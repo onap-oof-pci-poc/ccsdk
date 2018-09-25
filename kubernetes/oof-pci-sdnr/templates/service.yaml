@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "oof-pci-sdnr.fullname" . }}
+  labels:
+    app: {{ template "oof-pci-sdnr.name" . }}
+    chart: {{ template "oof-pci-sdnr.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ template "oof-pci-sdnr.name" . }}
+    release: {{ .Release.Name }}
