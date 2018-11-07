@@ -724,7 +724,7 @@ CREATE TABLE `RANGE_RULE` (
   `end_point_position` varchar(50) NOT NULL,
   `equipment_level` varchar(50) NOT NULL,
   `equipment_expression` varchar(2000) NOT NULL,
-  `ranges` varchar(100) NOT NULL
+  `ranges` varchar(100) NOT NULL,
   PRIMARY KEY (`range_rule_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
