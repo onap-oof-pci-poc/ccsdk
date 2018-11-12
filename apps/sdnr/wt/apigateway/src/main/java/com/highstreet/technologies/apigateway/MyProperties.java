@@ -1,3 +1,24 @@
+/*
+ * ============LICENSE_START=======================================================
+ * ONAP : CCSDK.apps.sdnr.wt.apigateway
+ * ================================================================================
+ * Copyright (C) 2018 highstreet technologies GmbH Intellectual Property.
+ * All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
+
 package com.highstreet.technologies.apigateway;
 
 import java.io.File;
@@ -14,113 +35,114 @@ import org.slf4j.LoggerFactory;
 
 public class MyProperties {
 
-	private static Logger LOG = LoggerFactory.getLogger(MyProperties.class);
-	public static final String PROPFILE = "etc/apigateway.properties";
-	private static final String DEFAULT_AAI_HEADERS = "[\"X-FromAppId:SDNR\",\"Authorization: Basic QUFJOkFBSQ==\"]";
+    private static Logger LOG = LoggerFactory.getLogger(MyProperties.class);
+    public static final String PROPFILE = "etc/apigateway.properties";
+    private static final String DEFAULT_AAI_HEADERS = "[\"X-FromAppId:SDNR\",\"Authorization: Basic QUFJOkFBSQ==\"]";
 
-	@Override
-	public String toString() {
-		return "MyProperties [aaiBase=" + aaiBase + ", aaiHeaders=" + aaiHeaders + ", esBase=" + esBase
-				+ ", trustInsecure=" + trustInsecure + ", corsEnabled=" + corsEnabled + "]";
-	}
+    @Override
+    public String toString() {
+        return "MyProperties [aaiBase=" + aaiBase + ", aaiHeaders=" + aaiHeaders + ", esBase=" + esBase
+                + ", trustInsecure=" + trustInsecure + ", corsEnabled=" + corsEnabled + "]";
+    }
 
-	private static MyProperties mObj;
+    private static MyProperties mObj;
 
-	private String aaiBase;
-	private Map<String, String> aaiHeaders;
-	private String esBase;
+    private String aaiBase;
+    private final Map<String, String> aaiHeaders;
+    private final String esBase;
 
-	private boolean trustInsecure;
+    private boolean trustInsecure;
 
-	private boolean corsEnabled;
+    private final boolean corsEnabled;
 
-	public boolean isAAIOff() {
-		return this.aaiBase == null ? true : this.aaiBase.equals("off");
-	}
+    public boolean isAAIOff() {
+        return this.aaiBase == null ? true : this.aaiBase.equals("off");
+    }
 
-	public boolean isEsOff() {
-		return this.esBase == null ? true : this.esBase.equals("off");
-	}
+    public boolean isEsOff() {
+        return this.esBase == null ? true : this.esBase.equals("off");
+    }
 
-	public String getAAIBaseUrl() {
-		return this.aaiBase;
-	}
+    public String getAAIBaseUrl() {
+        return this.aaiBase;
+    }
 
-	public String getEsBaseUrl() {
-		return this.esBase;
-	}
+    public String getEsBaseUrl() {
+        return this.esBase;
+    }
 
-	public Map<String, String> getAAIHeaders() {
-		return this.aaiHeaders;
-	}
+    public Map<String, String> getAAIHeaders() {
+        return this.aaiHeaders;
+    }
 
-	public boolean trustInsecure() {
-		return this.trustInsecure;
-	}
+    public boolean trustInsecure() {
+        return this.trustInsecure;
+    }
 
-	public boolean corsEnabled() {
-		return this.corsEnabled;
-	}
+    public boolean corsEnabled() {
+        return this.corsEnabled;
+    }
 
-	public static MyProperties Instantiate(String filename) throws IOException, NumberFormatException {
-		mObj = new MyProperties(filename);
-		if (mObj != null)
+    public static MyProperties Instantiate(String filename) throws IOException, NumberFormatException {
+        mObj = new MyProperties(filename);
+        if (mObj != null) {
 			LOG.debug("instantiated:" + mObj.toString());
-		return mObj;
-	}
-
-	private MyProperties(String filename) throws IOException, NumberFormatException {
-		this.aaiBase = "off";
-		this.trustInsecure = false;
-		File f = new File(filename);
-		if (!f.exists()) {
-			this.writeDefaults(f);
 		}
-		Properties defaultProps = new Properties();
-		FileInputStream in = new FileInputStream(filename);
-		defaultProps.load(in);
-		in.close();
+        return mObj;
+    }
 
-		this.aaiBase = defaultProps.getProperty("aai", "off");
-		this.aaiHeaders = _parseHeadersMap(defaultProps.getProperty("aaiHeaders", DEFAULT_AAI_HEADERS));
-		this.esBase = defaultProps.getProperty("database", "off");
-		this.trustInsecure = Integer.parseInt(defaultProps.getProperty("insecure", "0")) == 1;
-		this.corsEnabled = Integer.parseInt(defaultProps.getProperty("cors", "0")) == 1;
-	}
+    private MyProperties(String filename) throws IOException, NumberFormatException {
+        this.aaiBase = "off";
+        this.trustInsecure = false;
+        File f = new File(filename);
+        if (!f.exists()) {
+            this.writeDefaults(f);
+        }
+        Properties defaultProps = new Properties();
+        FileInputStream in = new FileInputStream(filename);
+        defaultProps.load(in);
+        in.close();
 
-	private static Map<String, String> _parseHeadersMap(String s) {
-		Map<String, String> r = new HashMap<String, String>();
-		try {
-			JSONArray a = new JSONArray(s);
-			if (a != null && a.length() > 0) {
-				for (int i = 0; i < a.length(); i++) {
-					String item = a.getString(i);
-					String[] hlp = item.split(":");
-					if (hlp.length > 1) {
-						r.put(hlp[0], hlp[1]);
-					}
-				}
-			}
-		} catch (Exception e) {
-			LOG.warn("problem loading headers map:" + e.getMessage());
-		}
-		return r;
-	}
+        this.aaiBase = defaultProps.getProperty("aai", "off");
+        this.aaiHeaders = _parseHeadersMap(defaultProps.getProperty("aaiHeaders", DEFAULT_AAI_HEADERS));
+        this.esBase = defaultProps.getProperty("database", "off");
+        this.trustInsecure = Integer.parseInt(defaultProps.getProperty("insecure", "0")) == 1;
+        this.corsEnabled = Integer.parseInt(defaultProps.getProperty("cors", "0")) == 1;
+    }
 
-	private void writeDefaults(File f) throws IOException {
-		FileWriter fw = new FileWriter(f);
-		final String LR = "\n";
-		fw.write("aai=off" + LR);
-		fw.write("aaiHeaders=" + DEFAULT_AAI_HEADERS + LR);
-		fw.write("database=http://localhost:9200" + LR);
-		fw.write("insecure=1" + LR);
-		fw.write("cors=1");
-		fw.close();
+    private static Map<String, String> _parseHeadersMap(String s) {
+        Map<String, String> r = new HashMap<>();
+        try {
+            JSONArray a = new JSONArray(s);
+            if (a != null && a.length() > 0) {
+                for (int i = 0; i < a.length(); i++) {
+                    String item = a.getString(i);
+                    String[] hlp = item.split(":");
+                    if (hlp.length > 1) {
+                        r.put(hlp[0], hlp[1]);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            LOG.warn("problem loading headers map:" + e.getMessage());
+        }
+        return r;
+    }
 
-	}
+    private void writeDefaults(File f) throws IOException {
+        FileWriter fw = new FileWriter(f);
+        final String LR = "\n";
+        fw.write("aai=off" + LR);
+        fw.write("aaiHeaders=" + DEFAULT_AAI_HEADERS + LR);
+        fw.write("database=http://localhost:9200" + LR);
+        fw.write("insecure=1" + LR);
+        fw.write("cors=1");
+        fw.close();
 
-	public static MyProperties getInstance() {
-		return mObj;
-	}
+    }
+
+    public static MyProperties getInstance() {
+        return mObj;
+    }
 
 }
