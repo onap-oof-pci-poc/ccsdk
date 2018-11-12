@@ -28,7 +28,6 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.onap.ccsdk.apps</groupId>
   <artifactId>ccsdk-apps-sdnr-wt-apigateway</artifactId>
-  <packaging>bundle</packaging>
 
   <parent>
         <groupId>org.onap.ccsdk.parent</groupId>
