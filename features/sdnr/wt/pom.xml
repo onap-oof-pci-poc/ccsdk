@@ -18,7 +18,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -26,11 +25,12 @@
     <artifactId>sdnr-wt</artifactId>
     <version>0.4.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>sdnr-wireless transport :: micro-services</name>
-    <description>SDN-R Wireless transport micro-services</description>
+    <name>ccsdk-sdnr-wireless transport :: micro-services</name>
+    <description>SDN-R wireless transport micro-services</description>
 
     <modules>
 	<module>apigateway</module>
+	<module>devicemodel</module>
     </modules>
 </project>
 

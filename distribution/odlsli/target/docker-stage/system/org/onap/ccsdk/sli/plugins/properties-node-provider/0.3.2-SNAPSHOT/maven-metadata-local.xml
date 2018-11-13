@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata modelVersion="1.1.0">
+  <groupId>org.onap.ccsdk.sli.plugins</groupId>
+  <artifactId>properties-node-provider</artifactId>
+  <version>0.3.2-SNAPSHOT</version>
+  <versioning>
+    <snapshot>
+      <localCopy>true</localCopy>
+    </snapshot>
+    <lastUpdated>20181022140858</lastUpdated>
+    <snapshotVersions>
+      <snapshotVersion>
+        <extension>jar</extension>
+        <value>0.3.2-SNAPSHOT</value>
+        <updated>20181022140858</updated>
+      </snapshotVersion>
+    </snapshotVersions>
+  </versioning>
+</metadata>

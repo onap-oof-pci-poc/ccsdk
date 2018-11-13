@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.4.0" name="ccsdk-resource-assignment">
+    <repository>mvn:org.onap.ccsdk.sli.core/ccsdk-sli/0.3.2-SNAPSHOT/xml/features</repository>
+    <repository>mvn:org.onap.ccsdk.sli.core/ccsdk-dblib/0.3.2-SNAPSHOT/xml/features</repository>
+    <feature name="ccsdk-resource-assignment" description="ccsdk-sli-adaptors :: resource-assignment :: ccsdk-resource-assignment" version="0.3.2.SNAPSHOT">
+        <details>Root POM to be used in place of odlparent for CCSDK based projects</details>
+        <feature version="0.3.2.SNAPSHOT" prerequisite="false" dependency="false">ccsdk-sli</feature>
+        <feature version="0.3.2.SNAPSHOT" prerequisite="false" dependency="false">ccsdk-dblib</feature>
+        <feature prerequisite="true" dependency="false">wrap</feature>
+        <bundle>mvn:org.onap.ccsdk.sli.adaptors/resource-assignment-provider/0.3.2-SNAPSHOT</bundle>
+        <bundle>wrap:mvn:org.springframework/spring-beans/3.2.17.RELEASE</bundle>
+        <bundle>wrap:mvn:org.springframework/spring-core/3.2.17.RELEASE</bundle>
+        <bundle>mvn:commons-logging/commons-logging/1.1.3</bundle>
+        <bundle>wrap:mvn:org.springframework/spring-context/3.2.17.RELEASE</bundle>
+        <bundle>wrap:mvn:org.springframework/spring-aop/3.2.17.RELEASE</bundle>
+        <bundle>wrap:mvn:aopalliance/aopalliance/1.0</bundle>
+        <bundle>wrap:mvn:org.springframework/spring-expression/3.2.17.RELEASE</bundle>
+        <bundle>wrap:mvn:org.springframework/spring-jdbc/3.2.17.RELEASE</bundle>
+        <bundle>wrap:mvn:org.springframework/spring-tx/3.2.17.RELEASE</bundle>
+    </feature>
+</features>

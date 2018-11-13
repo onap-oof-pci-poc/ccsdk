@@ -2,7 +2,7 @@
 <!--
 
  * ============LICENSE_START=======================================================
- * ONAP : CCSDK.sdnr
+ * ONAP : CCSDK.sdnr.wt.apigateway.provider
  * ================================================================================
  * Copyright (C) 2018 highstreet technologies GmbH Intellectual Property.
  * All rights reserved.
@@ -26,15 +26,16 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
   <artifactId>sdnr-wt-apigateway-provider</artifactId>
-  <version>0.4.0-SNAPSHOT</version>
+  <version>0.3.2-SNAPSHOT</version>
   <name>ccsdk-features-sdnr-wt :: ${project.artifactId}</name>
 
   <parent>
         <groupId>org.onap.ccsdk.parent</groupId>
         <artifactId>odlparent-lite</artifactId>
-        <version>1.2.0-SNAPSHOT</version>
+        <version>1.1.2-SNAPSHOT</version>
         <relativePath/>
   </parent>
 

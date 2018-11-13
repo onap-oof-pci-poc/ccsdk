@@ -4,8 +4,8 @@
   <artifactId>ccsdk-dataChange</artifactId>
   <versioning>
     <versions>
-      <version>0.4.0-SNAPSHOT</version>
+      <version>0.3.2-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20181106173159</lastUpdated>
+    <lastUpdated>20181106173038</lastUpdated>
   </versioning>
 </metadata>

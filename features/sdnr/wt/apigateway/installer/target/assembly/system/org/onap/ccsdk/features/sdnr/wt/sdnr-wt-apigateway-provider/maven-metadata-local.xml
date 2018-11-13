@@ -4,8 +4,8 @@
   <artifactId>sdnr-wt-apigateway-provider</artifactId>
   <versioning>
     <versions>
-      <version>0.4.0-SNAPSHOT</version>
+      <version>0.3.2-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20181113084459</lastUpdated>
+    <lastUpdated>20181113182317</lastUpdated>
   </versioning>
 </metadata>

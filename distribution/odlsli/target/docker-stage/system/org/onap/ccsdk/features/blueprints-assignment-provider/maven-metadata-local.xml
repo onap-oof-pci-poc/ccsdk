@@ -4,8 +4,8 @@
   <artifactId>blueprints-assignment-provider</artifactId>
   <versioning>
     <versions>
-      <version>0.4.0-SNAPSHOT</version>
+      <version>0.3.2-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20181106173149</lastUpdated>
+    <lastUpdated>20181106164845</lastUpdated>
   </versioning>
 </metadata>

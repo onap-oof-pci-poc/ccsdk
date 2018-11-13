@@ -4,8 +4,8 @@
   <artifactId>ccsdk-sli-plugins-all</artifactId>
   <versioning>
     <versions>
-      <version>0.4.0-SNAPSHOT</version>
+      <version>0.3.2-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20181106164720</lastUpdated>
+    <lastUpdated>20181022141019</lastUpdated>
   </versioning>
 </metadata>

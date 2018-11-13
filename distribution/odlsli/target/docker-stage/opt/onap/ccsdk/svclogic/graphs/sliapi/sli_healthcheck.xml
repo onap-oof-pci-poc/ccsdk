@@ -19,7 +19,7 @@
 
 <service-logic xmlns="http://www.onap.org/sdnc/svclogic"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.onap.org/sdnc/svclogic ./svclogic.xsd" module='sli' version='0.4.0-SNAPSHOT'><method rpc='healthcheck' mode='sync'>
+    xsi:schemaLocation="http://www.onap.org/sdnc/svclogic ./svclogic.xsd" module='sli' version='0.3.2-SNAPSHOT'><method rpc='healthcheck' mode='sync'>
 <set>
 <parameter name='error-code' value='200' />
 <parameter name='error-message' value='SDN-C is healthy'/>

@@ -4,8 +4,8 @@
   <artifactId>ccsdk-dblib</artifactId>
   <versioning>
     <versions>
-      <version>0.4.0-SNAPSHOT</version>
+      <version>0.3.2-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20181112175652</lastUpdated>
+    <lastUpdated>20181112175546</lastUpdated>
   </versioning>
 </metadata>

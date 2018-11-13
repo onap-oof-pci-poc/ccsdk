@@ -1,0 +1,11 @@
+org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.$YangModelBindingProvider
+org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev181010.$YangModelBindingProvider
+org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.onf.ethernet.conditional.packages.rev170402.$YangModelBindingProvider
+org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.g._874._1.model.rev170320.$YangModelBindingProvider
+org.opendaylight.yang.gen.v1.urn.onf.otcc.wireless.yang.radio.access.rev180408.$YangModelBindingProvider
+org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.core.model.rev170320.$YangModelBindingProvider
+org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.ptp.dataset.rev170208.$YangModelBindingProvider
+org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.onf.core.model.conditional.packages.rev170402.$YangModelBindingProvider
+org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.onf.ptp.dataset.rev170508.$YangModelBindingProvider
+org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.onf.otn.odu.conditional.packages.rev171020.$YangModelBindingProvider
+org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev180907.$YangModelBindingProvider

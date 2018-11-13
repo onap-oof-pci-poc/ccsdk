@@ -4,13 +4,13 @@ MAINTAINER CCSDK Team (onap-ccsdk@lists.onap.org)
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 ENV ODL_HOME /opt/opendaylight
 ENV SDNC_CONFIG_DIR /opt/onap/ccsdk/data/properties
-ENV CCSDK_SLI_CORE_REPO mvn:org.onap.ccsdk.sli.core/ccsdk-sli-core-all/0.4.0-SNAPSHOT/xml/features
-ENV CCSDK_SLI_ADAPTORS_REPO mvn:org.onap.ccsdk.sli.adaptors/ccsdk-sli-adaptors-all/0.4.0-SNAPSHOT/xml/features
-ENV CCSDK_FEATURES_REPO mvn:org.onap.ccsdk.features/ccsdk-features-all/0.4.0-SNAPSHOT/xml/features
-ENV CCSDK_SLI_NORTHBOUND_REPO mvn:org.onap.ccsdk.sli.northbound/ccsdk-sli-northbound-all/0.4.0-SNAPSHOT/xml/features
-ENV CCSDK_SLI_PLUGINS_REPO mvn:org.onap.ccsdk.sli.plugins/ccsdk-sli-plugins-all/0.4.0-SNAPSHOT/xml/features
-ENV SDNR_NORTHBOUND_REPO mvn:org.onap.ccsdk.features.sdnr.northbound/sdnr-northbound-all/0.4.0-SNAPSHOT/xml/features
-ENV SDNR_WT_REPO mvn:org.onap.ccsdk.features.sdnr.wt/sdnr-wt-apigateway/0.4.0-SNAPSHOT/xml/features
+ENV CCSDK_SLI_CORE_REPO mvn:org.onap.ccsdk.sli.core/ccsdk-sli-core-all/0.3.2-SNAPSHOT/xml/features
+ENV CCSDK_SLI_ADAPTORS_REPO mvn:org.onap.ccsdk.sli.adaptors/ccsdk-sli-adaptors-all/0.3.2-SNAPSHOT/xml/features
+ENV CCSDK_FEATURES_REPO mvn:org.onap.ccsdk.features/ccsdk-features-all/0.3.2-SNAPSHOT/xml/features
+ENV CCSDK_SLI_NORTHBOUND_REPO mvn:org.onap.ccsdk.sli.northbound/ccsdk-sli-northbound-all/0.3.2-SNAPSHOT/xml/features
+ENV CCSDK_SLI_PLUGINS_REPO mvn:org.onap.ccsdk.sli.plugins/ccsdk-sli-plugins-all/0.3.2-SNAPSHOT/xml/features
+ENV SDNR_NORTHBOUND_REPO mvn:org.onap.ccsdk.features.sdnr.northbound/sdnr-northbound-all/0.3.2-SNAPSHOT/xml/features
+ENV SDNR_WT_REPO mvn:org.onap.ccsdk.features.sdnr.wt/sdnr-wt-apigateway/0.3.2-SNAPSHOT/xml/features
 ENV ANSIBLE_GPG_KEY 93C4A3FD7BB9C367
 
 # copy the opendaylight credentials

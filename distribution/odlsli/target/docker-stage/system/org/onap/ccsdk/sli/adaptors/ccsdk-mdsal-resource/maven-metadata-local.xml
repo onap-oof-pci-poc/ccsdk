@@ -4,8 +4,8 @@
   <artifactId>ccsdk-mdsal-resource</artifactId>
   <versioning>
     <versions>
-      <version>0.4.0-SNAPSHOT</version>
+      <version>0.3.2-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20181106170343</lastUpdated>
+    <lastUpdated>20181108204608</lastUpdated>
   </versioning>
 </metadata>

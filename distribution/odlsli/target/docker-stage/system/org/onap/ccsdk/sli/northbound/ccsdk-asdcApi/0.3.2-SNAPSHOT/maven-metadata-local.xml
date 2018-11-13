@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata modelVersion="1.1.0">
+  <groupId>org.onap.ccsdk.sli.northbound</groupId>
+  <artifactId>ccsdk-asdcApi</artifactId>
+  <version>0.3.2-SNAPSHOT</version>
+  <versioning>
+    <snapshot>
+      <localCopy>true</localCopy>
+    </snapshot>
+    <lastUpdated>20181106173023</lastUpdated>
+    <snapshotVersions>
+      <snapshotVersion>
+        <classifier>features</classifier>
+        <extension>xml</extension>
+        <value>0.3.2-SNAPSHOT</value>
+        <updated>20181106173023</updated>
+      </snapshotVersion>
+    </snapshotVersions>
+  </versioning>
+</metadata>

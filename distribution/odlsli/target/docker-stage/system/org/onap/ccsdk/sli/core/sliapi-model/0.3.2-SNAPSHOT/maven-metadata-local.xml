@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata modelVersion="1.1.0">
+  <groupId>org.onap.ccsdk.sli.core</groupId>
+  <artifactId>sliapi-model</artifactId>
+  <version>0.3.2-SNAPSHOT</version>
+  <versioning>
+    <snapshot>
+      <localCopy>true</localCopy>
+    </snapshot>
+    <lastUpdated>20181112175719</lastUpdated>
+    <snapshotVersions>
+      <snapshotVersion>
+        <extension>jar</extension>
+        <value>0.3.2-SNAPSHOT</value>
+        <updated>20181112175719</updated>
+      </snapshotVersion>
+    </snapshotVersions>
+  </versioning>
+</metadata>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.4.0" name="ccsdk-filters">
+    <repository>mvn:org.onap.ccsdk.sli.core/ccsdk-sli/0.3.2-SNAPSHOT/xml/features</repository>
+    <feature name="ccsdk-filters" description="ccsdk-sli-core :: filters :: ccsdk-filters" version="0.3.2.SNAPSHOT">
+        <details>Root POM to be used in place of odlparent for CCSDK based projects</details>
+        <feature version="0.3.2.SNAPSHOT" prerequisite="false" dependency="false">ccsdk-sli</feature>
+        <bundle>mvn:org.onap.ccsdk.sli.core/filters-provider/0.3.2-SNAPSHOT</bundle>
+        <bundle>mvn:javax.servlet/javax.servlet-api/3.1.0</bundle>
+        <bundle>mvn:commons-codec/commons-codec/1.11</bundle>
+    </feature>
+</features>

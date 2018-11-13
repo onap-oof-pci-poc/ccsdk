@@ -4,8 +4,8 @@
   <artifactId>ccsdk-restapi-call-node</artifactId>
   <versioning>
     <versions>
-      <version>0.4.0-SNAPSHOT</version>
+      <version>0.3.2-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20181106164618</lastUpdated>
+    <lastUpdated>20181022140911</lastUpdated>
   </versioning>
 </metadata>

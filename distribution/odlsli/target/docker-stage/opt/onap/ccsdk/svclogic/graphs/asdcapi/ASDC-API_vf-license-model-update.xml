@@ -19,7 +19,7 @@
 
 <service-logic xmlns="http://www.onap.org/sdnc/svclogic"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.onap.org/sdnc/svclogic ./svclogic.xsd" module='ASDC-API' version='0.4.0-SNAPSHOT'>
+    xsi:schemaLocation="http://www.onap.org/sdnc/svclogic ./svclogic.xsd" module='ASDC-API' version='0.3.2-SNAPSHOT'>
     <method rpc='vf-license-model-update' mode='sync'>
         <block>
             <record  plugin="org.onap.ccsdk.sli.core.sli.recording.Slf4jRecorder">

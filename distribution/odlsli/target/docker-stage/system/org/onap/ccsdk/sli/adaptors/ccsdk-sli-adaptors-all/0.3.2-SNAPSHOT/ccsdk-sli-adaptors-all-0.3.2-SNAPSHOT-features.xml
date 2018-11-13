@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.4.0" name="ccsdk-sli-adaptors-all">
+    <repository>mvn:org.onap.ccsdk.sli.adaptors/ccsdk-aai-service/0.3.2-SNAPSHOT/xml/features</repository>
+    <repository>mvn:org.onap.ccsdk.sli.adaptors/ccsdk-ansible-adapter/0.3.2-SNAPSHOT/xml/features</repository>
+    <repository>mvn:org.onap.ccsdk.sli.adaptors/ccsdk-netbox-client/0.3.2-SNAPSHOT/xml/features</repository>
+    <repository>mvn:org.onap.ccsdk.sli.adaptors/ccsdk-mdsal-resource/0.3.2-SNAPSHOT/xml/features</repository>
+    <repository>mvn:org.onap.ccsdk.sli.adaptors/ccsdk-resource-assignment/0.3.2-SNAPSHOT/xml/features</repository>
+    <repository>mvn:org.onap.ccsdk.sli.adaptors/ccsdk-sql-resource/0.3.2-SNAPSHOT/xml/features</repository>
+    <feature name="ccsdk-sli-adaptors-all" description="ccsdk-sli-adaptors :: features :: ccsdk-sli-adaptors-all" version="0.3.2.SNAPSHOT">
+        <details>Root POM to be used in place of odlparent for CCSDK based projects</details>
+        <feature version="0.3.2.SNAPSHOT" prerequisite="false" dependency="false">ccsdk-aai-service</feature>
+        <feature version="0.3.2.SNAPSHOT" prerequisite="false" dependency="false">ccsdk-ansible-adapter</feature>
+        <feature version="0.3.2.SNAPSHOT" prerequisite="false" dependency="false">ccsdk-netbox-client</feature>
+        <feature version="0.3.2.SNAPSHOT" prerequisite="false" dependency="false">ccsdk-mdsal-resource</feature>
+        <feature version="0.3.2.SNAPSHOT" prerequisite="false" dependency="false">ccsdk-resource-assignment</feature>
+        <feature version="0.3.2.SNAPSHOT" prerequisite="false" dependency="false">ccsdk-sql-resource</feature>
+    </feature>
+</features>

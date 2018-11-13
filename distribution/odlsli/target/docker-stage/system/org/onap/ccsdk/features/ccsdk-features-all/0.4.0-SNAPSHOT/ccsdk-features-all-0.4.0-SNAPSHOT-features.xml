@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<features xmlns="http://karaf.apache.org/xmlns/features/v1.4.0" name="ccsdk-features-all">
-    <repository>mvn:org.onap.ccsdk.features/ccsdk-blueprints-processor/0.4.0-SNAPSHOT/xml/features</repository>
-    <feature name="ccsdk-features-all" description="ccsdk-features :: features :: ccsdk-features-all" version="0.4.0.SNAPSHOT">
-        <details>Root POM to be used in place of odlparent for CCSDK based projects</details>
-        <feature version="0.4.0.SNAPSHOT" prerequisite="false" dependency="false">ccsdk-blueprints-processor</feature>
-    </feature>
-</features>
