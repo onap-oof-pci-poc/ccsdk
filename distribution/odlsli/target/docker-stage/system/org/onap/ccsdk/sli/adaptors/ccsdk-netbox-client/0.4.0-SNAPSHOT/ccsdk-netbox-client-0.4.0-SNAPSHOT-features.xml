@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.4.0" name="ccsdk-netbox-client">
+    <repository>mvn:org.opendaylight.controller/odl-mdsal-broker/1.7.3/xml/features</repository>
+    <repository>mvn:org.onap.ccsdk.sli.core/ccsdk-sli/0.4.0-SNAPSHOT/xml/features</repository>
+    <repository>mvn:org.onap.ccsdk.sli.core/ccsdk-dblib/0.4.0-SNAPSHOT/xml/features</repository>
+    <feature name="ccsdk-netbox-client" description="ccsdk-sli-adaptors :: netbox-client :: ccsdk-netbox-client" version="0.4.0.SNAPSHOT">
+        <details>Root POM to be used in place of odlparent for CCSDK based projects</details>
+        <feature version="1.7.3" prerequisite="false" dependency="false">odl-mdsal-broker</feature>
+        <feature version="0.4.0.SNAPSHOT" prerequisite="false" dependency="false">ccsdk-sli</feature>
+        <feature version="0.4.0.SNAPSHOT" prerequisite="false" dependency="false">ccsdk-dblib</feature>
+        <feature prerequisite="true" dependency="false">wrap</feature>
+        <bundle>mvn:org.onap.ccsdk.sli.adaptors/netbox-client-provider/0.4.0-SNAPSHOT</bundle>
+        <bundle>wrap:mvn:org.apache.httpcomponents/httpcore/4.4.4</bundle>
+        <bundle>wrap:mvn:org.apache.httpcomponents/httpclient/4.5.2</bundle>
+        <bundle>mvn:commons-logging/commons-logging/1.2</bundle>
+        <bundle>mvn:commons-codec/commons-codec/1.11</bundle>
+        <bundle>mvn:org.onap.ccsdk.sli.core/sliPluginUtils-provider/0.4.0-SNAPSHOT</bundle>
+    </feature>
+</features>

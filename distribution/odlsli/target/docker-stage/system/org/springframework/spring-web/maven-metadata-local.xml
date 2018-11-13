@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>org.springframework</groupId>
+  <artifactId>spring-web</artifactId>
+  <versioning>
+    <release>3.2.17.RELEASE</release>
+    <versions>
+      <version>3.2.17.RELEASE</version>
+    </versions>
+    <lastUpdated>20181112113822</lastUpdated>
+  </versioning>
+</metadata>

@@ -1,0 +1,22 @@
+module goodbyeworld {
+    yang-version 1;
+    namespace "org:onap:ccsdk:features:sdnr:northbound:goodbyeworld";
+    prefix "goodbyeworld";
+
+    revision "2015-01-05" {
+        description "Initial revision of goodbyeworld model";
+    }
+
+    rpc greeting {
+    	input {
+    		leaf salutation {
+    			type string;
+    		}
+    	}
+    	output {
+    		leaf response {
+    			type string;
+    		}
+    	}
+    }
+}

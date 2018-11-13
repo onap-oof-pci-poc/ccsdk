@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.4.0" name="ccsdk-ansible-adapter">
+    <repository>mvn:org.onap.ccsdk.sli.core/ccsdk-sli/0.4.0-SNAPSHOT/xml/features</repository>
+    <feature name="ccsdk-ansible-adapter" description="ccsdk-sli-adaptors :: ansible-adapter:: ccsdk-ansible-adapter" version="0.4.0.SNAPSHOT">
+        <details>Root POM to be used in place of odlparent for CCSDK based projects</details>
+        <feature version="0.4.0.SNAPSHOT" prerequisite="false" dependency="false">ccsdk-sli</feature>
+        <feature prerequisite="true" dependency="false">wrap</feature>
+        <bundle>mvn:org.onap.ccsdk.sli.adaptors/ansible-adapter-bundle/0.4.0-SNAPSHOT</bundle>
+        <bundle>wrap:mvn:com.att.eelf/eelf-core/1.0.0</bundle>
+        <bundle>mvn:ch.qos.logback/logback-core/1.2.3</bundle>
+        <bundle>mvn:ch.qos.logback/logback-classic/1.2.3</bundle>
+        <bundle>mvn:commons-codec/commons-codec/1.11</bundle>
+        <bundle>mvn:commons-logging/commons-logging/1.2</bundle>
+        <bundle>wrap:mvn:org.apache.httpcomponents/httpclient/4.5.2</bundle>
+        <bundle>wrap:mvn:org.apache.httpcomponents/httpcore/4.4.4</bundle>
+        <bundle>wrap:mvn:org.json/json/20131018</bundle>
+    </feature>
+</features>

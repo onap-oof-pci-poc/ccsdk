@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.4.0" name="ccsdk-sli-northbound-all">
+    <repository>mvn:org.onap.ccsdk.sli.northbound/ccsdk-asdcApi/0.4.0-SNAPSHOT/xml/features</repository>
+    <repository>mvn:org.onap.ccsdk.sli.northbound/ccsdk-dataChange/0.4.0-SNAPSHOT/xml/features</repository>
+    <repository>mvn:org.onap.ccsdk.sli.northbound/ccsdk-lcm/0.4.0-SNAPSHOT/xml/features</repository>
+    <feature name="ccsdk-sli-northbound-all" description="ccsdk-sli-northbound :: features :: ccsdk-sli-northbound-all" version="0.4.0.SNAPSHOT">
+        <details>Root POM to be used in place of odlparent for CCSDK based projects</details>
+        <feature version="0.4.0.SNAPSHOT" prerequisite="false" dependency="false">ccsdk-asdcApi</feature>
+        <feature version="0.4.0.SNAPSHOT" prerequisite="false" dependency="false">ccsdk-dataChange</feature>
+        <feature version="0.4.0.SNAPSHOT" prerequisite="false" dependency="false">ccsdk-lcm</feature>
+    </feature>
+</features>

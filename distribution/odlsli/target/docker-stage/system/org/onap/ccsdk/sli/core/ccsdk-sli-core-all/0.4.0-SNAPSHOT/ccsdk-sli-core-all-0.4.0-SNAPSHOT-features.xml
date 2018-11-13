@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.4.0" name="ccsdk-sli-core-all">
+    <repository>mvn:org.onap.ccsdk.sli.core/ccsdk-slicore-utils/0.4.0-SNAPSHOT/xml/features</repository>
+    <repository>mvn:org.onap.ccsdk.sli.core/ccsdk-dblib/0.4.0-SNAPSHOT/xml/features</repository>
+    <repository>mvn:org.onap.ccsdk.sli.core/ccsdk-filters/0.4.0-SNAPSHOT/xml/features</repository>
+    <repository>mvn:org.onap.ccsdk.sli.core/ccsdk-sli/0.4.0-SNAPSHOT/xml/features</repository>
+    <repository>mvn:org.onap.ccsdk.sli.core/ccsdk-sliapi/0.4.0-SNAPSHOT/xml/features</repository>
+    <repository>mvn:org.onap.ccsdk.sli.core/ccsdk-sliPluginUtils/0.4.0-SNAPSHOT/xml/features</repository>
+    <feature name="ccsdk-sli-core-all" description="ccsdk-sli-core :: features :: ccsdk-sli-core-all" version="0.4.0.SNAPSHOT">
+        <details>Root POM to be used in place of odlparent for CCSDK based projects</details>
+        <feature version="0.4.0.SNAPSHOT" prerequisite="false" dependency="false">ccsdk-slicore-utils</feature>
+        <feature version="0.4.0.SNAPSHOT" prerequisite="false" dependency="false">ccsdk-dblib</feature>
+        <feature version="0.4.0.SNAPSHOT" prerequisite="false" dependency="false">ccsdk-filters</feature>
+        <feature version="0.4.0.SNAPSHOT" prerequisite="false" dependency="false">ccsdk-sli</feature>
+        <feature version="0.4.0.SNAPSHOT" prerequisite="false" dependency="false">ccsdk-sliapi</feature>
+        <feature version="0.4.0.SNAPSHOT" prerequisite="false" dependency="false">ccsdk-sliPluginUtils</feature>
+    </feature>
+</features>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>org.onap.ccsdk.features.sdnr.northbound</groupId>
+  <artifactId>sdnr-helloworld</artifactId>
+  <versioning>
+    <versions>
+      <version>0.4.0-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20181112173243</lastUpdated>
+  </versioning>
+</metadata>

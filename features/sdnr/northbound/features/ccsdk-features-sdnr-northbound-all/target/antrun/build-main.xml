@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-antrun-" default="main"  >
+<target name="main">
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+  <if>
+    <available file="/home/herbert/onap/ccsdk/features/sdnr/northbound/features/ccsdk-features-sdnr-northbound-all/src/main/resources/org/opendaylight/blueprint" type="dir"/>
+    <then>
+      <echo>Moving autowire.xml to org/opendaylight/blueprint</echo>
+      <move file="/home/herbert/onap/ccsdk/features/sdnr/northbound/features/ccsdk-features-sdnr-northbound-all/target/generated-resources/OSGI-INF/blueprint/autowire.xml" todir="/home/herbert/onap/ccsdk/features/sdnr/northbound/features/ccsdk-features-sdnr-northbound-all/target/generated-resources/org/opendaylight/blueprint" failonerror="false" quiet="true"/>
+    </then>
+    <else>
+      <echo>NOT moving autowire.xml (to org/opendaylight/blueprint)</echo>
+    </else>
+  </if>
+</target>
+</project>

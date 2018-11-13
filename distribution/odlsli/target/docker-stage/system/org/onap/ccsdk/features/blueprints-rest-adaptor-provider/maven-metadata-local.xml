@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>org.onap.ccsdk.features</groupId>
+  <artifactId>blueprints-rest-adaptor-provider</artifactId>
+  <versioning>
+    <versions>
+      <version>0.4.0-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20181106173149</lastUpdated>
+  </versioning>
+</metadata>

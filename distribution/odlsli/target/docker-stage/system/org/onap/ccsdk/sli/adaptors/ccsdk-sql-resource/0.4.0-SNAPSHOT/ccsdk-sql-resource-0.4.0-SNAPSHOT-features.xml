@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.4.0" name="ccsdk-sql-resource">
+    <feature name="ccsdk-sql-resource" description="ccsdk-sli-adaptors :: sql-resource :: ccsdk-sql-resource" version="0.4.0.SNAPSHOT">
+        <details>Root POM to be used in place of odlparent for CCSDK based projects</details>
+        <bundle>mvn:org.onap.ccsdk.sli.adaptors/sql-resource-provider/0.4.0-SNAPSHOT</bundle>
+    </feature>
+</features>

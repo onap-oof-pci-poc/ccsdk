@@ -1,0 +1,28 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1542043958302
+Build-Jdk: 1.8.0_181
+Built-By: herbert
+Bundle-Description: Root POM to be used in place of odlparent for CCSDK 
+ based projects
+Bundle-License: https://www.eclipse.org/legal/epl-v10.html
+Bundle-ManifestVersion: 2
+Bundle-Name: helloworld-provider
+Bundle-SymbolicName: org.onap.ccsdk.features.sdnr.northbound.helloworld-
+ provider
+Bundle-Vendor: ONAP
+Bundle-Version: 0.4.0.SNAPSHOT
+Created-By: Apache Maven Bundle Plugin
+Export-Package: org.onap.ccsdk.features.sdnr.northbound.helloworld;uses:
+ ="org.opendaylight.controller.md.sal.binding.api,org.opendaylight.contr
+ oller.sal.binding.api,org.opendaylight.yang.gen.v1.org.onap.ccsdk.featu
+ res.sdnr.northbound.helloworld.rev150105,org.opendaylight.yangtools.yan
+ g.common";version="0.4.0"
+Import-Package: com.google.common.base;version="[23.6,24)",com.google.co
+ mmon.util.concurrent;version="[23.6,24)",org.opendaylight.controller.md
+ .sal.binding.api;version="[1.6,2)",org.opendaylight.controller.sal.bind
+ ing.api;version="[1.6,2)",org.opendaylight.yang.gen.v1.org.onap.ccsdk.f
+ eatures.sdnr.northbound.helloworld.rev150105;version="[0.4,1)",org.open
+ daylight.yangtools.yang.binding;version="[0.12,1)",org.opendaylight.yan
+ gtools.yang.common;version="[2.0,3)",org.slf4j;version="[1.7,2)"
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.8))"
+Tool: Bnd-3.3.0.201609221906
