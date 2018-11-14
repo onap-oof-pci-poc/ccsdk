@@ -1,1 +1,5 @@
-/target/
+*/target/
+*/target-ide/
+.checkstyle
+.classpath
+.project

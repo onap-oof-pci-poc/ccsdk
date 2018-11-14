@@ -1,7 +1,0 @@
-org.opendaylight.mwtn.impl
-org.opendaylight.mwtn.impl.dto
-org.opendaylight.mwtn.impl.utils
-org.opendaylight.mwtn.impl.websocket
-org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.websocketmanager.impl.rev141210
-org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.websocketmanager.impl.rev141210.modules.module.configuration
-org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.websocketmanager.impl.rev141210.modules.module.configuration.websocketmanager
