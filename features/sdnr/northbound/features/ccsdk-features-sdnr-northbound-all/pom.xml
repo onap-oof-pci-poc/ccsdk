@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.onap.ccsdk.parent</groupId>
     <artifactId>single-feature-parent</artifactId>
-    <version>1.1.2-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
     <relativePath />
   </parent>
 
@@ -46,6 +46,13 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>sdnr-goodbyeworld</artifactId>
+      <version>${project.version}</version>
+      <type>xml</type>
+      <classifier>features</classifier>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>sdnr-oofpcipoc</artifactId>
       <version>${project.version}</version>
       <type>xml</type>
       <classifier>features</classifier>
