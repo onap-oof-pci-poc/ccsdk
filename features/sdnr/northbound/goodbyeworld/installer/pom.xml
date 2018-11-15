@@ -15,7 +15,7 @@
   <version>0.3.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>ccsdk-features-sdnr-northbound :: goodbyeworld :: ${project-artifactId}</name>
+  <name>ccsdk-features-sdnr-northbound :: goodbyeworld :: ${project.artifactId}</name>
 
   <properties>
     <application.name>sdnr-goodbyeworld</application.name>

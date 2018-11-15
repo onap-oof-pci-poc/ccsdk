@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.onap.ccsdk.parent</groupId>
     <artifactId>odlparent-lite</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>1.2.0-SNAPSHOT</version>
     <relativePath />
   </parent>
 
@@ -15,7 +15,7 @@
   <version>0.3.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>ccsdk-features-sdnr-northbound :: oofpcipoc :: ${project-artifactId}</name>
+  <name>ccsdk-features-sdnr-northbound :: oofpcipoc :: ${project.artifactId}</name>
 
   <properties>
     <application.name>sdnr-oofpcipoc</application.name>

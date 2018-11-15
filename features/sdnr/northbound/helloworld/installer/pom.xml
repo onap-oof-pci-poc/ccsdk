@@ -15,7 +15,7 @@
   <version>0.3.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>ccsdk-features-sdnr-northbound :: helloworld :: ${project-artifactId}</name>
+  <name>ccsdk-features-sdnr-northbound :: helloworld :: ${project.artifactId}</name>
 
   <properties>
     <application.name>sdnr-helloworld</application.name>
