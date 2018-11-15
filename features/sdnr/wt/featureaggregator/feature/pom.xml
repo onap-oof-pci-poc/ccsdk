@@ -3,6 +3,12 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
+  <artifactId>sdnr-wt-feature-aggregator</artifactId>
+  <version>0.3.2-SNAPSHOT</version>
+  <packaging>feature</packaging>
+  <name>ccsdk-features-sdnr-wt :: ${project.artifactId}</name>
+
   <parent>
     <groupId>org.onap.ccsdk.parent</groupId>
     <artifactId>single-feature-parent</artifactId>
@@ -10,12 +16,6 @@
     <relativePath />
   </parent>
 
-  <groupId>org.onap.ccsdk.features.sdnr.northbound</groupId>
-  <artifactId>sdnr-northbound-all</artifactId>
-  <version>0.3.2-SNAPSHOT</version>
-  <packaging>feature</packaging>
-
-  <name>ccsdk-features-sdnr-northbound :: features :: ${project.artifactId}</name>
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -38,21 +38,28 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>sdnr-helloworld</artifactId>
+      <artifactId>sdnr-wt-apigateway</artifactId>
       <version>${project.version}</version>
       <type>xml</type>
       <classifier>features</classifier>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>sdnr-goodbyeworld</artifactId>
+      <artifactId>sdnr-wt-devicemodel</artifactId>
       <version>${project.version}</version>
       <type>xml</type>
       <classifier>features</classifier>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>sdnr-oofpcipoc</artifactId>
+      <artifactId>sdnr-wt-devicemanager</artifactId>
+      <version>${project.version}</version>
+      <type>xml</type>
+      <classifier>features</classifier>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>sdnr-wt-websocketmanager</artifactId>
       <version>${project.version}</version>
       <type>xml</type>
       <classifier>features</classifier>
