@@ -31,6 +31,8 @@
     <modules>
 	<module>apigateway</module>
 	<module>devicemodel</module>
+	<module>devicemanager</module>
+	<module>websocketmanager</module>
     </modules>
 </project>
 

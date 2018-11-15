@@ -28,7 +28,7 @@
 	<artifactId>sdnr-wt-devicemanager-top</artifactId>
 	<version>0.3.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>ccsdk-features-sdnr-wt :: ${artifactId}</name>
+	<name>ccsdk-features-sdnr-wt :: ${project.artifactId}</name>
 
 	<parent>
 		<groupId>org.onap.ccsdk.parent</groupId>
