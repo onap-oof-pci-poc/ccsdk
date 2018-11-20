@@ -23,12 +23,13 @@
 
     <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
     <artifactId>sdnr-wt</artifactId>
-    <version>0.3.2-SNAPSHOT</version>
+    <version>0.3.3-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>ccsdk-sdnr-wireless transport :: micro-services</name>
     <description>SDN-R wireless transport micro-services</description>
 
     <modules>
+        <module>config-parent</module>
 	<module>featureaggregator</module>
 	<module>apigateway</module>
 	<module>devicemodel</module>

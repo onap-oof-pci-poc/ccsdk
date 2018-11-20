@@ -49,7 +49,14 @@
 			<attribute name="ignore_optional_problems" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" output="target-ide/classes" path="target-ide/generated-sources/mdsal-binding">
+	<classpathentry kind="src" output="target-ide/classes" path="src/main/yang-gen-sal">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="ignore_optional_problems" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" output="target-ide/classes" path="target/swagger">
 		<attributes>
 			<attribute name="optional" value="true"/>
 			<attribute name="maven.pomderived" value="true"/>

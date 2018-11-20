@@ -22,7 +22,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.onap.ccsdk.features.sdnr.northbound</groupId>
     <artifactId>sdnr-wt</artifactId>
-    <version>0.3.2-SNAPSHOT</version>
+    <version>0.3.3-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>ccsdk-sdnr-northbound :: micro-services</name>
     <description>SDN-R northbound micro-services</description>
