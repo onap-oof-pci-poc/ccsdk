@@ -1,0 +1,265 @@
+[
+	{
+		"name": "security-manager-resource-key",
+		"input-param": true,
+		"property": {
+			"type": "string",
+			"required": true
+		},
+		"dictionary-name": "security-manager-resource-key",
+		"dictionary-source": "input"
+	},
+	{
+		"name": "security-manager-resource-name",
+		"input-param": true,
+		"property": {
+			"type": "string",
+			"required": true
+		},
+		"dictionary-name": "security-manager-resource-name",
+		"dictionary-source": "input"
+	},
+	{
+		"name": "snmp-server-ipv4-addresses",
+		"input-param": true,
+		"property": {
+			"type": "list",
+			"required": true,
+			"entry_schema": {
+				"type": "string"
+			}
+		},
+		"dictionary-name": "snmp-server-ipv4-addresses",
+		"dictionary-source": "network-resource-discovery",
+		"dependencies": [
+			"asn-region",
+			"complex-code"
+		]
+	},
+	{
+		"name": "snmp-community",
+		"input-param": true,
+		"property": {
+			"type": "string",
+			"required": true
+		},
+		"dictionary-name": "snmp-community",
+		"dictionary-source": "nsm",
+		"dependencies": [
+			"security-manager-resource-name",
+			"security-manager-resource-key"
+		],
+		"version": 0
+	},
+	{
+		"name": "lo0-local-ipv4-address",
+		"property": {
+			"description": "",
+			"required": true,
+			"type": "string",
+			"status": "",
+			"constraints": [
+				{
+					
+				}
+			],
+			"value": {
+				
+			},
+			"entry_schema": {
+				"type": ""
+			}
+		},
+		"input-param": false,
+		"dictionary-name": "lo0-local-ipv4-address",
+		"dictionary-source": "network-resource-discovery",
+		"dependencies": [
+			"hostname"
+		],
+		"version": 0
+	},
+	{
+		"name": "adig-urlb-route-reflectors",
+		"property": {
+			"description": "",
+			"required": true,
+			"type": "list",
+			"status": "",
+			"constraints": [
+				{
+					
+				}
+			],
+			"value": {
+				
+			},
+			"entry_schema": {
+				"type": "dt-adig-urlb-route-reflectors"
+			}
+		},
+		"input-param": false,
+		"dictionary-name": "adig-urlb-route-reflectors",
+		"dictionary-source": "network-resource-discovery",
+		"dependencies": [
+			"region"
+		],
+		"version": 0
+	},
+	{
+		"name": "bundle-id",
+		"property": {
+			"description": "",
+			"required": true,
+			"type": "string",
+			"status": "",
+			"constraints": [
+				{
+					
+				}
+			],
+			"value": {
+				
+			},
+			"entry_schema": {
+				"type": ""
+			}
+		},
+		"input-param": false,
+		"dictionary-name": "bundle-id",
+		"dictionary-source": "network-resource-discovery",
+		"dependencies": [
+			"hostname"
+		],
+		"version": 0
+	},
+	{
+		"name": "uplink-1-unit",
+		"property": {
+			"description": "",
+			"required": true,
+			"type": "integer",
+			"status": "",
+			"constraints": [
+				{
+					
+				}
+			],
+			"value": {
+				
+			},
+			"entry_schema": {
+				"type": ""
+			}
+		},
+		"input-param": false,
+		"dictionary-name": "uplink-1-unit",
+		"dictionary-source": "network-resource-discovery",
+		"dependencies": [
+			"hostname"
+		],
+		"version": 0
+	},
+	{
+		"name": "uplink-2-unit",
+		"property": {
+			"description": "",
+			"required": true,
+			"type": "integer",
+			"status": "",
+			"constraints": [
+				{
+					
+				}
+			],
+			"value": {
+				
+			},
+			"entry_schema": {
+				"type": ""
+			}
+		},
+		"input-param": false,
+		"dictionary-name": "uplink-2-unit",
+		"dictionary-source": "network-resource-discovery",
+		"dependencies": [
+			"hostname"
+		],
+		"version": 0
+	},
+	{
+		"name": "lo10-local-ipv4-address",
+		"property": {
+			"description": "",
+			"required": true,
+			"type": "string",
+			"status": "",
+			"constraints": [
+				{
+					
+				}
+			],
+			"value": {
+				
+			},
+			"entry_schema": {
+				"type": ""
+			}
+		},
+		"input-param": false,
+		"dictionary-name": "lo10-local-ipv4-address",
+		"dictionary-source": "network-resource-discovery",
+		"dependencies": [
+			"hostname"
+		],
+		"version": 0
+	},
+	{
+		"name": "complex-code",
+		"property": {
+			"required": true,
+			"type": "string"
+		},
+		"dictionary-name": "complex-code",
+		"dictionary-source": "network-resource-discovery",
+		"dependencies": [
+			"hostname"
+		],
+		"version": 0
+	},
+	{
+		"name": "country-code",
+		"property": {
+			"required": true,
+			"type": "string"
+		},
+		"dictionary-name": "country-code",
+		"dictionary-source": "network-resource-discovery",
+		"dependencies": [
+			"hostname"
+		],
+		"version": 0
+	},
+	{
+		"name": "hostname",
+		"property": {
+			"required": true,
+			"type": "string"
+		},
+		"dictionary-name": "hostname",
+		"dictionary-source": "input",
+		"version": 0
+	},
+	{
+		"name": "region",
+		"property": {
+			"required": true,
+			"type": "string"
+		},
+		"dictionary-name": "region",
+		"dictionary-source": "network-resource-discovery",
+		"dependencies": [
+			"hostname"
+		],
+		"version": 0
+	}
+]

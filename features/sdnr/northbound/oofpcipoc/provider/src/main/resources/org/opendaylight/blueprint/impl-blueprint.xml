@@ -10,7 +10,7 @@
   <reference id="svcLogicService"
              interface="org.onap.ccsdk.sli.core.sli.provider.SvcLogicService" />
 
-   <bean id="client" class="org.onap.ccsdk.sli.northbound.OofpcipocClient">
+   <bean id="client" class="org.onap.ccsdk.features.sdnr.northbound.oofpcipoc.OofpcipocClient">
        <argument ref="svcLogicService" />
    </bean>
 
@@ -24,8 +24,7 @@
   <reference id="rpcRegistry" interface="org.opendaylight.controller.sal.binding.api.RpcProviderRegistry"
     odl:type="default" />
 
-  <bean id="provider" class="org.onap.ccsdk.features.sdnr.northbound.oofpcipoc.OofpcipocProvider"
-    init-method="init" destroy-method="close">
+  <bean id="provider" class="org.onap.ccsdk.features.sdnr.northbound.oofpcipoc.OofpcipocProvider">
     <argument ref="dataBroker" />
     <argument ref="rpcRegistry" />
     <argument ref="notificationService" />

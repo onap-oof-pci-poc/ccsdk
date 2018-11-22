@@ -1,0 +1,171 @@
+{
+	"metadata": {
+		"author": "ks220y@att.com",
+		"service-template-name": "VRR-baseconfiguration",
+		"service-template-version": "1.0.0",
+		"release": "1802",
+		"service-type": "AVPN",
+		"vnf-type": "VRR"
+	},
+	"topology_template": {
+		"inputs": {
+			"request-id": {
+				"required": true,
+				"type": "string"
+			},
+			"service-instance-id": {
+				"required": true,
+				"type": "string"
+			},
+			"action-name": {
+				"required": true,
+				"type": "string"
+			},
+			"scope-type": {
+				"required": true,
+				"type": "string"
+			},
+			"hostname": {
+				"required": true,
+				"type": "string"
+			}
+		},
+		"node_templates": {
+			"base-config-template": {
+				"type": "artifact-config-template",
+				"properties": {
+					"action-names": [
+						"resource-assignment-action"
+					]
+				},
+				"capabilities": {
+					"content": {
+						"properties": {
+							"content": "db://base-config-template"
+						}
+					},
+					"mapping": {
+						"properties": {
+							"mapping": [
+								{
+									"name": "vnf-id",
+									"input-param": true,
+									"property": {
+										"type": "string",
+										"required": true
+									},
+									"dictionary-name": "vnf-id",
+									"dictionary-source": "input"
+								},
+								{
+									"name": "group-name",
+									"input-param": true,
+									"property": {
+										"type": "string",
+										"required": true
+									},
+									"dictionary-name": "group-name",
+									"dictionary-source": "input"
+								}
+							]
+						}
+					}
+				}
+			},
+			"resource-assignment-action": {
+				"type": "dg-resource-assignment",
+				"interfaces": {
+					"CONFIG": {
+						"operations": {
+							"ResourceAssignment": {
+								
+							}
+						}
+					}
+				},
+				"capabilities": {
+					"dg-node": {
+						
+					}
+				},
+				"requirements": {
+					"component-dependency": {
+						"capability": "component-node",
+						"node": "resource-assignment",
+						"relationship": "tosca.relationships.DependsOn"
+					}
+				}
+			},
+			"licence-template": {
+				"type": "artifact-config-template",
+				"properties": {
+					"action-names": [
+						"resource-assignment-action"
+					]
+				},
+				"capabilities": {
+					"content": {
+						"properties": {
+							"content": "db://licence-template"
+						}
+					},
+					"mapping": {
+						"properties": {
+							"mapping": [
+								{
+									"name": "bundle-id",
+									"input-param": true,
+									"property": {
+										"type": "string"
+									},
+									"dictionary-name": "bundle-id",
+									"dictionary-source": "input"
+								},
+								{
+									"name": "bundle-mac",
+									"input-param": true,
+									"property": {
+										"type": "string",
+										"required": true
+									},
+									"dictionary-name": "bundle-mac",
+									"dictionary-source": "input"
+								}
+							]
+						}
+					}
+				}
+			},
+			"resource-assignment": {
+				"type": "component-resource-assignment",
+				"interfaces": {
+					"org-onap-ccsdk-features-assignment-service-ConfigAssignmentNode": {
+						"operations": {
+							"process": {
+								"inputs": {
+									"action-name": "{ \"get_input\" : \"action-name\" }",
+									"resource-type": "vnf-type",
+									"template-names": [
+										"base-config-template",
+										"licence-template"
+									],
+									"request-id": "{ \"get_input\" : \"request-id\" }",
+									"resource-id": "{ \"get_input\" : \"vnf-id\" }"
+								},
+								"outputs": {
+									"resource-assignment-params": "",
+									"status": ""
+								}
+							}
+						}
+					}
+				},
+				"capabilities": {
+					"component-node": {
+						
+					}
+				}
+			}
+		}
+	}
+}
