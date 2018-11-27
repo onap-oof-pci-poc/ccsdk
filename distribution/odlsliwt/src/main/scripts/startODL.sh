@@ -34,14 +34,15 @@ MYSQL_PASSWD=${MYSQL_PASSWD:-openECOMP1.0}
 #
 # Wait for database
 #
-echo "Waiting for mysql"
-until mysql -h dbhost -u root -p${MYSQL_PASSWD} mysql &> /dev/null
-do
-  printf "."
-  sleep 1
-done
-echo -e "\nmysql ready"
-
+if [ ! ${SDNR_STANDALONE} ]; then
+    echo "Waiting for mysql"
+    until mysql -h dbhost -u root -p${MYSQL_PASSWD} mysql &> /dev/null
+    do
+      printf "."
+      sleep 1
+    done
+    echo -e "\nmysql ready"
+fi
 if [ ! -f ${CCSDK_HOME}/.installed ]
 then
     echo "Installing SDN-C database"

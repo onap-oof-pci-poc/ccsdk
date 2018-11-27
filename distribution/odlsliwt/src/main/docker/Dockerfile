@@ -1,5 +1,5 @@
 # Base ubuntu with added packages needed for open ecomp
-FROM nexus3.onap.org:10001/onap/ccsdk-odl-oxygen-image:0.3.3-STAGING
+FROM nexus3.onap.org:10001/onap/ccsdk-odl-oxygen-image:0.3.2
 MAINTAINER CCSDK Team (onap-ccsdk@lists.onap.org)
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 ENV ODL_HOME /opt/opendaylight
@@ -15,7 +15,7 @@ ENV SDNR_NORTHBOUND_REPO mvn:org.onap.ccsdk.features.sdnr.northbound/sdnr-northb
 ENV SDNR_WT_REPO mvn:org.opendaylight.mwtn/mwtn-parent/0.7.3-SNAPSHOT/xml/features
 ENV SDNR_REPOLIST=${SDNR_NORTHBOUND_REPO},${SDNR_WT_REPO}
 ENV SDNR_FEATURELIST=sdnr-northbound-all,odl-dev-all
-
+ENV SDNR_STANDALONE=false
 
 # copy the opendaylight credentials
 COPY idmlight.db.mv.db $ODL_HOME/data
