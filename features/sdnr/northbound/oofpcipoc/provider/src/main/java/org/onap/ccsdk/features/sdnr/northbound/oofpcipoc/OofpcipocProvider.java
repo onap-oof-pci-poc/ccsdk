@@ -112,6 +112,8 @@ public class OofpcipocProvider implements AutoCloseable, OofpcipocService {
 		Properties parms = new Properties();
 		GreetingOutputBuilder serviceDataBuilder = new GreetingOutputBuilder();
 
+    LOG.info( "Reached RPC greeting");
+
 		LOG.info( svcOperation +" called." );
 
 		if(input == null ) {
@@ -132,9 +134,10 @@ public class OofpcipocProvider implements AutoCloseable, OofpcipocService {
 		{
 			if (OofpcipocClient.hasGraph("Oofpcipoc", svcOperation , null, "sync"))
 			{
+        LOG.info( "OofpcipocClient has a Directed Graph for '" + svcOperation + "'");
 				try
 				{
-					OofpcipocClient.execute("Oofpcipoc", svcOperation, null, "sync", serviceDataBuilder, parms);
+          OofpcipocClient.execute("Oofpcipoc", svcOperation, null, "sync", serviceDataBuilder, parms);
 				}
 				catch (Exception e)
 				{
@@ -164,6 +167,8 @@ public class OofpcipocProvider implements AutoCloseable, OofpcipocService {
 		RpcResult<GreetingOutput> rpcResult =
 				RpcResultBuilder.<GreetingOutput> status(true).withResult(serviceDataBuilder.build()).build();
 
+    LOG.info("Successful exit from greeting ");
+
 		return Futures.immediateFuture(rpcResult);
 	}
 
@@ -175,6 +180,8 @@ public class OofpcipocProvider implements AutoCloseable, OofpcipocService {
 
 		Properties parms = new Properties();
 		ConfigurationPhyCellIdOutputBuilder serviceDataBuilder = new ConfigurationPhyCellIdOutputBuilder();
+
+    LOG.info( "Reached RPC configurationPhyCellId");
 
 		LOG.info( svcOperation +" called." );
 
@@ -194,8 +201,11 @@ public class OofpcipocProvider implements AutoCloseable, OofpcipocService {
 		// Call SLI sync method
 		try
 		{
+
 			if (OofpcipocClient.hasGraph("Oofpcipoc", svcOperation , null, "sync"))
 			{
+        LOG.info( "OofpcipocClient has a Directed Graph for '" + svcOperation + "'");
+
 				try
 				{
 					OofpcipocClient.execute("Oofpcipoc", svcOperation, null, "sync", serviceDataBuilder, parms);
