@@ -1,5 +1,5 @@
 # Base ubuntu with added packages needed for open ecomp
-FROM nexus3.onap.org:10001/onap/ccsdk-odl-oxygen-image:0.3.2
+FROM nexus3.onap.org:10001/onap/ccsdk-odl-oxygen-image:${project.version}
 MAINTAINER CCSDK Team (onap-ccsdk@lists.onap.org)
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 ENV ODL_HOME /opt/opendaylight
@@ -11,7 +11,7 @@ ENV CCSDK_SLI_NORTHBOUND_REPO mvn:org.onap.ccsdk.sli.northbound/ccsdk-sli-northb
 ENV CCSDK_SLI_PLUGINS_REPO mvn:org.onap.ccsdk.sli.plugins/ccsdk-sli-plugins-all/${ccsdk.sli.plugins.version}/xml/features
 ENV ANSIBLE_GPG_KEY ${ansible.gpg.key}
 
-ENV SDNR_NORTHBOUND_REPO mvn:org.onap.ccsdk.features.sdnr.northbound/sdnr-northbound-all/0.3.3-SNAPSHOT/xml/features
+ENV SDNR_NORTHBOUND_REPO mvn:org.onap.ccsdk.features.sdnr.northbound/sdnr-northbound-all/${project.version}/xml/features
 ENV SDNR_WT_REPO mvn:org.opendaylight.mwtn/mwtn-parent/0.7.3-SNAPSHOT/xml/features
 ENV SDNR_REPOLIST=${SDNR_NORTHBOUND_REPO},${SDNR_WT_REPO}
 ENV SDNR_FEATURELIST=sdnr-northbound-all,odl-dev-all
