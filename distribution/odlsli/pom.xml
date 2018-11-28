@@ -7,13 +7,13 @@
 	<parent>
 		<groupId>org.onap.ccsdk.parent</groupId>
 		<artifactId>odlparent-lite</artifactId>
-		<version>1.1.3-SNAPSHOT</version>
+		<version>1.1.2</version>
 		<relativePath />
 	</parent>
 
 	<groupId>org.onap.ccsdk.distribution</groupId>
 	<artifactId>distribution-odlsli</artifactId>
-	<version>0.3.3-SNAPSHOT</version>
+	<version>0.3.2</version>
 	<packaging>pom</packaging>
 
 	<name>ccsdk-distribution :: odlsli</name>
@@ -38,7 +38,7 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>dependencies</artifactId>
-			<version>${ccsdk.distribution.version}</version>
+			<version>${project.version}</version>
 			<classifier>repo</classifier>
 			<type>zip</type>
 		</dependency>
@@ -221,59 +221,31 @@
     <dependency>
       <groupId>org.onap.ccsdk.features.sdnr.northbound</groupId>
       <artifactId>sdnr-northbound-features-installer</artifactId>
-      <version>${ccsdk.features.version}</version>
+      <version>${ccsdk.sli.core.version}</version>
       <classifier>repo</classifier>
       <type>zip</type>
     </dependency>
     <dependency>
       <groupId>org.onap.ccsdk.features.sdnr.northbound</groupId>
       <artifactId>helloworld-installer</artifactId>
-      <version>${ccsdk.features.version}</version>
+      <version>${ccsdk.sli.core.version}</version>
       <classifier>repo</classifier>
       <type>zip</type>
     </dependency>
     <dependency>
       <groupId>org.onap.ccsdk.features.sdnr.northbound</groupId>
       <artifactId>goodbyeworld-installer</artifactId>
-      <version>${ccsdk.features.version}</version>
+      <version>${ccsdk.sli.core.version}</version>
       <classifier>repo</classifier>
       <type>zip</type>
     </dependency>
-    <dependency>
-      <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
-      <artifactId>sdnr-wt-feature-aggregator-installer</artifactId>
-      <version>${ccsdk.features.version}</version>
-      <classifier>repo</classifier>
-      <type>zip</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
-      <artifactId>sdnr-wt-apigateway-installer</artifactId>
-      <version>${ccsdk.features.version}</version>
-      <classifier>repo</classifier>
-      <type>zip</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
-      <artifactId>sdnr-wt-devicemodel-installer</artifactId>
-      <version>${ccsdk.features.version}</version>
-      <classifier>repo</classifier>
-      <type>zip</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
-      <artifactId>sdnr-wt-devicemanager-installer</artifactId>
-      <version>${ccsdk.features.version}</version>
-      <classifier>repo</classifier>
-      <type>zip</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
-      <artifactId>sdnr-wt-websocketmanager-installer</artifactId>
-      <version>${ccsdk.features.version}</version>
-      <classifier>repo</classifier>
-      <type>zip</type>
-    </dependency>
+		<dependency>
+			<groupId>org.onap.ccsdk.features.sdnr.northbound</groupId>
+			<artifactId>oofpcipoc-installer</artifactId>
+			<version>${ccsdk.sli.core.version}</version>
+			<classifier>repo</classifier>
+			<type>zip</type>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -291,6 +263,7 @@
 			<plugin>
 				<groupId>org.codehaus.groovy.maven</groupId>
 				<artifactId>gmaven-plugin</artifactId>
+				<version>1.0</version>
 				<executions>
 					<execution>
 						<phase>validate</phase>
