@@ -12,7 +12,7 @@ ENV CCSDK_SLI_PLUGINS_REPO mvn:org.onap.ccsdk.sli.plugins/ccsdk-sli-plugins-all/
 ENV ANSIBLE_GPG_KEY ${ansible.gpg.key}
 
 ENV SDNR_NORTHBOUND_REPO mvn:org.onap.ccsdk.features.sdnr.northbound/sdnr-northbound-all/${project.version}/xml/features
-ENV SDNR_WT_REPO mvn:org.opendaylight.mwtn/mwtn-parent/0.7.3-SNAPSHOT/xml/features
+ENV SDNR_WT_REPO mvn:org.opendaylight.mwtn/mwtn-parent/${wt.version}/xml/features
 ENV SDNR_REPOLIST=${SDNR_NORTHBOUND_REPO},${SDNR_WT_REPO}
 ENV SDNR_FEATURELIST=sdnr-northbound-all,odl-dev-all
 ENV SDNR_STANDALONE=false
@@ -25,8 +25,8 @@ COPY karaf-0.8.3-poc5/system /tmp/system
 RUN rsync -a /tmp/system $ODL_HOME && rm -rf /tmp/system
 
 #WT:copy schema cache into ontainer
-RUN mkdir -p $ODL_HOME/data/cache/schema/
-COPY karaf-0.8.3-poc5/etc/preload.cache.schema/* $ODL_HOME/data/cache/schema/
+RUN mkdir -p $ODL_HOME/cache/schema/
+COPY karaf-0.8.3-poc5/etc/preload.cache.schema/* $ODL_HOME/cache/schema/
 
 # copy CCSDK mvn artifacts to ODL repository
 COPY system /tmp/system
