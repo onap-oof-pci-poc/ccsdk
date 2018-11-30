@@ -1,0 +1,163 @@
+# Copyright © 2017 Amdocs, Bell Canada
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "common.servicename" . }}
+  namespace: {{ include "common.namespace" . }}
+  labels:
+    app: {{ include "common.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  annotations:
+    msb.onap.org/service-info: '[
+      {
+          "serviceName": "sdnc",
+          "version": "v1",
+          "url": "/",
+          "protocol": "REST",
+          "port": "{{ .Values.service.externalPort }}",
+          "visualRange":"1",
+          "path": "/"
+      }
+      ]'
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    {{if eq .Values.service.type "NodePort" -}}
+    - port: {{ .Values.service.externalPort }}
+      targetPort: {{ .Values.service.internalPort }}
+      nodePort: {{ .Values.global.nodePortPrefix | default .Values.nodePortPrefix }}{{ .Values.service.nodePort }}
+      name: "{{ .Values.service.portName }}-8282"
+    - port: {{ .Values.service.externalPort2 }}
+      targetPort: {{ .Values.service.internalPort2 }}
+      nodePort: {{ .Values.global.nodePortPrefix | default .Values.nodePortPrefix }}{{ .Values.service.nodePort2 }}
+      name: "{{ .Values.service.portName }}-8202"
+    - port: {{ .Values.service.externalPort3 }}
+      targetPort: {{ .Values.service.internalPort3 }}
+      nodePort: {{ .Values.global.nodePortPrefix | default .Values.nodePortPrefix }}{{ .Values.service.nodePort3 }}
+      name: "{{ .Values.service.portName }}-8280"
+    - port: {{ .Values.service.externalPort4 }}
+      targetPort: {{ .Values.service.internalPort4 }}
+      nodePort: {{ .Values.global.nodePortPrefix | default .Values.nodePortPrefix }}{{ .Values.service.nodePort4 }}
+      name: "{{ .Values.service.portName }}-8443"
+    - port: {{ .Values.service.externalPort5 }}
+      targetPort: {{ .Values.service.internalPort5 }}
+      nodePort: {{ .Values.global.nodePortPrefix | default .Values.nodePortPrefix }}{{ .Values.service.nodePort5 }}
+      name: "{{ .Values.service.portName }}-8085"
+    - port: {{ .Values.service.externalPort6 }}
+      targetPort: {{ .Values.service.internalPort6 }}
+      nodePort: {{ .Values.global.nodePortPrefix | default .Values.nodePortPrefix }}{{ .Values.service.nodePort6 }}
+      name: "{{ .Values.service.portName }}-8185"
+    {{- else -}}
+    - port: {{ .Values.service.externalPort }}
+      targetPort: {{ .Values.service.internalPort }}
+      name: {{ .Values.service.portName }}
+    {{- end}}
+  selector:
+    app: {{ include "common.name" . }}
+    release: {{ .Release.Name }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.service.portName }}-cluster
+  namespace: {{ include "common.namespace" . }}
+  labels:
+    app: {{ include "common.name" . }}
+    release: {{ .Release.Name }}
+  annotations:
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  ports:
+   - name: "{{ .Values.service.portName }}-cluster-port"
+     port: {{ .Values.service.clusterPort }}
+  clusterIP: None
+  selector:
+    app: {{ include "common.name" . }}
+    release: {{ .Release.Name }}
+  sessionAffinity: None
+  type: ClusterIP
+
+{{ if .Values.config.geoEnabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sdnhost-{{ include "common.servicename" . }}-0
+  namespace: {{ .Release.Namespace }}
+  labels:
+    statefulset.kubernetes.io/pod-name: {{ include "common.fullname" . }}-0
+spec:
+  ports:
+  - name: {{ .Values.service.portName }}-0-port-{{ .Values.service.internalPort4 }}
+    port: {{ .Values.service.clusterPort2 }}
+    targetPort: {{ .Values.service.internalPort4 }}
+    nodePort: {{ .Values.global.nodePortPrefixExt | default .Values.nodePortPrefixExt }}{{ .Values.service.geoNodePort4 }}
+  - name: {{ .Values.service.portName }}-0-port-{{ .Values.service.internalPort }}
+    port: {{ .Values.service.clusterPort3 }}
+    targetPort: {{ .Values.service.internalPort }}
+    nodePort: {{ .Values.global.nodePortPrefixExt | default .Values.nodePortPrefixExt }}{{ .Values.service.geoNodePort1 }}
+  type: NodePort
+  selector:
+    statefulset.kubernetes.io/pod-name: {{ include "common.fullname" . }}-0
+{{ end }}
+{{ if .Values.config.geoEnabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sdnhost-{{ include "common.servicename" . }}-1
+  namespace: {{ .Release.Namespace }}
+  labels:
+    statefulset.kubernetes.io/pod-name: {{ include "common.fullname" . }}-1
+spec:
+  ports:
+  - name: {{ .Values.service.portName }}-1-port-{{ .Values.service.internalPort4 }}
+    port: {{ .Values.service.clusterPort2 }}
+    targetPort: {{ .Values.service.internalPort4 }}
+    nodePort: {{ .Values.global.nodePortPrefixExt | default .Values.nodePortPrefixExt }}{{ .Values.service.geoNodePort5 }}
+  - name: {{ .Values.service.portName }}-1-port-{{ .Values.service.internalPort }}
+    port: {{ .Values.service.clusterPort3 }}
+    targetPort: {{ .Values.service.internalPort }}
+    nodePort: {{ .Values.global.nodePortPrefixExt | default .Values.nodePortPrefixExt }}{{ .Values.service.geoNodePort2 }}
+  type: NodePort
+  selector:
+    statefulset.kubernetes.io/pod-name: {{ include "common.fullname" . }}-1
+{{ end }}
+{{ if .Values.config.geoEnabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sdnhost-{{ include "common.servicename" . }}-2
+  namespace: {{ .Release.Namespace }}
+  labels:
+    statefulset.kubernetes.io/pod-name: {{ include "common.fullname" . }}-2
+spec:
+  ports:
+  - name: {{ .Values.service.portName }}-2-port-{{ .Values.service.internalPort4 }}
+    port: {{ .Values.service.clusterPort2 }}
+    targetPort: {{ .Values.service.internalPort4 }}
+    nodePort: {{ .Values.global.nodePortPrefixExt | default .Values.nodePortPrefixExt }}{{ .Values.service.geoNodePort6 }}
+  - name: {{ .Values.service.portName }}-2-port-{{ .Values.service.internalPort }}
+    port: {{ .Values.service.clusterPort3 }}
+    targetPort: {{ .Values.service.internalPort }}
+    nodePort: {{ .Values.global.nodePortPrefixExt | default .Values.nodePortPrefixExt }}{{ .Values.service.geoNodePort3 }}
+  type: NodePort
+  selector:
+    statefulset.kubernetes.io/pod-name: {{ include "common.fullname" . }}-2
+{{ end }}
