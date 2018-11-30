@@ -14,8 +14,8 @@ ENV ANSIBLE_GPG_KEY ${ansible.gpg.key}
 ENV SDNR_NORTHBOUND_REPO mvn:org.onap.ccsdk.features.sdnr.northbound/sdnr-northbound-all/${project.version}/xml/features
 ENV SDNR_WT_REPO mvn:org.opendaylight.mwtn/mwtn-parent/${wt.version}/xml/features
 ENV SDNR_REPOLIST=${SDNR_NORTHBOUND_REPO},${SDNR_WT_REPO}
-ENV SDNR_ODL_CLUSTER_NODE=odl-netconf-topology,odl-netconf-connector,odl-restconf-all,odl-mdsal-apidocs
-ENV SDNR_ODL_SINGLE_NODE=odl-mdsal-clustering,odl-netconf-clustered-topology,odl-restconf-all,odl-mdsal-apidocs
+ENV SDNR_ODL_SINGLE_NODE=odl-netconf-topology,odl-netconf-connector,odl-restconf-all,odl-mdsal-apidocs
+ENV SDNR_ODL_CLUSTER_NODE=odl-mdsal-clustering,odl-netconf-clustered-topology,odl-restconf-all,odl-mdsal-apidocs
 ENV SDNR_FEATURELIST=sdnr-northbound-all,odl-dev-all
 ENV SDNR_STANDALONE=false
 
