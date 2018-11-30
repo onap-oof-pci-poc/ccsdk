@@ -1,8 +1,8 @@
 # ccsdk
 Additions to the ccsdk/features repository in support of the OOF PCI PoC
 ## features/sdnr
-  * northbound/oofpcipoc - 
-  * wt - wireless transport micro services
+  * northbound/oofpcipoc -  Optimization Framework (OOF) Physical Cell ID (PCI) Optimizationinsupport of the ONAP OOF PCI Proof of conept
+  * wt - wireless transport (WT) micro services from 5th ONF CENTENIAL Proof of concept 
 
 
 ## ccsdk containers
