@@ -23,7 +23,7 @@
 	</organization>
 
 	<properties>
-		<image.name>onap/ccsdk-odlsli-image</image.name>
+		<image.name>oof-pci/ccsdk-odlsli-image</image.name>
 		<ccsdk.project.version>${project.version}</ccsdk.project.version>
 		<ccsdk.features.version>${project.version}</ccsdk.features.version>
 		<docker.buildArg.https_proxy>${https_proxy}</docker.buildArg.https_proxy>

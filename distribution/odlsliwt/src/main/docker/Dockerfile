@@ -14,6 +14,8 @@ ENV ANSIBLE_GPG_KEY ${ansible.gpg.key}
 ENV SDNR_NORTHBOUND_REPO mvn:org.onap.ccsdk.features.sdnr.northbound/sdnr-northbound-all/${project.version}/xml/features
 ENV SDNR_WT_REPO mvn:org.opendaylight.mwtn/mwtn-parent/${wt.version}/xml/features
 ENV SDNR_REPOLIST=${SDNR_NORTHBOUND_REPO},${SDNR_WT_REPO}
+ENV SDNR_ODL_CLUSTER_NODE=odl-netconf-topology,odl-netconf-connector,odl-restconf-all,odl-mdsal-apidocs
+ENV SDNR_ODL_SINGLE_NODE=odl-mdsal-clustering,odl-netconf-clustered-topology,odl-restconf-all,odl-mdsal-apidocs
 ENV SDNR_FEATURELIST=sdnr-northbound-all,odl-dev-all
 ENV SDNR_STANDALONE=false
 
@@ -24,9 +26,10 @@ COPY idmlight.db.mv.db $ODL_HOME/data
 COPY karaf-0.8.3-poc5/system /tmp/system
 RUN rsync -a /tmp/system $ODL_HOME && rm -rf /tmp/system
 
-#WT:copy schema cache into ontainer
+#WT:copy schema cache iand Version info into container
 RUN mkdir -p $ODL_HOME/cache/schema/
 COPY karaf-0.8.3-poc5/etc/preload.cache.schema/* $ODL_HOME/cache/schema/
+COPY karaf-0.8.3-poc5/networkAppVersion.txt $ODL_HOME/
 
 # copy CCSDK mvn artifacts to ODL repository
 COPY system /tmp/system
@@ -35,7 +38,7 @@ RUN rsync -a /tmp/system $ODL_HOME && rm -rf /tmp/system
 # Add CCSDK repositories to boot repositories
 RUN cp $ODL_HOME/etc/org.apache.karaf.features.cfg $ODL_HOME/etc/org.apache.karaf.features.cfg.orig
 RUN cat $ODL_HOME/etc/org.apache.karaf.features.cfg.orig | sed -e "\|featuresRepositories|s|$|, ${CCSDK_SLI_CORE_REPO}, ${CCSDK_SLI_ADAPTORS_REPO}, ${CCSDK_SLI_NORTHBOUND_REPO}, ${CCSDK_SLI_PLUGINS_REPO}, ${CCSDK_FEATURES_REPO}, ${SDNR_REPOLIST}|" > $ODL_HOME/etc/org.apache.karaf.features.cfg
-RUN echo featuresBoot=config,standard,region,package,kar,ssh,management,odl-netconf-topology,odl-netconf-connector,odl-restconf-all,odl-mdsal-all,odl-mdsal-apidocs,odl-daexim-all,ccsdk-sli-core-all,ccsdk-sli-adaptors-all,ccsdk-sli-northbound-all,ccsdk-sli-plugins-all,ccsdk-features-all,${SDNR_FEATURELIST} >> $ODL_HOME/etc/org.apache.karaf.features.cfg
+RUN echo featuresBoot=config,standard,region,package,kar,ssh,management,${SDNR_ODL_CLUSTER_NODE},odl-daexim-all,ccsdk-sli-core-all,ccsdk-sli-adaptors-all,ccsdk-sli-northbound-all,ccsdk-sli-plugins-all,ccsdk-features-all,${SDNR_FEATURELIST} >> $ODL_HOME/etc/org.apache.karaf.features.cfg
 
 # Create odl user
 RUN useradd odl
@@ -63,4 +66,4 @@ COPY org.ops4j.pax.logging.cfg /opt/opendaylight/etc/org.ops4j.pax.logging.cfg
 
 
 ENTRYPOINT /opt/onap/ccsdk/bin/startODL.sh
-EXPOSE 8181
+EXPOSE 2550 8085 8181 8185 9200 9300
