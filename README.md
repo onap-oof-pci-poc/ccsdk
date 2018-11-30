@@ -4,7 +4,11 @@ Additions to the ccsdk/features repository in support of the OOF PCI PoC
   * northbound/oofpcipoc -  Optimization Framework (OOF) Physical Cell ID (PCI) Optimizationinsupport of the ONAP OOF PCI Proof of conept
   * wt - wireless transport (WT) micro services from 5th ONF CENTENIAL Proof of concept 
 
-
-## ccsdk containers
-  * odlsli    Wireless transport features and oofpcipoc features.
+## distribution - ccsdk containers, basis for SDNC
   * odlsliwt  Wireless transport features and oofpcipoc features plus ONF CENTENNIAL network apps, ODL Cluster configuration
+  * odlsli    Wireless transport features and oofpcipoc features.
+
+## oof-pci - winlab helm / kubernetes
+  * sb4-rancher overrides and changes basing on oom / casablanca
+  * for demo-sdnc
+  * see [Installation of SDNR/SDNC into ONAP at OWL/Command to install...](https://wiki.onap.org/pages/viewpage.action?pageId=45300208#InstallationofSDNR/SDNCintoONAPatOWL-CommandtoinstallONAPwiththedevelopmentimage)
