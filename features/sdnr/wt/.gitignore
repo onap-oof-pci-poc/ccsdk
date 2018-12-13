@@ -5,3 +5,4 @@ yang-gen-sal/
 .classpath
 .project
 .settings
+*.swp
