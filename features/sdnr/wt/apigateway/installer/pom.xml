@@ -79,7 +79,7 @@
             </goals>
             <phase>prepare-package</phase>
             <configuration>
-              <transitive>false</transitive>
+              <transitive>true</transitive>
               <outputDirectory>${project.build.directory}/assembly/system</outputDirectory>
               <overWriteReleases>false</overWriteReleases>
               <overWriteSnapshots>true</overWriteSnapshots>
@@ -89,6 +89,25 @@
               <copyPom>false</copyPom>
               <includeArtifactIds>sdnr-wt-apigateway-provider,${application.name}</includeArtifactIds>
               <scope>provided</scope>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-nested-dependencies</id>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <phase>prepare-package</phase>
+            <configuration>
+              <transitive>true</transitive>
+              <outputDirectory>${project.build.directory}/assembly/system</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>true</overWriteSnapshots>
+              <overWriteIfNewer>true</overWriteIfNewer>
+              <useRepositoryLayout>true</useRepositoryLayout>
+              <addParentPoms>false</addParentPoms>
+              <copyPom>false</copyPom>
+              <!--<includeArtifactIds>sdnr-wt-apigateway-provider,${application.name}</includeArtifactIds>-->
+              <!--<scope>provided</scope>-->
             </configuration>
           </execution>
         </executions>

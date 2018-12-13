@@ -23,7 +23,7 @@
 	</organization>
 
 	<properties>
-		<image.name>oof-pci/ccsdk-odlsli-image</image.name>
+		<image.name>onap/ccsdk-odlsli-image</image.name>
 		<ccsdk.project.version>${project.version}</ccsdk.project.version>
 		<ccsdk.features.version>${project.version}</ccsdk.features.version>
 		<docker.buildArg.https_proxy>${https_proxy}</docker.buildArg.https_proxy>
@@ -32,10 +32,9 @@
 		<docker.push.phase>deploy</docker.push.phase>
 		<docker.verbose>true</docker.verbose>
 		<ansible.gpg.key>93C4A3FD7BB9C367</ansible.gpg.key>
-                <wt.version>0.7.3-SNAPSHOT</wt.version>
 	</properties>
 
-	<dependencies>
+  <dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>dependencies</artifactId>
@@ -240,13 +239,13 @@
       <classifier>repo</classifier>
       <type>zip</type>
     </dependency>
-    		<dependency>
-			<groupId>org.onap.ccsdk.features.sdnr.northbound</groupId>
-			<artifactId>oofpcipoc-installer</artifactId>
-			<version>${ccsdk.sli.core.version}</version>
-			<classifier>repo</classifier>
-			<type>zip</type>
-		</dependency>
+	 <dependency>
+	   <groupId>org.onap.ccsdk.features.sdnr.northbound</groupId>
+      <artifactId>oofpcipoc-installer</artifactId>
+      <version>${ccsdk.features.version}</version>
+      <classifier>repo</classifier>
+      <type>zip</type>
+    </dependency>
     <dependency>
       <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
       <artifactId>sdnr-wt-feature-aggregator-installer</artifactId>
@@ -282,6 +281,7 @@
       <classifier>repo</classifier>
       <type>zip</type>
     </dependency>
+
 	</dependencies>
 
 	<build>
@@ -299,7 +299,6 @@
 			<plugin>
 				<groupId>org.codehaus.groovy.maven</groupId>
 				<artifactId>gmaven-plugin</artifactId>
-		                <version>1.0</version>
 				<executions>
 					<execution>
 						<phase>validate</phase>
@@ -472,11 +471,11 @@
 							</resources>
 						</configuration>
 					</execution>
-					<execution>
+<!--					<execution>
 						<id>copy-wireless-transport-addon</id>
 						<goals>
 							<goal>copy-resources</goal>
-						</goals><!-- here the phase you need -->
+						</goals>
 						<phase>validate</phase>
 						<configuration>
 							<outputDirectory>${basedir}/target/docker-stage</outputDirectory>
@@ -491,7 +490,7 @@
 							</resources>
 						</configuration>
 					</execution>
-
+-->
 				</executions>
 			</plugin>
 			<plugin>
@@ -557,18 +556,35 @@
 						</configuration>
 					</execution>
 					<execution>
-						<id>download wireless transport applications</id>
+						<id>patch deps1</id>
 						<phase>process-sources</phase>
 						<goals>
 							<goal>exec</goal>
 						</goals>
 						<configuration>
-							<executable>src/main/wtaddon/wtaddon.sh</executable>
+							<executable>cp</executable>
 							<arguments>
-								<argument>${basedir}/target/docker-stage</argument>
+								<argument>-r</argument>
+								<argument>${basedir}/src/main/patch/log4j</argument>
+								<argument>${basedir}/target/docker-stage/system/</argument>
 							</arguments>
 						</configuration>
 					</execution>
+					<!--<execution>
+						<id>patch deps2</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>cp</executable>
+							<arguments>
+								<argument>-r</argument>
+								<argument>${basedir}/patch/org</argument>
+								<argument>${basedir}/target/docker-stage/system/</argument>
+							</arguments>
+						</configuration>
+					</execution>-->
 				</executions>
 			</plugin>
 
