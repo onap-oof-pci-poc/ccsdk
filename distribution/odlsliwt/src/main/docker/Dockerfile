@@ -16,7 +16,8 @@ ENV SDNR_WT_REPO mvn:org.onap.ccsdk.features.sdnr.wt/sdnr-wt-feature-aggregator/
 ENV SDNR_REPOLIST=${SDNR_NORTHBOUND_REPO},${SDNR_WT_REPO}
 ENV SDNR_ODL_SINGLE_NODE=odl-netconf-topology,odl-netconf-connector,odl-restconf-all,odl-mdsal-apidocs
 ENV SDNR_ODL_CLUSTER_NODE=odl-mdsal-clustering,odl-netconf-clustered-topology,odl-restconf-all,odl-mdsal-apidocs
-ENV SDNR_FEATURELIST=sdnr-northbound-all,sdnr-wt-feature-aggregator
+#ENV SDNR_FEATURELIST=sdnr-northbound-all,sdnr-wt-feature-aggregator
+ENV SDNR_FEATURELIST=sdnr-northbound-all
 ENV SDNR_STANDALONE=false
 
 # copy the opendaylight credentials

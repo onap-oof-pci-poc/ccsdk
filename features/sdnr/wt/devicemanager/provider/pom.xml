@@ -84,7 +84,6 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20131018</version>
         </dependency>
         <dependency>
             <groupId>javax.mail</groupId>
@@ -94,7 +93,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>1.7.25</version>
         </dependency>
         <dependency>
             <groupId>commons-beanutils</groupId>
@@ -106,7 +104,6 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>23.6.1-jre</version>
             <scope>compile</scope>
         </dependency>
 
@@ -178,12 +175,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>1.15</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty</artifactId>
             <version>3.10.5.Final</version>
@@ -232,31 +223,28 @@
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
-              <artifactId>commons-lang3</artifactId>
-                  <version>3.4</version>
+            <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-actor_2.12</artifactId>
-            <version>2.5.11</version>
         </dependency>
         <dependency>
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-cluster_2.12</artifactId>
-            <version>2.5.11</version>
         </dependency>
         <dependency>
            <groupId>org.ops4j.pax.logging</groupId>
            <artifactId>pax-logging-api</artifactId>
-           <version>1.8.4</version>
+           <version>1.8.5</version>
         </dependency>
         <dependency>
            <groupId>org.ops4j.pax.logging</groupId>
            <artifactId>pax-logging-service</artifactId>
-           <version>1.8.4</version>
+           <version>1.8.5</version>
         </dependency>
 
-        <!-- Implicit dependencies 
+        <!-- Implicit dependencies
         <dependency>
             <groupId>org.apache.lucene</groupId>
              <artifactId>lucene-core</artifactId>
