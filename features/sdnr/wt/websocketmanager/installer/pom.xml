@@ -46,7 +46,7 @@
   <dependencies>
     <dependency>
       <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
-      <artifactId>${application.name}</artifactId>
+      <artifactId>${application.name}-feature</artifactId>
       <version>${project.version}</version>
       <type>xml</type>
       <classifier>features</classifier>

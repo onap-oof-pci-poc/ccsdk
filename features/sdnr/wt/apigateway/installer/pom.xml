@@ -25,7 +25,7 @@
 
     <dependency>
       <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
-      <artifactId>${application.name}</artifactId>
+      <artifactId>${application.name}-feature</artifactId>
       <version>${project.version}</version>
       <type>xml</type>
       <classifier>features</classifier>
@@ -36,10 +36,9 @@
         </exclusion>
       </exclusions>
     </dependency>
-
     <dependency>
       <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
-      <artifactId>sdnr-wt-apigateway-provider</artifactId>
+      <artifactId>${application.name}-provider</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -72,25 +71,25 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
-          <execution>
-            <id>copy-dependencies</id>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <phase>prepare-package</phase>
-            <configuration>
-              <transitive>true</transitive>
-              <outputDirectory>${project.build.directory}/assembly/system</outputDirectory>
-              <overWriteReleases>false</overWriteReleases>
-              <overWriteSnapshots>true</overWriteSnapshots>
-              <overWriteIfNewer>true</overWriteIfNewer>
-              <useRepositoryLayout>true</useRepositoryLayout>
-              <addParentPoms>false</addParentPoms>
-              <copyPom>false</copyPom>
-              <includeArtifactIds>sdnr-wt-apigateway-provider,${application.name}</includeArtifactIds>
-              <scope>provided</scope>
-            </configuration>
-          </execution>
+<!--           <execution> -->
+<!--             <id>copy-dependencies</id> -->
+<!--             <goals> -->
+<!--               <goal>copy-dependencies</goal> -->
+<!--             </goals> -->
+<!--             <phase>prepare-package</phase> -->
+<!--             <configuration> -->
+<!--               <transitive>true</transitive> -->
+<!--               <outputDirectory>${project.build.directory}/assembly/system</outputDirectory> -->
+<!--               <overWriteReleases>false</overWriteReleases> -->
+<!--               <overWriteSnapshots>true</overWriteSnapshots> -->
+<!--               <overWriteIfNewer>true</overWriteIfNewer> -->
+<!--               <useRepositoryLayout>true</useRepositoryLayout> -->
+<!--               <addParentPoms>false</addParentPoms> -->
+<!--               <copyPom>false</copyPom> -->
+<!--               <includeArtifactIds>sdnr-wt-apigateway-provider,${application.name}</includeArtifactIds> -->
+<!--               <scope>provided</scope> -->
+<!--             </configuration> -->
+<!--           </execution> -->
           <execution>
             <id>copy-nested-dependencies</id>
             <goals>

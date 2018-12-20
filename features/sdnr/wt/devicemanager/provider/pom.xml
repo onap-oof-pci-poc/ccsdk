@@ -32,9 +32,9 @@
     <packaging>bundle</packaging>
     <parent>
         <groupId>org.onap.ccsdk.parent</groupId>
-        <artifactId>config-parent</artifactId>
+        <artifactId>binding-parent</artifactId>
         <version>1.1.2</version>
-        <relativePath>../../config-parent</relativePath>
+        <relativePath></relativePath>
     </parent>
     <!-- config-parent missing in ONAP project -->
 <!--
@@ -68,10 +68,15 @@
             <artifactId>sdnr-wt-websocketmanager-model</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.opendaylight.netconf</groupId>
             <artifactId>sal-netconf-connector</artifactId>
             <version>${mdsal.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.controller</groupId>
+            <artifactId>sal-binding-config</artifactId>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.controller.model</groupId>

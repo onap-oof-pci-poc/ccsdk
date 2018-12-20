@@ -42,7 +42,6 @@ import org.opendaylight.mwtn.config.impl.GeoConfig;
 import org.opendaylight.mwtn.config.impl.HtDevicemanagerConfiguration;
 import org.opendaylight.mwtn.config.impl.PmConfig;
 import org.opendaylight.mwtn.dcaeConnector.impl.DcaeProviderClient;
-import org.opendaylight.mwtn.devicemanager.api.DeviceManagerService;
 import org.opendaylight.mwtn.devicemanager.impl.database.service.HtDatabaseEventsService;
 import org.opendaylight.mwtn.devicemanager.impl.listener.NetconfChangeListener;
 import org.opendaylight.mwtn.devicemanager.impl.listener.ODLEventListener;
@@ -161,7 +160,7 @@ public class DeviceManagerImpl implements DeviceManagerService, BindingAwareProv
             LOG.info("single node mode detected");
         }
 
-        this.notificationDelayService=new NotificationDelayService<ProblemNotificationXml>(config);
+        this.notificationDelayService=new NotificationDelayService<>(config);
 
         EsConfig dbConfig = config.getEs();
         LOG.debug("esConfig=" + dbConfig.toString());
@@ -243,6 +242,10 @@ public class DeviceManagerImpl implements DeviceManagerService, BindingAwareProv
         LOG.info("Session Initiated end");
         stopStartupLog(startupLog);
         LOG.info("stop log listener for devmgr startup");
+    }
+
+    public void init() {
+        LOG.info("Init");
     }
 
     @Override

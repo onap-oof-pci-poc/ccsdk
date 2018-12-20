@@ -38,28 +38,28 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>sdnr-wt-apigateway</artifactId>
+      <artifactId>sdnr-wt-apigateway-feature</artifactId>
       <version>${project.version}</version>
       <type>xml</type>
       <classifier>features</classifier>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>sdnr-wt-devicemodel</artifactId>
+      <artifactId>sdnr-wt-devicemodel-feature</artifactId>
       <version>${project.version}</version>
       <type>xml</type>
       <classifier>features</classifier>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>sdnr-wt-devicemanager</artifactId>
+      <artifactId>sdnr-wt-devicemanager-feature</artifactId>
       <version>${project.version}</version>
       <type>xml</type>
       <classifier>features</classifier>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>sdnr-wt-websocketmanager</artifactId>
+      <artifactId>sdnr-wt-websocketmanager-feature</artifactId>
       <version>${project.version}</version>
       <type>xml</type>
       <classifier>features</classifier>

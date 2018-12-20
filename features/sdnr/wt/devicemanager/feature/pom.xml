@@ -26,7 +26,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
-  <artifactId>sdnr-wt-devicemanager</artifactId>
+  <artifactId>sdnr-wt-devicemanager-feature</artifactId>
   <version>0.3.2</version>
   <packaging>feature</packaging>
   <name>ccsdk-features-sdnr-wt :: ${project.artifactId} :: feature</name>

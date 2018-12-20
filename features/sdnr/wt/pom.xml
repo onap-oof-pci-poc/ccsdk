@@ -29,7 +29,6 @@
     <description>SDN-R wireless transport micro-services</description>
 
     <modules>
-        <module>config-parent</module>
 	<module>featureaggregator</module>
 	<module>apigateway</module>
 	<module>devicemodel</module>
