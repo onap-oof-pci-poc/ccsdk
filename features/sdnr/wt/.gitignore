@@ -7,3 +7,5 @@ yang-gen-sal/
 .settings
 *.swp
 dist/
+.fbExcludeFilterFile
+node_modules/
