@@ -36,7 +36,6 @@ export const NavigationMenu = withStyles(styles)(connect()(({ classes, state }: 
       { /* https://fiffty.github.io/react-treeview-mui/ */ }
       <List component="nav">
         <ListItemLink exact to="/" primary="Home" icon={ <FontAwesomeIcon icon={ faHome } /> } />
-        <ListItemLink to="/about" primary="About" icon={ <FontAwesomeIcon icon={ faAddressBook } /> } />
         <Divider />
         {
           state.framework.applicationRegistraion && Object.keys(state.framework.applicationRegistraion).map(key => {
@@ -50,6 +49,8 @@ export const NavigationMenu = withStyles(styles)(connect()(({ classes, state }: 
             ) || null;
           }) || null
         }
+        <Divider />
+        <ListItemLink to="/about" primary="About" icon={ <FontAwesomeIcon icon={ faAddressBook } /> } />
       </List>
       {/* <Divider />
             <List>

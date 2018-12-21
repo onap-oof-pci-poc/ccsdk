@@ -1,0 +1,10 @@
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+    <bean id="loader-provider" class="org.onap.ccsdk.features.sdnr.wt.odlux.loader.OdluxLoader"/>
+
+    <reference id="onBindService" availability="mandatory" activation="eager" interface="org.osgi.service.http.HttpService">
+      <reference-listener ref="loader-provider" bind-method="onBindService" unbind-method="onUnbindService"/>
+    </reference>
+
+    <service id="serviceRegistration" interface="org.onap.ccsdk.features.sdnr.wt.odlux.loader.OdluxModuleLoader" ref="loader-provider"/>
+
+</blueprint>

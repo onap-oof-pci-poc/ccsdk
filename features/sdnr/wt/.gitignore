@@ -6,3 +6,4 @@ yang-gen-sal/
 .project
 .settings
 *.swp
+dist/
