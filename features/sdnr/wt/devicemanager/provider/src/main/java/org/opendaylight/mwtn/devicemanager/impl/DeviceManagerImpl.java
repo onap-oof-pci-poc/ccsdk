@@ -6,6 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
+//org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.devicemanager.impl.rev170317.$YangModelBindingProvider
 package org.opendaylight.mwtn.devicemanager.impl;
 
 import com.google.common.base.Optional;
@@ -242,10 +243,6 @@ public class DeviceManagerImpl implements DeviceManagerService, BindingAwareProv
         LOG.info("Session Initiated end");
         stopStartupLog(startupLog);
         LOG.info("stop log listener for devmgr startup");
-    }
-
-    public void init() {
-        LOG.info("Init");
     }
 
     @Override

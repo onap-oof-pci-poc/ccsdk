@@ -68,7 +68,6 @@
             <artifactId>sdnr-wt-websocketmanager-model</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.opendaylight.netconf</groupId>
             <artifactId>sal-netconf-connector</artifactId>
@@ -81,6 +80,10 @@
         <dependency>
             <groupId>org.opendaylight.controller.model</groupId>
             <artifactId>model-inventory</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>org.opendaylight.mdsal</groupId>
+          <artifactId>yang-binding</artifactId>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.mdsal.model</groupId>
@@ -248,84 +251,6 @@
            <artifactId>pax-logging-service</artifactId>
            <version>1.8.5</version>
         </dependency>
-
-        <!-- Implicit dependencies
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-             <artifactId>lucene-core</artifactId>
-            <version>5.4.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-             <artifactId>lucene-backward-codecs</artifactId>
-            <version>5.4.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-             <artifactId>lucene-analyzers-common</artifactId>
-            <version>5.4.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-             <artifactId>lucene-queries</artifactId>
-            <version>5.4.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-             <artifactId>lucene-memory</artifactId>
-            <version>5.4.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-             <artifactId>lucene-highlighter</artifactId>
-            <version>5.4.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-             <artifactId>lucene-queryparser</artifactId>
-            <version>5.4.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-             <artifactId>lucene-sandbox</artifactId>
-            <version>5.4.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-             <artifactId>lucene-suggest</artifactId>
-            <version>5.4.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-             <artifactId>lucene-misc</artifactId>
-            <version>5.4.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-             <artifactId>lucene-join</artifactId>
-            <version>5.4.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-             <artifactId>lucene-grouping</artifactId>
-            <version>5.4.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-             <artifactId>lucene-spatial</artifactId>
-            <version>5.4.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-             <artifactId>lucene-spatial3d</artifactId>
-            <version>5.4.1</version>
-        </dependency>
-        <dependency>
-            <groupId>jakarta-regexp</groupId>
-            <artifactId>jakarta-regexp</artifactId>
-            <version>1.4</version>
-        </dependency>
-        -->
     </dependencies>
     <build>
         <resources>
@@ -343,7 +268,7 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-      <!--      <plugin>
+            <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <extensions>true</extensions>
@@ -363,16 +288,14 @@
                             org.apache.log;resolution:=optional,
                             *;resolution:=optional
                         </Import-Package>
-                        <Embed-Dependency>jackson*,ela*,joda*,Hdr*,lucene*,
-                        hppc,jsr166e,t-digest,snakeyaml,securesm,spatial4j,compress-lzf,commons-cli,jakarta-regexp,
-                        commons-lang3,commons-collections,commons-logging,commons-beanutils</Embed-Dependency>
-                        <Include-Resource>{maven-resources},{maven-dependencies},META-INF/git.properties=-target/classes/META-INF/git.properties</Include-Resource>
+                        <Embed-Dependency>jackson*,ela*,joda*,Hdr*,lucene*,hppc,jsr166e,t-digest,snakeyaml,securesm,spatial4j,compress-lzf,commons-cli,jakarta-regexp,
+                        commons-lang3,commons-collections,commons-logging,commons-beanutils;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
+                        <Include-Resource>{maven-resources},{maven-dependencies},META-INF/git.properties=-target/classes/META-INF/git.properties</Include-Resource>
                     </instructions>
                 </configuration>
-            </plugin>-->
-        </plugins>
+            </plugin>
+         </plugins>
     </build>
-
 </project>
 
