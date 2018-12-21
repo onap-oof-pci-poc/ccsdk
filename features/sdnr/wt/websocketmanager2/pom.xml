@@ -1,40 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
+<!--
+
  * ============LICENSE_START=======================================================
- * ONAP : CCSDK.apps.sdnr.wt
+ * ONAP : CCSDK.sdnr.wt.websocketmanager
  * ================================================================================
- * Copyright (C) 2018 highstreet technologies GmbH Intellectual Property. All rights reserved.
+ * Copyright (C) 2018 highstreet technologies GmbH Intellectual Property.
+ * All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ============LICENSE_END=========================================================
- -->
+
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+	<modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
-    <artifactId>sdnr-wt</artifactId>
-    <version>0.3.2</version>
-    <packaging>pom</packaging>
-    <name>ccsdk-sdnr-wireless transport :: micro-services</name>
-    <description>SDN-R wireless transport micro-services</description>
+    	<groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
+	<artifactId>sdnr-wt-websocketmanager2-top</artifactId>
+	<version>0.3.2</version>
+	<packaging>pom</packaging>
+	<name>ccsdk-features-sdnr-wt :: ${project.artifactId}</name>
 
-    <modules>
-	<module>featureaggregator</module>
-	<module>apigateway</module>
-	<module>devicemodel</module>
-	<module>devicemanager</module>
-	<module>websocketmanager</module>
-	<module>websocketmanager2</module>
-    </modules>
+	<parent>
+		<groupId>org.onap.ccsdk.parent</groupId>
+		<artifactId>odlparent-lite</artifactId>
+		<version>1.1.2</version>
+		<relativePath/>
+	</parent>
+
+	<properties>
+		<feature-name>sdnr-wt-websocketmanager2</feature-name>
+	</properties>
+
+	<modules>
+		<module>model</module>
+		<module>provider</module>
+		<module>feature</module>
+		<module>installer</module>
+	</modules>
+
 </project>
-
