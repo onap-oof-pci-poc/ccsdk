@@ -13,7 +13,7 @@ run() {
 	  --env MYSQL_ROOT_PASSWORD=openECOMP1.0 \
 	  --env SDNC_CONFIG_DIR=/opt/onap/ccsdk/data/properties \
 	  --name sdnr \
-	onap/ccsdk-odlsli-image:latest
+	oof-pci/ccsdk-odlsli-image:latest
 
 }
 

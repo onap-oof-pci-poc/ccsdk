@@ -32,12 +32,12 @@
         <docker.push.phase>deploy</docker.push.phase>
         <docker.verbose>true</docker.verbose>
         <ansible.gpg.key>93C4A3FD7BB9C367</ansible.gpg.key>
-        <wt.version>0.7.3-SNAPSHOT</wt.version>
-        <wt.poc.downloadlink>https://cloud-highstreet-technologies.com/nextcloud/index.php/s/G2BgQXbD8gNYdHN/download</wt.poc.downloadlink>
-        <wt.poc.filename>karaf-0.8.3-poc5.016.015.tar.gz</wt.poc.filename>
+                <wt.version>0.7.3-SNAPSHOT</wt.version>
+                <wt.poc.downloadlink>https://cloud-highstreet-technologies.com/nextcloud/index.php/s/G2BgQXbD8gNYdHN/download</wt.poc.downloadlink>
+                  <wt.poc.filename>karaf-0.8.3-poc5.016.015.tar.gz</wt.poc.filename>
     </properties>
 
-  <dependencies>
+    <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>dependencies</artifactId>
@@ -284,7 +284,6 @@
       <classifier>repo</classifier>
       <type>zip</type>
     </dependency>
-
     </dependencies>
 
     <build>
@@ -302,7 +301,7 @@
             <plugin>
                 <groupId>org.codehaus.groovy.maven</groupId>
                 <artifactId>gmaven-plugin</artifactId>
-                <version>1.0</version>
+                        <version>1.0</version>
                 <executions>
                     <execution>
                         <phase>validate</phase>
@@ -479,7 +478,7 @@
                         <id>copy-wireless-transport-addon</id>
                         <goals>
                             <goal>copy-resources</goal>
-                        </goals>
+                        </goals><!-- here the phase you need -->
                         <phase>validate</phase>
                         <configuration>
                             <outputDirectory>${basedir}/target/docker-stage</outputDirectory>
@@ -494,6 +493,7 @@
                             </resources>
                         </configuration>
                     </execution>
+
                 </executions>
             </plugin>
             <plugin>
@@ -555,21 +555,6 @@
                                 <argument>+x</argument>
                                 <argument>{}</argument>
                                 <argument>;</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>patch deps1</id>
-                        <phase>process-sources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>cp</executable>
-                            <arguments>
-                                <argument>-r</argument>
-                                <argument>${basedir}/src/main/patch/log4j</argument>
-                                <argument>${basedir}/target/docker-stage/system/</argument>
                             </arguments>
                         </configuration>
                     </execution>
