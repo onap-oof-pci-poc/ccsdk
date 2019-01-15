@@ -93,7 +93,7 @@ public class MSServlet extends HttpServlet {
     public MSServlet() {
 
         try {
-            MyProperties.Instantiate(MyProperties.PROPFILE);
+            MyProperties.Instantiate();
         } catch (Exception e) {
             LOG.error(e.getMessage());
         }

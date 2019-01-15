@@ -1,3 +1,5 @@
+package com.highstreet.technologies.apigateway;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;

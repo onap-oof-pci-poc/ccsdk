@@ -93,7 +93,7 @@ public class AaiServlet extends HttpServlet {
     public AaiServlet() {
 
         try {
-            MyProperties.Instantiate(MyProperties.PROPFILE);
+            MyProperties.Instantiate();
         } catch (Exception e) {
             LOG.error(e.getMessage());
         }

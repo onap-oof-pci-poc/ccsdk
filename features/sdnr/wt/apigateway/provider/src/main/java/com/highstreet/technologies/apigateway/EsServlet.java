@@ -93,7 +93,7 @@ public class EsServlet extends HttpServlet {
     public EsServlet() {
 
         try {
-            MyProperties.Instantiate(MyProperties.PROPFILE);
+            MyProperties.Instantiate();
         } catch (Exception e) {
             LOG.error(e.getMessage());
         }
