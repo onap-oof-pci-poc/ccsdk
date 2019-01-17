@@ -102,14 +102,15 @@ public class HelpServletBase {
 				return bis.read();
 			}
 		};
-		
-		Enumeration<String> headerNames = new Vector<String>().elements();
+		Vector<String> headers=new Vector<String>();
+		headers.addElement("Accept");
+		headers.add("User-Agent");
+		Enumeration<String> headerNames = headers.elements();
 		try {
 			when(mockRequest.getRequestURI()).thenReturn(this.baseUri+"/mwtn/test");
 			when(mockRequest.getHeaderNames()).thenReturn(headerNames);
-			// when(mockRequest.getInputStream()).thenReturn(new
-			// DelegatingServletInputStream(query.getBytes());
-			//when(mockRequest.getReader()).thenReturn(new BufferedReader(new StringReader(data)));
+			when(mockRequest.getHeader("Accept")).thenReturn("application/json");
+			when(mockRequest.getHeader("User-Agent")).thenReturn("Gecko abc");
 			when(mockRequest.getInputStream()).thenReturn(inputStream);
 			when(mockResponse.getOutputStream()).thenReturn(printOut);
 			System.out.println("do a " + method + " request");

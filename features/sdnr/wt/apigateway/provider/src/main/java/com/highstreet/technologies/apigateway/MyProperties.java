@@ -99,7 +99,7 @@ public class MyProperties {
 	public static MyProperties Instantiate(File file, boolean force) throws IOException, NumberFormatException {
 		if (mObj == null || force) {
 			mObj = new MyProperties(file);
-			LOG.debug("instantiated:" + mObj.toString());
+			LOG.debug("instantiated: {}", mObj.toString());
 		}
 		return mObj;
 	}
@@ -130,7 +130,7 @@ public class MyProperties {
 		Map<String, String> r = new HashMap<>();
 		try {
 			JSONArray a = new JSONArray(s);
-			if (a != null && a.length() > 0) {
+			if ( a.length() > 0) {
 				for (int i = 0; i < a.length(); i++) {
 					String item = a.getString(i);
 					String[] hlp = item.split(":");
@@ -140,7 +140,7 @@ public class MyProperties {
 				}
 			}
 		} catch (Exception e) {
-			LOG.warn("problem loading headers map:" + e.getMessage());
+			LOG.warn("problem loading headers map: {}",e.getMessage());
 		}
 		return r;
 	}
@@ -157,7 +157,7 @@ public class MyProperties {
 		try {
 			fw.write(sb.toString());
 		} catch (Exception e) {
-			LOG.warn("problem writing default values to propertyfile " + f.getAbsolutePath() + " : " + e.getMessage());
+			LOG.warn("problem writing default values to propertyfile {} : {}", f.getAbsolutePath() , e.getMessage());
 		} finally {
 			fw.close();
 		}

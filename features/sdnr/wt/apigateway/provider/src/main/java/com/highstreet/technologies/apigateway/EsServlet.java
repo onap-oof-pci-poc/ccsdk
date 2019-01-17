@@ -34,7 +34,6 @@ public class EsServlet extends BaseServlet {
 	 *
 	 */
 	private static final long serialVersionUID = -3996363343749995011L;
-	private static Logger LOG = LoggerFactory.getLogger(EsServlet.class);
 	private static final String OFFLINE_RESPONSE_MESSAGE = "Database interface is offline";
 
 	public EsServlet() {

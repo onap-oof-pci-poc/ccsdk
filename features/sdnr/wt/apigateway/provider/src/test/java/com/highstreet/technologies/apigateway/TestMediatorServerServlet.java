@@ -20,51 +20,52 @@
  */
 package com.highstreet.technologies.apigateway;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
 
 import org.junit.Test;
 
+import com.highstreet.technologies.apigateway.helper.HelpMsServlet;
 import com.highstreet.technologies.apigateway.helper.HelpServletBase;
 
 public class TestMediatorServerServlet extends HelpServletBase{
 
+	private static final int PORT = 40004;
+
 	public TestMediatorServerServlet() {
-		super("/aai",40003);
+		super("/ms",PORT);
 	}
 	
 	@Test
 	public void test() throws ServletException, IOException {
-		/*
-		String tmpFilename = "tmp.cfg";
+		
+		String tmpFilename = "tmp3.cfg";
 		File tmpFile = new File(tmpFilename);
 		if (tmpFile.exists())
 			tmpFile.delete();
-		MyProperties properties = MyProperties.Instantiate(tmpFile,true);
+		MyProperties.Instantiate(tmpFile,true);
 		String query = "{\"query\":{\"match_all\":{}}}";
-		String tmpconfigcontent = "aai=off" + LR + "aaiHeaders=[]" + LR + "database=off" + LR + "insecure=0" + LR
-				+ "cors=0";
-		String tmpconfigcontent2 = "aai=http://" + HOST + ":" + this.port + LR + "aaiHeaders=[]" + LR + "database=off"+ LR
-				+ "insecure=1" + LR + "cors=1";
-		this.setServlet(new HelpAaiServlet());
+		HelpMsServlet servlet = new HelpMsServlet();
+		this.setServlet(servlet);
 		// test diabled message
-		properties.load(new ByteArrayInputStream(tmpconfigcontent.getBytes()));
+		servlet.setOfflineStatus(true);
+		servlet.setBaseUrl("http://localhost:"+PORT);
 		String expectedResponse = "offline";
 		testrequest(HTTPMETHOD_GET, query, expectedResponse, false);
 		testrequest(HTTPMETHOD_POST, query, expectedResponse, false);
 		testrequest(HTTPMETHOD_PUT, query, expectedResponse, false);
 		testrequest(HTTPMETHOD_DELETE, query, expectedResponse, false);
 		
-		// initEsTestWebserver(port);
-		properties.load(new ByteArrayInputStream(tmpconfigcontent2.getBytes()));
-		testrequest(HTTPMETHOD_GET, query, HelpEsServlet.RESPONSE_GET, true);
-		testrequest(HTTPMETHOD_POST, query, HelpEsServlet.RESPONSE_POST, true);
-		testrequest(HTTPMETHOD_PUT, query, HelpEsServlet.RESPONSE_PUT, true);
-		testrequest(HTTPMETHOD_DELETE, query, HelpEsServlet.RESPONSE_DELETE, true);
+		servlet.setOfflineStatus(false);
+		testrequest(HTTPMETHOD_GET, query, HelpMsServlet.RESPONSE_GET, true);
+		testrequest(HTTPMETHOD_POST, query, HelpMsServlet.RESPONSE_POST, true);
+		testrequest(HTTPMETHOD_PUT, query, HelpMsServlet.RESPONSE_PUT, true);
+		testrequest(HTTPMETHOD_DELETE, query, HelpMsServlet.RESPONSE_DELETE, true);
 		testrequest(HTTPMETHOD_OPTIONS, query, "", false);
-		// stopTestWebserver();
-		 */
+		 
 	}
 
 }

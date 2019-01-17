@@ -34,7 +34,6 @@ public class MsServlet extends BaseServlet {
 	 *
 	 */
 	private static final long serialVersionUID = -5361461082028405171L;
-	private static Logger LOG = LoggerFactory.getLogger(MsServlet.class);
 	private static final String OFFLINE_RESPONSE_MESSAGE = "MediatorServer interface is offline";
 
 	public MsServlet() {
@@ -44,7 +43,7 @@ public class MsServlet extends BaseServlet {
 
 	@Override
 	protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
+		resp.setStatus(200);
 	}
 
 	@Override
@@ -59,6 +58,15 @@ public class MsServlet extends BaseServlet {
 
 	@Override
 	protected String getRemoteUrl(String uri) {
+		if (uri != null && uri.length() > 0) {
+			uri = uri.substring("/ms".length());
+		}
+		String dbServerId=uri.substring(0, uri.indexOf("/"));
+		
+		return this.getBaseUrl(dbServerId) + uri;
+	}
+
+	protected String getBaseUrl(String dbServerId) {
 		return "";
 	}
 }

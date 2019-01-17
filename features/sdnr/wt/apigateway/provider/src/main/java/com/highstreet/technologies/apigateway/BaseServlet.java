@@ -36,6 +36,7 @@ import java.util.Map;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -45,40 +46,48 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class BaseServlet extends HttpServlet{
-	
+public abstract class BaseServlet extends HttpServlet {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7403047480257892794L;
 	private static Logger LOG = LoggerFactory.getLogger(BaseServlet.class);
 	private static SSLContext sc;
-	private static boolean TRUSTALL = false;
+	private boolean TRUSTALL = false;
 	private static TrustManager[] trustCerts = null;
-	private static final int BUFSIZE = 1024;
-	
-	
+	private static final int BUFSIZE = 2048;
+
 	protected abstract String getOfflineResponse();
+
 	protected abstract boolean isOff();
+
 	protected abstract String getRemoteUrl(String uri);
+
 	/**
 	 *
 	 * @throws NoSuchAlgorithmException
 	 * @throws KeyManagementException
 	 */
-	private static void setupSslTrustAll() throws NoSuchAlgorithmException, KeyManagementException {
+	private static void setupSslTrustAll(boolean trustall) throws NoSuchAlgorithmException, KeyManagementException {
 
 		sc = SSLContext.getInstance("TLSv1.2");
-		if (TRUSTALL) {
+		if (trustall) {
 			if (trustCerts == null) {
 				trustCerts = new TrustManager[] { new javax.net.ssl.X509TrustManager() {
 					@Override
 					public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-						return null;
+						return new java.security.cert.X509Certificate[] {};
 					}
 
 					@Override
 					public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+						// do not check anything when trust all
 					}
 
 					@Override
 					public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+						// do not check anything when trust all
 					}
 				} };
 			}
@@ -90,8 +99,7 @@ public abstract class BaseServlet extends HttpServlet{
 		sc.init(null, trustCerts, new java.security.SecureRandom());
 	}
 
-	public BaseServlet()
-	{
+	public BaseServlet() {
 		try {
 			MyProperties.Instantiate();
 		} catch (Exception e) {
@@ -99,12 +107,14 @@ public abstract class BaseServlet extends HttpServlet{
 		}
 		this.trysslSetup(true);
 	}
-	
+
 	private void trysslSetup() {
 		this.trysslSetup(false);
-	}	
+	}
+
 	/**
 	 * init or deinit ssl insecure mode regarding to property
+	 * 
 	 * @param force init independent from property
 	 */
 	private void trysslSetup(boolean force) {
@@ -113,12 +123,13 @@ public abstract class BaseServlet extends HttpServlet{
 			// resetup ssl config
 			TRUSTALL = MyProperties.getInstance().trustInsecure();
 			try {
-				setupSslTrustAll();
+				setupSslTrustAll(TRUSTALL);
 			} catch (Exception e) {
-				LOG.error("error setting up SSL: " + e.getMessage());
+				LOG.error("problem setting up SSL: {}", e.getMessage());
 			}
 		}
 	}
+
 	protected void sendOffResponse(HttpServletResponse response) {
 		response.setStatus(200);// HTML/OK
 		response.setHeader("Content-Type", "text/html; charset=utf-8");
@@ -129,6 +140,7 @@ public abstract class BaseServlet extends HttpServlet{
 		}
 
 	}
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		if (this.isOff()) {
@@ -140,6 +152,7 @@ public abstract class BaseServlet extends HttpServlet{
 			http.disconnect();
 		}
 	}
+
 	@Override
 	protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		if (this.isOff()) {
@@ -176,21 +189,26 @@ public abstract class BaseServlet extends HttpServlet{
 		}
 
 	}
+
 	private URLConnection getConnection(HttpServletRequest req, final String method) throws IOException {
 
-		LOG.debug(method + " Request");
-		
+		LOG.debug("{} Request", method);
 		String surl = this.getRemoteUrl(req.getRequestURI());
-		// if (query != null && query.length() > 0)
-		// surl += "?" + query;
-		LOG.debug("RemoteURL: " + surl);
+		LOG.debug("RemoteURL: {}", surl);
 		URL url = new URL(surl);
 		URLConnection http = url.openConnection();
 		((HttpURLConnection) http).setRequestMethod(method);
 		if (url.toString().startsWith("https")) {
 			((HttpsURLConnection) http).setSSLSocketFactory(sc.getSocketFactory());
 			if (TRUSTALL) {
-				HostnameVerifier allHostsValid = (hostname, session) -> true;
+				HostnameVerifier allHostsValid = new HostnameVerifier() {
+
+					@Override
+					public boolean verify(String hostname, SSLSession session) {
+						// do not verify host if trust all
+						return true;
+					}
+				};
 				((HttpsURLConnection) http).setHostnameVerifier(allHostsValid);
 			}
 		}
@@ -207,28 +225,35 @@ public abstract class BaseServlet extends HttpServlet{
 			s += String.format("%s:%s;", h, v);
 			http.setRequestProperty(h, v);
 		}
-		LOG.debug("Request Headers: " + s);
+		LOG.debug("Request Headers: {}", s);
 		return http;
 	}
+
 	private void handleRequest(HttpURLConnection http, HttpServletRequest req, HttpServletResponse resp, String method)
 			throws IOException {
 		byte[] buffer = new byte[BUFSIZE];
 		int len = 0, lensum = 0;
 		// send request
 		// Send the message to destination
+		OutputStream output = null;
 		if (!method.equals("GET")) {
-			try (OutputStream output = http.getOutputStream()) {
-				while (true) {
-					len = req.getInputStream().read(buffer, 0, BUFSIZE);
-					if (len <= 0) {
-						break;
-					}
-					lensum += len;
-					output.write(buffer, 0, len);
-				}
+			try {
+				output = http.getOutputStream();
+			} catch (Exception e) {
+				LOG.debug("problem reading output stream: {}", e.getMessage());
 			}
 		}
-		LOG.debug("written " + lensum + " data out");
+		if (output != null) {
+			while (true) {
+				len = req.getInputStream().read(buffer, 0, BUFSIZE);
+				if (len <= 0) {
+					break;
+				}
+				lensum += len;
+				output.write(buffer, 0, len);
+			}
+		}
+		LOG.debug("written {} data out", lensum);
 		int responseCode = http.getResponseCode();
 		// Receive answer
 		InputStream response;
@@ -241,7 +266,7 @@ public abstract class BaseServlet extends HttpServlet{
 			}
 		}
 
-		LOG.debug("ResponseCode: " + responseCode);
+		LOG.debug("ResponseCode: {}", responseCode);
 		resp.setStatus(responseCode);
 		Map<String, List<String>> set = http.getHeaderFields();
 		String s = "";
@@ -262,7 +287,7 @@ public abstract class BaseServlet extends HttpServlet{
 
 			}
 		}
-		LOG.debug("Received Headers: " + s);
+		LOG.debug("Received Headers: {}", s);
 		lensum = 0;
 		if (response != null) {
 			while (true) {
@@ -276,8 +301,7 @@ public abstract class BaseServlet extends HttpServlet{
 		} else {
 			LOG.debug("response is null");
 		}
-		LOG.debug("Received " + lensum + " bytes");
+		LOG.debug("Received {} bytes", lensum);
 	}
-
 
 }
