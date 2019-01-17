@@ -47,15 +47,6 @@
       <groupId>org.opendaylight.mdsal.model</groupId>
       <artifactId>ietf-topology</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.opendaylight.mdsal.model</groupId>
-      <artifactId>yang-ext</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.opendaylight.controller</groupId>
-      <artifactId>config-api</artifactId>
-      <version>0.8.3</version>
-    </dependency>
   </dependencies>
 
 

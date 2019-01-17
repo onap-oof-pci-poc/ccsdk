@@ -2,7 +2,7 @@ import java.io.IOException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.opendaylight.mwtn.base.database.HtDatabaseWebAPIClient;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database.HtDatabaseWebAPIClient;
 
 public class ESWebAPITest {
 

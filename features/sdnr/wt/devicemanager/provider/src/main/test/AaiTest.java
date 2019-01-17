@@ -1,9 +1,8 @@
 import java.util.ArrayList;
 import java.util.List;
-
-import org.opendaylight.mwtn.aaiConnector.impl.AaiProviderClient;
-import org.opendaylight.mwtn.base.internalTypes.InventoryInformation;
-import org.opendaylight.mwtn.config.impl.HtDevicemanagerConfiguration;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.aaiConnector.impl.AaiProviderClient;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.InventoryInformation;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.HtDevicemanagerConfiguration;
 
 public class AaiTest {
 

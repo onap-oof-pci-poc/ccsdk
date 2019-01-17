@@ -1,9 +1,9 @@
-import org.opendaylight.mwtn.config.impl.AaiConfig;
-import org.opendaylight.mwtn.config.impl.DcaeConfig;
-import org.opendaylight.mwtn.config.impl.EsConfig;
-import org.opendaylight.mwtn.config.impl.HtDevicemanagerConfiguration;
-import org.opendaylight.mwtn.config.impl.PmConfig;
-import org.opendaylight.mwtn.config.impl.ToggleAlarmConfig;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.AaiConfig;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.DcaeConfig;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.EsConfig;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.HtDevicemanagerConfiguration;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.PmConfig;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.ToggleAlarmConfig;
 
 public class ConfigTest {
 

@@ -64,5 +64,26 @@
       <type>xml</type>
       <classifier>features</classifier>
     </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>sdnr-wt-wtconfig-feature</artifactId>
+      <version>${project.version}</version>
+      <type>xml</type>
+      <classifier>features</classifier>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>sdnr-wt-wtdatabase-feature</artifactId>
+      <version>${project.version}</version>
+      <type>xml</type>
+      <classifier>features</classifier>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>sdnr-wt-wtmanager-feature</artifactId>
+      <version>${project.version}</version>
+      <type>xml</type>
+      <classifier>features</classifier>
+    </dependency>
   </dependencies>
 </project>

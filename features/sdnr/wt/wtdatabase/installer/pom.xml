@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.onap.ccsdk.parent</groupId>
+    <artifactId>odlparent-lite</artifactId>
+    <version>1.1.2</version>
+    <relativePath />
+  </parent>
+
+  <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
+  <artifactId>sdnr-wt-wtdatabase-installer</artifactId>
+  <version>0.3.2</version>
+  <packaging>pom</packaging>
+  <name>ccsdk-features-sdnr-wt :: ${project.artifactId}</name>
+
+  <properties>
+    <application.name>sdnr-wt-wtdatabase</application.name>
+    <include.transitive.dependencies>false</include.transitive.dependencies>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
+      <artifactId>${application.name}-feature</artifactId>
+      <version>${project.version}</version>
+      <type>xml</type>
+      <classifier>features</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
+      <artifactId>${application.name}-model</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
+      <artifactId>${application.name}-provider</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>maven-repo-zip</id>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <attach>true</attach>
+              <finalName>stage/${application.name}-${project.version}</finalName>
+              <descriptors>
+                <descriptor>src/assembly/assemble_mvnrepo_zip.xml</descriptor>
+              </descriptors>
+              <appendAssemblyId>true</appendAssemblyId>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-nested-dependencies</id>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <phase>prepare-package</phase>
+            <configuration>
+              <transitive>true</transitive>
+              <outputDirectory>${project.build.directory}/assembly/system</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>true</overWriteSnapshots>
+              <overWriteIfNewer>true</overWriteIfNewer>
+              <useRepositoryLayout>true</useRepositoryLayout>
+              <addParentPoms>false</addParentPoms>
+              <copyPom>false</copyPom>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
