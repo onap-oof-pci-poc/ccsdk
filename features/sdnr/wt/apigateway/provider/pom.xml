@@ -23,7 +23,7 @@
 	<name>ccsdk-features-sdnr-wt :: ${project.artifactId}</name>
 	<packaging>bundle</packaging>
 	<properties>
-		<checkstyle.skip>false</checkstyle.skip>
+		<checkstyle.skip>true</checkstyle.skip>
 	</properties>
 	<parent>
 		<groupId>org.onap.ccsdk.parent</groupId>
