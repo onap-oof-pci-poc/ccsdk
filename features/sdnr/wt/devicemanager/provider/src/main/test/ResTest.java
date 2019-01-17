@@ -3,7 +3,7 @@ import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.opendaylight.mwtn.base.internalTypes.Resources;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.Resources;
 
 public class ResTest {
 

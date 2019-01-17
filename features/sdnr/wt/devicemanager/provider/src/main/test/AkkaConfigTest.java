@@ -1,5 +1,5 @@
-import org.opendaylight.mwtn.config.impl.AkkaConfig;
-import org.opendaylight.mwtn.config.impl.AkkaConfig.ClusterNodeInfo;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.AkkaConfig;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.AkkaConfig.ClusterNodeInfo;
 
 public class AkkaConfigTest {
 

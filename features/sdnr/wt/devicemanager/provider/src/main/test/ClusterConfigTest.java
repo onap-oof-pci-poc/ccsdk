@@ -1,6 +1,6 @@
-import org.opendaylight.mwtn.config.impl.AkkaConfig;
-import org.opendaylight.mwtn.config.impl.GeoConfig;
-import org.opendaylight.mwtn.config.impl.HtDevicemanagerConfiguration;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.AkkaConfig;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.GeoConfig;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.HtDevicemanagerConfiguration;
 
 public class ClusterConfigTest {
 

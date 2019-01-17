@@ -39,15 +39,9 @@
 
     <properties>
         <maven.javadoc.skip>true</maven.javadoc.skip>
-        <mdsal.version>1.7.3</mdsal.version>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.opendaylight.netconf</groupId>
-            <artifactId>sal-netconf-connector</artifactId>
-            <version>${mdsal.version}</version>
-        </dependency>
     </dependencies>
 </project>
 

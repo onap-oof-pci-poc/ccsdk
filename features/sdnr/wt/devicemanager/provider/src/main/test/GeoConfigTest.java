@@ -1,4 +1,4 @@
-import org.opendaylight.mwtn.config.impl.GeoConfig;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.GeoConfig;
 
 public class GeoConfigTest {
 

@@ -1,6 +1,5 @@
 import java.time.ZonedDateTime;
-
-import org.opendaylight.mwtn.maintenance.database.types.EsMaintenanceFilter;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.maintenance.database.types.EsMaintenanceFilter;
 
 public class ZonedDateTimeTimesTest {
 
