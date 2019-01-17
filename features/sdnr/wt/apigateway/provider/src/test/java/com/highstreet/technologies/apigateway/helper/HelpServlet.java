@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP : CCSDK.apps.sdnr.wt.apigateway
  * ================================================================================
- * Copyright (C) 2019 highstreet technologies GmbH Intellectual Property.
+ * Copyright (C) 2018 highstreet technologies GmbH Intellectual Property.
  * All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,57 +18,36 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package com.highstreet.technologies.apigateway;
+package com.highstreet.technologies.apigateway.helper;
 
 import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class AaiServlet extends BaseServlet {
+import com.highstreet.technologies.apigateway.EsServlet;
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 5946205120796162644L;
-	private static final String OFFLINE_RESPONSE_MESSAGE = "AAI interface is offline";
-
-	public AaiServlet() {
-		super();
-	}
+public class HelpServlet extends EsServlet {
 
 	@Override
-	protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		resp.setStatus(200);
+	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		super.doGet(req, resp);
 	}
-
 	@Override
-	protected String getOfflineResponse() {
-		return OFFLINE_RESPONSE_MESSAGE;
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		super.doPost(req, resp);
 	}
-
 	@Override
-	protected boolean isOff() {
-		return MyProperties.getInstance().isAAIOff();
+	public void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		super.doPut(req, resp);
 	}
-
 	@Override
-	protected String getRemoteUrl(String uri) {
-
-		if (uri.startsWith("/")) {
-			uri = uri.substring(1);
-		}
-		if (uri.startsWith("aai")) {
-			uri = uri.substring("aai".length());
-		}
-		if (uri.startsWith("/")) {
-			uri = uri.substring(1);
-		}
-		String base = MyProperties.getInstance().getAAIBaseUrl();
-		if (!base.endsWith("/")) {
-			base += "/";
-		}
-
-		return base + uri;
+	public void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		super.doOptions(req, resp);
+	}
+	@Override
+	public void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		super.doDelete(req, resp);
 	}
 }

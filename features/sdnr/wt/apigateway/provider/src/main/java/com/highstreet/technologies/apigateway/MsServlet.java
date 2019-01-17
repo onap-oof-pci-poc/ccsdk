@@ -28,27 +28,23 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EsServlet extends BaseServlet {
+public class MsServlet extends BaseServlet {
 
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = -3996363343749995011L;
-	private static Logger LOG = LoggerFactory.getLogger(EsServlet.class);
-	private static final String OFFLINE_RESPONSE_MESSAGE = "Database interface is offline";
+	private static final long serialVersionUID = -5361461082028405171L;
+	private static Logger LOG = LoggerFactory.getLogger(MsServlet.class);
+	private static final String OFFLINE_RESPONSE_MESSAGE = "MediatorServer interface is offline";
 
-	public EsServlet() {
+	public MsServlet() {
+
 		super();
 	}
 
 	@Override
 	protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		if (MyProperties.getInstance().corsEnabled()) {
-			resp.addHeader("Access-Control-Allow-Origin", "*");
-			resp.addHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
-			resp.addHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-		}
-		resp.setStatus(200);
+
 	}
 
 	@Override
@@ -58,14 +54,11 @@ public class EsServlet extends BaseServlet {
 
 	@Override
 	protected boolean isOff() {
-		return MyProperties.getInstance().isEsOff();
+		return true;
 	}
 
 	@Override
 	protected String getRemoteUrl(String uri) {
-		if (uri != null && uri.length() > 0) {
-			uri = uri.substring("/database".length());
-		}
-		return MyProperties.getInstance().getEsBaseUrl() + uri;
+		return "";
 	}
 }
