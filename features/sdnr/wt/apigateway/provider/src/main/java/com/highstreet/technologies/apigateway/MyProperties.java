@@ -146,16 +146,21 @@ public class MyProperties {
 	}
 
 	private String writeDefaults(File f) throws IOException {
-		FileWriter fw = new FileWriter(f);
-		final String LR = "\n";
 		StringBuilder sb = new StringBuilder();
+		final String LR = "\n";
+		FileWriter fw = new FileWriter(f);
 		sb.append("aai=" + DEFAULT_AAI + LR);
 		sb.append("aaiHeaders=" + DEFAULT_AAI_HEADERS + LR);
 		sb.append("database=" + DEFAULT_ESDATABASE + LR);
 		sb.append("insecure=" + DEFAULT_TRUSTINSECURE + LR);
 		sb.append("cors=" + DEFAULT_CORSENABLED);
-		fw.write(sb.toString());
-		fw.close();
+		try {
+			fw.write(sb.toString());
+		} catch (Exception e) {
+			LOG.warn("problem writing default values to propertyfile " + f.getAbsolutePath() + " : " + e.getMessage());
+		} finally {
+			fw.close();
+		}
 		return sb.toString();
 	}
 
