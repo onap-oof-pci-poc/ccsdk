@@ -54,7 +54,7 @@ public abstract class BaseServlet extends HttpServlet {
 	private static final long serialVersionUID = 7403047480257892794L;
 	private static Logger LOG = LoggerFactory.getLogger(BaseServlet.class);
 	private static SSLContext sc;
-	private boolean TRUSTALL = false;
+	private boolean trustAll = false;
 	private static TrustManager[] trustCerts = null;
 	private static final int BUFSIZE = 2048;
 
@@ -119,11 +119,11 @@ public abstract class BaseServlet extends HttpServlet {
 	 */
 	private void trysslSetup(boolean force) {
 		// if trustall config has changed
-		if (force || TRUSTALL != MyProperties.getInstance().trustInsecure()) {
+		if (force || trustAll != MyProperties.getInstance().trustInsecure()) {
 			// resetup ssl config
-			TRUSTALL = MyProperties.getInstance().trustInsecure();
+			trustAll = MyProperties.getInstance().trustInsecure();
 			try {
-				setupSslTrustAll(TRUSTALL);
+				setupSslTrustAll(trustAll);
 			} catch (Exception e) {
 				LOG.error("problem setting up SSL: {}", e.getMessage());
 			}
@@ -200,7 +200,7 @@ public abstract class BaseServlet extends HttpServlet {
 		((HttpURLConnection) http).setRequestMethod(method);
 		if (url.toString().startsWith("https")) {
 			((HttpsURLConnection) http).setSSLSocketFactory(sc.getSocketFactory());
-			if (TRUSTALL) {
+			if (trustAll) {
 				HostnameVerifier allHostsValid = new HostnameVerifier() {
 
 					@Override

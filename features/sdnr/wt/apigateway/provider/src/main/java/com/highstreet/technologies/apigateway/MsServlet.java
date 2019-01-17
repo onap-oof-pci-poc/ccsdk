@@ -58,11 +58,13 @@ public class MsServlet extends BaseServlet {
 
 	@Override
 	protected String getRemoteUrl(String uri) {
-		if (uri != null && uri.length() > 0) {
+		String dbServerId = "0";
+		if (uri == null)
+			uri = "";
+		if (uri.length() > 0) {
 			uri = uri.substring("/ms".length());
+			dbServerId = uri.substring(0, uri.indexOf("/"));
 		}
-		String dbServerId=uri.substring(0, uri.indexOf("/"));
-		
 		return this.getBaseUrl(dbServerId) + uri;
 	}
 
