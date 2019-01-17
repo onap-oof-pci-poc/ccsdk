@@ -35,6 +35,9 @@
 	<module>devicemanager</module>
 	<module>websocketmanager</module>
 	<module>websocketmanager2</module>
+	<module>wtconfig</module>
+	<module>wtdatabase</module>
+	<module>wtmanager</module>
     </modules>
 </project>
 

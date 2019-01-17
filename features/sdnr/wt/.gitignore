@@ -5,7 +5,6 @@ yang-gen-sal/
 .classpath
 .project
 .settings
+.factorypath
 *.swp
 dist/
-.fbExcludeFilterFile
-node_modules/
