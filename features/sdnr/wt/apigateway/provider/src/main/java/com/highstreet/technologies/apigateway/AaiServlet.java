@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP : CCSDK.apps.sdnr.wt.apigateway
  * ================================================================================
- * Copyright (C) 2018 highstreet technologies GmbH Intellectual Property.
+ * Copyright (C) 2019 highstreet technologies GmbH Intellectual Property.
  * All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package com.highstreet.technologies.apigateway;
 
 import java.io.IOException;
@@ -98,19 +97,35 @@ public class AaiServlet extends HttpServlet {
             LOG.error(e.getMessage());
         }
 
-        TRUSTALL = MyProperties.getInstance().trustInsecure();
-        try {
-            setupSslTrustAll();
-        } catch (Exception e) {
-            LOG.error("error setting up SSL: " + e.getMessage());
-        }
+        this.trysslSetup(true);
     }
-
+    private void trysslSetup() {
+		this.trysslSetup(false);
+	}	
+	/**
+	 * init or deinit ssl insecure mode regarding to property
+	 * @param force init independent from property
+	 */
+	private void trysslSetup(boolean force) {
+		// if trustall config has changed
+		if (force || TRUSTALL != MyProperties.getInstance().trustInsecure()) {
+			// resetup ssl config
+			TRUSTALL = MyProperties.getInstance().trustInsecure();
+			try {
+				setupSslTrustAll();
+			} catch (Exception e) {
+				LOG.error("error setting up SSL: " + e.getMessage());
+			}
+		}
+	}
+    
+    
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (MyProperties.getInstance().isAAIOff()) {
             this.sendOffResponse(resp);
         } else {
+        	this.trysslSetup();
             HttpURLConnection http = (HttpURLConnection) this.getConnection(req, "PUT");
             this.handleRequest(http, req, resp, "PUT");
             http.disconnect();
@@ -122,6 +137,7 @@ public class AaiServlet extends HttpServlet {
         if (MyProperties.getInstance().isAAIOff()) {
             this.sendOffResponse(resp);
         } else {
+        	this.trysslSetup();
             HttpURLConnection http = (HttpURLConnection) this.getConnection(req, "GET");
             this.handleRequest(http, req, resp, "GET");
             http.disconnect();
@@ -133,6 +149,7 @@ public class AaiServlet extends HttpServlet {
         if (MyProperties.getInstance().isAAIOff()) {
             this.sendOffResponse(resp);
         } else {
+        	this.trysslSetup();
             HttpURLConnection http = (HttpURLConnection) this.getConnection(req, "POST");
             this.handleRequest(http, req, resp, "POST");
             http.disconnect();
@@ -144,6 +161,7 @@ public class AaiServlet extends HttpServlet {
         if (MyProperties.getInstance().isAAIOff()) {
             this.sendOffResponse(resp);
         } else {
+        	this.trysslSetup();
             HttpURLConnection http = (HttpURLConnection) this.getConnection(req, "DELETE");
             this.handleRequest(http, req, resp, "DELETE");
             http.disconnect();
@@ -155,7 +173,7 @@ public class AaiServlet extends HttpServlet {
     protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // if(MyProperties.getInstance().corsEnabled())
         // resp.addHeader("Access-Control-Allow-Origin","*");
-        super.doOptions(req, resp);
+    	resp.setStatus(200);
     }
 
     private void sendOffResponse(HttpServletResponse response) {

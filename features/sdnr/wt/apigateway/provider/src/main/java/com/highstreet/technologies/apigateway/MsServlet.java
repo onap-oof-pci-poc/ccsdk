@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP : CCSDK.apps.sdnr.wt.apigateway
  * ================================================================================
- * Copyright (C) 2018 highstreet technologies GmbH Intellectual Property.
+ * Copyright (C) 2019 highstreet technologies GmbH Intellectual Property.
  * All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,6 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-
 package com.highstreet.technologies.apigateway;
 
 import java.io.IOException;
@@ -46,13 +45,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MSServlet extends HttpServlet {
+public class MsServlet extends HttpServlet {
 
     /**
      *
      */
     private static final long serialVersionUID = -5361461082028405171L;
-    private static Logger LOG = LoggerFactory.getLogger(MSServlet.class);
+    private static Logger LOG = LoggerFactory.getLogger(MsServlet.class);
     private static final byte[] OFFLINE_RESPONSE_BYTES = "MediatorServer interface is offline"
             .getBytes(StandardCharsets.UTF_8);
     private static final int BUFSIZE = 1024;
@@ -90,7 +89,7 @@ public class MSServlet extends HttpServlet {
 
     }
 
-    public MSServlet() {
+    public MsServlet() {
 
         try {
             MyProperties.Instantiate();
@@ -98,14 +97,28 @@ public class MSServlet extends HttpServlet {
             LOG.error(e.getMessage());
         }
 
-        TRUSTALL = MyProperties.getInstance().trustInsecure();
-        try {
-            setupSslTrustAll();
-        } catch (Exception e) {
-            LOG.error("error setting up SSL: " + e.getMessage());
-        }
+	    this.trysslSetup(true);
     }
-
+    private void trysslSetup() {
+		this.trysslSetup(false);
+	}	
+	/**
+	 * init or deinit ssl insecure mode regarding to property
+	 * @param force init independent from property
+	 */
+	private void trysslSetup(boolean force) {
+		// if trustall config has changed
+		if (force || TRUSTALL != MyProperties.getInstance().trustInsecure()) {
+			// resetup ssl config
+			TRUSTALL = MyProperties.getInstance().trustInsecure();
+			try {
+				setupSslTrustAll();
+			} catch (Exception e) {
+				LOG.error("error setting up SSL: " + e.getMessage());
+			}
+		}
+	}
+	
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpURLConnection http = (HttpURLConnection) this.getConnection(req, "PUT");

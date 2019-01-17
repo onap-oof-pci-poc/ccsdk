@@ -22,7 +22,9 @@
 	<version>0.3.2</version>
 	<name>ccsdk-features-sdnr-wt :: ${project.artifactId}</name>
 	<packaging>bundle</packaging>
-
+	<properties>
+		<checkstyle.skip>false</checkstyle.skip>
+	</properties>
 	<parent>
 		<groupId>org.onap.ccsdk.parent</groupId>
 		<artifactId>binding-parent</artifactId>
@@ -62,59 +64,6 @@
 				<configuration>
 					<useSystemClassLoader>false</useSystemClassLoader>
 				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>2.17</version>
-				<dependencies>
-					<dependency>
-						<groupId>org.onap.oparent</groupId>
-						<artifactId>checkstyle</artifactId>
-						<version>1.2.3-SNAPSHOT</version>
-					</dependency>
-				</dependencies>
-				<executions>
-					<execution>
-						<id>onap-license</id>
-						<goals>
-							<goal>check</goal>
-						</goals>
-						<phase>process-sources</phase>
-						<configuration>
-							<configLocation>../../onap-checkstyle/check-license.xml</configLocation>
-							<includeResources>false</includeResources>
-							<includeTestSourceDirectory>true</includeTestSourceDirectory>
-							<includeTestResources>false</includeTestResources>
-							<sourceDirectory>src/main/java</sourceDirectory>
-							<excludes>
-							</excludes>
-							<consoleOutput>true</consoleOutput>
-							<failsOnViolation>true</failsOnViolation>
-						</configuration>
-					</execution>
-					<execution>
-						<id>onap-java-style</id>
-						<goals>
-							<goal>check</goal>
-						</goals>
-						<phase>process-sources</phase>
-						<configuration>
-							<!-- Use Google Java Style Guide: https://github.com/checkstyle/checkstyle/blob/master/src/main/resources/google_checks.xml 
-								with minor changes -->
-							<configLocation>../../onap-checkstyle/onap-java-style.xml</configLocation>
-							<!-- <sourceDirectory> is needed so that checkstyle ignores the generated 
-								sources directory -->
-							<sourceDirectory>src/main/java</sourceDirectory>
-							<includeResources>true</includeResources>
-							<includeTestSourceDirectory>true</includeTestSourceDirectory>
-							<includeTestResources>true</includeTestResources>
-							<excludes>
-							</excludes>
-							<consoleOutput>true</consoleOutput>
-							<failsOnViolation>true</failsOnViolation>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>

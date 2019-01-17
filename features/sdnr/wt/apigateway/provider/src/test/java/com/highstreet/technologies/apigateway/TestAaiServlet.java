@@ -20,29 +20,27 @@
  */
 package com.highstreet.technologies.apigateway;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+
 import org.junit.Test;
 
+import com.highstreet.technologies.apigateway.helper.HelpAaiServlet;
 import com.highstreet.technologies.apigateway.helper.HelpEsServlet;
 import com.highstreet.technologies.apigateway.helper.HelpServletBase;
 
-import java.io.*;
-import javax.servlet.ServletException;
+public class TestAaiServlet extends HelpServletBase{
 
-public class TestDatabaseServlet extends HelpServletBase{
-
-	public TestDatabaseServlet() {
-		super("/database",40002);
+	public TestAaiServlet() {
+		super("/aai",40001);
 	}
-
-
-
-	final String LR = "\n";
-
-	
 	
 	@Test
 	public void test() throws ServletException, IOException {
-
+		
 		String tmpFilename = "tmp.cfg";
 		File tmpFile = new File(tmpFilename);
 		if (tmpFile.exists())
@@ -51,9 +49,9 @@ public class TestDatabaseServlet extends HelpServletBase{
 		String query = "{\"query\":{\"match_all\":{}}}";
 		String tmpconfigcontent = "aai=off" + LR + "aaiHeaders=[]" + LR + "database=off" + LR + "insecure=0" + LR
 				+ "cors=0";
-		String tmpconfigcontent2 = "aai=off" + LR + "aaiHeaders=[]" + LR + "database=http://" + HOST + ":" + this.port + LR
+		String tmpconfigcontent2 = "aai=http://" + HOST + ":" + this.port + LR + "aaiHeaders=[]" + LR + "database=off"+ LR
 				+ "insecure=1" + LR + "cors=1";
-		this.setServlet(new HelpEsServlet());
+		this.setServlet(new HelpAaiServlet());
 		// test diabled message
 		properties.load(new ByteArrayInputStream(tmpconfigcontent.getBytes()));
 		String expectedResponse = "offline";
@@ -70,6 +68,7 @@ public class TestDatabaseServlet extends HelpServletBase{
 		testrequest(HTTPMETHOD_DELETE, query, HelpEsServlet.RESPONSE_DELETE, true);
 		testrequest(HTTPMETHOD_OPTIONS, query, "", false);
 		// stopTestWebserver();
+		 
 	}
 
 }
