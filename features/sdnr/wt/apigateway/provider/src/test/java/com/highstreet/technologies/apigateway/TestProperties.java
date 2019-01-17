@@ -50,7 +50,7 @@ public class TestProperties {
 	private static final String LR = "\n";
 	@Test
 	public void test() {
-		final String tmpFilename="tmp.cfg";
+		final String tmpFilename="tmp2.cfg";
 		DEFAULT_AAIHEADERS.put("X-FromAppId","SDNR");
 		DEFAULT_AAIHEADERS.put("Authorization","Basic QUFJOkFBSQ==");
 		CUSTOM_AAIHEADERS.put("X-FromAppId","SDNC");
@@ -65,8 +65,9 @@ public class TestProperties {
 		if(ftest.exists())
 			ftest.delete();
 		MyProperties prop=null;
+		 ftest = new File(tmpFilename);
 		try {
-			prop = MyProperties.Instantiate(ftest);
+			prop = MyProperties.Instantiate(ftest,true);
 		} catch (Exception e) {
 			fail("error instantiating properties");
 		}

@@ -42,6 +42,7 @@ public class MyProperties {
 	private static final String DEFAULT_TRUSTINSECURE = "0";
 	private static final String DEFAULT_ESDATABASE = "http://localhost:9200";
 	private static final String DEFAULT_AAI = "off";
+
 	@Override
 	public String toString() {
 		return "MyProperties [aaiBase=" + aaiBase + ", aaiHeaders=" + aaiHeaders + ", esBase=" + esBase
@@ -91,7 +92,12 @@ public class MyProperties {
 	}
 
 	public static MyProperties Instantiate(File file) throws IOException, NumberFormatException {
-		if (mObj == null) {
+
+		return Instantiate(file, false);
+	}
+
+	public static MyProperties Instantiate(File file, boolean force) throws IOException, NumberFormatException {
+		if (mObj == null || force) {
 			mObj = new MyProperties(file);
 			LOG.debug("instantiated:" + mObj.toString());
 		}
@@ -143,9 +149,9 @@ public class MyProperties {
 		FileWriter fw = new FileWriter(f);
 		final String LR = "\n";
 		StringBuilder sb = new StringBuilder();
-		sb.append("aai="+DEFAULT_AAI + LR);
+		sb.append("aai=" + DEFAULT_AAI + LR);
 		sb.append("aaiHeaders=" + DEFAULT_AAI_HEADERS + LR);
-		sb.append("database="+DEFAULT_ESDATABASE + LR);
+		sb.append("database=" + DEFAULT_ESDATABASE + LR);
 		sb.append("insecure=" + DEFAULT_TRUSTINSECURE + LR);
 		sb.append("cors=" + DEFAULT_CORSENABLED);
 		fw.write(sb.toString());

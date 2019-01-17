@@ -25,7 +25,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ TestProperties.class, TestAaiServlet.class, TestDatabaseServlet.class })
+@SuiteClasses({ TestAaiServlet.class, TestProperties.class,TestDatabaseServlet.class })
 public class AllTests {
 
 }

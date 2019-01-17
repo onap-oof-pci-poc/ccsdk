@@ -40,12 +40,12 @@ public class TestMediatorServerServlet extends HelpServletBase{
 	
 	@Test
 	public void test() throws ServletException, IOException {
-		
+		/*
 		String tmpFilename = "tmp.cfg";
 		File tmpFile = new File(tmpFilename);
 		if (tmpFile.exists())
 			tmpFile.delete();
-		MyProperties properties = MyProperties.Instantiate(tmpFile);
+		MyProperties properties = MyProperties.Instantiate(tmpFile,true);
 		String query = "{\"query\":{\"match_all\":{}}}";
 		String tmpconfigcontent = "aai=off" + LR + "aaiHeaders=[]" + LR + "database=off" + LR + "insecure=0" + LR
 				+ "cors=0";
@@ -68,7 +68,7 @@ public class TestMediatorServerServlet extends HelpServletBase{
 		testrequest(HTTPMETHOD_DELETE, query, HelpEsServlet.RESPONSE_DELETE, true);
 		testrequest(HTTPMETHOD_OPTIONS, query, "", false);
 		// stopTestWebserver();
-		 
+		 */
 	}
 
 }
