@@ -147,9 +147,20 @@ public abstract class BaseServlet extends HttpServlet {
 			this.sendOffResponse(resp);
 		} else {
 			this.trysslSetup();
-			HttpURLConnection http = (HttpURLConnection) this.getConnection(req, "GET");
-			this.handleRequest(http, req, resp, "GET");
-			http.disconnect();
+			HttpURLConnection http = null;
+			try {
+				http = (HttpURLConnection) this.getConnection(req, "GET");
+			} catch (IOException e) {
+				LOG.warn(e.getMessage());
+			}
+			if (http != null) {
+				try {
+					this.handleRequest(http, req, resp, "GET");
+				} catch (IOException e) {
+					LOG.warn(e.getMessage());
+				}
+				http.disconnect();
+			}
 		}
 	}
 
@@ -159,9 +170,20 @@ public abstract class BaseServlet extends HttpServlet {
 			this.sendOffResponse(resp);
 		} else {
 			this.trysslSetup();
-			HttpURLConnection http = (HttpURLConnection) this.getConnection(req, "PUT");
-			this.handleRequest(http, req, resp, "PUT");
-			http.disconnect();
+			HttpURLConnection http = null;
+			try {
+				http = (HttpURLConnection) this.getConnection(req, "PUT");
+			} catch (IOException e) {
+				LOG.warn(e.getMessage());
+			}
+			if (http != null) {
+				try {
+					this.handleRequest(http, req, resp, "PUT");
+				} catch (IOException e) {
+					LOG.warn(e.getMessage());
+				}
+				http.disconnect();
+			}
 		}
 	}
 
@@ -171,9 +193,20 @@ public abstract class BaseServlet extends HttpServlet {
 			this.sendOffResponse(resp);
 		} else {
 			this.trysslSetup();
-			HttpURLConnection http = (HttpURLConnection) this.getConnection(req, "POST");
-			this.handleRequest(http, req, resp, "POST");
-			http.disconnect();
+			HttpURLConnection http = null;
+			try {
+				http = (HttpURLConnection) this.getConnection(req, "POST");
+			} catch (IOException e) {
+				LOG.warn(e.getMessage());
+			}
+			if (http != null) {
+				try {
+					this.handleRequest(http, req, resp, "POST");
+				} catch (IOException e) {
+					LOG.warn(e.getMessage());
+				}
+				http.disconnect();
+			}
 		}
 	}
 
@@ -183,11 +216,21 @@ public abstract class BaseServlet extends HttpServlet {
 			this.sendOffResponse(resp);
 		} else {
 			this.trysslSetup();
-			HttpURLConnection http = (HttpURLConnection) this.getConnection(req, "DELETE");
-			this.handleRequest(http, req, resp, "DELETE");
-			http.disconnect();
+			HttpURLConnection http = null;
+			try {
+				http = (HttpURLConnection) this.getConnection(req, "DELETE");
+			} catch (IOException e) {
+				LOG.warn(e.getMessage());
+			}
+			if (http != null) {
+				try {
+					this.handleRequest(http, req, resp, "DELETE");
+				} catch (IOException e) {
+					LOG.warn(e.getMessage());
+				}
+				http.disconnect();
+			}
 		}
-
 	}
 
 	private URLConnection getConnection(HttpServletRequest req, final String method) throws IOException {
