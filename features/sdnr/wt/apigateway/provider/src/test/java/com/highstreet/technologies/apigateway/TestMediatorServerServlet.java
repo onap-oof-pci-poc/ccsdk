@@ -20,16 +20,12 @@
  */
 package com.highstreet.technologies.apigateway;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
 
 import org.junit.Test;
 
-import com.highstreet.technologies.apigateway.helper.HelpAaiServlet;
-import com.highstreet.technologies.apigateway.helper.HelpEsServlet;
 import com.highstreet.technologies.apigateway.helper.HelpServletBase;
 
 public class TestMediatorServerServlet extends HelpServletBase{
