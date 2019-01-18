@@ -18,7 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package com.highstreet.technologies.apigateway;
+package org.onap.ccsdk.features.sdnr.wt.apigateway.test;
 
 import static org.junit.Assert.*;
 
@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
+import org.onap.ccsdk.features.sdnr.wt.apigateway.MyProperties;
 
 public class TestProperties {
 

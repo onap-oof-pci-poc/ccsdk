@@ -18,7 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package com.highstreet.technologies.apigateway;
+package org.onap.ccsdk.features.sdnr.wt.apigateway.test;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -27,10 +27,10 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 
 import org.junit.Test;
-
-import com.highstreet.technologies.apigateway.helper.HelpAaiServlet;
-import com.highstreet.technologies.apigateway.helper.HelpEsServlet;
-import com.highstreet.technologies.apigateway.helper.HelpServletBase;
+import org.onap.ccsdk.features.sdnr.wt.apigateway.MyProperties;
+import org.onap.ccsdk.features.sdnr.wt.apigateway.test.helper.HelpAaiServlet;
+import org.onap.ccsdk.features.sdnr.wt.apigateway.test.helper.HelpEsServlet;
+import org.onap.ccsdk.features.sdnr.wt.apigateway.test.helper.HelpServletBase;
 
 public class TestAaiServlet extends HelpServletBase{
 

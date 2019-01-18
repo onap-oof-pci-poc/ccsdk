@@ -18,7 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package com.highstreet.technologies.apigateway;
+package org.onap.ccsdk.features.sdnr.wt.apigateway;
 
 import java.io.File;
 import java.io.FileInputStream;

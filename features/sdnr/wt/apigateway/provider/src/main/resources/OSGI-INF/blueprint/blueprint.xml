@@ -5,7 +5,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs">
 
     <bean id="aaiServlet"
-        class="com.highstreet.technologies.apigateway.AaiServlet">
+        class="org.onap.ccsdk.features.sdnr.wt.apigateway.AaiServlet">
     </bean>
 
    <service interface="javax.servlet.http.HttpServlet" ref="aaiServlet">
@@ -15,7 +15,7 @@ xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs">
     </service>
 
 	<bean id="esServlet"
-        class="com.highstreet.technologies.apigateway.EsServlet">
+        class="org.onap.ccsdk.features.sdnr.wt.apigateway.EsServlet">
     </bean>
 
    <service interface="javax.servlet.http.HttpServlet" ref="esServlet">
@@ -25,7 +25,7 @@ xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs">
     </service>
 
     <bean id="msServlet"
-        class="com.highstreet.technologies.apigateway.MsServlet">
+        class="org.onap.ccsdk.features.sdnr.wt.apigateway.MsServlet">
     </bean>
 
    <service interface="javax.servlet.http.HttpServlet" ref="msServlet">

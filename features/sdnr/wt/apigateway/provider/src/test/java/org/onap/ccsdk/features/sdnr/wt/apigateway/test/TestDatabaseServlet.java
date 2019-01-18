@@ -18,12 +18,12 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package com.highstreet.technologies.apigateway;
+package org.onap.ccsdk.features.sdnr.wt.apigateway.test;
 
 import org.junit.Test;
-
-import com.highstreet.technologies.apigateway.helper.HelpEsServlet;
-import com.highstreet.technologies.apigateway.helper.HelpServletBase;
+import org.onap.ccsdk.features.sdnr.wt.apigateway.MyProperties;
+import org.onap.ccsdk.features.sdnr.wt.apigateway.test.helper.HelpEsServlet;
+import org.onap.ccsdk.features.sdnr.wt.apigateway.test.helper.HelpServletBase;
 
 import java.io.*;
 import javax.servlet.ServletException;

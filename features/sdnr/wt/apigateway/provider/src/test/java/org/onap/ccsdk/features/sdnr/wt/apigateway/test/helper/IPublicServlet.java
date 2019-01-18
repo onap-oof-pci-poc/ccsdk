@@ -18,7 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package com.highstreet.technologies.apigateway.helper;
+package org.onap.ccsdk.features.sdnr.wt.apigateway.test.helper;
 
 import java.io.IOException;
 

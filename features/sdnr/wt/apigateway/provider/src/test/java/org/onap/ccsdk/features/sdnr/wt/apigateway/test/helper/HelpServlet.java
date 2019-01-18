@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP : CCSDK.apps.sdnr.wt.apigateway
  * ================================================================================
- * Copyright (C) 2019 highstreet technologies GmbH Intellectual Property.
+ * Copyright (C) 2018 highstreet technologies GmbH Intellectual Property.
  * All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,57 +18,36 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package com.highstreet.technologies.apigateway;
+package org.onap.ccsdk.features.sdnr.wt.apigateway.test.helper;
 
 import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.onap.ccsdk.features.sdnr.wt.apigateway.EsServlet;
 
-public class MsServlet extends BaseServlet {
-
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -5361461082028405171L;
-	private static final String OFFLINE_RESPONSE_MESSAGE = "MediatorServer interface is offline";
-
-	public MsServlet() {
-
-		super();
-	}
+public class HelpServlet extends EsServlet {
 
 	@Override
-	protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		resp.setStatus(200);
+	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		super.doGet(req, resp);
 	}
-
 	@Override
-	protected String getOfflineResponse() {
-		return OFFLINE_RESPONSE_MESSAGE;
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		super.doPost(req, resp);
 	}
-
 	@Override
-	protected boolean isOff() {
-		return true;
+	public void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		super.doPut(req, resp);
 	}
-
 	@Override
-	protected String getRemoteUrl(String uri) {
-		String dbServerId = "0";
-		if (uri == null)
-			uri = "";
-		if (uri.length() > 0) {
-			uri = uri.substring("/ms".length());
-			dbServerId = uri.substring(0, uri.indexOf("/"));
-		}
-		return this.getBaseUrl(dbServerId) + uri;
+	public void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		super.doOptions(req, resp);
 	}
-
-	protected String getBaseUrl(String dbServerId) {
-		return "";
+	@Override
+	public void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		super.doDelete(req, resp);
 	}
 }

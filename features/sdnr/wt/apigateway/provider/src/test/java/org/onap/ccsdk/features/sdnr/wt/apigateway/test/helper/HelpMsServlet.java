@@ -18,7 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package com.highstreet.technologies.apigateway.helper;
+package org.onap.ccsdk.features.sdnr.wt.apigateway.test.helper;
 
 import java.io.IOException;
 
@@ -26,34 +26,58 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.highstreet.technologies.apigateway.AaiServlet;
+import org.onap.ccsdk.features.sdnr.wt.apigateway.MsServlet;
 
-public class HelpAaiServlet extends AaiServlet implements IPublicServlet{
+public class HelpMsServlet extends MsServlet implements IPublicServlet {
 
 	public static final String RESPONSE_GET = "This is the response get";
 	public static final String RESPONSE_POST = "This is the response post";
 	public static final String RESPONSE_PUT = "This is the response put";
 	public static final String RESPONSE_DELETE = "This is the response delete";
 	public static final String RESPONSE_OPTIONS = "This is the response options";
+	private boolean offline = true;
+	private String baseurl;
 
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		super.doGet(req, resp);
 	}
+
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		super.doPost(req, resp);
 	}
+
 	@Override
 	public void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		super.doPut(req, resp);
 	}
+
 	@Override
 	public void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		super.doOptions(req, resp);
 	}
+
 	@Override
 	public void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		super.doDelete(req, resp);
+	}
+
+	public void setOfflineStatus(boolean offline) {
+		this.offline = offline;
+	}
+
+	public void setBaseUrl(String url) {
+		this.baseurl = url;
+	}
+
+	@Override
+	protected boolean isOff() {
+		return this.offline;
+	}
+
+	@Override
+	protected String getBaseUrl(String dbServerId) {
+		return this.baseurl;
 	}
 }

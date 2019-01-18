@@ -18,7 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package com.highstreet.technologies.apigateway.helper;
+package org.onap.ccsdk.features.sdnr.wt.apigateway.test.helper;
 
 import java.io.IOException;
 
@@ -26,7 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.highstreet.technologies.apigateway.EsServlet;
+import org.onap.ccsdk.features.sdnr.wt.apigateway.EsServlet;
 
 public class HelpEsServlet extends EsServlet implements IPublicServlet {
 
