@@ -4,6 +4,7 @@ MAINTAINER CCSDK Team (onap-ccsdk@lists.onap.org)
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 ENV ODL_HOME /opt/opendaylight
 ENV SDNC_CONFIG_DIR /opt/onap/ccsdk/data/properties
+
 ENV CCSDK_SLI_CORE_REPO mvn:org.onap.ccsdk.sli.core/ccsdk-sli-core-all/${ccsdk.sli.core.version}/xml/features
 ENV CCSDK_SLI_ADAPTORS_REPO mvn:org.onap.ccsdk.sli.adaptors/ccsdk-sli-adaptors-all/${ccsdk.sli.adaptors.version}/xml/features
 ENV CCSDK_FEATURES_REPO mvn:org.onap.ccsdk.features/ccsdk-features-all/${ccsdk.features.version}/xml/features
@@ -18,17 +19,11 @@ ENV SDNR_REPOLIST=${SDNR_NORTHBOUND_REPO},${SDNR_WT_REPO}
 ENV SDNR_ODL_SINGLE_NODE=odl-netconf-topology,odl-netconf-connector,odl-restconf-all,odl-mdsal-apidocs
 ENV SDNR_ODL_CLUSTER_NODE=odl-mdsal-clustering,odl-netconf-clustered-topology,odl-restconf-all,odl-mdsal-apidocs
 #ENV SDNR_FEATURELIST=sdnr-northbound-all,sdnr-wt-feature-aggregator
-ENV SDNR_FEATURELIST=
+ENV SDNR_FEATURELIST=sdnr-wt-feature-aggregator
 ENV SDNR_STANDALONE=false
 
 # copy the opendaylight credentials
 COPY idmlight.db.mv.db $ODL_HOME/data
-
-#WT:copy mwtn applications into container
-COPY karaf-0.8.3-poc5/system/com/highstreet $ODL_HOME/system/com/highstreet
-COPY karaf-0.8.3-poc5/system/org/opendaylight $ODL_HOME/system/org/opendaylight
-#COPY karaf-0.8.3-poc5/system/org/opendaylight/mwtn $ODL_HOME/system/org/opendaylight/mwtn
-COPY karaf-0.8.3-poc5/system/org/opendaylight/dlux/loader.implementation $ODL_HOME/system/org/opendaylight/dlux/loader.implementation
 
 #WT:copy schema cache into ontainer
 RUN mkdir -p $ODL_HOME/cache/schema
@@ -70,4 +65,4 @@ COPY org.ops4j.pax.logging.cfg /opt/opendaylight/etc/org.ops4j.pax.logging.cfg
 
 
 ENTRYPOINT /opt/onap/ccsdk/bin/startODL.sh
-EXPOSE 8181
+EXPOSE 2550 8085 8181 8185 9200 9300

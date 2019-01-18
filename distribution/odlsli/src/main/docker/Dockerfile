@@ -24,6 +24,7 @@ RUN rsync -a /tmp/system $ODL_HOME && rm -rf /tmp/system
 # Add CCSDK repositories to boot repositories
 RUN cp $ODL_HOME/etc/org.apache.karaf.features.cfg $ODL_HOME/etc/org.apache.karaf.features.cfg.orig
 RUN cat $ODL_HOME/etc/org.apache.karaf.features.cfg.orig | sed -e "\|featuresRepositories|s|$|, ${CCSDK_SLI_CORE_REPO}, ${CCSDK_SLI_ADAPTORS_REPO}, ${CCSDK_SLI_NORTHBOUND_REPO}, ${CCSDK_SLI_PLUGINS_REPO}, ${CCSDK_FEATURES_REPO}, ${SDNR_NORTHBOUND_REPO}, ${SDNR_WT_REPO}|" > $ODL_HOME/etc/org.apache.karaf.features.cfg
+#RUN echo featuresBoot=config,standard,region,package,kar,ssh,management,odl-restconf-all,odl-mdsal-all,odl-mdsal-apidocs,odl-daexim-all,ccsdk-sli-core-all,ccsdk-sli-adaptors-all,ccsdk-sli-northbound-all,ccsdk-sli-plugins-all,ccsdk-features-all,sdnr-northbound-all >> $ODL_HOME/etc/org.apache.karaf.features.cfg
 RUN echo featuresBoot=config,standard,region,package,kar,ssh,management,odl-restconf-all,odl-mdsal-all,odl-mdsal-apidocs,odl-daexim-all,ccsdk-sli-core-all,ccsdk-sli-adaptors-all,ccsdk-sli-northbound-all,ccsdk-sli-plugins-all,ccsdk-features-all,sdnr-northbound-all,sdnr-wt-feature-aggregator >> $ODL_HOME/etc/org.apache.karaf.features.cfg
 
 # Create odl user

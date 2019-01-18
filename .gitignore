@@ -1,0 +1,11 @@
+target/
+target-ide/
+yang-gen-sal/
+.checkstyle
+.classpath
+.project
+.settings
+.factorypath
+*.swp
+dist/
+bin/
