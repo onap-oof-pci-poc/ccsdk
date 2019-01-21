@@ -1,10 +1,23 @@
-/*
-* Copyright (c) 2017 highstreet technologies GmbH and others. All rights reserved.
-*
-* This program and the accompanying materials are made available under the
-* terms of the Eclipse Public License v1.0 which accompanies this distribution,
-* and is available at http://www.eclipse.org/legal/epl-v10.html
-*/
+/*******************************************************************************
+ * ============LICENSE_START=======================================================
+ * ONAP : ccsdk feature sdnr wt
+ *  ================================================================================
+ * Copyright (C) 2019 highstreet technologies GmbH Intellectual Property.
+ * All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
+ ******************************************************************************/
 
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf;
 
@@ -138,22 +151,23 @@ public class ONFCoreNetworkElement12 extends ONFCoreNetworkElement12Base impleme
             HtDatabaseEventsService databaseService, ProviderClient dcaeProvider, @Nullable ProviderClient aotsmClient,
             MaintenanceService maintenanceService, NotificationDelayService<ProblemNotificationXml> notificationDelayService) {
 
-    	if (capabilities.isSupportingNamespaceAndRevision(NetworkElement.QNAME)) {
-    		OnfMicrowaveModel onfMicrowaveModel = null;
+        if (capabilities.isSupportingNamespaceAndRevision(NetworkElement.QNAME)) {
+            OnfMicrowaveModel onfMicrowaveModel = null;
 
-    		if ( capabilities.isSupportingNamespaceAndRevision(WrapperMicrowaveModelRev170324.QNAME) ) {
-    			onfMicrowaveModel = new WrapperMicrowaveModelRev170324();
-    		} else if ( capabilities.isSupportingNamespaceAndRevision(WrapperMicrowaveModelRev180907.QNAME) ) {
-    			onfMicrowaveModel = new WrapperMicrowaveModelRev180907();
-    		} else if ( capabilities.isSupportingNamespaceAndRevision(WrapperMicrowaveModelRev181010.QNAME) ) {
-    			onfMicrowaveModel = new WrapperMicrowaveModelRev181010();
-    		}
+            if ( capabilities.isSupportingNamespaceAndRevision(WrapperMicrowaveModelRev170324.QNAME) ) {
+                onfMicrowaveModel = new WrapperMicrowaveModelRev170324();
+            } else if ( capabilities.isSupportingNamespaceAndRevision(WrapperMicrowaveModelRev180907.QNAME) ) {
+                onfMicrowaveModel = new WrapperMicrowaveModelRev180907();
+            } else if ( capabilities.isSupportingNamespaceAndRevision(WrapperMicrowaveModelRev181010.QNAME) ) {
+                onfMicrowaveModel = new WrapperMicrowaveModelRev181010();
+            }
 
-    		if (onfMicrowaveModel != null)
-    			return new ONFCoreNetworkElement12(mountPointNodeName, capabilities, netconfNodeDataBroker, webSocketService,
+            if (onfMicrowaveModel != null) {
+				return new ONFCoreNetworkElement12(mountPointNodeName, capabilities, netconfNodeDataBroker, webSocketService,
                         databaseService, dcaeProvider, aotsmClient, maintenanceService, notificationDelayService, onfMicrowaveModel);
-    	}
-		return null;
+			}
+        }
+        return null;
 
     }
 
@@ -196,44 +210,44 @@ public class ONFCoreNetworkElement12 extends ONFCoreNetworkElement12Base impleme
     /**
      * Handling of specific Notifications from NE, indicating changes and need for synchronization.
      *
-     *	<attribute-value-changed-notification xmlns="urn:onf:params:xml:ns:yang:microwave-model">
-	 *		<attribute-name>/equipment-pac/equipment-current-problems</attribute-name>
-	 *		<object-id-ref>CARD-1.1.1.0</object-id-ref>
-	 *		<new-value></new-value>
-	 *	</attribute-value-changed-notification>
-	 *	<attribute-value-changed-notification xmlns="urn:onf:params:xml:ns:yang:microwave-model">
-	 *		<attribute-name>/network-element/extension[value-name="top-level-equipment"]/value</attribute-name>
-	 *		<object-id-ref>Hybrid-Z</object-id-ref>
-	 *		<new-value>SHELF-1.1.0.0,IDU-1.55.0.0,ODU-1.56.0.0,IDU-1.65.0.0</new-value>
-	 *	</attribute-value-changed-notification>
+     *    <attribute-value-changed-notification xmlns="urn:onf:params:xml:ns:yang:microwave-model">
+     *        <attribute-name>/equipment-pac/equipment-current-problems</attribute-name>
+     *        <object-id-ref>CARD-1.1.1.0</object-id-ref>
+     *        <new-value></new-value>
+     *    </attribute-value-changed-notification>
+     *    <attribute-value-changed-notification xmlns="urn:onf:params:xml:ns:yang:microwave-model">
+     *        <attribute-name>/network-element/extension[value-name="top-level-equipment"]/value</attribute-name>
+     *        <object-id-ref>Hybrid-Z</object-id-ref>
+     *        <new-value>SHELF-1.1.0.0,IDU-1.55.0.0,ODU-1.56.0.0,IDU-1.65.0.0</new-value>
+     *    </attribute-value-changed-notification>
      */
 
 
-	@Override
-	public void notificationFromNeListener(AttributeValueChangedNotificationXml notificationXml) {
-		notificationQueue.put(notificationXml);
-	}
+    @Override
+    public void notificationFromNeListener(AttributeValueChangedNotificationXml notificationXml) {
+        notificationQueue.put(notificationXml);
+    }
 
-	@Override
-	public void notificationActor(AttributeValueChangedNotificationXml notificationXml) {
+    @Override
+    public void notificationActor(AttributeValueChangedNotificationXml notificationXml) {
 
-		LOG.debug("Enter change notification listener");
-		if (LOG.isTraceEnabled()) {
-			LOG.trace("Notification: {}",notificationXml);
-		}
-		if (notificationXml.getAttributeName().equals("/equipment-pac/equipment-current-problems")) {
-			syncEquipmentPac(notificationXml.getObjectId());
-		} else if (notificationXml.getAttributeName().equals("/network-element/extension[value-name=\"top-level-equipment\"]/value")) {
-			initialReadFromNetworkElement();
-		}
-		LOG.debug("Leave change notification listener");
-	}
+        LOG.debug("Enter change notification listener");
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Notification: {}",notificationXml);
+        }
+        if (notificationXml.getAttributeName().equals("/equipment-pac/equipment-current-problems")) {
+            syncEquipmentPac(notificationXml.getObjectId());
+        } else if (notificationXml.getAttributeName().equals("/network-element/extension[value-name=\"top-level-equipment\"]/value")) {
+            initialReadFromNetworkElement();
+        }
+        LOG.debug("Leave change notification listener");
+    }
 
-	/**
-	 * Synchronize problems for a specific equipment-pac
-	 * @param uuidString of the equipment-pac
-	 */
-	private synchronized void syncEquipmentPac( String uuidString ) {
+    /**
+     * Synchronize problems for a specific equipment-pac
+     * @param uuidString of the equipment-pac
+     */
+    private synchronized void syncEquipmentPac( String uuidString ) {
 
         int problems = microwaveEventListener.removeObjectsCurrentProblemsOfNode(uuidString);
         LOG.debug("Removed {} problems for uuid {}", problems, uuidString);
@@ -242,7 +256,7 @@ public class ONFCoreNetworkElement12 extends ONFCoreNetworkElement12Base impleme
         microwaveEventListener.initCurrentProblemStatus(resultList);
         LOG.debug("Added {} problems for uuid {}", resultList.size(), uuidString);
 
-	}
+    }
 
 
     /*-----------------------------------------------------------------------------
