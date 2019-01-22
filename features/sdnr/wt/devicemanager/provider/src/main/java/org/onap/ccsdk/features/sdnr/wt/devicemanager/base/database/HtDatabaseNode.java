@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,6 +35,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import javax.annotation.Nullable;
 import org.apache.lucene.util.Constants;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.client.Client;
@@ -96,6 +97,10 @@ public class HtDatabaseNode implements AutoCloseable {
         oneNode = null; //Release the one instance that was started !
     }
 
+    /**
+     * Provide indication if all Index initializations are done.
+     * @return true if all index initializations are ready, false if not
+     */
     public Boolean getInitialized() {
         synchronized (initializedReached) {
             return initializedTarget != 0 && initializedReached == initializedTarget;
@@ -319,9 +324,9 @@ public class HtDatabaseNode implements AutoCloseable {
 
     /**
      * Start as singleton
-     * @return the node
+     * @return the node or null if external node used
      */
-    public static HtDatabaseNode start(EsConfig config) throws IllegalStateException {
+    public static @Nullable HtDatabaseNode start(EsConfig config) throws IllegalStateException {
         return start(config,null,null);
     }
 

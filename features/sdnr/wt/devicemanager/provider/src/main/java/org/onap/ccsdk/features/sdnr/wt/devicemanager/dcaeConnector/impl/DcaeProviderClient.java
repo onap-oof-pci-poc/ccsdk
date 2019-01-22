@@ -22,7 +22,7 @@ package org.onap.ccsdk.features.sdnr.wt.devicemanager.dcaeConnector.impl;
 
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.DcaeConfig;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.HtDevicemanagerConfiguration;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.HtDevicemanagerConfiguration.IConfigChangedListener;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.IConfigChangedListener;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.DeviceManagerImpl;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.ProviderClient;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.ProblemNotificationXml;

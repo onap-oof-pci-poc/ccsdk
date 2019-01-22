@@ -23,7 +23,6 @@ package org.onap.ccsdk.features.sdnr.wt.devicemanager.aaiConnector.impl;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Nonnull;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.http.BaseHTTPClient;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.http.BaseHTTPResponse;

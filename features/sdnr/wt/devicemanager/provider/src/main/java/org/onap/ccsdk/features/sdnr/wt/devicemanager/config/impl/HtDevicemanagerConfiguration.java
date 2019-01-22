@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,9 +22,6 @@ package org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.FileWatchdog;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.IniConfigurationFile;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.IniConfigurationFile.ConfigurationException;
 import org.slf4j.Logger;
@@ -32,96 +29,36 @@ import org.slf4j.LoggerFactory;
 
 public class HtDevicemanagerConfiguration {
 
-    private static final long FILE_POLL_INTERVAL_MS = 1000;
-
-    public interface IConfigChangedListener {
-        void onConfigChanged();
-    }
-    public static class ConfigFileObserver extends FileWatchdog
-    {
-        private final List<IConfigChangedListener> mConfigChangedHandlers = new ArrayList<>();
-        protected ConfigFileObserver(String filename) {
-            super(filename);
-            this.setDelay(FILE_POLL_INTERVAL_MS);
-        }
-
-        @Override
-        protected void doOnChange() {
-
-            boolean succeeded=true;
-            LOG.debug("property file has changed");
-            try {
-                mConfig.reLoad();
-
-            } catch (ConfigurationException e) {
-                LOG.warn("error reloading config: "+e.getMessage());
-                succeeded = false;
-
-            }
-            if(!succeeded) {
-				return;
-			}
-            if(this.mConfigChangedHandlers==null)
-            {
-                LOG.debug("handler list is null");//should never happen
-                return;
-            }
-            //push event to all listeners
-            for (IConfigChangedListener listener : this.mConfigChangedHandlers) {
-                if (listener != null) {
-					listener.onConfigChanged();
-				}
-            }
-        }
-
-        public void registerConfigChangedListener(IConfigChangedListener l) {
-            if (!this.mConfigChangedHandlers.contains(l)) {
-				this.mConfigChangedHandlers.add(l);
-			}
-        }
-
-        public void unregisterConfigChangedListener(IConfigChangedListener l) {
-            this.mConfigChangedHandlers.remove(l);
-        }
-
-
-    }
-    public interface ISubConfigHandler {
-        void save();
-    }
-
     private static final Logger LOG = LoggerFactory.getLogger(HtDevicemanagerConfiguration.class);
 
+    private static final long FILE_POLL_INTERVAL_MS = 1000;
+
     private static final String CONFIGURATIONFILE = "etc/devicemanager.properties";
-    private static final String CONFIGURATIONTESTFILE = "test.properties"; // for
-    // testing
 
-    private static HtDevicemanagerConfiguration mObj;
-    private static HtDevicemanagerConfiguration mObjTest;
-
-    public static HtDevicemanagerConfiguration getConfiguration() {
-        if (mObj == null) {
-			mObj = new HtDevicemanagerConfiguration(CONFIGURATIONFILE);
-		}
-        return mObj;
-    }
-    public static HtDevicemanagerConfiguration getTestConfiguration() {
-        return getTestConfiguration(CONFIGURATIONTESTFILE);
-    }
-    public static HtDevicemanagerConfiguration getTestConfiguration(final String filename) {
-        if (mObjTest == null) {
-			mObjTest = new HtDevicemanagerConfiguration(filename);
-		}
-        return mObjTest;
-    }
-    private static IniConfigurationFile mConfig;
-    private File mFile;
-
-    public IniConfigurationFile getMConfig() {
-        return mConfig;
-    }
-
+    private final IniConfigurationFile mConfig;
+    private final File mFile;
     private final ConfigFileObserver fileObserver;
+    private final ISubConfigHandler subconfigHandler;
+
+    public HtDevicemanagerConfiguration() throws IOException, ConfigurationException {
+        this(CONFIGURATIONFILE);
+    }
+
+    public HtDevicemanagerConfiguration(String filename) throws IOException, ConfigurationException {
+
+        LOG.info("Reading config file {}",filename);
+
+        this.mFile = new File(filename);
+        if (!this.mFile.exists()) {
+            this.mFile.createNewFile();
+        }
+        this.mConfig = new IniConfigurationFile(this.mFile);
+        this.mConfig.load();
+        this.subconfigHandler = () -> mConfig.save();
+        this.fileObserver = new ConfigFileObserver(filename,FILE_POLL_INTERVAL_MS, mConfig);
+        this.fileObserver.start();
+    }
+
     public void registerConfigChangedListener(IConfigChangedListener l) {
         this.fileObserver.registerConfigChangedListener(l);
     }
@@ -130,34 +67,11 @@ public class HtDevicemanagerConfiguration {
         this.fileObserver.unregisterConfigChangedListener(l);
     }
 
-    private HtDevicemanagerConfiguration(String filename) {
-
-        try {
-            this.mFile = new File(filename);
-            if (!this.mFile.exists()) {
-				this.mFile.createNewFile();
-			}
-            if(mConfig==null) {
-				mConfig = new IniConfigurationFile(this.mFile);
-			}
-            mConfig.load();
-
-        } catch (ConfigurationException e) {
-            LOG.error("error loading config values:" + e.getMessage());
-
-        } catch (IOException e) {
-            LOG.error("error loading config file " + filename + ": " + e.getMessage());
-        }
-
-        this.fileObserver=new ConfigFileObserver(filename);
-        this.fileObserver.start();
-    }
-
     @Override
     protected void finalize() throws Throwable {
         if(this.fileObserver!=null) {
-			this.fileObserver.interrupt();
-		}
+            this.fileObserver.interrupt();
+        }
         super.finalize();
     }
     public DcaeConfig getDcae() {
@@ -178,14 +92,8 @@ public class HtDevicemanagerConfiguration {
     public ToggleAlarmConfig getToggleAlarm() {
         return ToggleAlarmConfig.getTa(mConfig, this.subconfigHandler);
     }
-    private final ISubConfigHandler subconfigHandler = () -> mConfig.save();
 
-    public ISubConfigHandler getSubconfigHandler() {
-        return subconfigHandler;
-    }
-    public static void clear() {
-        mObj=null;
-        mObjTest=null;
+    public void clear() {
         DcaeConfig.clear();
         AaiConfig.clear();
         EsConfig.clear();

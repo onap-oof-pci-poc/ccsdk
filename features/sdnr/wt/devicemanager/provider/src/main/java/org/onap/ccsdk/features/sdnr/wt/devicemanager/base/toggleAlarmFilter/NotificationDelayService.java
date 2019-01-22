@@ -22,8 +22,8 @@ package org.onap.ccsdk.features.sdnr.wt.devicemanager.base.toggleAlarmFilter;
 
 import java.util.HashMap;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.HtDevicemanagerConfiguration;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.IConfigChangedListener;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.ToggleAlarmConfig;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.HtDevicemanagerConfiguration.IConfigChangedListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

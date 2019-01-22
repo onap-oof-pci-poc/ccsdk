@@ -26,7 +26,7 @@ import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.Inventor
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.ONFCoreNetworkElementRepresentation;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.AaiConfig;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.HtDevicemanagerConfiguration;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.HtDevicemanagerConfiguration.IConfigChangedListener;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.IConfigChangedListener;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.DeviceManagerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

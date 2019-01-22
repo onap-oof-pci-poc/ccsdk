@@ -18,7 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  ******************************************************************************/
-package org.onap.ccsdk.features.sdnr.wt.devicemanager.test.dcaeConnector;
+package org.onap.ccsdk.features.sdnr.wt.devicemanager.dcaeConnector.test;
 
 import java.io.BufferedReader;
 import java.io.File;

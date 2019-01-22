@@ -21,6 +21,7 @@
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.impl;
 
 import com.google.common.base.Optional;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,6 +29,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.aaiConnector.impl.AaiProviderClient;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database.HtDatabaseNode;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.IniConfigurationFile.ConfigurationException;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.ONFCoreNetworkElementFactory;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.ONFCoreNetworkElementRepresentation;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.toggleAlarmFilter.NotificationDelayService;
@@ -86,11 +88,12 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
     private static final String STARTUPLOG_FILENAME = "etc/devicemanager.startup.log";
     //private static final String STARTUPLOG_FILENAME2 = "data/cache/devicemanager.startup.log";
 
-    private DataBroker dataBroker;
-    private MountPointService mountPointService;
-    private RpcProviderRegistry rpcProviderRegistry;
+    private DataBroker dataBroker = null;
+    private MountPointService mountPointService = null;
+    private RpcProviderRegistry rpcProviderRegistry = null;
     @SuppressWarnings("unused")
-    private NotificationPublishService notificationPublishService;
+    private NotificationPublishService notificationPublishService = null;
+
     private final ConcurrentHashMap<String, ONFCoreNetworkElementRepresentation> networkElementRepresentations = new ConcurrentHashMap<>();
 
     private WebSocketServiceClient webSocketService;
@@ -116,7 +119,7 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
 
     //Blueprint 1
     public DeviceManagerImpl() {
-        this(null,null,null);
+        LOG.info( "Creating provider for {}", APPLICATION_NAME);
     }
     public void setDataBroker(DataBroker dataBroker) {
         this.dataBroker = dataBroker;
@@ -132,164 +135,122 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
          this.mountPointService = mountPointService;
     }
 
-    //Blueprint 2
-    public DeviceManagerImpl(final DataBroker dataBroker,
-            final RpcProviderRegistry rpcProviderRegistry,
-            final NotificationPublishService notificationPublishService) {
+    public void init(){
 
-        LOG.info( "Creating provider for {}", APPLICATION_NAME);
-
-        this.dataBroker = dataBroker;
-        this.rpcProviderRegistry = rpcProviderRegistry;
-        this.notificationPublishService = notificationPublishService;
-        this.mountPointService = null;
-    }
-
-    public void init2( ) {
-        LOG.info("Session Initiated start 1 {}", APPLICATION_NAME);
-        // Start RPC Service
-        this.rpcApiService = new DeviceManagerApiServiceImpl(rpcProviderRegistry);
-        // Get configuration
-        HtDevicemanagerConfiguration config = HtDevicemanagerConfiguration.getConfiguration();
-        this.akkaConfig = null;
-        try {
-            this.akkaConfig = AkkaConfig.load();
-            LOG.debug("akka.conf loaded: "+akkaConfig.toString());
-        } catch (Exception e1) {
-            LOG.warn("problem loading akka.conf: " + e1.getMessage());
-        }
-        GeoConfig geoConfig = null;
-        if (akkaConfig != null && akkaConfig.isCluster()) {
-            LOG.info("cluster mode detected");
-            if (GeoConfig.fileExists()) {
-                try {
-                    LOG.debug("try to load geoconfig");
-                    geoConfig = GeoConfig.load();
-                } catch (Exception err) {
-                    LOG.warn("problem loading geoconfig: " + err.getMessage());
-                }
-            } else {
-                LOG.debug("no geoconfig file found");
-            }
-        }
-        else
-        {
-            LOG.info("single node mode detected");
-        }
-        LOG.info("Session Initiated start 1- done {}", APPLICATION_NAME);
-    }
-
-    public void init( ){
-
-        LOG.info("Session Initiated start 2 {}", APPLICATION_NAME);
+        LOG.info("Session Initiated start {}", APPLICATION_NAME);
 
         // Start RPC Service
         this.rpcApiService = new DeviceManagerApiServiceImpl(rpcProviderRegistry);
         // Get configuration
-        HtDevicemanagerConfiguration config = HtDevicemanagerConfiguration.getConfiguration();
-        this.akkaConfig = null;
+        HtDevicemanagerConfiguration config;
         try {
-            this.akkaConfig = AkkaConfig.load();
-            LOG.debug("akka.conf loaded: "+akkaConfig.toString());
-        } catch (Exception e1) {
-            LOG.warn("problem loading akka.conf: " + e1.getMessage());
-        }
-        GeoConfig geoConfig = null;
-        if (akkaConfig != null && akkaConfig.isCluster()) {
-            LOG.info("cluster mode detected");
-            if (GeoConfig.fileExists()) {
-                try {
-                    LOG.debug("try to load geoconfig");
-                    geoConfig = GeoConfig.load();
-                } catch (Exception err) {
-                    LOG.warn("problem loading geoconfig: " + err.getMessage());
-                }
-            } else {
-                LOG.debug("no geoconfig file found");
+            config = new HtDevicemanagerConfiguration();
+            this.akkaConfig = null;
+            try {
+                this.akkaConfig = AkkaConfig.load();
+                LOG.debug("akka.conf loaded: "+akkaConfig.toString());
+            } catch (Exception e1) {
+                LOG.warn("problem loading akka.conf: " + e1.getMessage());
             }
-        }
-        else
-        {
-            LOG.info("single node mode detected");
-        }
+            GeoConfig geoConfig = null;
+            if (akkaConfig != null && akkaConfig.isCluster()) {
+                LOG.info("cluster mode detected");
+                if (GeoConfig.fileExists()) {
+                    try {
+                        LOG.debug("try to load geoconfig");
+                        geoConfig = GeoConfig.load();
+                    } catch (Exception err) {
+                        LOG.warn("problem loading geoconfig: " + err.getMessage());
+                    }
+                } else {
+                    LOG.debug("no geoconfig file found");
+                }
+            }
+            else
+            {
+                LOG.info("single node mode detected");
+            }
 
-        this.notificationDelayService=new NotificationDelayService<>(config);
+            this.notificationDelayService=new NotificationDelayService<>(config);
 
-        EsConfig dbConfig = config.getEs();
-        LOG.debug("esConfig=" + dbConfig.toString());
-        // Start database
-        htDatabase = HtDatabaseNode.start(dbConfig, akkaConfig,geoConfig);
+            EsConfig dbConfig = config.getEs();
+            LOG.debug("esConfig=" + dbConfig.toString());
+            // Start database
+            htDatabase = HtDatabaseNode.start(dbConfig, akkaConfig,geoConfig);
 
-        // init Database Values only if singleNode or clusterMember=1
-        if (akkaConfig == null || akkaConfig.isSingleNode() || akkaConfig != null && akkaConfig.isCluster()
-                && akkaConfig.getClusterConfig().getRoleMemberIndex() == 1) {
-            // Create DB index if not existing and if database is running
-            this.configService = new IndexConfigService(htDatabase);
-            this.mwtnService = new IndexMwtnService(htDatabase);
-        }
-        // start service for device maintenance service
-        this.maintenanceService = new MaintenanceServiceImpl(htDatabase);
-        // Websockets
+            // init Database Values only if singleNode or clusterMember=1
+            if (akkaConfig == null || akkaConfig.isSingleNode() || akkaConfig != null && akkaConfig.isCluster()
+                    && akkaConfig.getClusterConfig().getRoleMemberIndex() == 1) {
+                // Create DB index if not existing and if database is running
+                this.configService = new IndexConfigService(htDatabase);
+                this.mwtnService = new IndexMwtnService(htDatabase);
+            }
+            // start service for device maintenance service
+            this.maintenanceService = new MaintenanceServiceImpl(htDatabase);
+            // Websockets
 
-        this.webSocketService = new WebSocketServiceClientImpl();
+            this.webSocketService = new WebSocketServiceClientImpl();
 
-        // DCAE
-        this.dcaeProviderClient = new DcaeProviderClient(config, dbConfig.getCluster(), this);
+            // DCAE
+            this.dcaeProviderClient = new DcaeProviderClient(config, dbConfig.getCluster(), this);
 
-        this.aaiProviderClient = new AaiProviderClient(config,this);
-        // EM
-        EsConfig emConfig = dbConfig.cloneWithIndex("sdnevents");
+            this.aaiProviderClient = new AaiProviderClient(config,this);
+            // EM
+            EsConfig emConfig = dbConfig.cloneWithIndex("sdnevents");
 
-        if (emConfig == null) {
-            LOG.warn("No {} configuration available. Don't start event manager");
-        } else {
-            this.databaseClientEvents = new HtDatabaseEventsService(htDatabase);
+            if (emConfig == null) {
+                LOG.warn("No {} configuration available. Don't start event manager");
+            } else {
+                this.databaseClientEvents = new HtDatabaseEventsService(htDatabase);
 
-            String myDbKeyNameExtended=MYDBKEYNAMEBASE+"-"+dbConfig.getCluster();
+                String myDbKeyNameExtended=MYDBKEYNAMEBASE+"-"+dbConfig.getCluster();
 
 
-            this.odlEventListener = new ODLEventListener(myDbKeyNameExtended, webSocketService, databaseClientEvents,
-                    dcaeProviderClient, aotsMProvider,maintenanceService);
-        }
+                this.odlEventListener = new ODLEventListener(myDbKeyNameExtended, webSocketService, databaseClientEvents,
+                        dcaeProviderClient, aotsMProvider,maintenanceService);
+            }
 
-        // PM
-        PmConfig configurationPM = config.getPm();
-        LOG.info("Performance manager configuration: {}", configurationPM);
-        if (!configurationPM.isPerformanceManagerEnabled()) {
+            // PM
+            PmConfig configurationPM = config.getPm();
+            LOG.info("Performance manager configuration: {}", configurationPM);
+            if (!configurationPM.isPerformanceManagerEnabled()) {
 
-            LOG.info("No configuration available. Don't start performance manager");
-        } else {
-            @Nullable MicrowaveHistoricalPerformanceWriterService databaseClientHistoricalPerformance;
-            databaseClientHistoricalPerformance = new MicrowaveHistoricalPerformanceWriterService(htDatabase);
-            this.performanceManager = new PerformanceManagerImpl(60, databaseClientHistoricalPerformance);
-        }
+                LOG.info("No configuration available. Don't start performance manager");
+            } else {
+                @Nullable MicrowaveHistoricalPerformanceWriterService databaseClientHistoricalPerformance;
+                databaseClientHistoricalPerformance = new MicrowaveHistoricalPerformanceWriterService(htDatabase);
+                this.performanceManager = new PerformanceManagerImpl(60, databaseClientHistoricalPerformance);
+            }
 
-        // DUS (Database update service)
-        LOG.debug("start db update service");
-        this.updateService = new IndexUpdateService(htDatabase, dbConfig.getHost(), dbConfig.getCluster(),
-                dbConfig.getNode());
-        this.updateService.start();
+            // DUS (Database update service)
+            LOG.debug("start db update service");
+            this.updateService = new IndexUpdateService(htDatabase, dbConfig.getHost(), dbConfig.getCluster(),
+                    dbConfig.getNode());
+            this.updateService.start();
 
-        // RPC Service for specific services
-        this.rpcApiService.setMaintenanceService(this.maintenanceService);
-        this.rpcApiService.setResyncListener(this);
-        // DM
-        // DeviceMonitor has to be available before netconfSubscriptionManager is
-        // configured
-        LOG.debug("start DeviceMonitor Service");
-        this.deviceMonitor = new DeviceMonitorImpl(dataBroker, odlEventListener);
+            // RPC Service for specific services
+            this.rpcApiService.setMaintenanceService(this.maintenanceService);
+            this.rpcApiService.setResyncListener(this);
+            // DM
+            // DeviceMonitor has to be available before netconfSubscriptionManager is
+            // configured
+            LOG.debug("start DeviceMonitor Service");
+            this.deviceMonitor = new DeviceMonitorImpl(dataBroker, odlEventListener);
 
-        // netconfSubscriptionManager should be the last one because this is a callback
-        // service
-        LOG.debug("start NetconfSubscriptionManager Service");
-        // this.netconfSubscriptionManager = new
-        // NetconfSubscriptionManagerOfDeviceManager(this, dataBroker);
-        // this.netconfSubscriptionManager.register();
-        this.netconfChangeListener = new NetconfChangeListener(this, dataBroker);
-        this.netconfChangeListener.register();
+            // netconfSubscriptionManager should be the last one because this is a callback
+            // service
+            LOG.debug("start NetconfSubscriptionManager Service");
+            // this.netconfSubscriptionManager = new
+            // NetconfSubscriptionManagerOfDeviceManager(this, dataBroker);
+            // this.netconfSubscriptionManager.register();
+            this.netconfChangeListener = new NetconfChangeListener(this, dataBroker);
+            this.netconfChangeListener.register();
 
-        synchronized (initialized) {
-            initialized = true;
+            synchronized (initialized) {
+                initialized = true;
+            }
+        } catch (IOException | ConfigurationException e) {
+            LOG.error("Can not load configuration", e);
         }
 
         LOG.info("Session Initiated end");
@@ -339,13 +300,16 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
         String mountPointNodeName = nNodeId.getValue();
         LOG.info("Starting Event listener on Netconf for mountpoint {} Action {}", mountPointNodeName, action);
 
+        boolean preConditionMissing = false;
         if (mountPointService == null) {
-            LOG.warn("No mountservice available. return.");
+            preConditionMissing = true;
+            LOG.warn("No mountservice available.");
         }
-
-
         if (!initialized) {
-            LOG.warn("Devicemanager initialization still pending. Leave startup procedure. Mountpoint {}", mountPointNodeName);
+            preConditionMissing = true;
+            LOG.warn("Devicemanager initialization still pending.");
+        }
+        if (preConditionMissing) {
             return;
         }
 
@@ -384,7 +348,6 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
                         mountPointNodeName);
                 return;
             }
-
             // Mountpoint is present for sure
             MountPoint mountPoint = optionalMountPoint.get();
 
@@ -432,9 +395,7 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
             deviceMonitor.deviceConnectMasterIndication(mountPointNodeName, ne);
 
             LOG.info("Starting Event listener on Netconf device :: Name : {} finished", mountPointNodeName);
-
         }
-
     }
 
     // removeListenerOnNode
@@ -562,6 +523,14 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
             return nodeNamesHandled;
         }
     };
+
+    /**
+     * Get initialization status of database.
+     * @return true if fully initialized false if not
+     */
+    public boolean getInitialized() {
+        return htDatabase == null ? false : htDatabase.getInitialized();
+    }
 
     /*---------------------------------------------------------------------
      * Private funtions

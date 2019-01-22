@@ -18,7 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  ******************************************************************************/
-package org.onap.ccsdk.features.sdnr.wt.devicemanager.test.dcaeConnector;
+package org.onap.ccsdk.features.sdnr.wt.devicemanager.dcaeConnector.test;
 
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.DcaeConfig;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.dcaeConnector.impl.DcaeMessages;

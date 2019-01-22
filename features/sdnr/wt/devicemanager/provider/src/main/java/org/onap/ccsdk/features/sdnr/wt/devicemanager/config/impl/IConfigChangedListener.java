@@ -1,6 +1,6 @@
 /*******************************************************************************
  * ============LICENSE_START=======================================================
- * ONAP : ccsdk feature sdnr wt
+ * ONAP : ccsdk feature sdnr wt sdnr-wt-devicemanager-provider
  *  ================================================================================
  * Copyright (C) 2019 highstreet technologies GmbH Intellectual Property.
  * All rights reserved.
@@ -18,17 +18,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  ******************************************************************************/
-package org.onap.ccsdk.features.sdnr.wt.devicemanager.test;
 
-import static org.junit.Assert.*;
+package org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl;
 
-import org.junit.Test;
-
-public class test1 {
-
-    @Test
-    public void test() {
-        fail("Not yet implemented");
-    }
-
+public interface IConfigChangedListener {
+    void onConfigChanged();
 }

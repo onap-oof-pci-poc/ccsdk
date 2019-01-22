@@ -30,19 +30,19 @@ limitations under the License.
              interface="org.opendaylight.controller.md.sal.binding.api.NotificationPublishService"
              odl:type="default" />
 
+  <reference id="mountPointService"
+             interface="org.opendaylight.controller.md.sal.binding.api.MountPointService"
+             odl:type="default" />
+
   <reference id="rpcProviderRegistry" interface="org.opendaylight.controller.sal.binding.api.RpcProviderRegistry"
     odl:type="default" />
 
-  <!-- <bean id="provider" class="org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.DeviceManagerImpl">
-    <argument ref="dataBroker" />
-    <argument ref="rpcProviderRegistry" />
-    <argument ref="notificationService" />
-  </bean> -->
 
  <bean id="provider" class="org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.DeviceManagerImpl" init-method="init" destroy-method="close">
     <property name="dataBroker" ref="dataBroker"/>
     <property name="rpcProviderRegistry" ref="rpcProviderRegistry" />
     <property name="notificationPublishService" ref="notificationPublishService" />
+    <property name="mountPointService" ref="mountPointService" />
   </bean>
 
 

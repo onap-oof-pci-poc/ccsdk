@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,7 +22,6 @@ package org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl;
 
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.IniConfigurationFile;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.IniConfigurationFile.ConfigurationException;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.HtDevicemanagerConfiguration.ISubConfigHandler;
 
 public class DcaeConfig extends BaseSubConfig {
     private static final String SECTION_MARKER_DCAE = "dcae";
@@ -119,15 +118,15 @@ public class DcaeConfig extends BaseSubConfig {
             DcaeConfig cobj = (DcaeConfig) obj;
             if (!(cobj.eventReceiverUrl == null && this.eventReceiverUrl == null
                     || cobj.eventReceiverUrl.equals(this.eventReceiverUrl))) {
-				return false;
-			}
+                return false;
+            }
             if (!(cobj.userCredentials == null && this.userCredentials == null
                     || cobj.userCredentials.equals(this.userCredentials))) {
-				return false;
-			}
+                return false;
+            }
             if (cobj.timerPeriodSeconds != this.timerPeriodSeconds) {
-				return false;
-			}
+                return false;
+            }
             return true;
         }
         return super.equals(obj);
@@ -143,12 +142,12 @@ public class DcaeConfig extends BaseSubConfig {
 
     public static DcaeConfig getDcae(IniConfigurationFile config, ISubConfigHandler configHandler) {
         if (dcaeConfig == null) {
-			try {
+            try {
                 dcaeConfig = new DcaeConfig(config, configHandler);
             } catch (ConfigurationException e) {
                 dcaeConfig = DcaeConfig.getDefaultConfiguration();
             }
-		}
+        }
         return dcaeConfig;
     }
 
@@ -158,8 +157,8 @@ public class DcaeConfig extends BaseSubConfig {
 
     public static DcaeConfig reload() {
         if (dcaeConfig == null) {
-			return null;
-		}
+            return null;
+        }
         DcaeConfig tmpConfig;
         try {
             tmpConfig = new DcaeConfig(dcaeConfig.getConfig(), dcaeConfig.getConfigHandler(), false);
