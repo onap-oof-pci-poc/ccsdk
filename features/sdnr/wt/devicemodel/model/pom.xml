@@ -48,7 +48,21 @@
       <artifactId>ietf-topology</artifactId>
     </dependency>
   </dependencies>
-
-
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>**/gen/**</exclude>
+            <exclude>**/generated-sources/**</exclude>
+            <exclude>**/yang-gen-sal/**/*</exclude>
+            <exclude>**/pax/**</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
 
