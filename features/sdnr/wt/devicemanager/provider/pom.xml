@@ -38,10 +38,18 @@
   </parent>
 
   <properties>
+    <checkstyle.skip>true</checkstyle.skip> <!-- POM configuration -->
     <maven.javadoc.skip>true</maven.javadoc.skip>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
     <buildtime>${maven.build.timestamp} UTC</buildtime>
   </properties>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+    </license>
+  </licenses>
 
   <dependencyManagement>
     <dependencies>

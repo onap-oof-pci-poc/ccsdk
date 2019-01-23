@@ -32,6 +32,7 @@
     <module>featureaggregator</module>
     <module>apigateway</module>
     <module>devicemodel</module>
+    <module>websocketmanager2</module>
     <module>devicemanager</module>
     </modules>
 </project>

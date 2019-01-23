@@ -21,7 +21,8 @@
  * ============LICENSE_END=========================================================
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
@@ -74,7 +75,8 @@
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>com.fasterxml.jackson.*</groupId>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>*</artifactId>
         </exclusion>
         <exclusion>
           <groupId>com.fasterxml.jackson.dataformat</groupId>
@@ -89,29 +91,50 @@
           <artifactId>*</artifactId>
         </exclusion>
         <exclusion>
-              <groupId>com.twitter</groupId>
+          <groupId>com.twitter</groupId>
+          <artifactId>*</artifactId>
         </exclusion>
         <exclusion>
-              <groupId>org.hdrhistogram</groupId>
+          <groupId>org.hdrhistogram</groupId>
+          <artifactId>*</artifactId>
         </exclusion>
         <exclusion>
-      <groupId>com.tdunning</groupId>
+          <groupId>com.tdunning</groupId>
+          <artifactId>*</artifactId>
         </exclusion>
         <exclusion>
-      <groupId>com.ning</groupId>
+          <groupId>com.ning</groupId>
+          <artifactId>compress-lzf</artifactId>
         </exclusion>
         <exclusion>
-      <artifactId>compress-lzf</artifactId>
+          <groupId>io.netty</groupId>
+          <artifactId>netty</artifactId>
         </exclusion>
         <exclusion>
-      <groupId>io.netty</groupId>
-      <artifactId>netty</artifactId>
+          <groupId>org.yaml</groupId>
+          <artifactId>snakeyaml</artifactId>
         </exclusion>
         <exclusion>
-      <groupId>org.yaml</groupId>
-      <artifactId>snakeyaml</artifactId>
+          <groupId>jakarta-regexp</groupId>
+          <artifactId>jakarta-regexp</artifactId>
         </exclusion>
-     </exclusions>
+        <exclusion>
+          <groupId>org.joda</groupId>
+          <artifactId>joda-convert</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>joda-time</groupId>
+          <artifactId>joda-time</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.carrotsearch</groupId>
+          <artifactId>hppc</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.spatial4j</groupId>
+          <artifactId>spatial4j</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 </project>
