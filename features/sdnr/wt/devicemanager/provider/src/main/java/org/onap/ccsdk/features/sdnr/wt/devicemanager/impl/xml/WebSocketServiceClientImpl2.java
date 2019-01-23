@@ -20,42 +20,40 @@
  ******************************************************************************/
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml;
 
+import java.util.concurrent.Future;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.listener.ODLEventListener;
+import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.websocketmanager.rev150105.WebsocketEventInputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.websocketmanager.rev150105.WebsocketEventOutput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.websocketmanager.rev150105.WebsocketmanagerService;
+import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * WrapperMock class for web-socket notifications to the web-socket service.
+ * Wrapper for forwarding web-socket notifications to the web-socket service, that is running as bundle.
  */
-public class WebSocketServiceClientImpl implements WebSocketServiceClient {
+public class WebSocketServiceClientImpl2 implements WebSocketServiceClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(ODLEventListener.class);
 
-    /*
     private final WebsocketmanagerService websocketmanagerService;
     private final XmlMapper xmlMapper;
 
     /**
-     * @param websocketmanagerService object
-     * @param xmlMapper object
+     * Implementation of Websocket notification processor.
+     * @param rpcProviderRegistry to get MDSAL services.
      */
-    /*
-    public WebSocketServiceClientImpl(WebsocketmanagerService websocketmanagerService,
-            XmlMapper xmlMapper) {
+    public WebSocketServiceClientImpl2(RpcProviderRegistry rpcProviderRegistry) {
         super();
-        this.websocketmanagerService = websocketmanagerService;
-        this.xmlMapper = xmlMapper;
-    }
-    */
-
-    public WebSocketServiceClientImpl() {
+        this.websocketmanagerService = rpcProviderRegistry.getRpcService(WebsocketmanagerService.class);
+        this.xmlMapper = new XmlMapper();
     }
 
     @Override
     public <T extends MwtNotificationBase & GetEventType> void sendViaWebsockets(String nodeName, T notificationXml) {
-        LOG.info("Dummy to send websocket event {} for mountpoint {}", notificationXml.getClass().getSimpleName(), nodeName);
+        LOG.info("Send websocket event {} for mountpoint {}", notificationXml.getClass().getSimpleName(), nodeName);
 
-        /*
         try {
             WebsocketEventInputBuilder wsBuilder = new WebsocketEventInputBuilder();
             wsBuilder.setNodeName(nodeName);
@@ -67,6 +65,5 @@ public class WebSocketServiceClientImpl implements WebSocketServiceClient {
             LOG.warn("Can not send websocket event {} for mountpoint {} {}",
                     notificationXml.getClass().getSimpleName(), nodeName, e.toString());
         }
-        */
     }
 }

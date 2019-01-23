@@ -62,6 +62,11 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
+      <artifactId>sdnr-wt-websocketmanager2-model</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>sdnr-wt-devicemodel-model</artifactId>
       <version>${project.version}</version>

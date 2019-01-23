@@ -45,7 +45,7 @@ import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.listener.NetconfChange
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.listener.ODLEventListener;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.ProblemNotificationXml;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.WebSocketServiceClient;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.WebSocketServiceClientImpl;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.WebSocketServiceClientImpl2;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.index.impl.IndexConfigService;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.index.impl.IndexMwtnService;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.index.impl.IndexUpdateService;
@@ -189,7 +189,7 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
             this.maintenanceService = new MaintenanceServiceImpl(htDatabase);
             // Websockets
 
-            this.webSocketService = new WebSocketServiceClientImpl();
+            this.webSocketService = new WebSocketServiceClientImpl2(rpcProviderRegistry);
 
             // DCAE
             this.dcaeProviderClient = new DcaeProviderClient(config, dbConfig.getCluster(), this);
