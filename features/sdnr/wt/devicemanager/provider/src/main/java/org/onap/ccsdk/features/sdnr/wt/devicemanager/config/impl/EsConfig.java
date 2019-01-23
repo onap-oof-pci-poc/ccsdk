@@ -1,28 +1,9 @@
-/*******************************************************************************
- * ============LICENSE_START=======================================================
- * ONAP : ccsdk feature sdnr wt
- *  ================================================================================
- * Copyright (C) 2019 highstreet technologies GmbH Intellectual Property.
- * All rights reserved.
- * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
- ******************************************************************************/
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl;
 
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.Environment;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.IniConfigurationFile;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.IniConfigurationFile.ConfigurationException;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.HtDevicemanagerConfiguration.ISubConfigHandler;
 
 public class EsConfig extends BaseSubConfig {
 
@@ -96,8 +77,8 @@ public class EsConfig extends BaseSubConfig {
 
         String c = this.getString(PROPERTY_KEY_CLUSTER, clustername);
         if (c != null && c.startsWith("$")) {
-			c = Environment.getVar(c);
-		}
+            c = Environment.getVar(c);
+        }
         this.cluster = c;
         this.node = String.format("%s%s", this.cluster, "n1");
         this.host = "localhost";
@@ -121,17 +102,17 @@ public class EsConfig extends BaseSubConfig {
         if (obj instanceof EsConfig) {
             EsConfig cobj = (EsConfig) obj;
             if (!(cobj.cluster == null && this.cluster == null || cobj.cluster.equals(this.cluster))) {
-				return false;
-			}
+                return false;
+            }
             if (!(cobj.host == null && this.host == null || cobj.host.equals(this.host))) {
-				return false;
-			}
+                return false;
+            }
             if (!(cobj.node == null && this.node == null || cobj.node.equals(this.node))) {
-				return false;
-			}
+                return false;
+            }
             if (!(cobj.index == null && this.index == null || cobj.index.equals(this.index))) {
-				return false;
-			}
+                return false;
+            }
             return true;
         }
         return super.equals(obj);
@@ -146,7 +127,7 @@ public class EsConfig extends BaseSubConfig {
         return c;
     }
     @Override
-	public void save()
+    public void save()
     {
         this.config.setProperty(SECTION_MARKER_ES + "." + PROPERTY_KEY_CLUSTER, this.cluster);
         super.save();
@@ -161,19 +142,19 @@ public class EsConfig extends BaseSubConfig {
 
     public static EsConfig getEs(IniConfigurationFile config, ISubConfigHandler configHandler) {
         if (esConfig == null) {
-			try {
+            try {
                 esConfig = new EsConfig(config, configHandler);
             } catch (ConfigurationException e) {
                 esConfig = EsConfig.getDefaultConfiguration();
             }
-		}
+        }
         return esConfig;
     }
 
     public static EsConfig reload() {
         if (esConfig == null) {
-			return null;
-		}
+            return null;
+        }
         EsConfig tmpConfig;
         try {
             tmpConfig = new EsConfig(esConfig.getConfig(), esConfig.getConfigHandler(), false);

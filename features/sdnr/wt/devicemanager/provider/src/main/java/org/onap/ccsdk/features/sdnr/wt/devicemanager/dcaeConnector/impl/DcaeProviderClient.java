@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,7 +22,7 @@ package org.onap.ccsdk.features.sdnr.wt.devicemanager.dcaeConnector.impl;
 
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.DcaeConfig;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.HtDevicemanagerConfiguration;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.IConfigChangedListener;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.HtDevicemanagerConfiguration.IConfigChangedListener;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.DeviceManagerImpl;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.ProviderClient;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.ProblemNotificationXml;
@@ -34,57 +34,49 @@ public class DcaeProviderClient implements AutoCloseable, ProviderClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(DcaeProviderClient.class);
 
-	private final HtDevicemanagerConfiguration htConfig;
-	private final String entityName;
-	private final DeviceManagerImpl deviceManager;
+    private final HtDevicemanagerConfiguration htConfig;
+    private final IConfigChangedListener configChangedListener;
 
-	private DcaeProviderWorker worker;
+    private DcaeProviderWorker worker;
 
     public DcaeProviderClient(HtDevicemanagerConfiguration cfg, String entityName, DeviceManagerImpl deviceManager) {
-    	LOG.info("Create");
-    	this.entityName = entityName;
-    	this.deviceManager = deviceManager;
-    	this.htConfig=cfg;
-		this.htConfig.registerConfigChangedListener(configChangedListener );
+        LOG.info("Create");
+        this.htConfig=cfg;
+        worker = new DcaeProviderWorker(this.htConfig.getDcae(), entityName, deviceManager);
+        this.configChangedListener = () -> {
+            LOG.info("Configuration change. Worker exchanged");
+            synchronized(worker) {
+                worker.close();
+                worker = new DcaeProviderWorker(DcaeConfig.reload(), entityName, deviceManager);
+            }
+        };
+        this.htConfig.registerConfigChangedListener(configChangedListener );
 
-		worker = new DcaeProviderWorker(this.htConfig.getDcae(), entityName, deviceManager);
     }
 
-	@Override
+    @Override
     public void sendProblemNotification(String mountPointName, ProblemNotificationXml notification) {
-    	synchronized(worker) {
-    		worker.sendProblemNotification(mountPointName, notification);
-    	}
+        synchronized(worker) {
+            worker.sendProblemNotification(mountPointName, notification);
+        }
     }
 
-	@Override
-	public void sendProblemNotification(String mountPointName, ProblemNotificationXml notification, boolean neDeviceAlarm) {
-		sendProblemNotification(mountPointName, notification);
-	}
+    @Override
+    public void sendProblemNotification(String mountPointName, ProblemNotificationXml notification, boolean neDeviceAlarm) {
+        sendProblemNotification(mountPointName, notification);
+    }
 
-	@Override
-	public void close() {
-		this.htConfig.unregisterConfigChangedListener(configChangedListener);
-    	synchronized(worker) {
-    		worker.close();
-    	}
-	}
+    @Override
+    public void close() {
+        this.htConfig.unregisterConfigChangedListener(configChangedListener);
+        synchronized(worker) {
+            worker.close();
+        }
+    }
 
     /* ---------------------------------------------------------
      * Private
      */
-
-	private IConfigChangedListener configChangedListener = new IConfigChangedListener() {
-
-		@Override
-		public void onConfigChanged() {
-			LOG.info("Configuration change. Worker exchanged");
-			synchronized(worker) {
-				worker.close();
-				worker = new DcaeProviderWorker(DcaeConfig.reload(), entityName, deviceManager);
-			}
-		}
-	};
 
 }
 

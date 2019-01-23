@@ -1,28 +1,9 @@
-/*******************************************************************************
- * ============LICENSE_START=======================================================
- * ONAP : ccsdk feature sdnr wt
- *  ================================================================================
- * Copyright (C) 2019 highstreet technologies GmbH Intellectual Property.
- * All rights reserved.
- * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
- ******************************************************************************/
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl;
 
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.IniConfigurationFile;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.IniConfigurationFile.ConversionException;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.IniConfigurationFile.Section;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.HtDevicemanagerConfiguration.ISubConfigHandler;
 
 public class BaseSubConfig {
 
@@ -53,22 +34,22 @@ public class BaseSubConfig {
     protected boolean hasKey(String key)
     {
         if(this.subconfig==null) {
-			return false;
-		}
+            return false;
+        }
         return this.subconfig.hasKey(key);
     }
     protected String getString(String key,String def)
     {
         if(this.subconfig==null) {
-			return def;
-		}
+            return def;
+        }
         String s;
         //try
         {
             s=this.subconfig.getString(key, def);
             if(s.isEmpty()) {
-				s=def;
-			}
+                s=def;
+            }
         }
         /*catch(ConversionException e)
         {
@@ -79,8 +60,8 @@ public class BaseSubConfig {
     }
     protected boolean getBoolean(String key, boolean def) {
         if(this.subconfig==null) {
-			return def;
-		}
+            return def;
+        }
         boolean s;
         try {
             s=this.subconfig.getBoolean(key, def);
@@ -93,8 +74,8 @@ public class BaseSubConfig {
     }
     protected int getInt(String key, int def) {
         if(this.subconfig==null) {
-			return def;
-		}
+            return def;
+        }
         int s;
         try {
             s=this.subconfig.getInt(key, def);
@@ -107,8 +88,8 @@ public class BaseSubConfig {
     }
     protected long getLong(String key, long def) {
         if(this.subconfig==null) {
-			return def;
-		}
+            return def;
+        }
         long s;
         try {
             s=this.subconfig.getLong(key, def);
@@ -122,8 +103,8 @@ public class BaseSubConfig {
     protected void save()
     {
         if(this.configHandler!=null) {
-			this.configHandler.save();
-		}
+            this.configHandler.save();
+        }
     }
 
 

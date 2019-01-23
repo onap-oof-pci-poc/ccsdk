@@ -21,7 +21,6 @@
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.impl;
 
 import com.google.common.base.Optional;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,7 +28,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.aaiConnector.impl.AaiProviderClient;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database.HtDatabaseNode;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.IniConfigurationFile.ConfigurationException;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.ONFCoreNetworkElementFactory;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.ONFCoreNetworkElementRepresentation;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.toggleAlarmFilter.NotificationDelayService;
@@ -142,115 +140,110 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
         // Start RPC Service
         this.rpcApiService = new DeviceManagerApiServiceImpl(rpcProviderRegistry);
         // Get configuration
-        HtDevicemanagerConfiguration config;
+        HtDevicemanagerConfiguration  config = HtDevicemanagerConfiguration.getConfiguration();
+        this.akkaConfig = null;
         try {
-            config = new HtDevicemanagerConfiguration();
-            this.akkaConfig = null;
-            try {
-                this.akkaConfig = AkkaConfig.load();
-                LOG.debug("akka.conf loaded: "+akkaConfig.toString());
-            } catch (Exception e1) {
-                LOG.warn("problem loading akka.conf: " + e1.getMessage());
-            }
-            GeoConfig geoConfig = null;
-            if (akkaConfig != null && akkaConfig.isCluster()) {
-                LOG.info("cluster mode detected");
-                if (GeoConfig.fileExists()) {
-                    try {
-                        LOG.debug("try to load geoconfig");
-                        geoConfig = GeoConfig.load();
-                    } catch (Exception err) {
-                        LOG.warn("problem loading geoconfig: " + err.getMessage());
-                    }
-                } else {
-                    LOG.debug("no geoconfig file found");
+            this.akkaConfig = AkkaConfig.load();
+            LOG.debug("akka.conf loaded: "+akkaConfig.toString());
+        } catch (Exception e1) {
+            LOG.warn("problem loading akka.conf: " + e1.getMessage());
+        }
+        GeoConfig geoConfig = null;
+        if (akkaConfig != null && akkaConfig.isCluster()) {
+            LOG.info("cluster mode detected");
+            if (GeoConfig.fileExists()) {
+                try {
+                    LOG.debug("try to load geoconfig");
+                    geoConfig = GeoConfig.load();
+                } catch (Exception err) {
+                    LOG.warn("problem loading geoconfig: " + err.getMessage());
                 }
-            }
-            else
-            {
-                LOG.info("single node mode detected");
-            }
-
-            this.notificationDelayService=new NotificationDelayService<>(config);
-
-            EsConfig dbConfig = config.getEs();
-            LOG.debug("esConfig=" + dbConfig.toString());
-            // Start database
-            htDatabase = HtDatabaseNode.start(dbConfig, akkaConfig,geoConfig);
-
-            // init Database Values only if singleNode or clusterMember=1
-            if (akkaConfig == null || akkaConfig.isSingleNode() || akkaConfig != null && akkaConfig.isCluster()
-                    && akkaConfig.getClusterConfig().getRoleMemberIndex() == 1) {
-                // Create DB index if not existing and if database is running
-                this.configService = new IndexConfigService(htDatabase);
-                this.mwtnService = new IndexMwtnService(htDatabase);
-            }
-            // start service for device maintenance service
-            this.maintenanceService = new MaintenanceServiceImpl(htDatabase);
-            // Websockets
-
-            this.webSocketService = new WebSocketServiceClientImpl2(rpcProviderRegistry);
-
-            // DCAE
-            this.dcaeProviderClient = new DcaeProviderClient(config, dbConfig.getCluster(), this);
-
-            this.aaiProviderClient = new AaiProviderClient(config,this);
-            // EM
-            EsConfig emConfig = dbConfig.cloneWithIndex("sdnevents");
-
-            if (emConfig == null) {
-                LOG.warn("No {} configuration available. Don't start event manager");
             } else {
-                this.databaseClientEvents = new HtDatabaseEventsService(htDatabase);
-
-                String myDbKeyNameExtended=MYDBKEYNAMEBASE+"-"+dbConfig.getCluster();
-
-
-                this.odlEventListener = new ODLEventListener(myDbKeyNameExtended, webSocketService, databaseClientEvents,
-                        dcaeProviderClient, aotsMProvider,maintenanceService);
+                LOG.debug("no geoconfig file found");
             }
+        }
+        else
+        {
+            LOG.info("single node mode detected");
+        }
 
-            // PM
-            PmConfig configurationPM = config.getPm();
-            LOG.info("Performance manager configuration: {}", configurationPM);
-            if (!configurationPM.isPerformanceManagerEnabled()) {
+        this.notificationDelayService=new NotificationDelayService<>(config);
 
-                LOG.info("No configuration available. Don't start performance manager");
-            } else {
-                @Nullable MicrowaveHistoricalPerformanceWriterService databaseClientHistoricalPerformance;
-                databaseClientHistoricalPerformance = new MicrowaveHistoricalPerformanceWriterService(htDatabase);
-                this.performanceManager = new PerformanceManagerImpl(60, databaseClientHistoricalPerformance);
-            }
+        EsConfig dbConfig = config.getEs();
+        LOG.debug("esConfig=" + dbConfig.toString());
+        // Start database
+        htDatabase = HtDatabaseNode.start(dbConfig, akkaConfig,geoConfig);
 
-            // DUS (Database update service)
-            LOG.debug("start db update service");
-            this.updateService = new IndexUpdateService(htDatabase, dbConfig.getHost(), dbConfig.getCluster(),
-                    dbConfig.getNode());
-            this.updateService.start();
+        // init Database Values only if singleNode or clusterMember=1
+        if (akkaConfig == null || akkaConfig.isSingleNode() || akkaConfig != null && akkaConfig.isCluster()
+                && akkaConfig.getClusterConfig().getRoleMemberIndex() == 1) {
+            // Create DB index if not existing and if database is running
+            this.configService = new IndexConfigService(htDatabase);
+            this.mwtnService = new IndexMwtnService(htDatabase);
+        }
+        // start service for device maintenance service
+        this.maintenanceService = new MaintenanceServiceImpl(htDatabase);
+        // Websockets
 
-            // RPC Service for specific services
-            this.rpcApiService.setMaintenanceService(this.maintenanceService);
-            this.rpcApiService.setResyncListener(this);
-            // DM
-            // DeviceMonitor has to be available before netconfSubscriptionManager is
-            // configured
-            LOG.debug("start DeviceMonitor Service");
-            this.deviceMonitor = new DeviceMonitorImpl(dataBroker, odlEventListener);
+        this.webSocketService = new WebSocketServiceClientImpl2(rpcProviderRegistry);
 
-            // netconfSubscriptionManager should be the last one because this is a callback
-            // service
-            LOG.debug("start NetconfSubscriptionManager Service");
-            // this.netconfSubscriptionManager = new
-            // NetconfSubscriptionManagerOfDeviceManager(this, dataBroker);
-            // this.netconfSubscriptionManager.register();
-            this.netconfChangeListener = new NetconfChangeListener(this, dataBroker);
-            this.netconfChangeListener.register();
+        // DCAE
+        this.dcaeProviderClient = new DcaeProviderClient(config, dbConfig.getCluster(), this);
 
-            synchronized (initialized) {
-                initialized = true;
-            }
-        } catch (IOException | ConfigurationException e) {
-            LOG.error("Can not load configuration", e);
+        this.aaiProviderClient = new AaiProviderClient(config,this);
+        // EM
+        EsConfig emConfig = dbConfig.cloneWithIndex("sdnevents");
+
+        if (emConfig == null) {
+            LOG.warn("No {} configuration available. Don't start event manager");
+        } else {
+            this.databaseClientEvents = new HtDatabaseEventsService(htDatabase);
+
+            String myDbKeyNameExtended=MYDBKEYNAMEBASE+"-"+dbConfig.getCluster();
+
+
+            this.odlEventListener = new ODLEventListener(myDbKeyNameExtended, webSocketService, databaseClientEvents,
+                    dcaeProviderClient, aotsMProvider,maintenanceService);
+        }
+
+        // PM
+        PmConfig configurationPM = config.getPm();
+        LOG.info("Performance manager configuration: {}", configurationPM);
+        if (!configurationPM.isPerformanceManagerEnabled()) {
+
+            LOG.info("No configuration available. Don't start performance manager");
+        } else {
+            @Nullable MicrowaveHistoricalPerformanceWriterService databaseClientHistoricalPerformance;
+            databaseClientHistoricalPerformance = new MicrowaveHistoricalPerformanceWriterService(htDatabase);
+            this.performanceManager = new PerformanceManagerImpl(60, databaseClientHistoricalPerformance);
+        }
+
+        // DUS (Database update service)
+        LOG.debug("start db update service");
+        this.updateService = new IndexUpdateService(htDatabase, dbConfig.getHost(), dbConfig.getCluster(),
+                dbConfig.getNode());
+        this.updateService.start();
+
+        // RPC Service for specific services
+        this.rpcApiService.setMaintenanceService(this.maintenanceService);
+        this.rpcApiService.setResyncListener(this);
+        // DM
+        // DeviceMonitor has to be available before netconfSubscriptionManager is
+        // configured
+        LOG.debug("start DeviceMonitor Service");
+        this.deviceMonitor = new DeviceMonitorImpl(dataBroker, odlEventListener);
+
+        // netconfSubscriptionManager should be the last one because this is a callback
+        // service
+        LOG.debug("start NetconfSubscriptionManager Service");
+        // this.netconfSubscriptionManager = new
+        // NetconfSubscriptionManagerOfDeviceManager(this, dataBroker);
+        // this.netconfSubscriptionManager.register();
+        this.netconfChangeListener = new NetconfChangeListener(this, dataBroker);
+        this.netconfChangeListener.register();
+
+        synchronized (initialized) {
+            initialized = true;
         }
 
         LOG.info("Session Initiated end");

@@ -9,3 +9,4 @@ yang-gen-sal/
 *.swp
 dist/
 bin/
+etc/

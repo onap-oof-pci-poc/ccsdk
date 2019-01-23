@@ -1,23 +1,3 @@
-/*******************************************************************************
- * ============LICENSE_START=======================================================
- * ONAP : ccsdk feature sdnr wt
- *  ================================================================================
- * Copyright (C) 2019 highstreet technologies GmbH Intellectual Property.
- * All rights reserved.
- * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
- ******************************************************************************/
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl;
 
 import java.io.IOException;
@@ -29,6 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.IniConfigurationFile;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.IniConfigurationFile.ConfigurationException;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.HtDevicemanagerConfiguration.ISubConfigHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -141,24 +122,24 @@ public class AaiConfig extends BaseSubConfig {
                 String value;
                 value = aaiProperties.getRemoteUrl();
                 if (value != null) {
-					defBaseUrl = value;
-				}
+                    defBaseUrl = value;
+                }
                 value = aaiProperties.getPCKS12CertFilename();
                 if (value != null) {
-					defPCKSCertFilename = value;
-				}
+                    defPCKSCertFilename = value;
+                }
                 value = aaiProperties.getPCKS12Passphrase();
                 if (value != null) {
-					defPCKSPassphrase = value;
-				}
+                    defPCKSPassphrase = value;
+                }
                 value = aaiProperties.getApplicationIdentifier();
                 if (value != null) {
-					defApplicationId = value;
-				}
+                    defApplicationId = value;
+                }
             }
         } else {
-			LOG.debug("no aaiclient.properties file found");
-		}
+            LOG.debug("no aaiclient.properties file found");
+        }
 
 
         this.baseUrl = this.getString(PROPERTY_KEY_BASEURL, defBaseUrl);
@@ -189,8 +170,8 @@ public class AaiConfig extends BaseSubConfig {
                 !this.hasKey(PROPERTY_KEY_TRUSTALLCERTS) || !this.hasKey(PROPERTY_KEY_PCKS12CERTFILENAME) ||
                 !this.hasKey(PROPERTY_KEY_PCKS12PASSPHRASE);
         if(missing) {
-			LOG.debug("some params missing in config file");
-		}
+            LOG.debug("some params missing in config file");
+        }
         //re-save if external aaiproperties file changed to show that params are submitted internally
         if(missing || aaiConfig!=null && aaiConfig!=this && (
                 !propertyEquals(aaiConfig.aaiPropFile, this.aaiPropFile) ||
@@ -252,41 +233,41 @@ public class AaiConfig extends BaseSubConfig {
         if (obj instanceof AaiConfig) {
             AaiConfig cobj = (AaiConfig) obj;
             if(!AaiConfig.propertyEquals(cobj.baseUrl, this.baseUrl)) {
-				return false;
-			}
+                return false;
+            }
             if(!AaiConfig.propertyEquals(cobj.apiVersion, this.apiVersion)) {
-				return false;
-			}
+                return false;
+            }
             if(!AaiConfig.propertyEquals(cobj.username, this.username)) {
-				return false;
-			}
+                return false;
+            }
             if(!AaiConfig.propertyEquals(cobj.password, this.password)) {
-				return false;
-			}
+                return false;
+            }
             if(!AaiConfig.propertyEquals(cobj.deleteOnMountPointRemoved, this.deleteOnMountPointRemoved)) {
-				return false;
-			}
+                return false;
+            }
             if(!AaiConfig.propertyEquals(cobj.headers, this.headers)) {
-				return false;
-			}
+                return false;
+            }
             if(!AaiConfig.propertyEquals(cobj.trustAllCerts, this.trustAllCerts)) {
-				return false;
-			}
+                return false;
+            }
             if(!AaiConfig.propertyEquals(cobj.aaiPropFile, this.aaiPropFile)) {
-				return false;
-			}
+                return false;
+            }
             if(!AaiConfig.propertyEquals(cobj.connectionTimeout, this.connectionTimeout)) {
-				return false;
-			}
+                return false;
+            }
             if(!AaiConfig.propertyEquals(cobj.pcks12CertificateFilename, this.pcks12CertificateFilename)) {
-				return false;
-			}
+                return false;
+            }
             if(!AaiConfig.propertyEquals(cobj.pcks12CertificatePassphrase, this.pcks12CertificatePassphrase)) {
-				return false;
-			}
+                return false;
+            }
             if(!AaiConfig.propertyEquals(cobj.applicationIdentifier, this.applicationIdentifier)) {
-				return false;
-			}
+                return false;
+            }
 
             /*
             if (!((cobj.baseUrl == null && this.baseUrl == null) || cobj.baseUrl.equals(this.baseUrl)))
@@ -312,18 +293,18 @@ public class AaiConfig extends BaseSubConfig {
     public String getBaseUrl() {
         String url=this.baseUrl;
         if(!url.endsWith("/")) {
-			url+="/";
-		}
+            url+="/";
+        }
         if(this.apiVersion.startsWith("/")) {
-			this.apiVersion=this.apiVersion.substring(1);
-		}
+            this.apiVersion=this.apiVersion.substring(1);
+        }
         return url+this.apiVersion;
     }
 
     public Map<String, String> getHeaders() {
         if (this.headers == null) {
-			this.headers = new HashMap<>();
-		}
+            this.headers = new HashMap<>();
+        }
         this.headers.put(HEADER_KEY_APPLICATION, this.applicationIdentifier);
         String s = this.headers.getOrDefault("Authorization", null);
         if (nullorempty(s) && !nullorempty(this.username) && !nullorempty(this.password)) {
@@ -349,8 +330,8 @@ public class AaiConfig extends BaseSubConfig {
             int i = 0;
             for (Entry<String, String> entry : headers.entrySet()) {
                 if (i > 0) {
-					r += ",";
-				}
+                    r += ",";
+                }
                 r += "\"" + entry.getKey() + ":" + entry.getValue() + "\"";
                 i++;
             }
@@ -384,19 +365,19 @@ public class AaiConfig extends BaseSubConfig {
 
     public static AaiConfig getAai(IniConfigurationFile config, ISubConfigHandler configHandler) {
         if (aaiConfig == null) {
-			try {
+            try {
                 aaiConfig = new AaiConfig(config, configHandler);
             } catch (ConfigurationException e) {
                 aaiConfig = AaiConfig.getDefaultConfiguration();
             }
-		}
+        }
         return aaiConfig;
     }
 
     public static AaiConfig reload() {
         if (aaiConfig == null) {
-			return null;
-		}
+            return null;
+        }
         AaiConfig tmpConfig;
         try {
             tmpConfig = new AaiConfig(aaiConfig.getConfig(), aaiConfig.getConfigHandler(), false);
