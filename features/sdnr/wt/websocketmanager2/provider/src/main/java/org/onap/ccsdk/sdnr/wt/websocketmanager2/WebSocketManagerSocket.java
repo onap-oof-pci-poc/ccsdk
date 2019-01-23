@@ -1,4 +1,4 @@
-package org.opendaylight.mwtn.impl;
+package org.onap.ccsdk.sdnr.wt.websocketmanager2;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import java.util.Random;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 import org.json.JSONObject;
-import org.opendaylight.mwtn.impl.utils.UserScopes;
+import org.onap.ccsdk.sdnr.wt.websocketmanager2.utils.UserScopes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +53,6 @@ public class WebSocketManagerSocket extends WebSocketAdapter {
 	@Override
 	protected void finalize() throws Throwable {
 		sessionIds.remove(this.sessionId);
-		super.finalize();
 	}
 	private static String _genSessionId() {
 		Random rnd=new Random();
@@ -74,7 +73,6 @@ public class WebSocketManagerSocket extends WebSocketAdapter {
 
 	@Override
 	public void onWebSocketBinary(byte[] payload, int offset, int len) {
-		// TODO Auto-generated method stub
 		super.onWebSocketBinary(payload, offset, len);
 	}
 

@@ -1,4 +1,4 @@
-package org.opendaylight.mwtn.impl.websocket;
+package org.onap.ccsdk.sdnr.wt.websocketmanager2.websocket;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -15,7 +15,6 @@ public class SyncWebSocketClient extends WebSocketClient {
 
 	public SyncWebSocketClient(URI serverUri) {
 		super(serverUri);
-		// TODO Auto-generated constructor stub
 	}
 
 	public SyncWebSocketClient(String uri) throws URISyntaxException {
@@ -24,54 +23,51 @@ public class SyncWebSocketClient extends WebSocketClient {
 
 	@Override
 	public void onClose(int arg0, String arg1, boolean arg2) {
-		// TODO Auto-generated method stub
+		LOG.debug("socket closed: {} {} {}", arg0, arg1, arg2);
 
 	}
 
 	@Override
 	public void onError(Exception arg0) {
-		// TODO Auto-generated method stub
+		LOG.warn("error on socket: {}", arg0.getMessage());
 
 	}
 
 	@Override
 	public void onMessage(String arg0) {
-		// TODO Auto-generated method stub
+		LOG.debug("received message: {}", arg0);
 
 	}
 
 	@Override
 	public void onOpen(ServerHandshake arg0) {
-		LOG.debug("ws opened");
-		if(this.messageToSend!=null)
-		{
-			LOG.debug("try to send: "+this.messageToSend);
+		LOG.debug("socket opened");
+		if (this.messageToSend != null) {
+			LOG.debug("try to send: " + this.messageToSend);
 			this.send(this.messageToSend);
-			this.messageToSend=null;
+			this.messageToSend = null;
 		}
 
 	}
 
-	public void openAndSendAsync(String message)
-	{
-		this.messageToSend=message;
+	public void openAndSendAsync(String message) {
+		this.messageToSend = message;
 		this.connect();
 	}
-	public void openAndSendAndCloseSync(String message)
-	{
+
+	public void openAndSendAndCloseSync(String message) {
 		try {
 			this.connectBlocking();
 		} catch (InterruptedException e) {
-			LOG.warn("problem connecting:"+e.getMessage());
+			LOG.warn("problem connecting:" + e.getMessage());
 		}
 		this.send(message);
 		try {
 			this.closeBlocking();
 		} catch (InterruptedException e) {
-			LOG.warn("problem disconnecting:"+e.getMessage());
+			LOG.warn("problem disconnecting:" + e.getMessage());
 
 		}
 	}
-
 
 }

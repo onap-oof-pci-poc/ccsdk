@@ -1,4 +1,4 @@
-package org.opendaylight.mwtn.impl;
+package org.onap.ccsdk.sdnr.wt.websocketmanager2;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -8,11 +8,11 @@ import java.util.concurrent.Future;
 import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 import org.json.JSONObject;
-import org.opendaylight.mwtn.impl.WebSocketManagerSocket.EventInputCallback;
-import org.opendaylight.mwtn.impl.utils.AkkaConfig;
-import org.opendaylight.mwtn.impl.utils.AkkaConfig.ClusterConfig;
-import org.opendaylight.mwtn.impl.utils.AkkaConfig.ClusterNodeInfo;
-import org.opendaylight.mwtn.impl.websocket.SyncWebSocketClient;
+import org.onap.ccsdk.sdnr.wt.websocketmanager2.WebSocketManagerSocket.EventInputCallback;
+import org.onap.ccsdk.sdnr.wt.websocketmanager2.utils.AkkaConfig;
+import org.onap.ccsdk.sdnr.wt.websocketmanager2.utils.AkkaConfig.ClusterConfig;
+import org.onap.ccsdk.sdnr.wt.websocketmanager2.utils.AkkaConfig.ClusterNodeInfo;
+import org.onap.ccsdk.sdnr.wt.websocketmanager2.websocket.SyncWebSocketClient;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.websocketmanager.rev150105.WebsocketEventInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.websocketmanager.rev150105.WebsocketEventOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.websocketmanager.rev150105.WebsocketEventOutputBuilder;

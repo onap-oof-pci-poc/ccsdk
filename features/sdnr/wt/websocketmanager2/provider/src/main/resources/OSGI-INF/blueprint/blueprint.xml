@@ -4,8 +4,7 @@
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs">
 
-    <bean id="wsServlet">
-        class="org.opendaylight.mwtn.WebSocketManager"
+    <bean id="wsServlet" class="org.onap.ccsdk.sdnr.wt.websocketmanager2.WebSocketManager">
     </bean>
 
    <service interface="org.eclipse.jetty.websocket.servlet.WebSocketServlet" ref="wsServlet">

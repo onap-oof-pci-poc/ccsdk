@@ -1,4 +1,4 @@
-package org.opendaylight.mwtn.impl.utils;
+package org.onap.ccsdk.sdnr.wt.websocketmanager2.utils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -6,13 +6,17 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.onap.ccsdk.sdnr.wt.websocketmanager2.WebSocketManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
 public class AkkaConfig{
 
-
-
+	private static final Logger LOG = LoggerFactory.getLogger(WebSocketManager.class.getName());
+	
 	public static class ClusterNodeInfo
 	{
 		@Override
@@ -104,21 +108,45 @@ public class AkkaConfig{
 	}
 
 	private static final String DEFAULT_FILENAME = "configuration/initial/akka.conf";
-	private final String filename;
+	private final File file;
+	private final String resourceFilename;
+	private final String fileContent;
 	private ClusterConfig cluserConfig;
 	public ClusterConfig getClusterConfig() {return this.cluserConfig;}
 
-	private AkkaConfig(String filename) {
-		this.filename = filename;
+	private AkkaConfig(File file,boolean isResource) {
+		this.file=isResource?null:file;
+		this.fileContent=null;
+		this.resourceFilename=isResource?file.getAbsolutePath():null;
 	}
+	private AkkaConfig(String fileContent) {
+		this.file = null;
+		this.fileContent = fileContent;
+		this.resourceFilename = null;
+	}
+	
+	
 	@Override
 	public String toString() {
-		return "AkkaConfig [filename=" + filename + ", cluserConfig=" + cluserConfig + "]";
+		return "AkkaConfig [filename=" + file + ", cluserConfig=" + cluserConfig + "]";
 	}
 
 	private void loadFromFile() throws Exception {
-		Config cfg=ConfigFactory.parseFile(new File(this.filename));
-		this.cluserConfig=new ClusterConfig(cfg.getConfig("odl-cluster-data").getConfig("akka").getConfig("cluster"));
+		Config cfg=null;
+		if(this.file!=null)
+			cfg=ConfigFactory.parseFile(this.file);
+		else if(this.fileContent!=null)
+			cfg=ConfigFactory.parseString(this.fileContent);
+		else if(this.resourceFilename!=null)
+			cfg=ConfigFactory.parseResources(this.getClass(), this.resourceFilename);
+		
+		if(cfg!=null)
+			this.cluserConfig=new ClusterConfig(cfg.getConfig("odl-cluster-data").getConfig("akka").getConfig("cluster"));
+		else
+		{
+			LOG.warn("unable to parse config file");
+			this.cluserConfig=null;
+		}
 	}
 
 	public boolean isCluster()
@@ -132,11 +160,16 @@ public class AkkaConfig{
 
 	public static AkkaConfig load(String filename) throws Exception
 	{
-		AkkaConfig cfg=new AkkaConfig(filename);
+		return load(filename,false);
+	}
+	public static AkkaConfig load(String filename,boolean isResource) throws Exception
+	{
+		AkkaConfig cfg=new AkkaConfig(new File(filename),isResource);
 		cfg.loadFromFile();
 
 		return cfg;
 	}
+
 
 
 

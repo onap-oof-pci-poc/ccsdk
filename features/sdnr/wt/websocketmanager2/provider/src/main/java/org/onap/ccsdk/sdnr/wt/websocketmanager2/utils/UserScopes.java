@@ -1,4 +1,4 @@
-package org.opendaylight.mwtn.impl.utils;
+package org.onap.ccsdk.sdnr.wt.websocketmanager2.utils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
