@@ -284,7 +284,20 @@
       <classifier>repo</classifier>
       <type>zip</type>
     </dependency>
-
+<dependency>
+      <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
+      <artifactId>sdnr-wt-odlux-core-installer</artifactId>
+      <version>${ccsdk.features.version}</version>
+      <classifier>repo</classifier>
+      <type>zip</type>
+    </dependency>
+<dependency>
+      <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
+      <artifactId>sdnr-wt-odlux-apps-installer</artifactId>
+      <version>${ccsdk.features.version}</version>
+      <classifier>repo</classifier>
+      <type>zip</type>
+    </dependency>
     </dependencies>
 
     <build>
