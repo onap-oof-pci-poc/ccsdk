@@ -1,1 +1,0 @@
-require.config({"paths":{"app":"app.js?v=db05781c63761076ab9e"},"baseUrl":""})

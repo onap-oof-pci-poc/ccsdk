@@ -1,10 +1,40 @@
-<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
-    <bean id="loader-provider" class="org.onap.ccsdk.features.sdnr.wt.odlux.loader.OdluxLoader"/>
+<?xml version="1.0" encoding="UTF-8"?>
 
-    <reference id="onBindService" availability="mandatory" activation="eager" interface="org.osgi.service.http.HttpService">
-      <reference-listener ref="loader-provider" bind-method="onBindService" unbind-method="onUnbindService"/>
-    </reference>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs">
 
-    <service id="serviceRegistration" interface="org.onap.ccsdk.features.sdnr.wt.odlux.loader.OdluxModuleLoader" ref="loader-provider"/>
+    <bean id="indexServlet"
+        class="org.onap.ccsdk.features.sdnr.wt.odlux.IndexServlet">
+    </bean>
 
+   <service interface="javax.servlet.http.HttpServlet" ref="indexServlet">
+        <service-properties>
+            <entry key="alias" value="/index2.html" />
+        </service-properties>
+    </service>
+    
+<!--     <bean id="rootServlet" -->
+<!--         class="com.highstreet.technologies.odlux.RootServlet"> -->
+<!--     </bean> -->
+
+<!--    <service interface="javax.servlet.http.HttpServlet" ref="rootServlet"> -->
+<!--         <service-properties> -->
+<!--             <entry key="alias" value="/" /> -->
+<!--         </service-properties> -->
+<!--     </service> -->
+
+    <bean id="resFilesServlet"
+        class="org.onap.ccsdk.features.sdnr.wt.odlux.ResFilesServlet">
+    </bean>
+
+   <service interface="javax.servlet.http.HttpServlet" ref="resFilesServlet">
+        <service-properties>
+            <entry key="alias" value="/odlux" />
+        </service-properties>
+    </service>
+    
+    <bean id="loadersvc" class="org.onap.ccsdk.features.sdnr.wt.odlux.model.bundles.OdluxBundleLoaderImpl"/>
+    <service id="serviceRegistration" interface="org.onap.ccsdk.features.sdnr.wt.odlux.model.bundles.OdluxBundleLoader" ref="loadersvc"/>
+    
 </blueprint>

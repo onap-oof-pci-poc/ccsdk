@@ -53,7 +53,7 @@
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>sdnr-wt-odlux-loader-provider</artifactId>
+			<artifactId>sdnr-wt-odlux-core-provider</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 

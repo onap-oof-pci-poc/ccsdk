@@ -16,12 +16,16 @@
 	<artifactId>sdnr-wt-odlux-core-top</artifactId>
 	<version>0.3.2</version>
 	<packaging>pom</packaging>
-	<name>odlux-loader</name>
+	<name>odlux-core</name>
 
+	<properties>
+		<feature-name>sdnr-wt-odlux-core</feature-name>
+	</properties>
 
 	<modules>
 		<module>model</module>
 		<module>provider</module>
 		<module>features</module>
+		<module>installer</module>
 	</modules>
 </project>
