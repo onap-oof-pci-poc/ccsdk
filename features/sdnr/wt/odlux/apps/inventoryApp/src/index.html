@@ -15,8 +15,9 @@
   <script type="text/javascript" src="./config.js"></script>
   <script>
     // run the application
-    require(["app","inventoryApp"], function (app) {
-      app("./app.tsx")
+    require(["app", "inventoryApp"], function (app, inventoryApp) {
+      inventoryApp.register();
+      app("./app.tsx");
     });
   </script>
 </body>

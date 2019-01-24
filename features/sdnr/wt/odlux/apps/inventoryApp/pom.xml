@@ -3,22 +3,27 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
+	<parent>
+		<groupId>org.onap.ccsdk.parent</groupId>
+		<artifactId>odlparent</artifactId>
+		<version>1.1.2</version>
+		<relativePath />
+	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
-	<artifactId>odlux-app-inventoryApp</artifactId>
-	<version>0.7.3-SNAPSHOT</version>
-	<packaging>jar</packaging>
-	<name>odlux-app-inventoryApp</name>
-	
-	
-	
+	<artifactId>sdnr-wt-odlux-app-inventoryApp</artifactId>
+	<version>0.3.2</version>
+	<packaging>bundle</packaging>
+	<name>sdnr-wt-odlux-app-inventoryApp</name>
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>sdnr-wt-odlux-core-model</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
 	<build>
-		<resources>
-			<resource>
-				<directory>dist</directory>
-				<targetPath>odlux</targetPath>
-			</resource>
-		</resources>
+		<sourceDirectory>src2/main/java</sourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -27,7 +32,7 @@
 				<executions>
 					<execution>
 						<id>build with yarn</id>
-						<phase>compile</phase>
+						<phase>initialize</phase>
 						<goals>
 							<goal>exec</goal>
 						</goals>
@@ -40,10 +45,32 @@
 							<workingDirectory>${basedir}</workingDirectory>
 						</configuration>
 					</execution>
-
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Import-Package>org.onap.ccsdk.features.sdnr.wt.odlux.model.*,com.opensymphony.*</Import-Package>
+						<Private-Package></Private-Package>
+					</instructions>
+				</configuration>
+			</plugin>
 		</plugins>
+		<resources>
+			<resource>
+				<directory>dist</directory>
+				<targetPath>odlux</targetPath>
+			</resource>
+			<resource>
+				<directory>src2/main/resources</directory>
+			</resource>
+		</resources>
 	</build>
-
 </project>
