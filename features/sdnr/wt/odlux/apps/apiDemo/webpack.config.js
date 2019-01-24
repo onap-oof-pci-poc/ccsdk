@@ -6,13 +6,11 @@
 
 "use strict";
 
+const path = require("path");
 const webpack = require("webpack");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const path = require("path");
-const process = require("process");
-const autoprefixer = require("autoprefixer");
+const requirejsPlugin = require('requirejs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 // const __dirname = (path => path.replace(/^([a-z]\:)/, c => c.toUpperCase()))(process.__dirname());
 
@@ -59,12 +57,12 @@ module.exports = (env) => [{
       }]
     }]
   },
-
   optimization: {
     noEmitOnErrors: true,
-    namedModules: env !== "release"
+    namedModules: env !== "release",
+    minimize: false,
+    minimizer: [],
   },
-
   plugins: [
     //  new CopyWebpackPlugin([{
     //    from: '../../../framework/dist/**.*',
@@ -85,18 +83,6 @@ module.exports = (env) => [{
         "process.env": {
           NODE_ENV: "'production'",
           VERSION: JSON.stringify(require("./package.json").version)
-        }
-      }),
-      new UglifyJsPlugin({
-        sourceMap: true,
-        uglifyOptions: {
-          mangle: true,
-          compress: {
-            drop_console: true,
-            drop_debugger: true,
-            warnings: true
-          },
-          warnings: true
         }
       })
     ] : [
