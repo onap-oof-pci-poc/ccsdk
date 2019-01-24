@@ -1,8 +1,9 @@
 import * as React from "react"; 
 import { withRouter, RouteComponentProps, Route, Switch, Redirect } from 'react-router-dom';
 
-import { faAddressBook } from '@fortawesome/free-solid-svg-icons';
+import { faAddressBook, faRegistered } from '@fortawesome/free-solid-svg-icons';
 
+import { subscribe, IFormatedMessage } from '../../../framework/src/services/notificationService';
 import applicationManager from '../../../framework/src/services/applicationManager';
 import connect, { Connect } from '../../../framework/src/flux/connect';
 
@@ -25,12 +26,13 @@ const App = (props: AppProps) => (
  
 const FinalApp = withRouter(connect()(App)); 
 
-applicationManager.registerApplication({ 
-  name: "demoApp",
-  icon: faAddressBook,
-  rootComponent: FinalApp,
-  rootActionHandler: demoAppRootHandler,
-  exportedComponents: { counter: Counter },
-  menuEntry: "Demo App"
-});
-
+export function register() {
+  const applicationApi = applicationManager.registerApplication({
+    name: "demoApp",
+    icon: faAddressBook,
+    rootComponent: FinalApp,
+    rootActionHandler: demoAppRootHandler,
+    exportedComponents: { counter: Counter },
+    menuEntry: "Demo App"
+  });
+}
