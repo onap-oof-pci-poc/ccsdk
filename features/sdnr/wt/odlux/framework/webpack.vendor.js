@@ -6,9 +6,10 @@
 
 "use strict";
 
-const webpack = require("webpack");
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const path = require("path");
+const webpack = require("webpack");
+
+const TerserPlugin = require('terser-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const extractCSS = new ExtractTextPlugin('vendor.css');
 
@@ -80,10 +81,10 @@ module.exports = (env) => [{
   },
 
   optimization: {
-
     noEmitOnErrors: true,
     namedModules: true,
-
+    minimize: false,
+    minimizer: [],
   },
 
   plugins: [
@@ -98,18 +99,6 @@ module.exports = (env) => [{
         "process.env": {
           NODE_ENV: "'production'",
           VERSION: JSON.stringify(require("./package.json").version)
-        }
-      }),
-      new UglifyJsPlugin({
-        sourceMap: true,
-        uglifyOptions: {
-          mangle: true,
-          compress: {
-            drop_console: true,
-            drop_debugger: true,
-            warnings: true
-          },
-          warnings: true
         }
       })
     ] : [

@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { ColumnModel } from './columnModel';
+import { ColumnModel, ColumnType } from './columnModel';
 import { withStyles, WithStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 import TableSortLabel from '@material-ui/core/TableSortLabel';
@@ -17,7 +17,7 @@ interface IEnhancedTableHeadComponentProps {
   order: 'asc' | 'desc';
   orderBy: string | null;
   rowCount: number;
-  columns: ColumnModel[];
+  columns: ColumnModel<{}>[];
 }
 
 class EnhancedTableHeadComponent extends React.Component<IEnhancedTableHeadComponentProps> {
@@ -43,12 +43,12 @@ class EnhancedTableHeadComponent extends React.Component<IEnhancedTableHeadCompo
             return (
               <TableCell
                 key={ col.property }
-                numeric={ col.numeric || false }
+                align={ col.type === ColumnType.numeric ? 'right' : 'left' } 
                 padding={ col.disablePadding ? 'none' : 'default' }
                 sortDirection={ orderBy === (col.property) ? order : false }
                 style={ style }
               >
-                { col.disableSorting
+                { col.disableSorting || (col.type === ColumnType.custom)
                   ? <TableSortLabel
                     active={ false }
                     direction={ undefined }
@@ -57,7 +57,7 @@ class EnhancedTableHeadComponent extends React.Component<IEnhancedTableHeadCompo
                   </TableSortLabel>
                   : <Tooltip
                     title="Sort"
-                    placement={ col.numeric ? 'bottom-end' : 'bottom-start' }
+                    placement={ col.type === ColumnType.numeric ? 'bottom-end' : 'bottom-start' }
                     enterDelay={ 300 }
                   >
                     <TableSortLabel

@@ -1,11 +1,23 @@
 
+import * as React from 'react';
 
-export type ColumnModel = {
+export enum ColumnType {
+  text,
+  numeric,
+  custom
+}
+
+type CustomControl<TData> = {
+  rowData: TData
+}
+
+export type ColumnModel<TData> = {
   property: string ;
   title?: string;
-  numeric?: boolean;
+  type?: ColumnType;
   disablePadding?: boolean;
   width?: string | number;
   disableSorting?: boolean;
   disableFilter?: boolean;
+  customControl?: React.ComponentType<CustomControl<TData>>;  
 }

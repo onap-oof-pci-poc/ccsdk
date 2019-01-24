@@ -17,7 +17,7 @@ export const apiMiddleware = (store: MiddlewareArg<IApplicationStoreState>) => (
 
   // So the middleware doesn't get applied to every single action
   if (action instanceof ApiAction) {
-    const user = store && store.getState().framework.authentication.user;
+    const user = store && store.getState().framework.authenticationState.user;
     const token = user && user.token || null;
     let config = { headers: {} };
 
@@ -36,7 +36,7 @@ export const apiMiddleware = (store: MiddlewareArg<IApplicationStoreState>) => (
       }
     }
 
-    fetch(action.endpoint.replace(/\/{2,}/, '/'), config)
+    fetch(baseUrl + action.endpoint.replace(/\/{2,}/, '/'), config)
       .then(response =>
         response.json().then(data => ({ data, response }))
       )

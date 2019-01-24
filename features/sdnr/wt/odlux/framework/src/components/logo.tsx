@@ -19,14 +19,17 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import { WithStyles, withStyles, createStyles, Theme } from '@material-ui/core/styles'; // infra for styling
 
+
+import defaultLogo from '../assets/images/defaultLogo.svg';
+
 const styles = (theme: Theme) => createStyles({
   headerLogo: {
-    backgroundImage: "url(" + theme.design.url + ")",
+    backgroundImage: "url(" + (theme.design && theme.design.url || defaultLogo) + ")",
     backgroundColor: theme.palette.primary.main,
     backgroundRepeat: "no-repeat",
-    backgroundSize: "auto " + theme.design.logoHeight + "px",
-    height: theme.design.logoHeight,
-    width: theme.design.width / theme.design.height * theme.design.logoHeight
+    backgroundSize: "auto " + (theme.design && theme.design.logoHeight || 70) + "px",
+    height: theme.design && theme.design.logoHeight || 70,
+    width: theme.design ? theme.design.width / theme.design.height * theme.design.logoHeight : 220
   }
 });
 

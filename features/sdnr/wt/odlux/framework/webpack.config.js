@@ -6,14 +6,11 @@
 
 "use strict";
 
+const path = require("path");
 const webpack = require("webpack");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
 const requirejsPlugin = require('requirejs-webpack-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const path = require("path");
-const process = require("process");
-const autoprefixer = require("autoprefixer");
+const TerserPlugin = require('terser-webpack-plugin');
 
 // const __dirname = (path => path.replace(/^([a-z]\:)/, c => c.toUpperCase()))(process.__dirname());
 
@@ -25,7 +22,13 @@ module.exports = (env) => [{
   context: path.resolve(__dirname, "src"),
 
   entry: {
-    app: ["./app.tsx", "./services/applicationManager","./components/material-table"],
+    app: [
+      "./app.tsx",
+      "./services", 
+      "./components/material-table", 
+      "./components/material-ui",
+      "./utilities/elasticSearch",
+      "./models"],
   },
 
   devtool: env === "release" ? false : "source-map",
@@ -57,12 +60,23 @@ module.exports = (env) => [{
       use: [{
         loader: "babel-loader"
       }]
+    }, {
+      test: /\.(png|gif|jpg|svg)$/,
+      use: [{
+        loader: 'url-loader',
+        options: {
+          limit: 10000,
+          name: './images/[hash].[ext]'
+        }
+      }]
     }]
   },
 
   optimization: {
     noEmitOnErrors: true,
     namedModules: true,
+    minimize: false,
+    minimizer: [],
   },
 
   plugins: [
@@ -82,7 +96,7 @@ module.exports = (env) => [{
       baseUrl: '',
       pathUrl: '',
       processOutput: function (assets) {
-        return 'require.config(' + JSON.stringify(assets,null,2) + ')';
+        return 'require.config(' + JSON.stringify(assets, null, 2) + ')';
       }
     }),
     // new HtmlWebpackPlugin({
@@ -111,18 +125,6 @@ module.exports = (env) => [{
           VERSION: JSON.stringify(require("./package.json").version)
         }
       }),
-     new UglifyJsPlugin({
-       sourceMap: true,
-       uglifyOptions: {
-         mangle: true,
-         compress: {
-           drop_console: true,
-           drop_debugger: true,
-           warnings: true
-         },
-         warnings: true
-       }
-     })
     ] : [
       new webpack.HotModuleReplacementPlugin(),
       new webpack.DefinePlugin({

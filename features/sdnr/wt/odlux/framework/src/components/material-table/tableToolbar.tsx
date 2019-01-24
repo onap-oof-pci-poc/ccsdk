@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { ColumnModel } from './columnModel';
 import { withStyles, WithStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 import IconButton from '@material-ui/core/IconButton';
@@ -9,11 +8,10 @@ import Typography from '@material-ui/core/Typography';
 import DeleteIcon from '@material-ui/icons/Delete';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import FilterListIcon from '@material-ui/icons/FilterList';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormGroup from '@material-ui/core/FormGroup';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import { lighten } from '@material-ui/core/styles/colorManipulator';
+import { SvgIconProps } from '@material-ui/core/SvgIcon/SvgIcon';
 
 const styles = (theme: Theme) => createStyles({
   root: {
@@ -50,6 +48,7 @@ const styles = (theme: Theme) => createStyles({
 interface ITableToolbarComponentProps extends WithStyles<typeof styles> {
   numSelected: number | null;
   title?: string;
+  customActionButtons?: { icon: React.ComponentType<SvgIconProps>, tooltip?: string, onClick: () => void }[];
   onToggleFilter: () => void;
   onExportToCsv: () => void;
 }
@@ -89,6 +88,15 @@ class TableToolbarComponent extends React.Component<ITableToolbarComponentProps,
         </div>
         <div className={ classes.spacer } />
         <div className={ classes.actions }>
+          { this.props.customActionButtons 
+            ? this.props.customActionButtons.map((action, ind) =>(
+              <Tooltip key={ `custom-action-${ ind }`} title={action.tooltip}>
+              <IconButton aria-label={ `custom-action-${ind}` } onClick={() => action.onClick() }>
+                <action.icon />
+              </IconButton>
+            </Tooltip>
+            ))
+            : null }
           { numSelected && numSelected > 0 ? (
             <Tooltip title="Delete">
               <IconButton aria-label="Delete">
@@ -110,20 +118,8 @@ class TableToolbarComponent extends React.Component<ITableToolbarComponentProps,
               <MoreIcon />
             </IconButton>
           </Tooltip>
-          <Menu
-            id="menu-appbar"
-            anchorEl={ this.state.anchorEl }
-            anchorOrigin={ {
-              vertical: 'top',
-              horizontal: 'right',
-            } }
-            transformOrigin={ {
-              vertical: 'top',
-              horizontal: 'right',
-            } }
-            open={ open }
-            onClose={ this.handleClose }
-          >
+          <Menu id="menu-appbar" anchorEl={ this.state.anchorEl } anchorOrigin={ { vertical: 'top', horizontal: 'right' } } 
+                transformOrigin={ { vertical: 'top', horizontal: 'right' } } open={ open } onClose={ this.handleClose } >
             <MenuItem onClick={ this.props.onExportToCsv }>Export as CSV</MenuItem>
           </Menu>
         </div>

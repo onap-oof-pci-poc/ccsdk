@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { ColumnModel } from './columnModel';
+import { ColumnModel, ColumnType } from './columnModel';
 import { withStyles, WithStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 
@@ -22,7 +22,7 @@ const styles = (theme: Theme) => createStyles({
 interface IEnhancedTableFilterComponentProps extends WithStyles<typeof styles> {
   onFilterChanged: (property: string, filterTerm: string) => void;
   filter: { [property: string]: string };
-  columns: ColumnModel[];
+  columns: ColumnModel<{}>[];
 }
 
 class EnhancedTableFilterComponent extends React.Component<IEnhancedTableFilterComponentProps> {
@@ -44,7 +44,7 @@ class EnhancedTableFilterComponent extends React.Component<IEnhancedTableFilterC
               padding={ col.disablePadding ? 'none' : 'default' }
               style={ style }
             >
-              { col.disableFilter ? null : <Input
+              { col.disableFilter || (col.type === ColumnType.custom) ? null : <Input
                 className={ classes.input }
                 inputProps={ {
                   'aria-label': 'Filter',

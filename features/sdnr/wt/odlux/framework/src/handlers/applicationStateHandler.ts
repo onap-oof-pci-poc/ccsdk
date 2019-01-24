@@ -1,20 +1,23 @@
 import { IActionHandler } from '../flux/action';
 import { SetTitleAction } from '../actions/titleActions';
 
+import { AddSnackbarNotification, RemoveSnackbarNotification } from '../actions/snackbarActions';
 import { AddErrorInfoAction, RemoveErrorInfoAction, ClearErrorInfoAction } from '../actions/errorActions';
 
 import { IconType } from '../models/iconDefinition';
 
 import { ErrorInfo } from '../models/errorInfo';
+import { SnackbarItem } from '../models/snackbarItem';
 
 export interface IApplicationState {
   title: string;
   icon?: IconType; 
 
   errors: ErrorInfo[];
+  snackBars: SnackbarItem[];
 }
 
-const applicationStateInit: IApplicationState = { title: "Loading ...", errors: [] };
+const applicationStateInit: IApplicationState = { title: "Loading ...", errors: [], snackBars:[] };
 
 export const applicationStateHandler: IActionHandler<IApplicationState> = (state = applicationStateInit, action) => {
   if (action instanceof SetTitleAction) {
@@ -49,7 +52,19 @@ export const applicationStateHandler: IActionHandler<IApplicationState> = (state
         errors: []
       };
     }
+  } else if (action instanceof AddSnackbarNotification) {
+    state = {
+      ...state,
+      snackBars: [
+        ...state.snackBars,
+        action.notification
+      ]
+    };
+  } else if (action instanceof RemoveSnackbarNotification) {
+    state = {
+      ...state,
+      snackBars: state.snackBars.filter(s => s.key !== action.key)
+    };
   }
-
   return state;
 };

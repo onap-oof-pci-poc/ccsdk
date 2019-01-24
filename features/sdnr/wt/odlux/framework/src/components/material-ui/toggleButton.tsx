@@ -3,8 +3,8 @@ import * as React from 'react';
 import classNames from 'classnames';
 import { withStyles, WithStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { fade } from '@material-ui/core/styles/colorManipulator';
-import ButtonBase, { ButtonBaseClassKey, ButtonBaseProps } from '@material-ui/core/ButtonBase';
-import { StandardProps } from '@material-ui/core';
+import ButtonBase from '@material-ui/core/ButtonBase';
+
 
 export const styles = (theme: Theme) => createStyles({
     /* Styles applied to the root element. */
@@ -98,7 +98,7 @@ interface IToggleButtonProps extends WithStyles<typeof styles> {
     onChange?: (event: React.FormEvent<HTMLElement>, value?: any) => void;
 }
 
-class ToggleButton extends React.Component<IToggleButtonProps> {
+class ToggleButtonComponent extends React.Component<IToggleButtonProps> {
     handleChange = (event: React.FormEvent<HTMLElement>) => {
         const { onChange, onClick, value } = this.props;
 
@@ -155,4 +155,5 @@ class ToggleButton extends React.Component<IToggleButtonProps> {
     public static muiName = 'ToggleButton';
 }
 
-export default withStyles(styles, { name: 'MuiToggleButton' })(ToggleButton);
+export const ToggleButton = withStyles(styles, { name: 'MuiToggleButton' })(ToggleButtonComponent);
+export default ToggleButton;

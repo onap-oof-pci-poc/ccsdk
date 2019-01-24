@@ -7,17 +7,22 @@ import applicationService from '../services/applicationManager';
 import { applicationRegistryHandler, IApplicationRegistration } from '../handlers/applicationRegistryHandler';
 import { authenticationStateHandler, IAuthenticationState } from '../handlers/authenticationHandler';
 import { applicationStateHandler, IApplicationState } from '../handlers/applicationStateHandler';
+import { navigationStateHandler, INavigationState } from '../handlers/navigationStateHandler';
 
-import api from '../middleware/api';
-import thunk from '../middleware/thunk';
-import logger from '../middleware/logger';
+import { setApplicationStore } from '../services/applicationApi';
+
+import apiMiddleware from '../middleware/api';
+import thunkMiddleware from '../middleware/thunk';
+import loggerMiddleware from '../middleware/logger';
+import routerMiddleware from '../middleware/navigation';
 
 export type MiddlewareApi = MiddlewareArg<IApplicationStoreState>;
 
 export interface IFrameworkStoreState {
   applicationRegistraion: IApplicationRegistration;
   applicationState: IApplicationState;
-  authentication: IAuthenticationState;
+  authenticationState: IAuthenticationState;
+  navigationState: INavigationState;
 }
 
 export interface IApplicationStoreState {
@@ -27,7 +32,8 @@ export interface IApplicationStoreState {
 const frameworkHandlers = combineActionHandler({
   applicationRegistraion: applicationRegistryHandler,
   applicationState: applicationStateHandler,
-  authentication: authenticationStateHandler
+  authenticationState: authenticationStateHandler,
+  navigationState: navigationStateHandler
 });
 
 export class ApplicationStore extends Store<IApplicationStoreState> { }
@@ -42,7 +48,9 @@ export const applicationStoreCreator = (): ApplicationStore => {
     return acc;
   }, { framework: frameworkHandlers } as any);
 
-  return new ApplicationStore(combineActionHandler(actionHandlers), chainMiddleware(logger, thunk, api, ...middlewares));
+  const applicationStore = new ApplicationStore(combineActionHandler(actionHandlers), chainMiddleware(loggerMiddleware, thunkMiddleware, routerMiddleware, apiMiddleware, ...middlewares));
+  setApplicationStore(applicationStore);
+  return applicationStore;
 }
 
 export default applicationStoreCreator;
