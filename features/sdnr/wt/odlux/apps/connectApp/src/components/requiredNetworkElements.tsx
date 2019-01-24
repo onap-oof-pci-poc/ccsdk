@@ -1,310 +1,197 @@
 import * as React from 'react';
-import connect from '../../../../framework/src/flux/connect';
-import TablePagination from "@material-ui/core/TablePagination";
-import Mount from '../components/mount';
-import Unmount from '../components/unmount';
-import Info from '../components/info';
-import Fcaps from '../components/fcaps';
-import EnhancedTableHeader from '../components/enhancedTableHeader';
-import PaginationActions from '../components/tablePaginationActions';
-import { Table, TableBody, TableCell, TableRow, TableFooter } from '@material-ui/core/';
-import { IHeaderCell, IEnhancedTableHeader } from '../models/enhancedTableHeader'
-import { IRequiredNetworkElements, IRequiredNetworkElementExtended } from '../models/requiredNetworkElements';
-import { IEnhancedTablePage } from '../models/tablePagination';
-import { connectNE, disconnectNE } from '../actions/requiredNetworkElementsActions'
-import { loadAllRequiredNetworkElementsAsync } from '../actions/requiredNetworkElementsActions';
+import { Theme, createStyles, withStyles, WithStyles } from '@material-ui/core/styles';
 
-interface INetworkListProps {
-  networkElements: IRequiredNetworkElementExtended[],
-  busy: boolean,
-  onLoadAllRequiredNetworkElements: () => void
-}
+import AddIcon from '@material-ui/icons/Add';
+import LinkIcon from '@material-ui/icons/Link';
+import LinkOffIcon from '@material-ui/icons/LinkOff';
+import RemoveIcon from '@material-ui/icons/RemoveCircleOutline';
+
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+
+import { MaterialTable, ColumnType, MaterialTableCtorType } from '../../../../framework/src/components/material-table';
+import { IApplicationStoreState } from '../../../../framework/src/store/applicationStore';
+import { connect, Connect, IDispatcher } from '../../../../framework/src/flux/connect';
+import { NavigateToApplication } from '../../../../framework/src/actions/navigationActions';
 
 
-function desc(a: IRequiredNetworkElementExtended, b: IRequiredNetworkElementExtended, orderBy: string) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
+import { RequiredNetworkElementType } from '../models/requiredNetworkElements';
+import { createRequiredNetworkElementsActions, createRequiredNetworkElementsProperties } from '../handlers/requiredNetworkElementsHandler';
+
+import EditNetworkElementDialog, { EditNetworkElementDialogMode } from './editNetworkElementDialog';
+import { Tooltip } from '@material-ui/core';
+import { NetworkElementBaseType } from 'models/networkElementBase';
+
+const styles = (theme: Theme) => createStyles({
+  connectionStatusConnected: {
+    color: 'darkgreen',
+  },
+  connectionStatusConnecting: {
+    color: theme.palette.primary.main,
+  },
+  connectionStatusDisconnected: {
+    color: 'red',
+  },
+  button: {
+    margin: 0,
+    padding: "6px 6px",
+    minWidth: 'unset'
+  },
+  spacer: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    display: "inline"
   }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
+});
 
-function stableSort(array: IRequiredNetworkElementExtended[], cmp: Function) {
-  array.sort((a, b) => {
-    return cmp(a, b);
-  });
-  return array;
-}
+const mapProps = (state: IApplicationStoreState) => ({
+  requiredNetworkElementsProperties: createRequiredNetworkElementsProperties(state),
+  requiredNetworkElements: state.connectApp.requiredNetworkElements,
+  mountedNetworkElements: state.connectApp.mountedNetworkElements
+});
 
+const mapDispatch = (dispatcher: IDispatcher) => ({
+  requiredNetworkElementsActions: createRequiredNetworkElementsActions(dispatcher.dispatch),
+  navigateToApplication: (applicationName: string, path?: string) => dispatcher.dispatch(new NavigateToApplication(applicationName, path)),
+});
 
-function getSorting(order: "asc" | "desc" | undefined, orderBy: string) {
-  return order === "desc"
-    ? (a: IRequiredNetworkElementExtended, b: IRequiredNetworkElementExtended) => desc(a, b, orderBy)
-    : (a: IRequiredNetworkElementExtended, b: IRequiredNetworkElementExtended) => -desc(a, b, orderBy);
-}
-
-function searchingFor(search: string) {
-  return function (x: any) {
-    return x.mountId.includes(search) || x.host.includes(search);
-  }
+type RequiredNetworkElementsListComponentProps = WithStyles<typeof styles> & Connect<typeof mapProps, typeof mapDispatch> & {
 
 }
+type RequiredNetworkElementsListComponentState = {
+  networkElementToEdit: RequiredNetworkElementType,
+  networkElementEditorMode: EditNetworkElementDialogMode
+}
 
+const emptyRequireNetworkElement = { mountId: '', host: '', port: 0 };
 
-const columns: IHeaderCell[] = [
-  {
-    id: "mountId",
-    numeric: false,
-    label: "Name"
-  },
-  {
-    id: "connectionStatus",
-    numeric: false,
-    label: "Connection Status"
-  },
-  {
-    id: "host",
-    numeric: false,
-    label: "IP Address"
-  },
-  {
-    id: "port",
-    numeric: true,
-    label: "Port"
-  },
-  {
-    id: "client",
-    numeric: false,
-    label: "Client"
-  },
-  {
-    id: "username",
-    numeric: false,
-    label: "User Name"
-  },
-  {
-    id: "password",
-    numeric: false,
-    label: "Password"
-  },
-  {
-    id: "actions",
-    numeric: false,
-    label: "Actions"
-  }
-];
+const RequiredNetworkElementTable = MaterialTable as MaterialTableCtorType<RequiredNetworkElementType>;
 
+export class RequiredNetworkElementsListComponent extends React.Component<RequiredNetworkElementsListComponentProps, RequiredNetworkElementsListComponentState> {
 
-export class RequiredNetworkElementsListComponent extends React.Component<INetworkListProps, IRequiredNetworkElements & IEnhancedTableHeader & IEnhancedTablePage> {
-  constructor(props: INetworkListProps, state: IRequiredNetworkElements & IEnhancedTableHeader & IEnhancedTablePage) {
-    super(props, state);
-    console.log("Props on 26: ", props);
-    //initiating state
+  constructor(props: RequiredNetworkElementsListComponentProps) {
+    super(props);
+
     this.state = {
-      networkElements: [],
-      onRequestSort: () => { },
-      onChangePage: () => { },
-      order: undefined,
-      orderBy: "",
-      headerColumns: [],
-      rowsPerPage: 5,
-      page: 0,
-      count: 0,
-      theme: [],
-      classes: '',
-      search: ''
+      networkElementToEdit: emptyRequireNetworkElement,
+      networkElementEditorMode: EditNetworkElementDialogMode.None
     };
-    this.searchHandler = this.searchHandler.bind(this);
   }
 
-  public searchHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ search: event.target.value });
-  };
-
-  public handleChangePage = (event: React.MouseEvent<HTMLButtonElement>, page: number) => {
-    this.setState({ page });
-  };
-
-  public handleChangeRowsPerPage = (event: any) => {
-    this.setState({ rowsPerPage: event.target.value });
-  };
-
-  public handleRequestSort = (event: React.MouseEvent<HTMLElement>, property: string) => {
-    const orderBy = property;
-    if (this.state.orderBy === property && this.state.order === "desc") {
-      this.setState({
-        order: "asc",
-        orderBy: orderBy
-      });
-    } else {
-      this.setState({
-        order: "desc",
-        orderBy: orderBy
-      });
-    }
-  };
+  //  private navigationCreator 
 
   render(): JSX.Element {
-    const {
-      networkElements,
-      busy
-    } = this.props;
-
-    const { rowsPerPage, page, search } = this.state;
-    const { order, orderBy } = this.state;
-
-    console.log("my data 171:", networkElements);
-    var networkElementsList: IRequiredNetworkElementExtended[];
-    if (this.state.networkElements.length > 0) {
-      networkElementsList = this.state.networkElements;
-    } else {
-      networkElementsList = networkElements;
-    }
-
-    if (this.state.search) {
-      networkElementsList = networkElementsList.filter(row => {
-        return row.mountId.includes(this.state.search) || row.host.includes(this.state.search);
-      })
-    }
+    const { classes } = this.props;
+    const { networkElementToEdit } = this.state;
+    const addRequireNetworkElementAction = {
+      icon: AddIcon, tooltip: 'Add', onClick: () => {
+        this.setState({
+          networkElementEditorMode: EditNetworkElementDialogMode.MountNetworkElementToRequiredNetworkElements,
+          networkElementToEdit: emptyRequireNetworkElement,
+        });
+      }
+    };
     return (
-      <div>
-        <Table >
-          <div>
-            Search: <input type="text"
-              onChange={ this.searchHandler }
-              value={ this.state.search }
-            />
-          </div>
-          <EnhancedTableHeader
-            onRequestSort={ this.handleRequestSort }
-            order={ order }
-            orderBy={ orderBy }
-            headerColumns={ columns }
-          />
-          <TableBody>
-            { stableSort(networkElementsList, getSorting(order, orderBy))
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .filter(searchingFor(this.state.search))
-              .map(element => (
-                <TableRow >
-                  <TableCell>{ element.mountId }</TableCell>
-                  <TableCell>{ element.connectionStatus }</TableCell>
-                  <TableCell>{ element.host }</TableCell>
-                  <TableCell>{ element.port.toString() }</TableCell>
-                  <TableCell>{ '' }</TableCell>
-                  <TableCell>{ element.username }</TableCell>
-                  <TableCell>{ '*****' }</TableCell>
-                  <TableCell><Mount onClickFunction={ this.mountDevice } rowElement={ element } />
-                    <Unmount onClickFunction={ this.unmountDevice } rowElement={ element } />
-                    <Info onClickFunction={ this.mountDevice } rowElement={ element } onHideOrDelete={ this.onHideOrDeleteNE }/> 
-                  </TableCell>
-                </TableRow>
-              )) 
-            }
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TablePagination
-                colSpan={ 3 }
-                count={ networkElementsList.length }
-                rowsPerPage={ rowsPerPage }
-                page={ page }
-                onChangePage={ this.handleChangePage }
-                onChangeRowsPerPage={ this.handleChangeRowsPerPage }
-                ActionsComponent={ PaginationActions }
-              />
-            </TableRow>
-          </TableFooter>
-        </Table>
+      <>
+        <RequiredNetworkElementTable customActionButtons={ [addRequireNetworkElementAction] } columns={ [
+          { property: "mountId", title: "Name", type: ColumnType.text },
+          {
+            property: "connectionStatus", title: "Connection Status", type: ColumnType.custom, disableFilter: true, disableSorting: true, customControl: ({ rowData }) => {
+              const unknownNetworkElement = this.props.mountedNetworkElements.elements.find(el => el.mountId === rowData.mountId);
+              const connectionStatus = unknownNetworkElement && unknownNetworkElement.connectionStatus || 'disconnected';
+              const cssClasses = connectionStatus === "connected"
+                ? classes.connectionStatusConnected
+                : connectionStatus === "disconnected"
+                  ? classes.connectionStatusDisconnected
+                  : classes.connectionStatusConnecting
+              return <div className={ cssClasses } >{ connectionStatus } </div>
 
-      </div>
+            }
+          },
+          { property: "host", title: "Host", type: ColumnType.text },
+          { property: "port", title: "Port", type: ColumnType.text },
+          // { property: "username", title: "Username", type: ColumnType.text },
+          // { property: "password", title: "Password", type: ColumnType.text },
+          {
+            property: "actions", title: "Actions", type: ColumnType.custom, customControl: ({ rowData }) => {
+              const unknownNetworkElement = this.props.mountedNetworkElements.elements.find(el => el.mountId === rowData.mountId);
+              const connectionStatus = unknownNetworkElement && unknownNetworkElement.connectionStatus || 'disconnected';
+              return (
+                <>
+                  <div className={ classes.spacer }>
+                    <Tooltip title={ "Mount" } ><IconButton className={ classes.button } onClick={ event => this.onOpenMountdNetworkElementsDialog(event, rowData) }><LinkIcon /></IconButton></Tooltip>
+                    <Tooltip title={ "Unmount" } ><IconButton className={ classes.button } onClick={ event => this.onOpenUnmountdNetworkElementsDialog(event, rowData) }><LinkOffIcon /></IconButton></Tooltip>
+                    <Tooltip title={ "Remove" } ><IconButton className={ classes.button } onClick={ event => this.onOpenRemoveRequiredNetworkElementDialog(event, rowData) } ><RemoveIcon /></IconButton></Tooltip>
+                  </div>
+                  <div className={ classes.spacer }>
+                    <Tooltip title={ "Info" } ><Button className={ classes.button } >I</Button></Tooltip>
+                  </div>
+                  <div className={ classes.spacer }>
+                    <Tooltip title={ "Fault" } ><Button className={ classes.button } onClick={ this.navigateToApplicationHandlerCreator("faultApp", rowData) } >F</Button></Tooltip>
+                    <Tooltip title={ "Configure" } ><Button className={ classes.button } onClick={ this.navigateToApplicationHandlerCreator("configureApp", rowData)} >C</Button></Tooltip>
+                    <Tooltip title={ "Accounting " } ><Button className={ classes.button } onClick={ this.navigateToApplicationHandlerCreator("accountingApp", rowData) }>A</Button></Tooltip>
+                    <Tooltip title={ "Performance" } ><Button className={ classes.button } onClick={ this.navigateToApplicationHandlerCreator("performanceApp", rowData) }>P</Button></Tooltip>
+                    <Tooltip title={ "Security" } ><Button className={ classes.button } onClick={ this.navigateToApplicationHandlerCreator("securityApp", rowData) }>S</Button></Tooltip>
+                  </div>
+                </>
+              )
+            }
+          },
+        ] } idProperty="mountId" { ...this.props.requiredNetworkElements } { ...this.props.requiredNetworkElementsActions } { ...this.props.requiredNetworkElementsProperties } asynchronus >
+        </RequiredNetworkElementTable>
+        <EditNetworkElementDialog
+          initialNetworkElement={ networkElementToEdit }
+          mode={ this.state.networkElementEditorMode }
+          onClose={ this.onCloseEditNetworkElementDialog }
+        />
+      </>
     );
   };
 
   public componentDidMount() {
-    this.props.onLoadAllRequiredNetworkElements();
+    this.props.requiredNetworkElementsActions.onRefresh();
   }
-  public onHideOrDeleteNE = (element: IRequiredNetworkElementExtended) => {
-    let currentNetworkElements: IRequiredNetworkElementExtended[] = [];
-    let networkElements: IRequiredNetworkElementExtended[] = [];
-    if(this.state.networkElements.length > 0) {
-      currentNetworkElements = this.state.networkElements;
-    } else {
-      currentNetworkElements = this.props.networkElements;
-    }
-    currentNetworkElements.forEach(ne => {
-      if(ne.mountId !== element.mountId) {
-        networkElements.push(ne);
-      }
+
+  private onOpenRemoveRequiredNetworkElementDialog = (event: React.MouseEvent<HTMLElement>, element: RequiredNetworkElementType) => {
+    this.setState({
+      networkElementToEdit: element,
+      networkElementEditorMode: EditNetworkElementDialogMode.RequiredNetworkElementToUnknownNetworkElements
     });
-    this.setState({networkElements: networkElements});
+    event.preventDefault();
+    event.stopPropagation();
   }
 
-  /**
-  * Connecting the device
-  */
-  public mountDevice = (element: IRequiredNetworkElementExtended) => {
-    console.log("Element selected to mount: ", element, this.state);
-    connectNE(element);
-    var networkElements: IRequiredNetworkElementExtended[];
-    console.log('element in 230:', this.state.networkElements);
+  private onOpenUnmountdNetworkElementsDialog = (event: React.MouseEvent<HTMLElement>, element: RequiredNetworkElementType) => {
+    this.setState({
+      networkElementToEdit: element,
+      networkElementEditorMode: EditNetworkElementDialogMode.UnmountNetworkElement
+    });
+    event.preventDefault();
+    event.stopPropagation();
+  }
 
-    if (this.state.networkElements.length > 0) {
-      networkElements = this.state.networkElements.map(ne => {
-        if (element.mountId === ne.mountId) {
-          return element;
-        } else {
-          return ne;
-        }
-      });
-    } else {
-      console.log('element in 240:', this.state.networkElements);
-      networkElements = this.props.networkElements.map(ne => {
-        if (element.mountId === ne.mountId) {
-          console.log('element:;', element);
-          return element;
-        } else {
-          console.log('ne;', ne);
-          return ne;
-        }
-      });
+  private onOpenMountdNetworkElementsDialog = (event: React.MouseEvent<HTMLElement>, element: RequiredNetworkElementType) => {
+    this.setState({
+      networkElementToEdit: element,
+      networkElementEditorMode: EditNetworkElementDialogMode.MountNetworkElement
+    });
+    event.preventDefault();
+    event.stopPropagation();
+  }
 
-      console.log('element in 244:', networkElements);
-    }
+  private onCloseEditNetworkElementDialog = () => {
+    this.setState({
+      networkElementEditorMode: EditNetworkElementDialogMode.None,
+      networkElementToEdit: emptyRequireNetworkElement,
+    });
+  }
 
-    this.setState({ networkElements: networkElements });
-  };
-
-  /**
-    * unmounting the device.
-    */
-  public unmountDevice = (element: IRequiredNetworkElementExtended) => {
-    console.log("Element selected to unmount: ", element, this.state);
-    disconnectNE(element.mountId);
-    console.log('came back from mounting');
-    var networkElements: IRequiredNetworkElementExtended[];
-    if (this.state.networkElements.length > 0) {
-      networkElements = this.state.networkElements.map(ne => {
-        if (element.mountId === ne.mountId) {
-          return element;
-        } else {
-          return ne;
-        }
-      });
-    } else {
-      networkElements = this.props.networkElements.map(ne => {
-        if (element.mountId === ne.mountId) {
-          return element;
-        } else {
-          return ne;
-        }
-      });
-    }
-    this.setState({ networkElements: networkElements });
-  };
+  private navigateToApplicationHandlerCreator = (applicationName: string, element: NetworkElementBaseType) => (event: React.MouseEvent<HTMLElement>) => {
+    this.props.navigateToApplication(applicationName, element.mountId);
+    event.preventDefault();
+    event.stopPropagation();
+  }
 }
 
-
-export default RequiredNetworkElementsListComponent;
+export const RequiredNetworkElementsList = withStyles(styles)(connect(mapProps, mapDispatch)(RequiredNetworkElementsListComponent));
+export default RequiredNetworkElementsList;

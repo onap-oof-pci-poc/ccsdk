@@ -1,27 +1,39 @@
-import * as React from "react";
-import { withRouter, RouteComponentProps, Route, Switch, Redirect } from 'react-router-dom';
+
 import { faPlug } from '@fortawesome/free-solid-svg-icons';
+
 import applicationManager from '../../../framework/src/services/applicationManager';
-import connect, { Connect } from '../../../framework/src/flux/connect';
+import { subscribe, IFormatedMessage } from '../../../framework/src/services/notificationService';
+
 import connectAppRootHandler from './handlers/connectAppRootHandler';
 import ConnectApplication  from './views/connectView';
+import { RemoveMountedNetworkElement, addMountedNetworkElementAsyncActionCreator } from './actions/mountedNetworkElementsActions' ;
+import { AddSnackbarNotification } from '../../../framework/src/actions/snackbarActions';
 
-type AppProps = RouteComponentProps & Connect;       
-const App = (props: AppProps) => (   
-  <Switch>                  
-    <Route exact path={`${props.match.path}`} component={ConnectApplication} />
-    <Redirect to={ `${ props.match.path }` } />
-  </Switch>
-);
+type ObjectNotification = {
+  counter: string;
+  nodeName: string;
+  objectId: string;
+  timeStamp: string;
+}
 
+export function register() {
+  const applicationApi = applicationManager.registerApplication({
+    name: "connectApp",
+    icon: faPlug,
+    rootComponent: ConnectApplication,
+    rootActionHandler: connectAppRootHandler,
+    menuEntry: "Connect App"
+  });
 
-const FinalApp = withRouter(connect()(App));
-
-applicationManager.registerApplication({  
-  name: "connectApp",
-  icon: faPlug,
-  rootComponent: FinalApp,
-  rootActionHandler: connectAppRootHandler,
-  menuEntry: "Connect App"
-}); 
-                                                                     
+  // subscribe to the websocket notifications
+  subscribe<ObjectNotification & IFormatedMessage>(["ObjectCreationNotification", "ObjectDeletionNotification"], (msg => {
+    const store = applicationApi && applicationApi.applicationStore;
+    if (msg && msg.notifType === "ObjectCreationNotification" && store) {
+      store.dispatch(addMountedNetworkElementAsyncActionCreator(msg.objectId));
+      store.dispatch(new AddSnackbarNotification({ message: `Adding network element [${ msg.objectId }]`, options: { variant: 'info' } }));
+    } else if (msg && msg.notifType === "ObjectDeletionNotification" && store) {
+      store.dispatch(new AddSnackbarNotification({ message: `Removing network element [${ msg.objectId }]`, options: { variant: 'info' } }));
+      store.dispatch(new RemoveMountedNetworkElement(msg.objectId));
+    }
+  }));
+}                                     

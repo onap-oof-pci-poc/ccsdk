@@ -1,12 +1,13 @@
 import { combineActionHandler } from '../../../../framework/src/flux/middleware';
-import { listRequiredHandler, IListRequired } from './requiredNetworkElementsHandler';
-import { listLogHandler, ILogListRequired } from './connectionStatusLogHandler';
-import { listUnknownHandler, IUnknownList} from './unknownNetworkElementsHandler';
+import { IRequiredNetworkElementsState, requiredNetworkElementsActionHandler  } from './requiredNetworkElementsHandler';
+import { IMountedNetworkElementsState, mountedNetworkElementsActionHandler } from './mountedNetworkElementsHandler';
+import { IConnectionStatusLogState, connectionStatusLogActionHandler } from './connectionStatusLogHandler';
 
 export interface IConnectAppStoreState {
-  listRequired: IListRequired;
-  listLog: ILogListRequired;
-  listUnknown: IUnknownList;
+
+  requiredNetworkElements: IRequiredNetworkElementsState;
+  mountedNetworkElements: IMountedNetworkElementsState;
+  connectionStatusLog: IConnectionStatusLogState;
 }
 
 declare module '../../../../framework/src/store/applicationStore' {
@@ -16,9 +17,9 @@ declare module '../../../../framework/src/store/applicationStore' {
 }
 
 const actionHandlers = {
-  listRequired: listRequiredHandler,
-  listLog: listLogHandler,
-  listUnknown: listUnknownHandler
+  requiredNetworkElements: requiredNetworkElementsActionHandler,
+  mountedNetworkElements: mountedNetworkElementsActionHandler,
+  connectionStatusLog: connectionStatusLogActionHandler
 };
 
 export const connectAppRootHandler = combineActionHandler <IConnectAppStoreState>(actionHandlers);

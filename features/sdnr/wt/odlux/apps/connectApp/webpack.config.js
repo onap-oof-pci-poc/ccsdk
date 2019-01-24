@@ -6,13 +6,10 @@
 
 "use strict";
 
+const path = require("path");
 const webpack = require("webpack");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const path = require("path");
-const process = require("process");
-const autoprefixer = require("autoprefixer");
+const TerserPlugin = require('terser-webpack-plugin');
 
 // const __dirname = (path => path.replace(/^([a-z]\:)/, c => c.toUpperCase()))(process.__dirname());
 
@@ -62,14 +59,11 @@ module.exports = (env) => [{
 
   optimization: {
     noEmitOnErrors: true,
-    namedModules: env !== "release"
+    namedModules: env !== "release",
+    minimize: false,
+    minimizer: [],
   },
-
   plugins: [
-    //  new CopyWebpackPlugin([{
-    //    from: '../../../framework/dist/**.*',
-    //    to: path.resolve(__dirname, "dist")
-    //  }]),
     new webpack.DllReferencePlugin({
       context: path.resolve(__dirname, "../../framework/src"),
       manifest: require("../../framework/dist/vendor-manifest.json"),
@@ -87,18 +81,6 @@ module.exports = (env) => [{
           VERSION: JSON.stringify(require("./package.json").version)
         }
       }),
-      new UglifyJsPlugin({
-        sourceMap: true,
-        uglifyOptions: {
-          mangle: true,
-          compress: {
-            drop_console: true,
-            drop_debugger: true,
-            warnings: true
-          },
-          warnings: true
-        }
-      })
     ] : [
       new webpack.DefinePlugin({
         "process.env": {
@@ -132,8 +114,12 @@ module.exports = (env) => [{
       colors: true
     },
     proxy: {
-      "/api": {
-        target: "http://localhost:3001",
+      "/restconf": {
+        target: "http://localhost:8181",
+        secure: false
+      },
+      "/database": {
+        target: "http://localhost:8181",
         secure: false
       }
     }

@@ -1,39 +1,18 @@
-import { IActionHandler } from '../../../../framework/src/flux/action';
-import { IRequiredNetworkElementExtended } from '../models/requiredNetworkElements';
-import { LoadAllRequiredNetworkElementsAction, AllrequiredNetworkElementLoadedAction } from '../actions/requiredNetworkElementsActions';
+import { createExternal,IExternalTableState } from '../../../../framework/src/components/material-table/utilities';
+import { createSearchDataHandler } from '../../../../framework/src/utilities/elasticSearch';
 
-export interface IListRequired {
-  networkelements: IRequiredNetworkElementExtended[];
-  busy: boolean;
-}
+import { RequiredNetworkElementType } from '../models/requiredNetworkElements';
+export interface IRequiredNetworkElementsState extends IExternalTableState<RequiredNetworkElementType> { }
 
-const listRequiredInit: IListRequired = {
-  networkelements: [],
-  busy: false
-};
+// create eleactic search material data fetch handler
+const requiredNetworkElementsSearchHandler = createSearchDataHandler<RequiredNetworkElementType>('mwtn/required-networkelement');
 
-export const listRequiredHandler: IActionHandler<IListRequired> = (state = listRequiredInit, action) => {
-  if (action instanceof LoadAllRequiredNetworkElementsAction) {
+export const {
+  actionHandler: requiredNetworkElementsActionHandler,
+  createActions: createRequiredNetworkElementsActions,
+  createProperties: createRequiredNetworkElementsProperties,
+  reloadAction: requiredNetworkElementsReloadAction,
 
-    state = {
-      ...state,
-      busy: true
-    };
-  
-  } else if (action instanceof AllrequiredNetworkElementLoadedAction) {
-    if (!action.error && action.Elements) {
-      state = {
-        ...state,
-        networkelements: action.Elements,
-        busy: false
-      };
-    } else {
-      state = {
-        ...state,
-        busy: false
-      };
-    }
-  }
+  // set value action, to change a value 
+} = createExternal<RequiredNetworkElementType>(requiredNetworkElementsSearchHandler, appState => appState.connectApp.requiredNetworkElements);
 
-  return state;
-};

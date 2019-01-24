@@ -1,39 +1,30 @@
-import { IActionHandler } from '../../../../framework/src/flux/action';
-import { LoadConnectionStatusLogAction, AllConnectionStatusLogAction } from '../actions/connectionStatusLogActions'
-import { ILogSource } from '../models/connectionStatusLog';
+import { createExternal,IExternalTableState } from '../../../../framework/src/components/material-table/utilities';
+import { createSearchDataHandler } from '../../../../framework/src/utilities/elasticSearch';
 
-export interface ILogListRequired {
-  connectionLog: ILogSource[];
-  busy: boolean;
-}
+import { ConnectionStatusLogType } from '../models/connectionStatusLog';
+export interface IConnectionStatusLogState extends IExternalTableState<ConnectionStatusLogType> { }
 
-const listLogInit: ILogListRequired = {
-  connectionLog: [],
-  busy: false
-};
+// create eleactic search material data fetch handler
+const connectionStatusLogSearchHandler = createSearchDataHandler<{ event: ConnectionStatusLogType }, ConnectionStatusLogType>('sdnevents_v1/eventlog', null,
+  (event) => ({
+    _id: event._id,
+    timeStamp: event._source.event.timeStamp,
+    objectId: event._source.event.objectId,
+    type: event._source.event.type,
+    elementStatus: event._source.event.type === 'ObjectCreationNotificationXml'
+      ? 'connected'
+      : event._source.event.type === 'ObjectDeletionNotificationXml'
+        ? 'disconnected'
+        : 'unknown'
+  }),
+  (name) => `event.${ name }`);
 
-export const listLogHandler: IActionHandler<ILogListRequired> = (state = listLogInit, action) => {
-  if (action instanceof LoadConnectionStatusLogAction) {
+export const {
+  actionHandler: connectionStatusLogActionHandler,
+  createActions: createConnectionStatusLogActions,
+  createProperties: createConnectionStatusLogProperties,
+  reloadAction: connectionStatusLogReloadAction,
 
-    state = {
-      ...state,
-      busy: true
-    };
-  
-  } else if (action instanceof AllConnectionStatusLogAction) {
-    if (!action.error && action.Elements) {
-      state = {
-        ...state,
-        connectionLog: action.Elements,
-        busy: false
-      };
-    } else {
-      state = {
-        ...state,
-        busy: false
-      };
-    }
-  }
+  // set value action, to change a value 
+} = createExternal<ConnectionStatusLogType>(connectionStatusLogSearchHandler, appState => appState.connectApp.connectionStatusLog);
 
-  return state;
-};

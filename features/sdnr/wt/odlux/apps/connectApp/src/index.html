@@ -15,7 +15,9 @@
   <script type="text/javascript" src="./config.js"></script>
   <script>
     // run the application
-    require(["app","connectApp"], function (app) {
+    require(["app","connectApp", "faultApp"], function (app, connectApp, faultApp) {
+      connectApp.register();
+      faultApp.register();
       app("./app.tsx")
     });
   </script>
