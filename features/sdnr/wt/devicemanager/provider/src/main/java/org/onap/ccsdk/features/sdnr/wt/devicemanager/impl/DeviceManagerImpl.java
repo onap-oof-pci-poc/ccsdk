@@ -43,6 +43,7 @@ import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.listener.NetconfChange
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.listener.ODLEventListener;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.ProblemNotificationXml;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.WebSocketServiceClient;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.WebSocketServiceClientImpl;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.WebSocketServiceClientImpl2;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.index.impl.IndexConfigService;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.index.impl.IndexMwtnService;
@@ -184,9 +185,12 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
         // start service for device maintenance service
         this.maintenanceService = new MaintenanceServiceImpl(htDatabase);
         // Websockets
-
-        this.webSocketService = new WebSocketServiceClientImpl2(rpcProviderRegistry);
-
+        try {
+            this.webSocketService = new WebSocketServiceClientImpl2(rpcProviderRegistry);
+        } catch (Exception e) {
+            LOG.error("Can not start websocket service. Loading mock class.",e);
+            this.webSocketService = new WebSocketServiceClientImpl();
+        }
         // DCAE
         this.dcaeProviderClient = new DcaeProviderClient(config, dbConfig.getCluster(), this);
 
