@@ -10,3 +10,5 @@ yang-gen-sal/
 dist/
 bin/
 etc/
+node_modules/
+.fbExcludeFilterFile
