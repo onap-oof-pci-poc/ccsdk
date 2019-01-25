@@ -51,7 +51,7 @@ public class WebSocketManagerSocket extends WebSocketAdapter {
 	/**
 	 * list of all sessionids
 	 */
-	private static final List<String> sessionIds=new ArrayList<>();
+	private static final List<String> sessionIds = new ArrayList<>();
 	/**
 	 * map of sessionid <=> UserScopes
 	 */
@@ -59,66 +59,84 @@ public class WebSocketManagerSocket extends WebSocketAdapter {
 	/**
 	 * map of class.hashCode <=> class
 	 */
-	private static final HashMap<String,WebSocketManagerSocket> clientList=new HashMap<>();
+	private static final HashMap<String, WebSocketManagerSocket> clientList = new HashMap<>();
 	private final String myUniqueSessionId;
 
+	private Session session = null;
 
-	public interface EventInputCallback
-	{
+	public interface EventInputCallback {
 		void onMessagePushed(final String message) throws Exception;
 	}
 
 	public WebSocketManagerSocket() {
-		this.myUniqueSessionId=_genSessionId();
+		this.myUniqueSessionId = _genSessionId();
 	}
+
 	@Override
 	protected void finalize() throws Throwable {
 		sessionIds.remove(this.myUniqueSessionId);
 	}
+
 	private static String _genSessionId() {
-		Random rnd=new Random();
-		String sid=String.valueOf(rnd.nextLong());
-		while(sessionIds.contains(sid)) {
-			sid=String.valueOf(rnd.nextLong());
+		Random rnd = new Random();
+		String sid = String.valueOf(rnd.nextLong());
+		while (sessionIds.contains(sid)) {
+			sid = String.valueOf(rnd.nextLong());
 		}
 		sessionIds.add(sid);
 		return sid;
 	}
+
 	@Override
 	public void onWebSocketText(String message) {
-		LOG.info(this.getRemote().getInetSocketAddress().toString()+" has sent "+ message);
-		if(!this.manageClientRequest(message)) {
+		LOG.info(this.getRemoteAdr() + " has sent " + message);
+		if (!this.manageClientRequest(message)) {
 			this.manageClientRequest2(message);
 		}
 
-		super.onWebSocketText(message);
 	}
 
 	@Override
 	public void onWebSocketBinary(byte[] payload, int offset, int len) {
-		super.onWebSocketBinary(payload, offset, len);
+
 	}
 
 	@Override
 	public void onWebSocketConnect(Session sess) {
+		this.session = sess;
 		clientList.put(String.valueOf(this.hashCode()), this);
-		LOG.debug("client connected from "+this.getRemote().getInetSocketAddress().toString());
-		super.onWebSocketConnect(sess);
+		LOG.debug("client connected from " + this.getRemoteAdr());
 	}
 
 	@Override
 	public void onWebSocketClose(int statusCode, String reason) {
 		clientList.remove(String.valueOf(this.hashCode()));
-		LOG.debug("client disconnected from "+this.getRemote().getInetSocketAddress().toString());
-		super.onWebSocketClose(statusCode, reason);
+		LOG.debug("client disconnected from " + this.getRemoteAdr());
 	}
 
 	@Override
 	public void onWebSocketError(Throwable cause) {
-		LOG.debug("error caused on "+this.getRemote().getInetSocketAddress().toString()+" :"+cause.getMessage());
-		super.onWebSocketError(cause);
+
+		LOG.debug("error caused on " + this.getRemoteAdr() + " :" + cause.getMessage());
+		// super.onWebSocketError(cause);
 	}
 
+	private String getRemoteAdr() {
+		String adr = "unknown";
+		try {
+			adr = this.session.getRemoteAddress().toString();
+		} catch (Exception e) {
+			LOG.debug("error resolving adr: {}", e.getMessage());
+		}
+		return adr;
+	}
+
+	/**
+	 * 
+	 * @param request is a json object
+	 *                {"data":"scopes","scopes":["scope1","scope2",...]}
+	 * @return if handled
+	 */
 	private boolean manageClientRequest(String request) {
 		boolean ret = false;
 		try {
@@ -130,10 +148,9 @@ public class WebSocketManagerSocket extends WebSocketAdapter {
 					String sessionId = this.getSessionId();
 					UserScopes clientDto = new UserScopes();
 					clientDto.setScopes(jsonMessage.getJSONArray(MSG_KEY_SCOPES));
-					clientDto.setUserId(sessionId);
 					userScopesList.put(sessionId, clientDto);
-					this.send("You are connected to the Opendaylight Websocket server and scopes are : " + request
-							+ "");
+					this.send(
+							"You are connected to the Opendaylight Websocket server and scopes are : " + request + "");
 				}
 			}
 		} catch (Exception e) {
@@ -143,23 +160,26 @@ public class WebSocketManagerSocket extends WebSocketAdapter {
 		}
 		return ret;
 	}
+
 	/*
 	 * broadcast message to all your clients
 	 */
 	private void manageClientRequest2(String request) {
 		try {
-			JSONObject o=new JSONObject(request);
-			if(o.has(KEY_NODENAME) && o.has(KEY_EVENTTYPE) && o.has(KEY_EVENTTYPE)) {
-				broadCast(o.getString(KEY_NODENAME),o.getString(KEY_EVENTTYPE),o.getString(KEY_XMLEVENT));
+			JSONObject o = new JSONObject(request);
+			if (o.has(KEY_NODENAME) && o.has(KEY_EVENTTYPE) && o.has(KEY_EVENTTYPE)) {
+				broadCast(o.getString(KEY_NODENAME), o.getString(KEY_EVENTTYPE), o.getString(KEY_XMLEVENT));
 			}
 		} catch (Exception e) {
-			LOG.warn("handle ws request failed:"+e.getMessage());
+			LOG.warn("handle ws request failed:" + e.getMessage());
 		}
 	}
+
 	private void send(String msg) {
 		try {
-			this.getRemote().sendString(msg);
-		} catch (IOException e) {
+			LOG.trace("sending {}", msg);
+			this.session.getRemote().sendString(msg);
+		} catch (Exception e) {
 			LOG.warn("problem sending message: " + e.getMessage());
 		}
 	}
@@ -167,22 +187,31 @@ public class WebSocketManagerSocket extends WebSocketAdapter {
 	private String getSessionId() {
 		return this.myUniqueSessionId;
 	}
+
 	public static void broadCast(String nodeName, String eventType, String xmlEvent) {
 		if (clientList != null && clientList.size() > 0) {
 			for (Map.Entry<String, WebSocketManagerSocket> entry : clientList.entrySet()) {
 				WebSocketManagerSocket socket = entry.getValue();
+				if (socket != null) {
+					try {
 
-				try {
-					UserScopes clientScopes = userScopesList.get(String.valueOf(socket.hashCode()));
-					if (clientScopes.getScopes().get(eventType) != null) {
-						socket.send(xmlEvent);
+						UserScopes clientScopes = userScopesList.get(socket.getSessionId());
+						if (clientScopes != null) {
+							if (clientScopes.hasScope(eventType)) {
+								socket.send(xmlEvent);
+							} else
+								LOG.debug("client has not scope {}", eventType);
+						} else {
+							LOG.debug("no scopes for notifications registered");
+						}
+					} catch (Exception ioe) {
+						LOG.warn(ioe.getMessage());
 					}
-				} catch (Exception ioe) {
-					LOG.warn(ioe.getMessage());
+				} else {
+					LOG.debug("cannot broadcast. socket is null");
 				}
 			}
 		}
 	}
-
 
 }

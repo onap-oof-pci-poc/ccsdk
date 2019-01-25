@@ -21,23 +21,29 @@
 package org.onap.ccsdk.sdnr.wt.websocketmanager2.utils;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 public class UserScopes {
 
-    public void setScopes(JSONArray jsonArray) {
-        // TODO Auto-generated method stub
+	private JSONArray scopes;
 
-    }
+	/**
+	 * 
+	 * @param jsonArray array of Strings
+	 */
+	public void setScopes(JSONArray jsonArray) {
+		this.scopes = jsonArray;
+	}
 
-    public void setUserId(String sessionId) {
-        // TODO Auto-generated method stub
+	public boolean hasScope(String scope) {
+		if (this.scopes == null)
+			return false;
+		for (int i = 0, l = this.scopes.length(); i < l; i++) {
+			if (this.scopes.get(i).toString().equals(scope)) {
+				return true;
+			}
+		}
 
-    }
-
-    public JSONObject getScopes() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+		return false;
+	}
 
 }
