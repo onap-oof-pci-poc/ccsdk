@@ -23,9 +23,9 @@
   xmlns:odl="http://opendaylight.org/xmlns/blueprint/v1.0.0"
   odl:use-default-for-reference-types="true">
 
-  <bean id="wsServlet"
-    class="org.onap.ccsdk.sdnr.wt.websocketmanager2.WebSocketManager">
-  </bean>
+<!--   <bean id="wsServlet" -->
+<!--     class="org.onap.ccsdk.sdnr.wt.websocketmanager2.WebSocketManager"> -->
+<!--   </bean> -->
 
   <reference id="rpcProviderRegistry"
     interface="org.opendaylight.controller.sal.binding.api.RpcProviderRegistry"
@@ -35,15 +35,18 @@
     class="org.onap.ccsdk.sdnr.wt.websocketmanager2.WebSocketManagerProvider"
     init-method="init" destroy-method="close">
     <property name="rpcProviderRegistry" ref="rpcProviderRegistry" />
-    <property name="wsServlet" ref="wsServlet" />
+<!--     <property name="wsServlet" ref="wsServlet" /> -->
   </bean>
 
-  <service
-    interface="org.eclipse.jetty.websocket.servlet.WebSocketServlet"
-    ref="wsServlet">
-    <service-properties>
-      <entry key="alias" value="/websocket" />
-    </service-properties>
-  </service>
+   <reference id="onBindService" availability="mandatory" activation="eager" interface="org.osgi.service.http.HttpService">
+      <reference-listener ref="provider" bind-method="onBindService" unbind-method="onUnbindService"/>
+    </reference>
+<!--   <service -->
+<!--     interface="org.eclipse.jetty.websocket.servlet.WebSocketServlet" -->
+<!--     ref="wsServlet"> -->
+<!--     <service-properties> -->
+<!--       <entry key="alias" value="/websocket" /> -->
+<!--     </service-properties> -->
+<!--   </service> -->
 
 </blueprint>
