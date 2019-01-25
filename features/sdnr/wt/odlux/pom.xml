@@ -38,6 +38,7 @@
 	</dependencyManagement>
 	<modules>
 		<module>framework</module>
+		<module>core</module>
 		<module>apps/apiDemo</module>
 		<module>apps/connectApp</module>
 		<module>apps/demoApp</module>

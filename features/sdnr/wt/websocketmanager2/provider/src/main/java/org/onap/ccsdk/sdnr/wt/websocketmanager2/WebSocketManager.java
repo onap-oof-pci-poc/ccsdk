@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -76,6 +76,32 @@ public class WebSocketManager extends WebSocketServlet implements Websocketmanag
         }
     }
 
+    @Override
+    public Future<RpcResult<WebsocketEventOutput>> websocketEvent(WebsocketEventInput input) {
+         LOG.debug("Send message '{}'", input);
+            try {
+                WebsocketEventOutputBuilder outputBuilder = new WebsocketEventOutputBuilder();
+                final String s=input.getXmlEvent();
+                WebSocketManagerSocket.broadCast(input.getNodeName(), input.getEventType(),s );
+                outputBuilder.setResponse("OK");
+                try {
+                    JSONObject o=new JSONObject();
+                    o.put(WebSocketManagerSocket.KEY_NODENAME, input.getNodeName());
+                    o.put(WebSocketManagerSocket.KEY_EVENTTYPE, input.getEventType());
+                    o.put(WebSocketManagerSocket.KEY_XMLEVENT, input.getXmlEvent());
+                    this.rpcEventInputCallback.onMessagePushed(o.toString());
+                }
+                catch(Exception err)
+                {
+                    LOG.warn("problem pushing messsage to other nodes: "+err.getMessage());
+                }
+                return RpcResultBuilder.success(outputBuilder.build()).buildFuture();
+            } catch (Exception e) {
+                LOG.warn("Socketproblem: {}", e);
+            }
+            return null;
+    }
+
     /**********************************************************
      * Private functions
      */
@@ -106,30 +132,5 @@ public class WebSocketManager extends WebSocketServlet implements Websocketmanag
         }
     };
 
-    @Override
-    public Future<RpcResult<WebsocketEventOutput>> websocketEvent(WebsocketEventInput input) {
-         LOG.debug("Send message '{}'", input);
-            try {
-                WebsocketEventOutputBuilder outputBuilder = new WebsocketEventOutputBuilder();
-                final String s=input.getXmlEvent();
-                WebSocketManagerSocket.broadCast(input.getNodeName(), input.getEventType(),s );
-                outputBuilder.setResponse("OK");
-                try {
-                    JSONObject o=new JSONObject();
-                    o.put(WebSocketManagerSocket.KEY_NODENAME, input.getNodeName());
-                    o.put(WebSocketManagerSocket.KEY_EVENTTYPE, input.getEventType());
-                    o.put(WebSocketManagerSocket.KEY_XMLEVENT, input.getXmlEvent());
-                    this.rpcEventInputCallback.onMessagePushed(o.toString());
-                }
-                catch(Exception err)
-                {
-                    LOG.warn("problem pushing messsage to other nodes: "+err.getMessage());
-                }
-                return RpcResultBuilder.success(outputBuilder.build()).buildFuture();
-            } catch (Exception e) {
-                LOG.warn("Socketproblem: {}", e);
-            }
-            return null;
-    }
 
 }

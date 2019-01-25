@@ -35,7 +35,6 @@
     <module>websocketmanager2</module>
     <module>devicemanager</module>
     <module>odlux</module>
-    <module>odlux-core</module>
     </modules>
 </project>
 
