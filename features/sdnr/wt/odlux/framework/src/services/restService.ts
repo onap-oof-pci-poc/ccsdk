@@ -10,9 +10,10 @@ export async function requestRest<TData>(path: string = '', init: RequestInit = 
     ...init.headers
   };
   if (authenticate) {
+    #user:admin password:Kp8bJ4SXszM0WXlhak3eHlcse2gAw84vaoGGmJvUy2U
     init.headers = {
       ...init.headers,
-      'Authorization': 'Basic YWRtaW46YWRtaW4='
+      'Authorization': 'Basic YWRtaW46S3A4Yko0U1hzek0wV1hsaGFrM2VIbGNzZTJnQXc4NHZhb0dHbUp2VXkyVQ=='
     };
   }
   const result = await fetch(uri, init);
