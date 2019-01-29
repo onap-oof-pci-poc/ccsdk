@@ -45,14 +45,14 @@ public class IndexClientBuilder implements AutoCloseable {
 
 	private final ScheduledExecutorService scheduler;
     private HtDatabaseClientAbstract client;
-    private HtDatabaseNode database;
+    private HtDatabaseNode databaseNode;
 
 
     // --- Construct and initialize
 
     public IndexClientBuilder(String index) {
     	this.index = index;
-    	this.database = null;
+    	this.databaseNode = null;
     	this.scheduler = Executors.newSingleThreadScheduledExecutor();
     }
 
@@ -70,7 +70,7 @@ public class IndexClientBuilder implements AutoCloseable {
 
     public HtDatabaseClientAbstract create(HtDatabaseNode database) {
 		LOG.info("Create {} start with node", this.getClass().getSimpleName() );
-     	this.database = database;
+     	this.databaseNode = database;
 		client = new HtDatabaseClientAbstract(index, database);
 		setupIndex();
        	return client;
@@ -105,8 +105,8 @@ public class IndexClientBuilder implements AutoCloseable {
     private final Runnable fillDatabase = new Runnable() {
     	@Override
     	public void run() {
-    		if (database != null) {
-    			database.setInitializedTarget();
+    		if (databaseNode != null) {
+    			databaseNode.setInitializedTarget();
     		}
     		try { //Prevent ending task by exception
 				if (modelDataDirectory != null) {
@@ -123,8 +123,8 @@ public class IndexClientBuilder implements AutoCloseable {
 			} catch (Exception e) {
 				LOG.warn("Problem during initialization of index "+index+" {}", e);
 			}
-    		if (database != null) {
-    			database.setInitializedReached();
+    		if (databaseNode != null) {
+    			databaseNode.setInitializedReached();
     		}
     	}
     };

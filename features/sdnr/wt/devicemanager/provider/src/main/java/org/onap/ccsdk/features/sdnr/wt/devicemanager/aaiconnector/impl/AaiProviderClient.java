@@ -120,7 +120,7 @@ public class AaiProviderClient implements AutoCloseable {
     private void _reload() {
         if (reloadConfigFlag) {
             this.config = AaiConfig.reload();
-            LOG.info("config reloaded:" + config == null ? "null" : config.toString());
+            LOG.info("config reloaded: {}", config == null ? "null" : config);
         }
         reloadConfigFlag = false;
     }

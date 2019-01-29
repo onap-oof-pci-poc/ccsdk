@@ -6,9 +6,9 @@
  * =================================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -18,7 +18,6 @@
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database;
 
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -33,7 +32,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import javax.annotation.Nullable;
-import org.apache.lucene.util.Constants;
+import org.apache.lucene.util.Version;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
@@ -49,21 +48,16 @@ import org.slf4j.LoggerFactory;
 
 public class HtDatabaseNode implements AutoCloseable {
 
-
-
     private static final Logger LOGGER = LoggerFactory.getLogger(HtDatabaseNode.class);
     private static final String DBCONFIGFILENAME = "etc/elasticsearch.yml";
     private static int MIN_PORT_NUMBER = 1024;
     private static int MAX_PORT_NUMBER = 65535;
     private static int ES_PORT = 9200;
     private static int DELAYSECONDS = 120;
-
-    private static String pluginFolder="etc/elasticsearch-plugins";
+    private static String PLUGINFOLDER = "etc/elasticsearch-plugins";
 
     private static HtDatabaseNode oneNode = null;
-    /**
-     *
-     */
+    private static Object initializationLock = new Object();
     private static Integer initializedTarget = 0;
     private static Integer initializedReached = 0;
 
@@ -72,9 +66,7 @@ public class HtDatabaseNode implements AutoCloseable {
     private HtDatabaseNode() {
         LOGGER.debug("Start elasticsearch service");
 
-        String test = Constants.LUCENE_MAIN_VERSION;
-        LOGGER.debug("Lucine version: "+test);
-
+        LOGGER.debug("Lucine version: " + Version.LATEST);
 
         node = nodeBuilder().settings(Settings.builder().put("path.home", "etc").put("path.conf", "etc")).node();
         LOGGER.info("Starting Database service. Wait {} s", DELAYSECONDS);
@@ -91,27 +83,28 @@ public class HtDatabaseNode implements AutoCloseable {
     @Override
     public void close() {
         node.close();
-        oneNode = null; //Release the one instance that was started !
+        oneNode = null; // Release the one instance that was started !
     }
 
     /**
      * Provide indication if all Index initializations are done.
+     *
      * @return true if all index initializations are ready, false if not
      */
     public Boolean getInitialized() {
-        synchronized (initializedReached) {
+        synchronized (initializationLock) {
             return initializedTarget != 0 && initializedReached == initializedTarget;
         }
     }
 
     public void setInitializedReached() {
-        synchronized (initializedReached) {
+        synchronized (initializationLock) {
             HtDatabaseNode.initializedReached++;
         }
     }
 
     public void setInitializedTarget() {
-        synchronized (initializedTarget) {
+        synchronized (initializationLock) {
             HtDatabaseNode.initializedTarget++;
         }
     }
@@ -121,8 +114,8 @@ public class HtDatabaseNode implements AutoCloseable {
     }
 
 
-    /* ---------------------------------------
-     * Static functions below
+    /*
+     * --------------------------------------- Static functions below
      */
 
 
@@ -130,16 +123,16 @@ public class HtDatabaseNode implements AutoCloseable {
 
         byte[] buffer = new byte[1024];
 
-        try {
+        //        try {
 
-            // create output directory is not exists
-            File folder = new File(outputFolder);
-            if (!folder.exists()) {
-                folder.mkdir();
-            }
+        // create output directory is not exists
+        File folder = new File(outputFolder);
+        if (!folder.exists()) {
+            folder.mkdir();
+        }
 
-            // get the zip file content
-            ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile));
+        // get the zip file content
+        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile))) {
             // get the zipped file list entry
             ZipEntry ze = zis.getNextEntry();
 
@@ -149,33 +142,28 @@ public class HtDatabaseNode implements AutoCloseable {
 
                 File newFile = new File(outputFolder + File.separator + fileName);
                 System.out.println("file unzip : " + newFile.getAbsoluteFile());
-                if(ze.isDirectory())
-                {
+                if (ze.isDirectory()) {
                     newFile.mkdir();
-                }
-                else
-                {
+                } else {
 
                     // create all non exists folders
                     // else you will hit FileNotFoundException for compressed folder
                     new File(newFile.getParent()).mkdirs();
 
-                    FileOutputStream fos = new FileOutputStream(newFile);
-
-                    int len;
-                    while ((len = zis.read(buffer)) > 0) {
-                        fos.write(buffer, 0, len);
+                    try (FileOutputStream fos = new FileOutputStream(newFile)) {
+                        int len;
+                        while ((len = zis.read(buffer)) > 0) {
+                            fos.write(buffer, 0, len);
+                        }
+                        fos.close();
                     }
-
-                    fos.close();
                 }
                 ze = zis.getNextEntry();
             }
-
             zis.closeEntry();
             zis.close();
         } catch (IOException ex) {
-            LOGGER.warn("problem extracting " + zipFile + " to " + outputFolder);
+            LOGGER.warn("problem extracting {} to {}",zipFile, outputFolder);
         }
     }
 
@@ -206,7 +194,7 @@ public class HtDatabaseNode implements AutoCloseable {
                 LOGGER.debug("problem extracting plugin res");
             }
         }
-        if(tmpFile.exists()) {
+        if (tmpFile.exists()) {
             tmpFile.delete();
         }
 
@@ -215,8 +203,7 @@ public class HtDatabaseNode implements AutoCloseable {
     /**
      * Checks to see if a specific port is available.
      *
-     * @param port
-     *            the port to check for availability
+     * @param port the port to check for availability
      */
     private static boolean isPortAvailable(int port) {
         if (port < MIN_PORT_NUMBER || port > MAX_PORT_NUMBER) {
@@ -249,7 +236,7 @@ public class HtDatabaseNode implements AutoCloseable {
         return false;
     }
 
-    private static void checkorcreateConfigFile(EsConfig config, AkkaConfig akkaConfig,GeoConfig geoConfig) {
+    private static void checkorcreateConfigFile(EsConfig config, AkkaConfig akkaConfig, GeoConfig geoConfig) {
         File f = new File(DBCONFIGFILENAME);
         if (!f.exists()) {
             LOGGER.debug("no " + DBCONFIGFILENAME + " found - extracting from resources");
@@ -259,51 +246,48 @@ public class HtDatabaseNode implements AutoCloseable {
                 Charset charset = StandardCharsets.UTF_8;
                 try {
                     Path p = f.toPath();
-                    String hostName = "0.0.0.0"; //Default as initialisation value
-                    if(akkaConfig!=null && akkaConfig.isCluster())
-                    {
+                    String hostName = "0.0.0.0"; // Default as initialisation value
+                    if (akkaConfig != null && akkaConfig.isCluster()) {
                         LOGGER.debug("cluster configuration found");
-                        hostName=akkaConfig.getClusterConfig().getHostName(hostName);
-                        String clusterDBName=akkaConfig.getClusterConfig().getDBClusterName(null);
-                        String nodeName=String.format("node%d.%s",akkaConfig.getClusterConfig().getRoleMemberIndex(),clusterDBName);
-                        if(clusterDBName!=null)
-                        {
+                        hostName = akkaConfig.getClusterConfig().getHostName(hostName);
+                        String clusterDBName = akkaConfig.getClusterConfig().getDBClusterName(null);
+                        String nodeName = String.format("node%d.%s", akkaConfig.getClusterConfig().getRoleMemberIndex(),
+                                clusterDBName);
+                        if (clusterDBName != null) {
                             config.setCluster(clusterDBName);
                             config.setNode(nodeName);
                             config.save();
-                            LOGGER.info("set db name to "+clusterDBName+" nodename="+nodeName );
+                            LOGGER.info("set db name to " + clusterDBName + " nodename=" + nodeName);
                         } else {
                             LOGGER.warn("unable to set correct db clustername");
                         }
                     }
                     String content = new String(Files.readAllBytes(p), charset);
-                    content = content.replaceAll("\\$clustername", config.getCluster()).replaceAll("\\$nodename",
-                            config.getNode()).replaceAll("\\$hostname", hostName);
+                    content = content.replaceAll("\\$clustername", config.getCluster())
+                            .replaceAll("\\$nodename", config.getNode()).replaceAll("\\$hostname", hostName);
 
-                    //add cluster configuration
-                    if(akkaConfig!=null && akkaConfig.isCluster())
-                    {
-                        List<ClusterNodeInfo> seedNodes=akkaConfig.getClusterConfig().getSeedNodes();
-                        String nodesJSONString="[\""+seedNodes.get(0).getRemoteAddress()+"\"";
-                        for(int i=1;i<seedNodes.size();i++) {
-                            nodesJSONString+=",\""+seedNodes.get(i).getRemoteAddress()+"\"";
+                    // add cluster configuration
+                    if (akkaConfig != null && akkaConfig.isCluster()) {
+                        List<ClusterNodeInfo> seedNodes = akkaConfig.getClusterConfig().getSeedNodes();
+                        String nodesJSONString = "[\"" + seedNodes.get(0).getRemoteAddress() + "\"";
+                        for (int i = 1; i < seedNodes.size(); i++) {
+                            nodesJSONString += ",\"" + seedNodes.get(i).getRemoteAddress() + "\"";
                         }
-                        nodesJSONString+="]";
-                        content+=System.lineSeparator()+String.format("discovery.zen.ping.unicast.hosts: %s",nodesJSONString);
+                        nodesJSONString += "]";
+                        content += System.lineSeparator()
+                                + String.format("discovery.zen.ping.unicast.hosts: %s", nodesJSONString);
 
-                        if(geoConfig!=null)
-                        {
+                        if (geoConfig != null) {
                             LOGGER.debug("adding zone configuration");
-                            content+=System.lineSeparator()+String.format("cluster.routing.allocation.awareness.force.zone.values: zone1,zone2");
-                            content+=System.lineSeparator()+String.format("cluster.routing.allocation.awareness.attributes: zone");
-                            if(geoConfig.isPrimary(akkaConfig.getClusterConfig().getRoleMember()))
-                            {
-                                content+=System.lineSeparator()+String.format("node.zone: zone1");
+                            content += System.lineSeparator() + String
+                                    .format("cluster.routing.allocation.awareness.force.zone.values: zone1,zone2");
+                            content += System.lineSeparator()
+                                    + String.format("cluster.routing.allocation.awareness.attributes: zone");
+                            if (geoConfig.isPrimary(akkaConfig.getClusterConfig().getRoleMember())) {
+                                content += System.lineSeparator() + String.format("node.zone: zone1");
                                 LOGGER.debug("setting zone to zone1");
-                            }
-                            else
-                            {
-                                content+=System.lineSeparator()+String.format("node.zone: zone2");
+                            } else {
+                                content += System.lineSeparator() + String.format("node.zone: zone2");
                                 LOGGER.debug("setting zone to zone2");
                             }
                         }
@@ -321,21 +305,23 @@ public class HtDatabaseNode implements AutoCloseable {
 
     /**
      * Start as singleton
+     *
      * @return the node or null if external node used
      */
     public static @Nullable HtDatabaseNode start(EsConfig config) throws IllegalStateException {
-        return start(config,null,null);
+        return start(config, null, null);
     }
 
-    public static HtDatabaseNode start(EsConfig config, AkkaConfig akkaConfig,GeoConfig geoConfig) {
+    public static HtDatabaseNode start(EsConfig config, AkkaConfig akkaConfig, GeoConfig geoConfig) {
         if (isPortAvailable(ES_PORT)) {
             LOGGER.info("ES Port not in use. Start internal ES.");
             if (oneNode == null) {
-                checkorcreateplugins(pluginFolder);
-                checkorcreateConfigFile(config,akkaConfig,geoConfig);
+                checkorcreateplugins(PLUGINFOLDER);
+                checkorcreateConfigFile(config, akkaConfig, geoConfig);
                 oneNode = new HtDatabaseNode();
             } else {
-                throw new IllegalStateException("Database is already started, but can only be started once. Stop here.");
+                throw new IllegalStateException(
+                        "Database is already started, but can only be started once. Stop here.");
             }
         } else {
             LOGGER.info("ES Port in use. External ES used.");
