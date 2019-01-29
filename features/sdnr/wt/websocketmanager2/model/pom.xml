@@ -35,14 +35,4 @@
     <version>1.1.2</version>
     <relativePath />
   </parent>
-  <dependencies>
-    <dependency>
-      <groupId>org.opendaylight.mdsal.model</groupId>
-      <artifactId>ietf-inet-types</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.opendaylight.mdsal.model</groupId>
-      <artifactId>ietf-yang-types</artifactId>
-    </dependency>
-  </dependencies>
 </project>
