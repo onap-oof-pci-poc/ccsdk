@@ -46,7 +46,6 @@ const styles = (theme: Theme) => createStyles({
 
 const mapProps = (state: IApplicationStoreState) => ({
   requiredNetworkElementsProperties: createRequiredNetworkElementsProperties(state),
-  requiredNetworkElements: state.connectApp.requiredNetworkElements,
   mountedNetworkElements: state.connectApp.mountedNetworkElements
 });
 
@@ -55,9 +54,7 @@ const mapDispatch = (dispatcher: IDispatcher) => ({
   navigateToApplication: (applicationName: string, path?: string) => dispatcher.dispatch(new NavigateToApplication(applicationName, path)),
 });
 
-type RequiredNetworkElementsListComponentProps = WithStyles<typeof styles> & Connect<typeof mapProps, typeof mapDispatch> & {
-
-}
+type RequiredNetworkElementsListComponentProps = WithStyles<typeof styles> & Connect<typeof mapProps, typeof mapDispatch>;
 type RequiredNetworkElementsListComponentState = {
   networkElementToEdit: RequiredNetworkElementType,
   networkElementEditorMode: EditNetworkElementDialogMode
@@ -137,7 +134,7 @@ export class RequiredNetworkElementsListComponent extends React.Component<Requir
               )
             }
           },
-        ] } idProperty="mountId" { ...this.props.requiredNetworkElements } { ...this.props.requiredNetworkElementsActions } { ...this.props.requiredNetworkElementsProperties } asynchronus >
+        ] } idProperty="mountId" { ...this.props.requiredNetworkElementsActions } { ...this.props.requiredNetworkElementsProperties } asynchronus >
         </RequiredNetworkElementTable>
         <EditNetworkElementDialog
           initialNetworkElement={ networkElementToEdit }

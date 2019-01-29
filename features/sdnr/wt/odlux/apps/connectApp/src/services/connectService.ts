@@ -1,4 +1,3 @@
-import * as $ from 'jquery';
 import { RequiredNetworkElementType } from '../models/requiredNetworkElements';
 import { MountedNetworkElementType } from 'models/mountedNetworkElements';
 import { Topology, TopologyNode } from 'models/topologyNetconf';
