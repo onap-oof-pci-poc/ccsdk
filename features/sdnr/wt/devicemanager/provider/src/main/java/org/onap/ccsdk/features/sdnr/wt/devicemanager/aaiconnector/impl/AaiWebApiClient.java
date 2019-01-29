@@ -1,17 +1,19 @@
 /*******************************************************************************
- * ============LICENSE_START======================================================= ONAP : ccsdk
- * feature sdnr wt ================================================================================
+ * ============LICENSE_START========================================================================
+ * ONAP : ccsdk feature sdnr wt
+ * =================================================================================================
  * Copyright (C) 2019 highstreet technologies GmbH Intellectual Property. All rights reserved.
- * ================================================================================ Licensed under
- * the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- *
+ * =================================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
- * the License. ============LICENSE_END=========================================================
+ * the License.
+ * ============LICENSE_END==========================================================================
  ******************************************************************************/
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.aaiconnector.impl;
 
@@ -53,73 +55,59 @@ public class AaiWebApiClient extends BaseHTTPClient {
             + "    \"equip-model\": \"@model@\",\n" + "    \"equip-vendor\": \"@vendor@\",\n"
             + "    \"ipaddress-v4-oam\": \"@oamIp@\",\n" + "    \"in-maint\": false,\n"
             + "    \"prov-status\":\"PROV\",\n" + "    \"p-interfaces\": @interface-list@\n" + "}\n" + "";
+    private static final String PNF_URI = "network/pnfs/pnf/";
+    private static final String EMPTY_MESSAGE = "";
 
     private final Map<String, String> headerMap;
-    private final Map<String, String> headerMapExtended;
 
 
     public AaiWebApiClient(String baseUrl, Map<String, String> headers, boolean trustAllCerts) {
         this(baseUrl, headers, trustAllCerts, null, null);
     }
+
     public AaiWebApiClient(String baseUrl, Map<String, String> headers, boolean trustAllCerts, String certFilename,
             String passphrase) {
         super(baseUrl, trustAllCerts, certFilename, passphrase, BaseHTTPClient.SSLCERT_PCKS);
-        this.headerMap = headers;
 
-        this.headerMapExtended = new HashMap<>();
-        this.headerMapExtended.putAll(headerMap);
-        this.headerMapExtended.put("Content-Type", "application/json");
-        this.headerMapExtended.put("Accept", "application/json");
+        this.headerMap = new HashMap<>();
+        this.headerMap.putAll(headers);
+        this.headerMap.put("Content-Type", "application/json");
+        this.headerMap.put("Accept", "application/json");
     }
-
 
     public boolean pnfCreate(String pnfId, String type, String model, String vendor, String oamIp,
             List<String> ifaces) {
         LOG.debug("registering {} (type={}, model={}, vendor={},ip={})", pnfId, type, model, vendor, oamIp);
-        BaseHTTPResponse response = null;
-        try {
-            String uri = "network/pnfs/pnf/" + URLParamEncoder.encode(pnfId);
-            String message = getPnfTemplateFilled(pnfId, type, model, vendor, oamIp, ifaces);
-            response = this.sendRequest(uri, "PUT", message, headerMapExtended);
-            LOG.debug("finished with responsecode {}", response.code);
-        } catch (IOException e) {
-            LOG.warn("problem registering {} : {}", pnfId, e.getMessage());
-        }
-        return response != null ? response.code == 200 : false;
+        String message = getPnfTemplateFilled(pnfId, type, model, vendor, oamIp, ifaces);
+        return pnfRequest(pnfId, "PUT", message).code == 200;
     }
 
     public boolean pnfDelete(String pnfId) {
         LOG.debug("unregistering {}", pnfId);
-        BaseHTTPResponse response = null;
-        try {
-            String uri = "network/pnfs/pnf/" + URLParamEncoder.encode(pnfId);
-            response = this.sendRequest(uri, "DELETE", "", headerMapExtended);
-            LOG.debug("finished with responsecode {}", response.code);
-        } catch (IOException e) {
-            LOG.warn("problem unregistering {} : {}", pnfId, e.getMessage());
-        }
-        return response != null ? response.code == 200 : false;
+        return pnfRequest(pnfId, "DELETE", EMPTY_MESSAGE).code == 200;
     }
 
     public @Nonnull BaseHTTPResponse pnfCheckIfExists(String pnfId) {
-
-        BaseHTTPResponse response = null;
         LOG.debug("check for {}", pnfId);
-        try {
-            String uri = "network/pnfs/pnf/" + URLParamEncoder.encode(pnfId);
-            response = this.sendRequest(uri, "GET", "", headerMapExtended);
-            LOG.debug("finished with responsecode {}", response.code);
-        } catch (IOException e) {
-            LOG.warn("problem checking {}: {}", pnfId, e.getMessage());
-            response = BaseHTTPResponse.UNKNOWN;
-        }
-
-        return response;
+        return pnfRequest(pnfId, "GET", EMPTY_MESSAGE);
     }
 
     /*
      * Private classes
      */
+
+    private @Nonnull BaseHTTPResponse pnfRequest(String pnfId, String method, String message) {
+        BaseHTTPResponse response = null;
+        try {
+            String uri = PNF_URI + URLParamEncoder.encode(pnfId);
+            response = this.sendRequest(uri, method, message, headerMap);
+            LOG.debug("finished with responsecode {}", response.code);
+        } catch (IOException e) {
+            LOG.warn("problem registering {} : {}", pnfId, e.getMessage());
+        }
+        return response;
+    }
+
 
     private static String getPnfTemplateFilled(String pnfId, String type, String model, String vendor, String oamIp,
             List<String> ifaces) {
@@ -130,7 +118,6 @@ public class AaiWebApiClient extends BaseHTTPClient {
 
     private static String getPnfTemplateInterfaceList(String pnfId, List<String> ifaces, String model) {
         StringBuffer s = new StringBuffer();
-
         s.append("[");
         if (ifaces != null) {
             for (int i = 0; i < ifaces.size(); i++) {
