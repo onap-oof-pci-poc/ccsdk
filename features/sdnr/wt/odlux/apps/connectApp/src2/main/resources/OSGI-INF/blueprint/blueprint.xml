@@ -4,5 +4,6 @@
     <bean id="bundle" init-method="initialize" destroy-method="clean" class="org.onap.ccsdk.features.sdnr.wt.odlux.bundles.MyOdluxBundle">
         <property name="loader" ref="loadersvc"/>
         <property name="bundleName" value="connectApp"/>
+        <property name="index" value="0"/>
     </bean>
 </blueprint>
