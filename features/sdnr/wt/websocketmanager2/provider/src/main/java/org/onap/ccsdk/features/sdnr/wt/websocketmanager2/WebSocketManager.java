@@ -43,8 +43,8 @@ public class WebSocketManager extends WebSocketServlet implements Websocketmanag
 
     private static final Logger LOG = LoggerFactory.getLogger(WebSocketManager.class.getName());
     private static final String APPLICATION_NAME = WebSocketManager.class.getName();
-    private final EventInputCallback rpcEventInputCallback;
     private static final int PORT = 8181;
+    private final EventInputCallback rpcEventInputCallback;
 
     /**
      * timeout for websocket with no messages in ms
@@ -54,20 +54,16 @@ public class WebSocketManager extends WebSocketServlet implements Websocketmanag
     private final ArrayList<URI> clusterNodeClients = new ArrayList<>();
 
     public WebSocketManager() {
-        super();
-       rpcEventInputCallback = new EventInputCallback() {
-
-            @Override
-            public void onMessagePushed(String message) throws Exception {
-                LOG.debug("onMessagePushed: " + message);
-                SyncWebSocketClient client;
-                for (URI clientURI : WebSocketManager.this.clusterNodeClients) {
-                    client = new SyncWebSocketClient(clientURI);
-                    LOG.debug("try to push message to " + client.getURI());
-                    client.openAndSendAndCloseSync(message);
-                }
-            }
-        };
+       super();
+       rpcEventInputCallback = message -> {
+        LOG.debug("onMessagePushed: " + message);
+        SyncWebSocketClient client;
+        for (URI clientURI : WebSocketManager.this.clusterNodeClients) {
+            client = new SyncWebSocketClient(clientURI);
+            LOG.debug("try to push message to " + client.getURI());
+            client.openAndSendAndCloseSync(message);
+        }
+    };
         LOG.info("Create servlet for {}", APPLICATION_NAME);
     }
 
@@ -78,7 +74,7 @@ public class WebSocketManager extends WebSocketServlet implements Websocketmanag
         factory.getPolicy().setIdleTimeout(IDLE_TIMEOUT);
         factory.getPolicy().setMaxBinaryMessageSize(1);
         factory.getPolicy().setMaxTextMessageSize(64 * 1024);
-        
+
         // register Socket as the WebSocket to create on Upgrade
         factory.register(WebSocketManagerSocket.class);
 
