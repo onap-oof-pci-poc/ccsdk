@@ -23,8 +23,23 @@ public class OdluxBundle {
 
 	private String bundleName;
 	private OdluxBundleLoader loader;
+	private int index;
 
-	public OdluxBundleLoader getLoader() {
+	/**
+     * @return the index
+     */
+    public int getIndex() {
+        return index;
+    }
+
+    /**
+     * @param index the index to set
+     */
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    public OdluxBundleLoader getLoader() {
 		return loader;
 	}
 
