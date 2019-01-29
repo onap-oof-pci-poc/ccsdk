@@ -62,7 +62,6 @@ public abstract class FileWatchdog extends Thread {
     private final File file;
     private long lastModified = 0;
     private boolean warnedAlready = false;
-    private boolean interrupted = false;
 
     protected FileWatchdog(String filename) {
         this.filename = filename;
@@ -90,8 +89,8 @@ public abstract class FileWatchdog extends Thread {
         try {
             fileExists = file.exists();
         } catch (SecurityException e) {
-            LOGGER.warn("Was not allowed to read check file existence, file:[" + filename + "].");
-            interrupted = true; // there is no point in continuing
+            LOGGER.warn("Was not allowed to read check file existence, file:[{}].",filename);
+            this.interrupt(); // there is no point in continuing
             return;
         }
 
@@ -107,7 +106,7 @@ public abstract class FileWatchdog extends Thread {
             }
         } else {
             if (!warnedAlready) {
-                LOGGER.debug("[" + filename + "] does not exist.");
+                LOGGER.debug("[{}] does not exist.", filename);
                 warnedAlready = true;
             }
         }
@@ -115,13 +114,14 @@ public abstract class FileWatchdog extends Thread {
 
     @Override
     public void run() {
-        while (!interrupted && !isInterrupted()) {
+        while (!isInterrupted()) {
+            checkAndConfigure();
             try {
                 Thread.sleep(delay);
             } catch (InterruptedException e) {
                 LOGGER.debug("Interrupted sleep. {}", e.getMessage());
             }
-            checkAndConfigure();
         }
+        LOGGER.debug("Stoppen file watchdog for file {}", filename);
     }
 }
