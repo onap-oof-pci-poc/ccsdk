@@ -41,35 +41,24 @@
 
   <dependencies>
     <dependency>
-     <groupId>${project.groupId}</groupId>
-	<artifactId>sdnr-wt-odlux-app-apiDemo</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>sdnr-wt-odlux-app-connectApp</artifactId>
       <version>${project.version}</version>
     </dependency>
-<dependency>
-     <groupId>${project.groupId}</groupId>
-	<artifactId>sdnr-wt-odlux-app-connectApp</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-<dependency>
-     <groupId>${project.groupId}</groupId>
-	<artifactId>sdnr-wt-odlux-app-demoApp</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-<dependency>
+    <dependency>
      <groupId>${project.groupId}</groupId>
 	<artifactId>sdnr-wt-odlux-app-faultApp</artifactId>
       <version>${project.version}</version>
     </dependency>
-<dependency>
-     <groupId>${project.groupId}</groupId>
-	<artifactId>sdnr-wt-odlux-app-inventoryApp</artifactId>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>sdnr-wt-odlux-app-helpApp</artifactId>
       <version>${project.version}</version>
     </dependency>
-<dependency>
-     <groupId>${project.groupId}</groupId>
-	<artifactId>sdnr-wt-odlux-app-minimumApp</artifactId>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>sdnr-wt-odlux-app-inventoryApp</artifactId>
       <version>${project.version}</version>
     </dependency>
-
   </dependencies>
 </project>
