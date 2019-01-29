@@ -22,8 +22,10 @@ export class ApplicationInfo {
   middlewares?: Middleware<{ [key: string]: any }>[]; 
   /** Optional: A mapping object with the exported components. */
   exportedComponents?: { [key: string]: ComponentType }
-  /** Optional: The entry to be shown in the menu. If null or undefiened the name will be used. */
-  menuEntry: string;
-  /** Optional: The pasth for this application. If null or undefined the name will be use as path. */
+  /** Optional: The entry to be shown in the menu. If undefiened the name will be used. */
+  menuEntry?: string | React.ComponentType;
+  /** Optional: A component to be shown in the menu when this app is active below the main entry. If undefiened the name will be used. */
+  subMenuEntry?: React.ComponentType;
+  /** Optional: The pasth for this application. If undefined the name will be use as path. */
   path?: string;
 }

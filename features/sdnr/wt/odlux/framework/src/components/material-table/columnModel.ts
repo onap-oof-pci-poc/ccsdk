@@ -12,12 +12,16 @@ type CustomControl<TData> = {
 }
 
 export type ColumnModel<TData> = {
-  property: string ;
   title?: string;
-  type?: ColumnType;
   disablePadding?: boolean;
   width?: string | number;
   disableSorting?: boolean;
   disableFilter?: boolean;
-  customControl?: React.ComponentType<CustomControl<TData>>;  
-}
+} & ({
+  property: string;
+  type: ColumnType.custom;
+  customControl: React.ComponentType<CustomControl<TData>>;
+} | {
+  property: keyof TData;
+  type?: ColumnType.numeric | ColumnType.text;
+});

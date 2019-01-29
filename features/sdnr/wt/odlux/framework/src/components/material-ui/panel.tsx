@@ -8,16 +8,16 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 const styles = (theme: Theme) => createStyles({
   accordion: {
-    background: theme.palette.secondary.dark,
-    color: theme.palette.primary.contrastText
+    // background: theme.palette.secondary.dark,
+    // color: theme.palette.primary.contrastText
   },
   detail: {
-    background: theme.palette.background.paper,
-    color: theme.palette.text.primary,
+    // background: theme.palette.background.paper,
+    // color: theme.palette.text.primary,
   },
   text: {
-    color: theme.palette.common.white,
-    fontSize: "1rem"
+    // color: theme.palette.common.white,
+    // fontSize: "1rem"
   },
 });
 

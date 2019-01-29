@@ -66,7 +66,7 @@ export const Frame = withStyles(styles)(({ classes }: WithStyles<typeof styles>)
               { Object.keys(registrations).map(p => {
                 const application = registrations[p];
                 return (<Route key={ application.name } path={ application.path || `/${ application.name }` } component={ () => (
-                  <AppFrame title={ application.title || application.menuEntry || application.name } icon={ application.icon } >
+                  <AppFrame title={ application.title || (typeof application.menuEntry === 'string' && application.menuEntry) || application.name } icon={ application.icon } >
                     <application.rootComponent />
                   </AppFrame>
                 ) } />)

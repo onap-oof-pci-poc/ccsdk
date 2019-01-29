@@ -14,8 +14,6 @@ import Menu from '@material-ui/core/Menu';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import ToggleButton from '../components/material-ui/toggleButton';
-
 import { UpdateAuthentication } from '../actions/authentication';
 
 import connect, { Connect, IDispatcher } from '../flux/connect';
@@ -72,7 +70,6 @@ class TitleBarComponent extends React.Component<TitleBarProps, { anchorEl: HTMLE
               : null }
             { state.framework.applicationState.title }
           </Typography>
-          <ToggleButton value="toggleTheme">MenuIcon</ToggleButton>
           { state.framework.authenticationState.user
             ? (<div>
               <Button

@@ -44,7 +44,8 @@ export const NavigationMenu = withStyles(styles)(connect()(({ classes, state }: 
               <ListItemLink 
                 key={ reg.name } 
                 to={ reg.path || `/${ reg.name }` }
-                primary={ reg.menuEntry }
+                primary={ reg.menuEntry || reg.name }
+                secondary={ reg.subMenuEntry }
                 icon={ reg.icon && <FontAwesomeIcon icon={ reg.icon } /> || null } />
             ) || null;
           }) || null
@@ -52,11 +53,6 @@ export const NavigationMenu = withStyles(styles)(connect()(({ classes, state }: 
         <Divider />
         <ListItemLink to="/about" primary="About" icon={ <FontAwesomeIcon icon={ faAddressBook } /> } />
       </List>
-      {/* <Divider />
-            <List>
-              <ListItemLink to="/inbox" primary="Inbox" icon={ <InboxIcon /> } />
-              <ListItemLink to="/drafts" primary="Drafts" icon={ <DraftsIcon /> } />
-            </List> */}
     </Drawer>)
 }));
 

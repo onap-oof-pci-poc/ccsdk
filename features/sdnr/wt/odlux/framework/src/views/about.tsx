@@ -10,6 +10,8 @@ import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import { MaterialTable, MaterialTableCtorType, ColumnType } from '../components/material-table';
+import { TreeView, ITreeItem, TreeViewCtorType } from '../components/material-ui/treeView';
+import { SvgIconProps } from '@material-ui/core/SvgIcon';
 
 const styles = (theme: Theme) => createStyles({
   root: {
@@ -795,7 +797,28 @@ const components = {
   'counter': 'demoApp.counter'
 };
 
+class TreeDemoItem implements ITreeItem {
+  title: string;
+  children?: TreeDemoItem[];
+  disabled?: boolean;
+  icon?: React.ComponentType<SvgIconProps>;
+}
+
+const treeData: TreeDemoItem[] = [
+  { title: "Erste Ebene", children: [ 
+      { title: "Zweite Ebene", children: [
+          { title: "Dritte Ebene" },
+        ]
+      },
+      { title: "Zweite Ebene 2" },
+    ]
+  },
+  { title: "Erste Ebene 3" },
+];
+
 const SampleDataMaterialTable = MaterialTable as MaterialTableCtorType<SampleData>;
+
+const SampleTree = TreeView as any as  TreeViewCtorType<TreeDemoItem>;
 
 const AboutComponent = (props: WithComponents<typeof components> & WithStyles<typeof styles>) => {
 
@@ -820,7 +843,14 @@ const AboutComponent = (props: WithComponents<typeof components> & WithStyles<ty
           </SampleDataMaterialTable>
         </ExpansionPanelDetails>
       </ExpansionPanel>
-
+      <ExpansionPanel>
+        <ExpansionPanelSummary expandIcon={ <ExpandMoreIcon /> }>
+          <Typography className={ props.classes.heading }>Tree Demo</Typography>
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails>
+          <SampleTree items={ treeData } contentProperty={"title"} childrenProperty={"children"} useFolderIcons enableSearchBar />
+        </ExpansionPanelDetails>
+      </ExpansionPanel>
     </div>
   )
 };

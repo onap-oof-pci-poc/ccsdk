@@ -11,15 +11,6 @@ const theme = createMuiTheme({
     logoHeight: 60,
   },
   palette: {
-    type: "light",
-    common: {
-      black: "#000",
-      white: "#fff"
-    },
-    background: {
-      paper: "#f2f2f2",
-      default: "#fafafa"
-    },
     primary: {
       light: "#f2f2f29c",
       main: "#f2f2f2",
@@ -30,38 +21,7 @@ const theme = createMuiTheme({
       light: "#f2f2f2",
       main: "rgba(51, 171, 226, 1)",
       dark: "rgba(41, 159, 213, 1)",
-      contrastText: "#fff"
-    },
-    action: {
-      active: "#e0e0e0",
-      hover: "rgba(0, 0, 0, 0.08)",
-      hoverOpacity: 0.08,
-      selected: "rgba(255, 255, 255, 0.14)",
-      disabled: "rgba(0, 0, 0, 0.26)",
-      disabledBackground: "rgba(0, 0, 0, 0.12)"
-    },
-    error: {
-      light: "#e57373",
-      main: "#f44336",
-      dark: "#d32f2f",
-      contrastText: "#fff"
-    },
-    text: {
-      primary: "#0094d3",
-      secondary: "#000",
-      disabled: "rgba(0, 0, 0, 0.38)",
-      hint: "rgba(0, 0, 0, 0.71)"
-    }
-  },
-  spacing: {
-    unit: 5
-  },
-
-  overrides: {
-    MuiTableCell: {
-      root: {
-        color: 'black'
-      }
+      contrastText: "#0094d3"
     }
   },
 });

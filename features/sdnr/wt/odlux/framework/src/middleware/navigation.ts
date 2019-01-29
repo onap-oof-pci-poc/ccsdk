@@ -13,7 +13,7 @@ const routerMiddlewareCreator = (history: History) => () => (next: Dispatch): Di
   if (action instanceof NavigateToApplication) {
     const application = applicationManager.applications && applicationManager.applications[action.applicationName];
     if (application) {
-      const href = `${ application.path || application.name }${ action.href ? '/' + action.href : '' }`;
+      const href = `/${ application.path || application.name }${ action.href ? '/' + action.href : '' }`.replace(/\/{2,}/i, '/');
       if (action.replace) {
         history.replace(href, action.state);
       } else {

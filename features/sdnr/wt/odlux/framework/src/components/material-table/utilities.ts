@@ -150,57 +150,42 @@ export function createExternal<TData>(callback: DataCallback<TData>, selectState
     }).catch(error => new AddErrorInfoAction(error));
   };
 
-  const createActions = (dispatch: Dispatch) => {
+  const createActions = (dispatch: Dispatch, skipRefresh: boolean = false) => {
     return {
       onRefresh: () => {
         dispatch(reloadAction);
       },
       onHandleRequestSort: (orderBy: string) => {
-        dispatch((dispatch: Dispatch, getAppState: () => IApplicationStoreState) => {
+        dispatch((dispatch: Dispatch) => {
           dispatch(new RequestSortAction(orderBy));
-          const ownState = selectState(getAppState());
-          Promise.resolve(callback(ownState.page, ownState.rowsPerPage, ownState.orderBy, ownState.order, ownState.showFilter && ownState.filter || {})).then(result => {
-            dispatch(new SetResultAction(result));
-          }).catch(error => new AddErrorInfoAction(error));
+          (!skipRefresh) && dispatch(reloadAction);
         });
       },
       onToggleFilter: () => {
         dispatch((dispatch: Dispatch, getAppState: () => IApplicationStoreState) => {
           const { showFilter } = selectState(getAppState());
           dispatch(new SetShowFilterAction(!showFilter));
-          const ownState = selectState(getAppState());
-          Promise.resolve(callback(ownState.page, ownState.rowsPerPage, ownState.orderBy, ownState.order, ownState.showFilter && ownState.filter || {})).then(result => {
-            dispatch(new SetResultAction(result));
-          }).catch(error => new AddErrorInfoAction(error));
+          (!skipRefresh) && dispatch(reloadAction);
         });
       },
-      onFilterChanged: (property: string, filterTerm: string ) => {
+      onFilterChanged: (property: string, filterTerm: string) => {
         dispatch((dispatch: Dispatch, getAppState: () => IApplicationStoreState) => {
           let { filter } = selectState(getAppState());
           filter = { ...filter, [property]: filterTerm };
           dispatch(new SetFilterChangedAction(filter));
-          const ownState = selectState(getAppState());
-          Promise.resolve(callback(ownState.page, ownState.rowsPerPage, ownState.orderBy, ownState.order, ownState.showFilter && ownState.filter || {})).then(result => {
-            dispatch(new SetResultAction(result));
-          }).catch(error => new AddErrorInfoAction(error));
+          (!skipRefresh) && dispatch(reloadAction);
         });
       },
       onHandleChangePage: (page: number) => { 
-        dispatch((dispatch: Dispatch, getAppState: () => IApplicationStoreState) => {
+        dispatch((dispatch: Dispatch) => {
           dispatch(new SetPageAction(page));
-          const ownState = selectState(getAppState());
-          Promise.resolve(callback(ownState.page, ownState.rowsPerPage, ownState.orderBy, ownState.order, ownState.showFilter && ownState.filter || {})).then(result => {
-            dispatch(new SetResultAction(result));
-          }).catch(error => new AddErrorInfoAction(error));
+          (!skipRefresh) && dispatch(reloadAction);
         });
       },
       onHandleChangeRowsPerPage: (rowsPerPage: number | null) => {
-        dispatch((dispatch: Dispatch, getAppState: () => IApplicationStoreState) => {
+        dispatch((dispatch: Dispatch) => {
           dispatch(new SetRowsPerPageAction(rowsPerPage || 10));
-          const ownState = selectState(getAppState());
-          Promise.resolve(callback(ownState.page, ownState.rowsPerPage, ownState.orderBy, ownState.order, ownState.showFilter && ownState.filter || {})).then(result => {
-            dispatch(new SetResultAction(result));
-          }).catch(error => new AddErrorInfoAction(error));
+          (!skipRefresh) && dispatch(reloadAction);
         });
       }
       // selected:

@@ -27,7 +27,8 @@
     "types": [
       "prop-types",
       "react",
-      "react-dom"
+      "react-dom",
+      "jest"
     ]
   },
   "exclude": [
