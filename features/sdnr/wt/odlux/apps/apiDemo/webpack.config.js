@@ -9,120 +9,123 @@
 const path = require("path");
 const webpack = require("webpack");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
-const requirejsPlugin = require('requirejs-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 
 // const __dirname = (path => path.replace(/^([a-z]\:)/, c => c.toUpperCase()))(process.__dirname());
 
-module.exports = (env) => [{
-  name: "App",
+module.exports = (env) => {
+  const distPath = path.resolve(__dirname, env === "release" ? "." : "../..", "dist");
+  const frameworkPath = path.resolve(__dirname, env === "release" ? "../../framework" : "../..", "dist");
+  return [{
+    name: "App",
 
-  mode: "none", //disable default behavior
+    mode: "none", //disable default behavior
 
-  target: "web",
+    target: "web",
 
-  context: path.resolve(__dirname, "src"),
+    context: path.resolve(__dirname, "src"),
 
-  entry: {
-    apiDemo: ["./plugin.tsx"]
-  },
+    entry: {
+      apiDemo: ["./plugin.tsx"]
+    },
 
-  devtool: env === "release" ? false : "source-map",
+    devtool: env === "release" ? false : "source-map",
 
-  resolve: {
-    extensions: [".ts", ".tsx", ".js", ".jsx"]
-  },
+    resolve: {
+      extensions: [".ts", ".tsx", ".js", ".jsx"]
+    },
 
-  output: {
-    path: path.resolve(__dirname, "dist"),
-    filename: "[name].js",
-    library: "[name]",
-    libraryTarget: "umd2",
-    chunkFilename: "[name].js"
-  },
-  module: {
-    rules: [{
-      test: /\.tsx?$/,
-      exclude: /node_modules/,
-      use: [{
-        loader: "babel-loader"
+    output: {
+      path: distPath,
+      filename: "[name].js",
+      library: "[name]",
+      libraryTarget: "umd2",
+      chunkFilename: "[name].js"
+    },
+    module: {
+      rules: [{
+        test: /\.tsx?$/,
+        exclude: /node_modules/,
+        use: [{
+          loader: "babel-loader"
+        }, {
+          loader: "ts-loader"
+        }]
       }, {
-        loader: "ts-loader"
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        use: [{
+          loader: "babel-loader"
+        }]
       }]
-    }, {
-      test: /\.jsx?$/,
-      exclude: /node_modules/,
-      use: [{
-        loader: "babel-loader"
-      }]
-    }]
-  },
-  optimization: {
-    noEmitOnErrors: true,
-    namedModules: env !== "release",
-    minimize: false,
-    minimizer: [],
-  },
-  plugins: [
-    //  new CopyWebpackPlugin([{
-    //    from: '../../../framework/dist/**.*',
-    //    to: path.resolve(__dirname, "dist")
-    //  }]),
-    new webpack.DllReferencePlugin({
-      context: path.resolve(__dirname, "../../framework/src"),
-      manifest: require("../../framework/dist/vendor-manifest.json"),
-      sourceType: "umd2"
-    }),
-    new webpack.DllReferencePlugin({
-      context: path.resolve(__dirname, "../../framework/src"),
-      manifest: require("../../framework/dist/app-manifest.json"),
-      sourceType: "umd2"
-    }),
-    ...(env === "release") ? [
-      new webpack.DefinePlugin({
-        "process.env": {
-          NODE_ENV: "'production'",
-          VERSION: JSON.stringify(require("./package.json").version)
-        }
-      })
-    ] : [
+    },
+    optimization: {
+      noEmitOnErrors: true,
+      namedModules: true,
+      minimize: false,
+      minimizer: [],
+    },
+    plugins: [
+      //  new CopyWebpackPlugin([{
+      //    from: '../../../dist/**.*',
+      //    to: path.resolve(__dirname, "dist")
+      //  }]),
+      new webpack.DllReferencePlugin({
+        context: path.resolve(__dirname, "../../framework/src"),
+        manifest: require(path.resolve(frameworkPath, "vendor-manifest.json")),
+        sourceType: "umd2"
+      }),
+      new webpack.DllReferencePlugin({
+        context: path.resolve(__dirname, "../../framework/src"),
+        manifest: require(path.resolve(frameworkPath, "app-manifest.json")),
+        sourceType: "umd2"
+      }),
+      ...(env === "release") ? [
         new webpack.DefinePlugin({
           "process.env": {
-            NODE_ENV: "'development'",
+            NODE_ENV: "'production'",
             VERSION: JSON.stringify(require("./package.json").version)
           }
-        }),
-        new CopyWebpackPlugin([{
-          from: 'index.html',
-          to: path.resolve(__dirname, "dist")
-        }]),
-      ]
-  ],
+        })
+      ] : [
+          new webpack.DefinePlugin({
+            "process.env": {
+              NODE_ENV: "'development'",
+              VERSION: JSON.stringify(require("./package.json").version)
+            }
+          }),
+          new CopyWebpackPlugin([{
+            from: 'index.html',
+            to: distPath
+          }]),
+        ]
+    ],
 
-  devServer: {
-    public: "http://localhost:3100",
-    contentBase: path.resolve(__dirname, "../../framework/dist/"),
+    devServer: {
+      public: "http://localhost:3100",
+      contentBase: frameworkPath,
 
-    compress: true,
-    headers: {
-      "Access-Control-Allow-Origin": "*"
-    },
-    host: "0.0.0.0",
-    port: 3100,
-    disableHostCheck: true,
-    historyApiFallback: true,
-    inline: true,
-    hot: false,
-    quiet: false,
-    stats: {
-      colors: true
-    },
-    proxy: {
-      "/restconf/**/*": {
-        target: "https://dlux.just-run.it",
-        secure: false,
-        changeOrigin: true
+      compress: true,
+      headers: {
+        "Access-Control-Allow-Origin": "*"
+      },
+      host: "0.0.0.0",
+      port: 3100,
+      disableHostCheck: true,
+      historyApiFallback: true,
+      inline: true,
+      hot: false,
+      quiet: false,
+      stats: {
+        colors: true
+      },
+      proxy: {
+        "/restconf/**/*": {
+          target: "https://dlux.just-run.it",
+          secure: false,
+          changeOrigin: true
+        }
       }
     }
-  }
-}];
+  }];
+}
