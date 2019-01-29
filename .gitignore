@@ -12,3 +12,4 @@ bin/
 etc/
 node_modules/
 .fbExcludeFilterFile
+*.md.html

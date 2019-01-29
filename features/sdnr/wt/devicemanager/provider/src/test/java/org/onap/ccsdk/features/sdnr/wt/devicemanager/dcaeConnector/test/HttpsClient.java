@@ -37,7 +37,7 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.dcaeConnector.impl.DcaeProviderClient;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.dcaeconnector.impl.DcaeProviderClient;
 
 public class HttpsClient{
 

@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -109,8 +109,8 @@ public class HtDataBaseReaderAndWriter<T extends IsEsObject> {
      * @return json String
      */
     public String getJson( T object ) {
-    	String json = mapper.objectToJson(object);
-    	return json;
+        String json = mapper.objectToJson(object);
+        return json;
     }
 
     /**
@@ -128,7 +128,7 @@ public class HtDataBaseReaderAndWriter<T extends IsEsObject> {
     /**
      * Write one object into Database
      * @param object Object with content
-     * @param json
+     * @param json string
      * @return This object for chained call pattern.
      */
     public T doWrite( T object, String json) {
@@ -136,12 +136,12 @@ public class HtDataBaseReaderAndWriter<T extends IsEsObject> {
         log.debug("doWrite {} {}",object.getClass().getSimpleName(), object.getEsId());
 
         if (json != null) {
-            String esId = db.doWrite(dataTypeName, object, json);
+            String esId = db.doWriteJsonString(dataTypeName, object, json);
             object.setEsId(esId);
             log.debug("doWrite done for {} {}",object.getClass().getSimpleName(), object.getEsId());
             return esId == null ? null : object;
         } else {
-            log.warn("Can not map object and write to database. {}",object.getClass().getSimpleName());
+            log.warn("Can not map object and write to database. {} {}",object.getClass().getSimpleName(), object);
             return null;
         }
 
@@ -185,9 +185,10 @@ public class HtDataBaseReaderAndWriter<T extends IsEsObject> {
      * @return The Object if found or null
      */
     public @Nullable T doRead( IsEsObject object ) {
-    	T res = mapper.getObjectFromJson( db.doReadJsonData( dataTypeName, object) );
-    	if (res != null)
-    		res.setEsId(object.getEsId());
+        T res = mapper.getObjectFromJson( db.doReadJsonData( dataTypeName, object) );
+        if (res != null) {
+            res.setEsId(object.getEsId());
+        }
         return res;
     }
 
@@ -197,9 +198,10 @@ public class HtDataBaseReaderAndWriter<T extends IsEsObject> {
      * @return The Object if found or null
      */
     public @Nullable T doRead( String objectEsId ) {
-    	T res = mapper.getObjectFromJson( db.doReadJsonData( dataTypeName, objectEsId ) );
-    	if (res != null)
-    		res.setEsId(objectEsId);
+        T res = mapper.getObjectFromJson( db.doReadJsonData( dataTypeName, objectEsId ) );
+        if (res != null) {
+            res.setEsId(objectEsId);
+        }
         return res;
     }
 

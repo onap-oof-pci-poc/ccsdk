@@ -18,35 +18,36 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  ******************************************************************************/
-package org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database;
+package org.onap.ccsdk.features.sdnr.wt.devicemodel.test;
 
-import org.elasticsearch.client.Client;
-import org.elasticsearch.common.bytes.BytesReference;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.SearchHit;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.Test;
+import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.core.model.rev170320.NetworkElement;
+import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.core.model.rev170320.NetworkElementBuilder;
+import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.core.model.rev170320.name.g.Name;
+import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.core.model.rev170320.name.g.NameBuilder;
+
+public class TestNetworkElement {
+
+    @Test
+    public void test() {
+
+        NetworkElementBuilder networkElementBuilder = new NetworkElementBuilder();
+
+        NameBuilder nameBuilder = new NameBuilder();
+        nameBuilder.setValueName("name");
+        nameBuilder.setValue("Device1");
+        List<Name> nameList = new ArrayList<>();
+        nameList.add(nameBuilder.build());
+        networkElementBuilder.setName(nameList);
 
 
-/**
- * Interface, used by access one object
- * @author Herbert
- *
- */
-public interface HtDataBase {
+        NetworkElement ne = networkElementBuilder.build();
 
-    String getNetworkIndex();
-    void setNetworkIndex(String networkIndex);
+        System.out.println(ne.toString());
 
-    Client getClient();
-    void closeDb();
-
-    public BytesReference doReadJsonData( String dataTypeName, IsEsObject esId );
-    public BytesReference doReadJsonData(String dataTypeName, String esId);
-    public SearchHit[] doReadAllJsonData( int start, int length, String dataTypeName );
-    public SearchHit[] doReadByQueryJsonData( int start, int length, String dataTypeName, QueryBuilder query);
-
-    public String doWriteByteArray( String dataTypeName, IsEsObject esId, byte[] json);
-    public String doWriteJsonString( String dataTypeName, IsEsObject esId, String json);
-
-    public boolean doRemove( String dataTypeName, IsEsObject esId );
+        //fail("Not yet implemented");
+    }
 
 }

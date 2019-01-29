@@ -18,7 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  ******************************************************************************/
-package org.onap.ccsdk.features.sdnr.wt.devicemanager.dcaeConnector.impl;
+package org.onap.ccsdk.features.sdnr.wt.devicemanager.dcaeconnector.impl;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

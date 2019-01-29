@@ -18,7 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  ******************************************************************************/
-package org.onap.ccsdk.features.sdnr.wt.devicemanager.aaiConnector.impl;
+package org.onap.ccsdk.features.sdnr.wt.devicemanager.aaiconnector.impl;
 
 import java.util.List;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.http.BaseHTTPResponse;

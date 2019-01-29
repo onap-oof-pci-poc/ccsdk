@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -65,22 +65,22 @@ public class EsPerformanceData {
             this.dataAirInterface12 = ((AirInterfaceHistoricalPerformanceTypeG) otnHistoryData).getPerformanceData();
         } else if (otnHistoryData instanceof ContainerHistoricalPerformanceTypeG) {
             this.dataEthContainer12 = ((ContainerHistoricalPerformanceTypeG) otnHistoryData).getPerformanceData();
-        } else if (otnHistoryData instanceof ExtendedAirInterfaceHistoricalPerformanceType1211) {
+        } else if (otnHistoryData instanceof ExtendedAirInterfaceHistoricalPerformanceType12) {
             this.dataAirInterface12 = ((ExtendedAirInterfaceHistoricalPerformanceType12) otnHistoryData)
                     .getAirInterfaceHistoricalPerformanceType().getPerformanceData();
         } else if (otnHistoryData instanceof org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev180907.AirInterfaceHistoricalPerformanceTypeG) {
             this.dataAirInterface1211 = ((org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev180907.AirInterfaceHistoricalPerformanceTypeG) otnHistoryData)
                     .getPerformanceData();
-        } else if (otnHistoryData instanceof ContainerHistoricalPerformanceTypeG) {
+        } else if (otnHistoryData instanceof org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev180907.ContainerHistoricalPerformanceTypeG) {
             this.dataEthContainer1211 = ((org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev180907.ContainerHistoricalPerformanceTypeG) otnHistoryData)
                     .getPerformanceData();
         } else if (otnHistoryData instanceof ExtendedAirInterfaceHistoricalPerformanceType1211) {
             this.dataAirInterface1211 = ((ExtendedAirInterfaceHistoricalPerformanceType1211) otnHistoryData)
                     .getAirInterfaceHistoricalPerformanceType().getPerformanceData();
-        } else if (otnHistoryData instanceof org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev180907.AirInterfaceHistoricalPerformanceTypeG) {
+        } else if (otnHistoryData instanceof org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev181010.AirInterfaceHistoricalPerformanceTypeG) {
             this.dataAirInterface1211p = ((org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev181010.AirInterfaceHistoricalPerformanceTypeG) otnHistoryData)
                     .getPerformanceData();
-        } else if (otnHistoryData instanceof ContainerHistoricalPerformanceTypeG) {
+        } else if (otnHistoryData instanceof org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev181010.ContainerHistoricalPerformanceTypeG) {
             this.dataEthContainer1211p = ((org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev181010.ContainerHistoricalPerformanceTypeG) otnHistoryData)
                     .getPerformanceData();
         } else if (otnHistoryData instanceof ExtendedAirInterfaceHistoricalPerformanceType1211p) {

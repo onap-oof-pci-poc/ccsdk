@@ -18,35 +18,17 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  ******************************************************************************/
-package org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database;
-
-import org.elasticsearch.client.Client;
-import org.elasticsearch.common.bytes.BytesReference;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.SearchHit;
-
-
 /**
- * Interface, used by access one object
- * @author Herbert
  *
  */
-public interface HtDataBase {
+package org.onap.ccsdk.features.sdnr.wt.devicemanager.dcaeconnector.impl;
 
-    String getNetworkIndex();
-    void setNetworkIndex(String networkIndex);
+/**
+ * @author herbert
+ *
+ */
+public interface DcaeSender {
 
-    Client getClient();
-    void closeDb();
-
-    public BytesReference doReadJsonData( String dataTypeName, IsEsObject esId );
-    public BytesReference doReadJsonData(String dataTypeName, String esId);
-    public SearchHit[] doReadAllJsonData( int start, int length, String dataTypeName );
-    public SearchHit[] doReadByQueryJsonData( int start, int length, String dataTypeName, QueryBuilder query);
-
-    public String doWriteByteArray( String dataTypeName, IsEsObject esId, byte[] json);
-    public String doWriteJsonString( String dataTypeName, IsEsObject esId, String json);
-
-    public boolean doRemove( String dataTypeName, IsEsObject esId );
+    public String sendDcaePost(String body);
 
 }

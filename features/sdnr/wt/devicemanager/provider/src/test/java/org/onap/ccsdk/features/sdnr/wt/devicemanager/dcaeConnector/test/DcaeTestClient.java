@@ -21,8 +21,8 @@
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.dcaeConnector.test;
 
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.DcaeConfig;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.dcaeConnector.impl.DcaeMessages;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.dcaeConnector.impl.DcaeSenderImpl;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.dcaeconnector.impl.DcaeMessages;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.dcaeconnector.impl.DcaeSenderImpl;
 
 public class DcaeTestClient {
 

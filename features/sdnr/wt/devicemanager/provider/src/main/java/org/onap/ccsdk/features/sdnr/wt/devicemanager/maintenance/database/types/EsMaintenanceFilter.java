@@ -8,9 +8,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,6 +20,9 @@
  ******************************************************************************/
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.maintenance.database.types;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -33,10 +36,6 @@ import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonSetter;
 
 /**
  * One filter element to describe a maintenance status for an object referenced by definition.
@@ -189,9 +188,9 @@ public class EsMaintenanceFilter implements Filter {
 
     /**
      * Compare the if probe is within the range of start and end.
-     * @param start
-     * @param end
-     * @param now
+     * @param start of range
+     * @param end of range
+     * @param probe time to verify
      * @return boolean result true if (start <= probe <= end)
      */
     public static boolean isInPeriod(ZonedDateTime start, ZonedDateTime end, ZonedDateTime probe) {
@@ -200,7 +199,7 @@ public class EsMaintenanceFilter implements Filter {
 
     /**
      * Convert to time value to String
-     * @param ldt
+     * @param ldt ZonedDateTime format
      * @return String output
      */
     public static String toString(ZonedDateTime ldt) {
@@ -212,14 +211,18 @@ public class EsMaintenanceFilter implements Filter {
 
     /**
      * Convert String to time value
-     * @param zoneTimeString
-     * @return
+     * @param zoneTimeString with time
+     * @return ZonedDateTime string
      */
     public static ZonedDateTime valueOf(String zoneTimeString) {
+        if (zoneTimeString == null || zoneTimeString.isEmpty()) {
+            LOG.warn("Null or empty zoneTimeString");
+            return EMPTYDATETIME;
+        }
         try {
             return ZonedDateTime.parse(zoneTimeString, FORMAT);
         } catch (DateTimeParseException e) {
-            LOG.warn("Can not parse zoneTimeString {}",zoneTimeString);
+            LOG.warn("Can not parse zoneTimeString '{}'",zoneTimeString);
             return EMPTYDATETIME;
         }
     }

@@ -1,22 +1,17 @@
 /*******************************************************************************
- * ============LICENSE_START=======================================================
- * ONAP : ccsdk feature sdnr wt
- *  ================================================================================
- * Copyright (C) 2019 highstreet technologies GmbH Intellectual Property.
- * All rights reserved.
- * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * ============LICENSE_START======================================================= ONAP : ccsdk
+ * feature sdnr wt ================================================================================
+ * Copyright (C) 2019 highstreet technologies GmbH Intellectual Property. All rights reserved.
+ * ================================================================================ Licensed under
+ * the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License. ============LICENSE_END=========================================================
  ******************************************************************************/
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml;
 
@@ -31,7 +26,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Wrapper for forwarding web-socket notifications to the web-socket service, that is running as bundle.
+ * Wrapper for forwarding web-socket notifications to the web-socket service, that is running as
+ * bundle.
  */
 public class WebSocketServiceClientImpl2 implements WebSocketServiceClient {
 
@@ -42,6 +38,7 @@ public class WebSocketServiceClientImpl2 implements WebSocketServiceClient {
 
     /**
      * Implementation of Websocket notification processor.
+     *
      * @param rpcProviderRegistry to get MDSAL services.
      */
     public WebSocketServiceClientImpl2(RpcProviderRegistry rpcProviderRegistry) {
@@ -62,8 +59,8 @@ public class WebSocketServiceClientImpl2 implements WebSocketServiceClient {
             Future<RpcResult<WebsocketEventOutput>> result = websocketmanagerService.websocketEvent(wsBuilder.build());
             LOG.info("Send websocket result: {}", result.get().getResult().getResponse());
         } catch (Exception e) {
-            LOG.warn("Can not send websocket event {} for mountpoint {} {}",
-                    notificationXml.getClass().getSimpleName(), nodeName, e.toString());
+            LOG.warn("Can not send websocket event {} for mountpoint {} {}", notificationXml.getClass().getSimpleName(),
+                    nodeName, e.toString());
         }
     }
 }
