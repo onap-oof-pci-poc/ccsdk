@@ -120,6 +120,7 @@ public abstract class FileWatchdog extends Thread {
                 Thread.sleep(delay);
             } catch (InterruptedException e) {
                 LOGGER.debug("Interrupted sleep. {}", e.getMessage());
+                Thread.currentThread().interrupt();
             }
         }
         LOGGER.debug("Stoppen file watchdog for file {}", filename);

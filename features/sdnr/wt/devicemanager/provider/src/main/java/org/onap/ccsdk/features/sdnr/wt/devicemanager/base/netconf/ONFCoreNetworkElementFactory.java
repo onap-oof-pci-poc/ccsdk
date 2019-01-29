@@ -6,9 +6,9 @@
  * =================================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -18,6 +18,7 @@
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf;
 
 import com.google.common.base.Optional;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.container.Capabilities;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.toggleAlarmFilter.NotificationDelayService;
@@ -27,7 +28,7 @@ import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.ProblemNotificatio
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.WebSocketServiceClient;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.maintenance.MaintenanceService;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
-import org.opendaylight.controller.md.sal.binding.api.ReadTransaction;
+import org.opendaylight.controller.md.sal.binding.api.ReadOnlyTransaction;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNode;
@@ -47,16 +48,14 @@ public class ONFCoreNetworkElementFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(ONFCoreNetworkElementFactory.class);
 
-    public static ONFCoreNetworkElementRepresentation create(String mountPointNodeName, DataBroker dataBroker,
+    public static @Nonnull ONFCoreNetworkElementRepresentation create(String mountPointNodeName, DataBroker dataBroker,
             WebSocketServiceClient webSocketService, HtDatabaseEventsService databaseService,
             InstanceIdentifier<Node> instanceIdentifier, DataBroker mountpointDataBroker, ProviderClient dcaeProvider,
             @Nullable ProviderClient aotsmClient, MaintenanceService maintenanceService,
             NotificationDelayService<ProblemNotificationXml> notificationDelayService) {
 
-        ReadTransaction tx = dataBroker.newReadOnlyTransaction();
         ONFCoreNetworkElementRepresentation res = null;
-
-        try {
+        try (ReadOnlyTransaction tx = dataBroker.newReadOnlyTransaction();){
             Optional<Node> nodeOption = tx.read(LogicalDatastoreType.OPERATIONAL, instanceIdentifier).checkedGet();
             if (nodeOption.isPresent()) {
                 Node node = nodeOption.get();
@@ -73,15 +72,14 @@ public class ONFCoreNetworkElementFactory {
                     }
                 }
             }
+            tx.close();
         } catch (ReadFailedException | IllegalArgumentException e) {
             LOG.warn("Can not generate specific NE Version representation. ", e);
         }
         if (res == null) {
             res = new ONFCoreEmpty(mountPointNodeName);
         }
-
         LOG.info("Mointpoint {} started as {}", mountPointNodeName, res.getClass().getSimpleName());
-
         return res;
     }
 

@@ -6,9 +6,9 @@
  * =================================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -22,9 +22,7 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-
 import javax.annotation.Nullable;
-
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.ReadOnlyTransaction;
@@ -36,7 +34,6 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.CheckedFuture;
@@ -44,8 +41,8 @@ import com.google.common.util.concurrent.CheckedFuture;
 public final class GenericTransactionUtils {
     static final Logger LOG = LoggerFactory.getLogger(GenericTransactionUtils.class);
 
-    public static <T extends DataObject> boolean writeData(DataBroker dataBroker, LogicalDatastoreType logicalDatastoreType,
-            InstanceIdentifier<T> iid, T dataObject, boolean isAdd) {
+    public static <T extends DataObject> boolean writeData(DataBroker dataBroker,
+            LogicalDatastoreType logicalDatastoreType, InstanceIdentifier<T> iid, T dataObject, boolean isAdd) {
         Preconditions.checkNotNull(dataBroker);
         WriteTransaction modification = dataBroker.newWriteOnlyTransaction();
         if (isAdd) {
@@ -53,9 +50,8 @@ public final class GenericTransactionUtils {
                 LOG.warn("Invalid attempt to add a non-existent object to path {}", iid);
                 return false;
             }
-            modification.merge(logicalDatastoreType, iid, dataObject, true /*createMissingParents*/);
-        }
-        else {
+            modification.merge(logicalDatastoreType, iid, dataObject, true /* createMissingParents */);
+        } else {
             modification.delete(LogicalDatastoreType.CONFIGURATION, iid);
         }
         CheckedFuture<Void, TransactionCommitFailedException> commitFuture = modification.submit();
@@ -64,38 +60,16 @@ public final class GenericTransactionUtils {
             LOG.debug("Transaction success for {} of object {}", isAdd ? "add" : "delete", dataObject);
             return true;
         } catch (Exception e) {
-            LOG.warn("Transaction failed with error {} for {} of object {}", e.getMessage(), isAdd ? "add" : "delete", dataObject);
+            LOG.warn("Transaction failed with error {} for {} of object {}", e.getMessage(), isAdd ? "add" : "delete",
+                    dataObject);
             modification.cancel();
             return false;
         }
     }
 
-     /*
-     /**
-     * Deliver the data back or null
-     * @param dataBroker for accessing data
-     * @param dataStoreType to address datastore
-     * @param iid id to access data
-     * @return Optional for the data
-     * /
-    private static <T extends DataObject> Optional<T> readDataOptional(DataBroker dataBroker, LogicalDatastoreType dataStoreType, InstanceIdentifier<T> iid) {
-
-        Preconditions.checkNotNull(dataBroker);
-        ReadOnlyTransaction readTransaction = dataBroker.newReadOnlyTransaction();
-        try {
-            CheckedFuture<Optional<T>, ReadFailedException> od = readTransaction.read(dataStoreType, iid);
-            Optional<T> optionalData = od.get();
-            readTransaction.close();
-            return optionalData;
-        } catch (CancellationException | ExecutionException | InterruptedException | NoSuchElementException e) {
-            logger.warn("Read transaction for identifier "+iid+" failed with error "+e.getMessage());
-            readTransaction.close();
-            return Optional.fromNullable(null);
-        }
-    } /**/
-
     /**
      * Deliver the data back or null. Warning
+     *
      * @param <T> SubType of the DataObject to be handled
      * @param dataBroker for accessing data
      * @param dataStoreType to address datastore
@@ -103,15 +77,16 @@ public final class GenericTransactionUtils {
      * @return null or object
      */
     @Nullable
-    public static <T extends DataObject> T readData(DataBroker dataBroker, LogicalDatastoreType dataStoreType, InstanceIdentifier<T> iid) {
-        //return readDataOptional(dataBroker, dataStoreType, iid).orNull();
+    public static <T extends DataObject> T readData(DataBroker dataBroker, LogicalDatastoreType dataStoreType,
+            InstanceIdentifier<T> iid) {
+
         AtomicBoolean noErrorIndication = new AtomicBoolean();
         AtomicReference<String> statusText = new AtomicReference<>();
 
         T obj = readDataOptionalWithStatus(dataBroker, dataStoreType, iid, noErrorIndication, statusText);
 
-        if (! noErrorIndication.get()) {
-            LOG.warn("Read transaction for identifier "+iid+" failed with status "+statusText.get());
+        if (!noErrorIndication.get()) {
+            LOG.warn("Read transaction for identifier " + iid + " failed with status " + statusText.get());
         }
 
         return obj;
@@ -119,6 +94,7 @@ public final class GenericTransactionUtils {
 
     /**
      * Deliver the data back or null
+     *
      * @param <T> SubType of the DataObject to be handled
      * @param dataBroker for accessing data
      * @param dataStoreType to address datastore
@@ -128,53 +104,59 @@ public final class GenericTransactionUtils {
      * @return null or object
      */
     @Nullable
-    public static <T extends DataObject> T readDataOptionalWithStatus(DataBroker dataBroker, LogicalDatastoreType dataStoreType, InstanceIdentifier<T> iid, AtomicBoolean noErrorIndication, AtomicReference<String> statusIndicator) {
+    public static <T extends DataObject> T readDataOptionalWithStatus(DataBroker dataBroker,
+            LogicalDatastoreType dataStoreType, InstanceIdentifier<T> iid, AtomicBoolean noErrorIndication,
+            AtomicReference<String> statusIndicator) {
 
-    	T data = null;
-    	noErrorIndication.set(false);
+        T data = null;
+        noErrorIndication.set(false);
 
-    	statusIndicator.set("Preconditions");
-    	Preconditions.checkNotNull(dataBroker);
+        statusIndicator.set("Preconditions");
+        Preconditions.checkNotNull(dataBroker);
 
-    	int retry = 0;
-    	int retryDelayMilliseconds = 2000;
-    	int maxRetries = 5; //0 no Retry
+        int retry = 0;
+        int retryDelayMilliseconds = 2000;
+        int maxRetries = 5; // 0 no Retry
 
-    	do {
-    		if (retry > 0) {
-        		try {
-        			LOG.debug("Sleep {}ms", retryDelayMilliseconds);
-        			Thread.sleep(retryDelayMilliseconds);
-        		} catch (InterruptedException e) {
-        			LOG.debug("Sleep interrupted",e);
-        		}
-    		}
+        do {
+            if (retry > 0) {
+                try {
+                    LOG.debug("Sleep {}ms", retryDelayMilliseconds);
+                    Thread.sleep(retryDelayMilliseconds);
+                } catch (InterruptedException e) {
+                    LOG.debug("Sleep interrupted", e);
+                    Thread.currentThread().interrupt();
+                }
+            }
 
-    		LOG.debug("Sending message with retry {} ", retry);
-    		statusIndicator.set("Create Read Transaction");
-    		ReadOnlyTransaction readTransaction = dataBroker.newReadOnlyTransaction();
+            LOG.debug("Sending message with retry {} ", retry);
+            statusIndicator.set("Create Read Transaction");
 
-    		try {
-    			CheckedFuture<Optional<T>, ReadFailedException> od = readTransaction.read(dataStoreType, iid);
-    			statusIndicator.set("Read done");
-    			if (od != null) {
-    				statusIndicator.set("Unwrap checkFuture done");
-    				Optional<T> optionalData = od.get();
-    				if (optionalData != null) {
-    					statusIndicator.set("Unwrap optional done");
-    					data = optionalData.orNull();
-    					statusIndicator.set("Read transaction done");
-    					noErrorIndication.set(true);
-    				}
-    			}
-    		} catch (CancellationException | ExecutionException | InterruptedException | NoSuchElementException e) {
-    			statusIndicator.set(ExceptionUtils.getStackTrace(e));
-    		}
-    		readTransaction.close();
+            try (ReadOnlyTransaction readTransaction = dataBroker.newReadOnlyTransaction();) {
+                CheckedFuture<Optional<T>, ReadFailedException> od = readTransaction.read(dataStoreType, iid);
+                statusIndicator.set("Read done");
+                if (od != null) {
+                    statusIndicator.set("Unwrap checkFuture done");
+                    Optional<T> optionalData = od.get();
+                    if (optionalData != null) {
+                        statusIndicator.set("Unwrap optional done");
+                        data = optionalData.orNull();
+                        statusIndicator.set("Read transaction done");
+                        noErrorIndication.set(true);
+                    }
+                }
 
-    	} while (noErrorIndication.get() == false && retry++ < maxRetries);
+                readTransaction.close();
+            } catch (CancellationException | ExecutionException | InterruptedException | NoSuchElementException e) {
+                statusIndicator.set(ExceptionUtils.getStackTrace(e));
+                if (e instanceof InterruptedException) {
+                    Thread.currentThread().interrupt();
+                }
+            }
 
-    	return data;
+        } while (noErrorIndication.get() == false && retry++ < maxRetries);
+
+        return data;
     }
 
 

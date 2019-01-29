@@ -6,9 +6,9 @@
  * =================================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -90,23 +90,24 @@ public abstract class ONFCoreNetworkElement12Base extends ONFCoreNetworkElementB
      * Constructor
      */
 
-	protected ONFCoreNetworkElement12Base(String mountPointNodeName, DataBroker netconfNodeDataBroker,
-			Capabilities capabilities) {
-		super(mountPointNodeName, netconfNodeDataBroker, capabilities);
-		// TODO Auto-generated constructor stub
+    protected ONFCoreNetworkElement12Base(String mountPointNodeName, DataBroker netconfNodeDataBroker,
+            Capabilities capabilities) {
+        super(mountPointNodeName, netconfNodeDataBroker, capabilities);
+        // TODO Auto-generated constructor stub
         this.isNetworkElementCurrentProblemsSupporting12 = capabilities.isSupportingNamespaceAndRevision(NetworkElementPac.QNAME);
         this.equipment = new ONFCoreNetworkElement12Equipment(this, capabilities);
         LOG.debug("support necurrent-problem-list=" + this.isNetworkElementCurrentProblemsSupporting12);
         LOG.info("Create NE instance {}", InstanceList.QNAME.getLocalName());
-	}
+    }
 
     /*---------------------------------------------------------------
      * Getter/ Setter
      */
 
-	public NetworkElement getOptionalNetworkElement() {
-		return optionalNe;
-	}
+    @Override
+    public NetworkElement getOptionalNetworkElement() {
+        return optionalNe;
+    }
 
 
     /*---------------------------------------------------------------
@@ -127,13 +128,7 @@ public abstract class ONFCoreNetworkElement12Base extends ONFCoreNetworkElementB
      */
     @Override
     public boolean checkIfConnectionToNeIsOk() {
-    	return true;
-    	/* => TODO Activate by extension.
-        synchronized (dmLock) {
-            return optionalNe != null && !interfaceList.isEmpty();
-        }
-        */
-
+        return true;
     }
 
     /*---------------------------------------------------------------
@@ -148,11 +143,11 @@ public abstract class ONFCoreNetworkElement12Base extends ONFCoreNetworkElementB
     public void initSynchronizationExtension() {
         // ClockIdentityType vv;
         try {
-            if (!capabilities.isSupportingNamespaceAndRevision(InstanceList.QNAME)) {
-                LOG.debug("Mountpoint {} does not support PTP", mountPointNodeName);
+            if (!getCapabilities().isSupportingNamespaceAndRevision(InstanceList.QNAME)) {
+                LOG.debug("Mountpoint {} does not support PTP", getMountPointNodeName());
             } else {
                 StringBuffer sb = new StringBuffer();
-                sb.append("NE " + mountPointNodeName + " does support synchronisation.\n");
+                sb.append("NE " + getMountPointNodeName() + " does support synchronisation.\n");
                 InstanceList ptpInstance = readPTPClockInstances();
                 if (ptpInstance != null) {
                     List<PortDsList> dsList = ptpInstance.getPortDsList();
@@ -189,7 +184,7 @@ public abstract class ONFCoreNetworkElement12Base extends ONFCoreNetworkElementB
 
     @Nullable
     private InstanceList readPTPClockInstances() {
-        return GenericTransactionUtils.readData(netconfNodeDataBroker, LogicalDatastoreType.OPERATIONAL,
+        return GenericTransactionUtils.readData(getNetconfNodeDataBroker(), LogicalDatastoreType.OPERATIONAL,
                 PTPINSTANCES_IID);
     }
 
