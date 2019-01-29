@@ -15,11 +15,13 @@
  * the License.
  * ============LICENSE_END==========================================================================
  ******************************************************************************/
-package org.onap.ccsdk.features.sdnr.wt.devicemanager.base.http;
+
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.http.BaseHTTPClient;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.http.BaseHTTPResponse;
 
 /*
  * base... baseURL, e.g. http://10.10.55.11:8432/api/paut/

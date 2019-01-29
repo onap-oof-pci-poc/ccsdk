@@ -6,9 +6,9 @@
  * =================================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -16,8 +16,8 @@
  * ============LICENSE_END==========================================================================
  ******************************************************************************/
 /**
- * Convert capabilities of netconfnode into internal format.
- * Boron and Carbon are providing different versions
+ * Convert capabilities of netconfnode into internal format. Boron and Carbon are providing
+ * different versions
  */
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.container;
 
@@ -31,7 +31,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.slf4j.Logger;
@@ -40,9 +39,11 @@ import org.slf4j.LoggerFactory;
 public class Capabilities {
 
     private static final Logger LOG = LoggerFactory.getLogger(Capabilities.class);
-    private static final String INTERFACE_AVAILABLECAPABILITY = "org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.netconf.node.connection.status.available.capabilities.AvailableCapability";
+    private static final String INTERFACE_AVAILABLECAPABILITY =
+            "org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.netconf.node.connection.status.available.capabilities.AvailableCapability";
 
     private final List<String> capabilities = new ArrayList<>();
+    private final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
     public Capabilities() {
 
@@ -60,9 +61,9 @@ public class Capabilities {
      * Does all construction steps
      *
      * @param pcapabilities with a list of capabilities. <br>
-     *                      Type could be <br>
-     *                      - Boron: List<code><String></code> <br>
-     *                      - Carbon: List<AvailableCapability>
+     *        Type could be <br>
+     *        - Boron: List<code><String></code> <br>
+     *        - Carbon: List<AvailableCapability>
      */
     private void constructor(List<?> pcapabilities) {
         for (Object capability : pcapabilities) {
@@ -73,7 +74,7 @@ public class Capabilities {
             if (capability instanceof String) { // ODL Boron specific
                 this.capabilities.add((String) capability);
             } else if (hasInterface(capability, INTERFACE_AVAILABLECAPABILITY)) { // Carbon specific part .. handled via
-                                                                                    // generic
+                                                                                  // generic
                 try {
                     Method method = capability.getClass().getDeclaredMethod("getCapability");
                     this.capabilities.add(method.invoke(capability).toString());
@@ -112,25 +113,24 @@ public class Capabilities {
      * @param qCapability capability from the model
      * @return true if supporting the model
      */
-    private DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-
     public boolean isSupportingNamespaceAndRevision(QName qCapability) {
         String namespace = qCapability.getNamespace().toString();
         String revision;
         Object revisionObject = qCapability.getRevision();
-        if (revisionObject instanceof Optional){
-        	if (((Optional<?>)revisionObject).isPresent()) {
-	        	revisionObject = ((Optional<?>)revisionObject).get();
-	        	LOG.info("Unwrapp Optional: {}",revisionObject.getClass());
-        	}
+        if (revisionObject instanceof Optional) {
+            if (((Optional<?>) revisionObject).isPresent()) {
+                revisionObject = ((Optional<?>) revisionObject).get();
+                LOG.info("Unwrapp Optional: {}", revisionObject.getClass());
+            }
         }
         if (revisionObject instanceof String) {
-        	revision = (String)revisionObject;
+            revision = (String) revisionObject;
         } else if (revisionObject instanceof Date) {
-        	revision = formatter.format((Date)revisionObject);
+            revision = formatter.format((Date) revisionObject);
         } else {
-        	revision = revisionObject.toString();
-        	LOG.warn("Revision number type not supported. Class:{} String:{}", revisionObject.getClass().getName(), revisionObject);
+            revision = revisionObject.toString();
+            LOG.warn("Revision number type not supported. Class:{} String:{}", revisionObject.getClass().getName(),
+                    revisionObject);
         }
         for (String capability : capabilities) {
             if (capability.contains(namespace) && capability.contains(revision)) {
@@ -143,7 +143,7 @@ public class Capabilities {
 
 
     public void add(String qname) {
-    	capabilities.add(qname);
+        capabilities.add(qname);
     }
 
     @Override
@@ -154,7 +154,7 @@ public class Capabilities {
     /**
      * Check if object is proxy and has specific interface
      *
-     * @param object        Name of the object to verify
+     * @param object Name of the object to verify
      * @param interfaceName is the name of the interface
      * @return boolean accordingly
      */

@@ -212,11 +212,9 @@ public class Resources {
             LOG.warn("cannot find resfile:" + resFile);
             return false;
         }
-        try {
-            InputStream in = u.openStream();
+        try (InputStream in = u.openStream();
+             OutputStream outStream = new FileOutputStream(oFile);) {
             oFile.getParentFile().mkdirs();
-            OutputStream outStream;
-            outStream = new FileOutputStream(oFile);
             int theInt;
             while ((theInt = in.read()) >= 0) {
                 outStream.write(theInt);
