@@ -43,52 +43,52 @@ public class HtDatabaseWebAPIClient {
 
     public String sendRequest(String uri, String method, JSONObject body) throws IOException {
         LOG.debug("try to send request with uri=" + uri + " as method=" + method);
-        if (body != null) {
-            LOG.trace("body:" + body.toString());
-        }
-        InputStream response = null;
+        String sresponse = "";
         int responseCode = -1;
 
-        String surl = String.format("%s:%d%s", this.host, this.port, uri);
-        URL url = new URL(surl);
-        URLConnection urlConnection = url.openConnection();
-        if (urlConnection instanceof HttpURLConnection) {
-            HttpURLConnection http = (HttpURLConnection)urlConnection;
-            http.setRequestMethod(method);
-            http.setDoOutput(true);
-            http.setRequestProperty("Content-Type", "application/json");
-            // send request
-            // Send the message to destination
-            if (!method.equals("GET")) {
-                try (OutputStream output = http.getOutputStream()) {
-                    output.write(body.toString().getBytes(CHARSET));
+        if (body != null) {
+            LOG.trace("body: {}", body);
+            InputStream response = null;
+            String surl = String.format("%s:%d%s", this.host, this.port, uri);
+            URL url = new URL(surl);
+            URLConnection urlConnection = url.openConnection();
+            if (urlConnection instanceof HttpURLConnection) {
+                HttpURLConnection http = (HttpURLConnection) urlConnection;
+                http.setRequestMethod(method);
+                http.setDoOutput(true);
+                http.setRequestProperty("Content-Type", "application/json");
+                // send request
+                // Send the message to destination
+                if (!method.equals("GET")) {
+                    try (OutputStream output = http.getOutputStream()) {
+                        output.write(body.toString().getBytes(CHARSET));
+                    }
+                }
+                responseCode = http.getResponseCode();
+                // Receive answer
+                if (responseCode >= 200 && responseCode < 300) {
+                    response = http.getInputStream();
+                } else {
+                    response = http.getErrorStream();
+                    if (response == null) {
+                        http.getInputStream();
+                    }
                 }
             }
-            responseCode = http.getResponseCode();
-            // Receive answer
-            if (responseCode >= 200 && responseCode < 300) {
-                response = http.getInputStream();
+            byte[] buffer = new byte[BUFSIZE];
+            int len = 0;
+            if (response != null) {
+                while (true) {
+                    len = response.read(buffer, 0, BUFSIZE);
+                    if (len <= 0) {
+                        break;
+                    }
+                    sresponse += new String(buffer, 0, len, CHARSET);
+                }
+                response.close();
             } else {
-                response = http.getErrorStream();
-                if (response == null) {
-                    http.getInputStream();
-                }
+                LOG.debug("response is null");
             }
-        }
-        byte[] buffer = new byte[BUFSIZE];
-        int len = 0;
-        String sresponse = "";
-        if (response != null) {
-            while (true) {
-                len = response.read(buffer, 0, BUFSIZE);
-                if (len <= 0) {
-                    break;
-                }
-                sresponse += new String(buffer, 0, len, CHARSET);
-            }
-            response.close();
-        } else {
-            LOG.debug("response is null");
         }
         LOG.debug("ResponseCode: " + responseCode);
         LOG.trace("Response: " + sresponse);

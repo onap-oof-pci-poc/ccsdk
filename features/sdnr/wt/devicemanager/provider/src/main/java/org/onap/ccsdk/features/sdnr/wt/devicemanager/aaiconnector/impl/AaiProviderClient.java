@@ -130,14 +130,14 @@ public class AaiProviderClient implements AutoCloseable {
         public void run() {
             LOG.debug("check if pnfid {} exists", pnfId);
             this.mClient.setTimeout(timeout);
-            BaseHTTPResponse response = this.mClient.pnfCheckIfExists(pnfId);
-            if (response.code == RESPCODE_NOTFOUND) {
+            int responseCode = this.mClient.pnfCheckIfExists(pnfId);
+            if (responseCode == RESPCODE_NOTFOUND) {
                 LOG.debug("do pnfCreate for {}", pnfId);
                 this.mClient.pnfCreate(pnfId, type, model, vendor, oamIp, ifaces);
-            } else if (response.code == RESPCODE_FOUND) {
+            } else if (responseCode == RESPCODE_FOUND) {
                 LOG.debug("pnfid {} found, nothing to do", pnfId);
             } else {
-                LOG.warn("unhandled response code: {}", response.toString());
+                LOG.warn("unhandled response code: {}", responseCode);
             }
         }
     };
