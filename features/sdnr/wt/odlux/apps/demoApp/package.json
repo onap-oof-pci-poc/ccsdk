@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --env debug",
-    "prebuild": "rimraf dist",
-    "build": "webpack --env release --config webpack.config.js"
+    "build": "webpack --env release --config webpack.config.js",
+    "build:dev": "webpack --env debug --config webpack.config.js"
   },
   "repository": {
     "type": "git",
