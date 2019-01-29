@@ -18,7 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  ******************************************************************************/
-package org.onap.ccsdk.sdnr.wt.websocketmanager2.test;
+package org.onap.ccsdk.features.sdnr.wt.websocketmanager2.test;
 
 import static org.junit.Assert.*;
 
@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import org.junit.Test;
-import org.onap.ccsdk.sdnr.wt.websocketmanager2.utils.AkkaConfig;
+import org.onap.ccsdk.features.sdnr.wt.websocketmanager2.utils.AkkaConfig;
 
 public class AkkaConfigTest {
 

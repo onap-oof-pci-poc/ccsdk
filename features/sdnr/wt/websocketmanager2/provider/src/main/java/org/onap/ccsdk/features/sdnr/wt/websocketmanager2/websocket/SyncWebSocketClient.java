@@ -18,7 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  ******************************************************************************/
-package org.onap.ccsdk.sdnr.wt.websocketmanager2.websocket;
+package org.onap.ccsdk.features.sdnr.wt.websocketmanager2.websocket;
 
 import java.net.URI;
 import java.net.URISyntaxException;

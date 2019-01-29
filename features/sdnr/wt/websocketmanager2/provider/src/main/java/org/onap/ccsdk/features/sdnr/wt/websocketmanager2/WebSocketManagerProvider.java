@@ -18,7 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  ******************************************************************************/
-package org.onap.ccsdk.sdnr.wt.websocketmanager2;
+package org.onap.ccsdk.features.sdnr.wt.websocketmanager2;
 
 import javax.servlet.ServletException;
 
@@ -76,7 +76,7 @@ public class WebSocketManagerProvider extends Blueprint {
 		if (httpService == null) {
 			LOG.warn("Unable to inject HttpService into DluxLoader. dlux modules won't work without httpService");
 		} else {
-
+		    
 			wsServlet = new WebSocketManager();
 			httpService.registerServlet(ALIAS, wsServlet, null, null);
 			LOG.info("websocket servlet registered.");

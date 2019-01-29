@@ -32,7 +32,7 @@
     odl:type="default" />
 
   <bean id="provider"
-    class="org.onap.ccsdk.sdnr.wt.websocketmanager2.WebSocketManagerProvider"
+    class="org.onap.ccsdk.features.sdnr.wt.websocketmanager2.WebSocketManagerProvider"
     init-method="init" destroy-method="close">
     <property name="rpcProviderRegistry" ref="rpcProviderRegistry" />
 <!--     <property name="wsServlet" ref="wsServlet" /> -->

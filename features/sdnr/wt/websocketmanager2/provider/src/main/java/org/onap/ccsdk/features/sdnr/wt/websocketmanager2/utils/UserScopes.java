@@ -18,7 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  ******************************************************************************/
-package org.onap.ccsdk.sdnr.wt.websocketmanager2.utils;
+package org.onap.ccsdk.features.sdnr.wt.websocketmanager2.utils;
 
 import org.json.JSONArray;
 

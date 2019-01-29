@@ -18,15 +18,14 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  ******************************************************************************/
-package org.onap.ccsdk.sdnr.wt.websocketmanager2.utils;
+package org.onap.ccsdk.features.sdnr.wt.websocketmanager2.utils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.onap.ccsdk.sdnr.wt.websocketmanager2.WebSocketManager;
+import org.onap.ccsdk.features.sdnr.wt.websocketmanager2.WebSocketManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

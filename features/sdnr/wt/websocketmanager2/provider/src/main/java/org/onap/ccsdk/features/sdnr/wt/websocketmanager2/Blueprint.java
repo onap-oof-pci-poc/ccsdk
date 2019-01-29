@@ -1,7 +1,7 @@
 /*******************************************************************************
  * ============LICENSE_START=======================================================
  * ONAP : ccsdk feature sdnr wt websocketmanager2
- *  ================================================================================
+ * ================================================================================
  * Copyright (C) 2019 highstreet technologies GmbH Intellectual Property.
  * All rights reserved.
  * ================================================================================
@@ -18,7 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  ******************************************************************************/
-package org.onap.ccsdk.sdnr.wt.websocketmanager2;
+package org.onap.ccsdk.features.sdnr.wt.websocketmanager2;
 
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 

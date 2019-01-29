@@ -1,24 +1,20 @@
 /*******************************************************************************
- * ============LICENSE_START=======================================================
- * ONAP : ccsdk feature sdnr wt websocketmanager2
- *  ================================================================================
- * Copyright (C) 2019 highstreet technologies GmbH Intellectual Property.
- * All rights reserved.
- * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * ============LICENSE_START======================================================= ONAP : ccsdk
+ * feature sdnr wt websocketmanager2
+ * ================================================================================ Copyright (C)
+ * 2019 highstreet technologies GmbH Intellectual Property. All rights reserved.
+ * ================================================================================ Licensed under
+ * the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License. ============LICENSE_END=========================================================
  ******************************************************************************/
-package org.onap.ccsdk.sdnr.wt.websocketmanager2;
+package org.onap.ccsdk.features.sdnr.wt.websocketmanager2;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -27,11 +23,11 @@ import java.util.concurrent.Future;
 import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 import org.json.JSONObject;
-import org.onap.ccsdk.sdnr.wt.websocketmanager2.WebSocketManagerSocket.EventInputCallback;
-import org.onap.ccsdk.sdnr.wt.websocketmanager2.utils.AkkaConfig;
-import org.onap.ccsdk.sdnr.wt.websocketmanager2.utils.AkkaConfig.ClusterConfig;
-import org.onap.ccsdk.sdnr.wt.websocketmanager2.utils.AkkaConfig.ClusterNodeInfo;
-import org.onap.ccsdk.sdnr.wt.websocketmanager2.websocket.SyncWebSocketClient;
+import org.onap.ccsdk.features.sdnr.wt.websocketmanager2.WebSocketManagerSocket.EventInputCallback;
+import org.onap.ccsdk.features.sdnr.wt.websocketmanager2.utils.AkkaConfig;
+import org.onap.ccsdk.features.sdnr.wt.websocketmanager2.utils.AkkaConfig.ClusterConfig;
+import org.onap.ccsdk.features.sdnr.wt.websocketmanager2.utils.AkkaConfig.ClusterNodeInfo;
+import org.onap.ccsdk.features.sdnr.wt.websocketmanager2.websocket.SyncWebSocketClient;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.websocketmanager.rev150105.WebsocketEventInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.websocketmanager.rev150105.WebsocketEventOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.websocketmanager.rev150105.WebsocketEventOutputBuilder;
@@ -47,21 +43,42 @@ public class WebSocketManager extends WebSocketServlet implements Websocketmanag
 
     private static final Logger LOG = LoggerFactory.getLogger(WebSocketManager.class.getName());
     private static final String APPLICATION_NAME = WebSocketManager.class.getName();
-
+    private final EventInputCallback rpcEventInputCallback;
     private static final int PORT = 8181;
+
+    /**
+     * timeout for websocket with no messages in ms
+     */
+    private static final long IDLE_TIMEOUT = 5 * 60 * 1000;
+
     private final ArrayList<URI> clusterNodeClients = new ArrayList<>();
 
     public WebSocketManager() {
         super();
-        LOG.info( "Create servlet for {}", APPLICATION_NAME);
+       rpcEventInputCallback = new EventInputCallback() {
+
+            @Override
+            public void onMessagePushed(String message) throws Exception {
+                LOG.debug("onMessagePushed: " + message);
+                SyncWebSocketClient client;
+                for (URI clientURI : WebSocketManager.this.clusterNodeClients) {
+                    client = new SyncWebSocketClient(clientURI);
+                    LOG.debug("try to push message to " + client.getURI());
+                    client.openAndSendAndCloseSync(message);
+                }
+            }
+        };
+        LOG.info("Create servlet for {}", APPLICATION_NAME);
     }
 
     @Override
     public void configure(WebSocketServletFactory factory) {
-        LOG.info( "Configure provider for {}", APPLICATION_NAME);
-        // set a 10 second timeout
-        factory.getPolicy().setIdleTimeout(10000);
-
+        LOG.info("Configure provider for {}", APPLICATION_NAME);
+        // set a second timeout
+        factory.getPolicy().setIdleTimeout(IDLE_TIMEOUT);
+        factory.getPolicy().setMaxBinaryMessageSize(1);
+        factory.getPolicy().setMaxTextMessageSize(64 * 1024);
+        
         // register Socket as the WebSocket to create on Upgrade
         factory.register(WebSocketManagerSocket.class);
 
@@ -78,28 +95,26 @@ public class WebSocketManager extends WebSocketServlet implements Websocketmanag
 
     @Override
     public Future<RpcResult<WebsocketEventOutput>> websocketEvent(WebsocketEventInput input) {
-         LOG.debug("Send message '{}'", input);
+        LOG.debug("Send message '{}'", input);
+        try {
+            WebsocketEventOutputBuilder outputBuilder = new WebsocketEventOutputBuilder();
+            final String s = input.getXmlEvent();
+            WebSocketManagerSocket.broadCast(input.getNodeName(), input.getEventType(), s);
+            outputBuilder.setResponse("OK");
             try {
-                WebsocketEventOutputBuilder outputBuilder = new WebsocketEventOutputBuilder();
-                final String s=input.getXmlEvent();
-                WebSocketManagerSocket.broadCast(input.getNodeName(), input.getEventType(),s );
-                outputBuilder.setResponse("OK");
-                try {
-                    JSONObject o=new JSONObject();
-                    o.put(WebSocketManagerSocket.KEY_NODENAME, input.getNodeName());
-                    o.put(WebSocketManagerSocket.KEY_EVENTTYPE, input.getEventType());
-                    o.put(WebSocketManagerSocket.KEY_XMLEVENT, input.getXmlEvent());
-                    this.rpcEventInputCallback.onMessagePushed(o.toString());
-                }
-                catch(Exception err)
-                {
-                    LOG.warn("problem pushing messsage to other nodes: "+err.getMessage());
-                }
-                return RpcResultBuilder.success(outputBuilder.build()).buildFuture();
-            } catch (Exception e) {
-                LOG.warn("Socketproblem: {}", e);
+                JSONObject o = new JSONObject();
+                o.put(WebSocketManagerSocket.KEY_NODENAME, input.getNodeName());
+                o.put(WebSocketManagerSocket.KEY_EVENTTYPE, input.getEventType());
+                o.put(WebSocketManagerSocket.KEY_XMLEVENT, input.getXmlEvent());
+                this.rpcEventInputCallback.onMessagePushed(o.toString());
+            } catch (Exception err) {
+                LOG.warn("problem pushing messsage to other nodes: " + err.getMessage());
             }
-            return null;
+            return RpcResultBuilder.success(outputBuilder.build()).buildFuture();
+        } catch (Exception e) {
+            LOG.warn("Socketproblem: {}", e);
+        }
+        return null;
     }
 
     /**********************************************************
@@ -121,16 +136,6 @@ public class WebSocketManager extends WebSocketServlet implements Websocketmanag
         }
     }
 
-    private final EventInputCallback rpcEventInputCallback=message -> {
-        LOG.debug("onMessagePushed: "+message);
-        SyncWebSocketClient client;
-        for(URI clientURI : this.clusterNodeClients)
-        {
-            client=new SyncWebSocketClient(clientURI);
-            LOG.debug("try to push message to "+client.getURI());
-            client.openAndSendAndCloseSync(message);
-        }
-    };
 
 
 }

@@ -18,9 +18,8 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  ******************************************************************************/
-package org.onap.ccsdk.sdnr.wt.websocketmanager2;
+package org.onap.ccsdk.features.sdnr.wt.websocketmanager2;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +29,7 @@ import java.util.Random;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 import org.json.JSONObject;
-import org.onap.ccsdk.sdnr.wt.websocketmanager2.utils.UserScopes;
+import org.onap.ccsdk.features.sdnr.wt.websocketmanager2.utils.UserScopes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
