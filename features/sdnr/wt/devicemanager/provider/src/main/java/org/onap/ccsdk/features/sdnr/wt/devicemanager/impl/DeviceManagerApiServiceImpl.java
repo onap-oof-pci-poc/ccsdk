@@ -6,9 +6,9 @@
  * =================================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -17,8 +17,8 @@
  ******************************************************************************/
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.impl;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import java.util.List;
-import java.util.concurrent.Future;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.maintenance.MaintenanceRPCServiceAPI;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.maintenance.impl.MaintenanceServiceImpl;
@@ -80,7 +80,7 @@ public class DeviceManagerApiServiceImpl implements DevicemanagerService, AutoCl
      */
 
     @Override
-    public Future<RpcResult<GetRequiredNetworkElementKeysOutput>> getRequiredNetworkElementKeys() {
+    public ListenableFuture<RpcResult<GetRequiredNetworkElementKeysOutput>> getRequiredNetworkElementKeys() {
 
         LOG.info("RPC Request: getRequiredNetworkElementKeys");
         RpcResultBuilder<GetRequiredNetworkElementKeysOutput> result;
@@ -95,7 +95,7 @@ public class DeviceManagerApiServiceImpl implements DevicemanagerService, AutoCl
     }
 
     @Override
-    public Future<RpcResult<ShowRequiredNetworkElementOutput>> showRequiredNetworkElement(
+    public ListenableFuture<RpcResult<ShowRequiredNetworkElementOutput>> showRequiredNetworkElement(
             ShowRequiredNetworkElementInput input) {
 
         LOG.info("RPC Request: showRequiredNetworkElement input: {}", input.getMountpointName());
@@ -112,7 +112,7 @@ public class DeviceManagerApiServiceImpl implements DevicemanagerService, AutoCl
     }
 
     @Override
-    public Future<RpcResult<SetMaintenanceModeOutput>> setMaintenanceMode(SetMaintenanceModeInput input) {
+    public ListenableFuture<RpcResult<SetMaintenanceModeOutput>> setMaintenanceMode(SetMaintenanceModeInput input) {
 
         LOG.info("RPC Request: setMaintenanceMode input: {}", input.getMountpointName());
         RpcResultBuilder<SetMaintenanceModeOutput> result;
@@ -131,7 +131,7 @@ public class DeviceManagerApiServiceImpl implements DevicemanagerService, AutoCl
 
 
     @Override
-    public Future<RpcResult<GetMaintenanceModeOutput>> getMaintenanceMode(GetMaintenanceModeInput input) {
+    public ListenableFuture<RpcResult<GetMaintenanceModeOutput>> getMaintenanceMode(GetMaintenanceModeInput input) {
 
         LOG.info("RPC Request: getMaintenanceMode input: {}", input.getMountpointName());
         RpcResultBuilder<GetMaintenanceModeOutput> result;
@@ -148,7 +148,7 @@ public class DeviceManagerApiServiceImpl implements DevicemanagerService, AutoCl
     }
 
     @Override
-    public Future<RpcResult<TestMaintenanceModeOutput>> testMaintenanceMode(TestMaintenanceModeInput input) {
+    public ListenableFuture<RpcResult<TestMaintenanceModeOutput>> testMaintenanceMode(TestMaintenanceModeInput input) {
         LOG.info("RPC Request: getMaintenanceMode input: {}", input.getMountpointName());
         RpcResultBuilder<TestMaintenanceModeOutput> result;
 
@@ -165,7 +165,7 @@ public class DeviceManagerApiServiceImpl implements DevicemanagerService, AutoCl
 
 
     @Override
-    public Future<RpcResult<ClearCurrentFaultByNodenameOutput>> clearCurrentFaultByNodename(
+    public ListenableFuture<RpcResult<ClearCurrentFaultByNodenameOutput>> clearCurrentFaultByNodename(
             ClearCurrentFaultByNodenameInput input) {
         LOG.info("RPC Request: clearNetworkElementAlarms input: {}", input.getNodenames());
         RpcResultBuilder<ClearCurrentFaultByNodenameOutput> result;

@@ -17,10 +17,10 @@
  ******************************************************************************/
 package org.onap.ccsdk.features.sdnr.wt.websocketmanager2;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.concurrent.Future;
 import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 import org.json.JSONObject;
@@ -35,6 +35,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.websocke
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.websocketmanager.rev150105.WebsocketmanagerService;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
+import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,9 +91,11 @@ public class WebSocketManager extends WebSocketServlet implements Websocketmanag
         }
     }
 
+    // ODL in Dublin version generates ListenableFuture that is child of Future.
     @Override
-    public Future<RpcResult<WebsocketEventOutput>> websocketEvent(WebsocketEventInput input) {
+    public ListenableFuture<RpcResult<WebsocketEventOutput>> websocketEvent(WebsocketEventInput input) {
         LOG.debug("Send message '{}'", input);
+        RpcResultBuilder<WebsocketEventOutput> result;
         try {
             WebsocketEventOutputBuilder outputBuilder = new WebsocketEventOutputBuilder();
             final String s = input.getXmlEvent();
@@ -107,11 +110,13 @@ public class WebSocketManager extends WebSocketServlet implements Websocketmanag
             } catch (Exception err) {
                 LOG.warn("problem pushing messsage to other nodes: " + err.getMessage());
             }
-            return RpcResultBuilder.success(outputBuilder.build()).buildFuture();
+            result = RpcResultBuilder.success(outputBuilder);
         } catch (Exception e) {
             LOG.warn("Socketproblem: {}", e);
+            result = RpcResultBuilder.failed();
+            result.withError(ErrorType.APPLICATION, "Exception", e);
         }
-        return null;
+        return result.buildFuture();
     }
 
     /**********************************************************
@@ -132,7 +137,4 @@ public class WebSocketManager extends WebSocketServlet implements Websocketmanag
             }
         }
     }
-
-
-
 }
