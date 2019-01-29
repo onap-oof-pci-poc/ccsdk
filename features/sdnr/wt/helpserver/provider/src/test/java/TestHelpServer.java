@@ -15,27 +15,22 @@
  * the License.
  * ============LICENSE_END==========================================================================
  ******************************************************************************/
-package org.onap.ccsdk.features.sdnr.wt.helpserver.data;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-import java.net.Inet4Address;
-import java.net.UnknownHostException;
-import java.util.Map;
+/*
+ * Copyright (c) 2019 Red Hat, Inc. and others. All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
 
-public class Environment {
+public class TestHelpServer {
 
-	public static String getVar(String v)
-	{
-		if(v.equals("$HOSTNAME"))
-			try {
-				return Inet4Address.getLocalHost().getHostName();
-			} catch (UnknownHostException e) {
+    @Test
+    public void test() {
+        fail("Not yet implemented");
+    }
 
-			}
-		Map<String, String> env = System.getenv();
-        for (String envName : env.keySet()) {
-           if(envName!=null && envName.equals(v))
-              return env.get(envName);
-        }
-        return null;
-	}
 }
