@@ -24,6 +24,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.file.Path;
@@ -83,31 +84,34 @@ public class HelpServlet extends HttpServlet implements AutoCloseable {
              * uri=uri.substring(1);
              */
             File f = new File(HelpInfrastructureObject.KARAFHELPDIRECTORY, "meta.json");
-            try {
-                if (f.exists()) {
-                    LOG.debug("found local meta file");
-                    BufferedReader rd = new BufferedReader(new FileReader(f));
+            if (f.exists()) {
+                LOG.debug("found local meta file");
+                try (BufferedReader rd = new BufferedReader(new FileReader(f));) {
                     String line = rd.readLine();
                     while (line != null) {
                         resp.getOutputStream().println(line);
                         line = rd.readLine();
                     }
                     rd.close();
-                } else {
-                    LOG.debug("start walking from path=" + basePath.toAbsolutePath().toString());
-                    HelpInfrastructureObject o = null;
-                    if (USE_FILESYSTEM) {
-                        o = new HelpInfrastructureObject(this.basePath);
-                    } else if (USE_RESSOURCES) {
-                        // o=new HelpInfrastructureObject()
-                    }
-                    resp.getOutputStream().println(o != null ? o.toString() : "");
+                } catch (IOException e) {
+                    LOG.debug("Can not read meta file", e);
                 }
-                resp.setHeader("Content-Type", "application/json");
-            } catch (Exception err) {
-                err.printStackTrace();
+            } else {
+                LOG.debug("start walking from path=" + basePath.toAbsolutePath().toString());
+                HelpInfrastructureObject o = null;
+                if (USE_FILESYSTEM) {
+                    try {
+                        o = new HelpInfrastructureObject(this.basePath);
+                    } catch (URISyntaxException e) {
+                        LOG.debug("Can not relsolve URI. ", e);
+                    }
+                } else if (USE_RESSOURCES) {
+                    // o=new HelpInfrastructureObject()
+                }
+                resp.getOutputStream().println(o != null ? o.toString() : "");
             }
-        } else {
+            resp.setHeader("Content-Type", "application/json");
+       } else {
             LOG.debug("received get with uri=" + req.getRequestURI());
             String uri = URLDecoder.decode(req.getRequestURI().substring(BASEURI.length()), "UTF-8");
             if (uri.startsWith("/")) {
