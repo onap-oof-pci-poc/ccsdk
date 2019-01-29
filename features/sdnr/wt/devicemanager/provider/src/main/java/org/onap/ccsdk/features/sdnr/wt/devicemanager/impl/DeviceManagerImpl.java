@@ -108,7 +108,7 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
     private IndexMwtnService mwtnService;
     private HtDatabaseNode htDatabase;
     private final Object initializedLock = new Object();
-    private Boolean initialized = false;
+    private Boolean devicemanagerInitializationOk = false;
     private MaintenanceServiceImpl maintenanceService;
     private NotificationDelayService<ProblemNotificationXml> notificationDelayService;
     private Thread threadDoClearCurrentFaultByNodename = null;
@@ -250,9 +250,9 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
             this.netconfChangeListener = new NetconfChangeListener(this, dataBroker);
             this.netconfChangeListener.register();
 
-            this.initialized = true;
+            this.devicemanagerInitializationOk = true;
         }
-        LOG.info("Session Initiated end. Initialization done {}", initialized);
+        LOG.info("Session Initiated end. Initialization done {}", devicemanagerInitializationOk);
     }
 
     @Override
@@ -304,7 +304,7 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
             preConditionMissing = true;
             LOG.warn("No mountservice available.");
         }
-        if (!initialized) {
+        if (!devicemanagerInitializationOk) {
             preConditionMissing = true;
             LOG.warn("Devicemanager initialization still pending.");
         }
@@ -521,11 +521,18 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
     };
 
     /**
+     * Indication if init() of devicemanager successfully done.
+     * @return true if init() was sucessfull. False if not done or not successfull.
+     */
+    public boolean isDevicemanagerInitializationOk() {
+        return this.devicemanagerInitializationOk;
+    }
+
+    /**
      * Get initialization status of database.
-     *
      * @return true if fully initialized false if not
      */
-    public boolean getInitialized() {
+    public boolean isDatabaseInitializationFinished() {
         return htDatabase == null ? false : htDatabase.getInitialized();
     }
 

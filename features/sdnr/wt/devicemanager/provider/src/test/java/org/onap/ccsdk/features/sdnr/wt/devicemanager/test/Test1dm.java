@@ -77,8 +77,8 @@ public class Test1dm {
         deviceManager.setRpcProviderRegistry(rpcProviderRegistry);
 
         deviceManager.init();
-
-        assertTrue(deviceManager.getInitialized());
+        System.out.println("Initialization status: "+deviceManager.isDevicemanagerInitializationOk());
+        assertTrue("Devicemanager not initialized", deviceManager.isDevicemanagerInitializationOk());
         System.out.println("Initialization done");
     }
 
@@ -101,7 +101,7 @@ public class Test1dm {
 
         System.out.println("Test1: Wait for database");
         int timeout = DATABASETIMEOUTSECONDS;
-        while ( !deviceManager.getInitialized() && timeout-- > 0) {
+        while ( !deviceManager.isDatabaseInitializationFinished() && timeout-- > 0) {
             System.out.println("Test1: "+timeout);
             Thread.sleep(1000); //On second
         }
