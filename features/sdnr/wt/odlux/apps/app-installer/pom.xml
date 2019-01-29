@@ -58,6 +58,11 @@
     </dependency>
 <dependency>
      <groupId>${project.groupId}</groupId>
+	<artifactId>sdnr-wt-odlux-app-helpApp</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+<dependency>
+     <groupId>${project.groupId}</groupId>
 	<artifactId>sdnr-wt-odlux-app-inventoryApp</artifactId>
       <version>${project.version}</version>
     </dependency>
