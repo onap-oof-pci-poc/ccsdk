@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,9 +26,24 @@ public class IndexOdluxBundle extends OdluxBundle{
 	private static final Pattern patternRequire = Pattern.compile(regexRequire);
 	private static final Pattern patternFunction = Pattern.compile(regexFunction);
 	private static final Pattern patternFunctionBody = Pattern.compile(regexFunctionBody);
+    protected static final int HELPINDEX = 100;
+    private final HashMap<String, Integer> orderMap;
 	
 	public IndexOdluxBundle() {
 		super(null,"app");
+		orderMap=new HashMap<String,Integer>();
+        orderMap.put("connectApp",0);
+        orderMap.put("faultApp",10);
+        orderMap.put("maintenanceApp",20);
+        orderMap.put("configurationApp",30);
+        orderMap.put("protectionApp",40);
+        orderMap.put("performanceApp",50);
+        orderMap.put("securityApp",60);
+        orderMap.put("inventoryApp",70);
+        orderMap.put("topologyApp",80);
+        orderMap.put("mediatorApp",90);
+        orderMap.put("helpApp",HELPINDEX);
+        
 	}
 	@Override
 	protected String loadFileContent(URL url) {
@@ -75,6 +92,7 @@ public class IndexOdluxBundle extends OdluxBundle{
 
 		return sb.toString();
 	}
+	
 	private List<String> getLoadedBundles() {
 		List<String> list = new ArrayList<String>();
 		list.add(this.getBundleName());
@@ -82,6 +100,17 @@ public class IndexOdluxBundle extends OdluxBundle{
 		{
 			list.add(b.getBundleName());
 		}
+		list.sort(sortorderbundlecomparator);
 		return list;
 	}
+	private final Comparator<String> sortorderbundlecomparator = new Comparator<String>() {
+        
+        @Override
+        public int compare(String arg0, String arg1) {
+           
+            int diff=IndexOdluxBundle.this.orderMap.getOrDefault(arg0, HELPINDEX-1)-IndexOdluxBundle.this.orderMap.getOrDefault(arg1, HELPINDEX-1);
+            return diff>0?1:diff<0?-1:0;
+            
+        }
+    };
 }
