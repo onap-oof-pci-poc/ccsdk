@@ -43,6 +43,7 @@
 		<module>apps/connectApp</module>
 		<module>apps/demoApp</module>
 		<module>apps/faultApp</module>
+		<module>apps/helpApp</module>
 		<module>apps/inventoryApp</module>
 		<module>apps/minimumApp</module>
 		<module>apps/app-feature</module>

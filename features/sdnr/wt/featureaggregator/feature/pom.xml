@@ -45,6 +45,13 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>sdnr-wt-helpserver-feature</artifactId>
+      <version>${project.version}</version>
+      <type>xml</type>
+      <classifier>features</classifier>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>sdnr-wt-websocketmanager2-feature</artifactId>
       <version>${project.version}</version>
       <type>xml</type>
@@ -53,6 +60,20 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>sdnr-wt-devicemanager-feature</artifactId>
+      <version>${project.version}</version>
+      <type>xml</type>
+      <classifier>features</classifier>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>sdnr-wt-odlux-core-feature</artifactId>
+      <version>${project.version}</version>
+      <type>xml</type>
+      <classifier>features</classifier>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>sdnr-wt-odlux-apps-feature</artifactId>
       <version>${project.version}</version>
       <type>xml</type>
       <classifier>features</classifier>
