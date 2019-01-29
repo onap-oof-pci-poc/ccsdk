@@ -1,5 +1,5 @@
 export { HitEntry, Result } from '../../../../framework/src/models';
-export type Inventory = {
+export type InventoryType = {
   treeLevel: number;
   parentUuid: string;
   mountpoint: string;

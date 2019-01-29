@@ -1,8 +1,8 @@
 import * as React from "react";
 import { NavLink, RouteComponentProps } from 'react-router-dom';
-import { MaterialTable, DataCallback } from '../../../../framework/src/components/material-table';
+import { MaterialTable, DataCallback, MaterialTableCtorType } from '../../../../framework/src/components/material-table';
 
-import { Result, Inventory } from '../models/inventory';
+import { Result, InventoryType } from '../models/inventory';
 
 
 const url = `${ window.location.origin}/database/sdnevents/inventoryequipment/_search`;
@@ -44,7 +44,7 @@ const fetchData: DataCallback = async (page, rowsPerPage, orderBy, order, filter
   });
 
   if (result.ok) {
-    const queryResult: Result<Inventory> = await result.json();
+    const queryResult: Result<InventoryType> = await result.json();
     const data = {
       page: Math.min(page || 0, queryResult.hits.total || 0 / (rowsPerPage || 1)), rowCount: queryResult.hits.total, rows: queryResult && queryResult.hits && queryResult.hits.hits && queryResult.hits.hits.map(h => (
       { ...h._source, _id: h._id }
@@ -56,8 +56,10 @@ const fetchData: DataCallback = async (page, rowsPerPage, orderBy, order, filter
   return { page: 0, rowCount: 0, rows: [] };
 };
 
+const InventoryTable = MaterialTable as MaterialTableCtorType<InventoryType>;
+
 export const Dashboard : React.SFC = (props) => (
-  <MaterialTable onRequestData={ fetchData } columns={ [
+  <InventoryTable onRequestData={ fetchData } columns={ [
     { property: "uuid", title: "Name" },
     { property: "parentUuid", title: "Parent" },
     { property: "mountpoint", title: "Mountpoint" },
@@ -66,7 +68,7 @@ export const Dashboard : React.SFC = (props) => (
     { property: "typeName", title: "Type" },
   ] } title="Inventory" idProperty="_id" >
 
-  </MaterialTable>
+  </InventoryTable>
 );
 
 export default Dashboard;
