@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.test;
 
+import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -77,6 +78,7 @@ public class Test1dm {
 
         deviceManager.init();
 
+        assertTrue(deviceManager.getInitialized());
         System.out.println("Initialization done");
     }
 

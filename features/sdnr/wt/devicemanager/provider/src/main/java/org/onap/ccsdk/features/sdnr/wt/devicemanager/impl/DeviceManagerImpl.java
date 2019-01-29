@@ -6,9 +6,9 @@
  * =================================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -78,11 +78,11 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
     private static final String MYDBKEYNAMEBASE = "SDN-Controller";
 
     // http://sendateodl:8181/restconf/operational/network-topology:network-topology/topology/topology-netconf
-    private static final InstanceIdentifier<Topology> NETCONF_TOPO_IID = InstanceIdentifier
-            .create(NetworkTopology.class)
-            .child(Topology.class, new TopologyKey(new TopologyId(TopologyNetconf.QNAME.getLocalName())));
+    private static final InstanceIdentifier<Topology> NETCONF_TOPO_IID =
+            InstanceIdentifier.create(NetworkTopology.class).child(Topology.class,
+                    new TopologyKey(new TopologyId(TopologyNetconf.QNAME.getLocalName())));
     private static final String STARTUPLOG_FILENAME = "etc/devicemanager.startup.log";
-    //private static final String STARTUPLOG_FILENAME2 = "data/cache/devicemanager.startup.log";
+    // private static final String STARTUPLOG_FILENAME2 = "data/cache/devicemanager.startup.log";
 
     private DataBroker dataBroker = null;
     private MountPointService mountPointService = null;
@@ -90,7 +90,8 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
     @SuppressWarnings("unused")
     private NotificationPublishService notificationPublishService = null;
 
-    private final ConcurrentHashMap<String, ONFCoreNetworkElementRepresentation> networkElementRepresentations = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ONFCoreNetworkElementRepresentation> networkElementRepresentations =
+            new ConcurrentHashMap<>();
 
     private WebSocketServiceClient webSocketService;
     private HtDatabaseEventsService databaseClientEvents;
@@ -106,6 +107,7 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
     private IndexConfigService configService;
     private IndexMwtnService mwtnService;
     private HtDatabaseNode htDatabase;
+    private final Object initializedLock = new Object();
     private Boolean initialized = false;
     private MaintenanceServiceImpl maintenanceService;
     private NotificationDelayService<ProblemNotificationXml> notificationDelayService;
@@ -113,36 +115,40 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
     private int refreshCounter = 0;
     private AkkaConfig akkaConfig;
 
-    //Blueprint 1
+    // Blueprint 1
     public DeviceManagerImpl() {
-        LOG.info( "Creating provider for {}", APPLICATION_NAME);
+        LOG.info("Creating provider for {}", APPLICATION_NAME);
     }
+
     public void setDataBroker(DataBroker dataBroker) {
         this.dataBroker = dataBroker;
     }
+
     public void setRpcProviderRegistry(RpcProviderRegistry rpcProviderRegistry) {
         this.rpcProviderRegistry = rpcProviderRegistry;
 
     }
+
     public void setNotificationPublishService(NotificationPublishService notificationPublishService) {
         this.notificationPublishService = notificationPublishService;
     }
+
     public void setMountPointService(MountPointService mountPointService) {
-         this.mountPointService = mountPointService;
+        this.mountPointService = mountPointService;
     }
 
-    public void init(){
+    public void init() {
 
         LOG.info("Session Initiated start {}", APPLICATION_NAME);
 
         // Start RPC Service
         this.rpcApiService = new DeviceManagerApiServiceImpl(rpcProviderRegistry);
         // Get configuration
-        HtDevicemanagerConfiguration  config = HtDevicemanagerConfiguration.getConfiguration();
+        HtDevicemanagerConfiguration config = HtDevicemanagerConfiguration.getConfiguration();
         this.akkaConfig = null;
         try {
             this.akkaConfig = AkkaConfig.load();
-            LOG.debug("akka.conf loaded: "+akkaConfig.toString());
+            LOG.debug("akka.conf loaded: " + akkaConfig.toString());
         } catch (Exception e1) {
             LOG.warn("problem loading akka.conf: " + e1.getMessage());
         }
@@ -159,95 +165,94 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
             } else {
                 LOG.debug("no geoconfig file found");
             }
-        }
-        else
-        {
+        } else {
             LOG.info("single node mode detected");
         }
 
-        this.notificationDelayService=new NotificationDelayService<>(config);
+        this.notificationDelayService = new NotificationDelayService<>(config);
 
         EsConfig dbConfig = config.getEs();
         LOG.debug("esConfig=" + dbConfig.toString());
         // Start database
-        htDatabase = HtDatabaseNode.start(dbConfig, akkaConfig,geoConfig);
-
-        // init Database Values only if singleNode or clusterMember=1
-        if (akkaConfig == null || akkaConfig.isSingleNode() || akkaConfig != null && akkaConfig.isCluster()
-                && akkaConfig.getClusterConfig().getRoleMemberIndex() == 1) {
-            // Create DB index if not existing and if database is running
-            this.configService = new IndexConfigService(htDatabase);
-            this.mwtnService = new IndexMwtnService(htDatabase);
-        }
-        // start service for device maintenance service
-        this.maintenanceService = new MaintenanceServiceImpl(htDatabase);
-        // Websockets
-        try {
-            this.webSocketService = new WebSocketServiceClientImpl2(rpcProviderRegistry);
-        } catch (Exception e) {
-            LOG.error("Can not start websocket service. Loading mock class.",e);
-            this.webSocketService = new WebSocketServiceClientImpl();
-        }
-        // DCAE
-        this.dcaeProviderClient = new DcaeProviderClient(config, dbConfig.getCluster(), this);
-
-        this.aaiProviderClient = new AaiProviderClient(config,this);
-        // EM
-        EsConfig emConfig = dbConfig.cloneWithIndex("sdnevents");
-
-        if (emConfig == null) {
-            LOG.warn("No {} configuration available. Don't start event manager");
+        htDatabase = HtDatabaseNode.start(dbConfig, akkaConfig, geoConfig);
+        if (htDatabase == null) {
+            LOG.error("Can only run with local database. Stop initialization of devicemanager.");
         } else {
-            this.databaseClientEvents = new HtDatabaseEventsService(htDatabase);
+            // init Database Values only if singleNode or clusterMember=1
+            if (akkaConfig == null || akkaConfig.isSingleNode() || akkaConfig != null && akkaConfig.isCluster()
+                    && akkaConfig.getClusterConfig().getRoleMemberIndex() == 1) {
+                // Create DB index if not existing and if database is running
+                this.configService = new IndexConfigService(htDatabase);
+                this.mwtnService = new IndexMwtnService(htDatabase);
+            }
+            // start service for device maintenance service
+            this.maintenanceService = new MaintenanceServiceImpl(htDatabase);
+            // Websockets
+            try {
+                this.webSocketService = new WebSocketServiceClientImpl2(rpcProviderRegistry);
+            } catch (Exception e) {
+                LOG.error("Can not start websocket service. Loading mock class.", e);
+                this.webSocketService = new WebSocketServiceClientImpl();
+            }
+            // DCAE
+            this.dcaeProviderClient = new DcaeProviderClient(config, dbConfig.getCluster(), this);
 
-            String myDbKeyNameExtended=MYDBKEYNAMEBASE+"-"+dbConfig.getCluster();
+            this.aaiProviderClient = new AaiProviderClient(config, this);
+            // EM
+            EsConfig emConfig = dbConfig.cloneWithIndex("sdnevents");
+
+            if (emConfig == null) {
+                LOG.warn("No configuration available. Don't start event manager");
+            } else {
+                this.databaseClientEvents = new HtDatabaseEventsService(htDatabase);
+
+                String myDbKeyNameExtended = MYDBKEYNAMEBASE + "-" + dbConfig.getCluster();
 
 
-            this.odlEventListener = new ODLEventListener(myDbKeyNameExtended, webSocketService, databaseClientEvents,
-                    dcaeProviderClient, aotsMProvider,maintenanceService);
+                this.odlEventListener = new ODLEventListener(myDbKeyNameExtended, webSocketService,
+                        databaseClientEvents, dcaeProviderClient, aotsMProvider, maintenanceService);
+            }
+
+            // PM
+            PmConfig configurationPM = config.getPm();
+            LOG.info("Performance manager configuration: {}", configurationPM);
+            if (!configurationPM.isPerformanceManagerEnabled()) {
+
+                LOG.info("No configuration available. Don't start performance manager");
+            } else {
+                @Nullable
+                MicrowaveHistoricalPerformanceWriterService databaseClientHistoricalPerformance;
+                databaseClientHistoricalPerformance = new MicrowaveHistoricalPerformanceWriterService(htDatabase);
+                this.performanceManager = new PerformanceManagerImpl(60, databaseClientHistoricalPerformance);
+            }
+
+            // DUS (Database update service)
+            LOG.debug("start db update service");
+            this.updateService =
+                    new IndexUpdateService(htDatabase, dbConfig.getHost(), dbConfig.getCluster(), dbConfig.getNode());
+            this.updateService.start();
+
+            // RPC Service for specific services
+            this.rpcApiService.setMaintenanceService(this.maintenanceService);
+            this.rpcApiService.setResyncListener(this);
+            // DM
+            // DeviceMonitor has to be available before netconfSubscriptionManager is
+            // configured
+            LOG.debug("start DeviceMonitor Service");
+            this.deviceMonitor = new DeviceMonitorImpl(dataBroker, odlEventListener);
+
+            // netconfSubscriptionManager should be the last one because this is a callback
+            // service
+            LOG.debug("start NetconfSubscriptionManager Service");
+            // this.netconfSubscriptionManager = new
+            // NetconfSubscriptionManagerOfDeviceManager(this, dataBroker);
+            // this.netconfSubscriptionManager.register();
+            this.netconfChangeListener = new NetconfChangeListener(this, dataBroker);
+            this.netconfChangeListener.register();
+
+            this.initialized = true;
         }
-
-        // PM
-        PmConfig configurationPM = config.getPm();
-        LOG.info("Performance manager configuration: {}", configurationPM);
-        if (!configurationPM.isPerformanceManagerEnabled()) {
-
-            LOG.info("No configuration available. Don't start performance manager");
-        } else {
-            @Nullable MicrowaveHistoricalPerformanceWriterService databaseClientHistoricalPerformance;
-            databaseClientHistoricalPerformance = new MicrowaveHistoricalPerformanceWriterService(htDatabase);
-            this.performanceManager = new PerformanceManagerImpl(60, databaseClientHistoricalPerformance);
-        }
-
-        // DUS (Database update service)
-        LOG.debug("start db update service");
-        this.updateService = new IndexUpdateService(htDatabase, dbConfig.getHost(), dbConfig.getCluster(),
-                dbConfig.getNode());
-        this.updateService.start();
-
-        // RPC Service for specific services
-        this.rpcApiService.setMaintenanceService(this.maintenanceService);
-        this.rpcApiService.setResyncListener(this);
-        // DM
-        // DeviceMonitor has to be available before netconfSubscriptionManager is
-        // configured
-        LOG.debug("start DeviceMonitor Service");
-        this.deviceMonitor = new DeviceMonitorImpl(dataBroker, odlEventListener);
-
-        // netconfSubscriptionManager should be the last one because this is a callback
-        // service
-        LOG.debug("start NetconfSubscriptionManager Service");
-        // this.netconfSubscriptionManager = new
-        // NetconfSubscriptionManagerOfDeviceManager(this, dataBroker);
-        // this.netconfSubscriptionManager.register();
-        this.netconfChangeListener = new NetconfChangeListener(this, dataBroker);
-        this.netconfChangeListener.register();
-
-        synchronized (initialized) {
-            initialized = true;
-        }
-
-        LOG.info("Session Initiated end");
+        LOG.info("Session Initiated end. Initialization done {}", initialized);
     }
 
     @Override
@@ -312,84 +317,81 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
             return;
         }
 
-        if (! isMaster(nNode) ) {
-            //Change Devicemonitor-status to connected ... for non master mountpoints.
+        if (!isMaster(nNode)) {
+            // Change Devicemonitor-status to connected ... for non master mountpoints.
             deviceMonitor.deviceConnectSlaveIndication(mountPointNodeName);
             return;
         }
 
-        synchronized (networkElementRepresentations) {
+        InstanceIdentifier<Node> instanceIdentifier =
+                NETCONF_TOPO_IID.child(Node.class, new NodeKey(new NodeId(mountPointNodeName)));
 
-            InstanceIdentifier<Node> instanceIdentifier = NETCONF_TOPO_IID.child(Node.class,
-                    new NodeKey(new NodeId(mountPointNodeName)));
+        Optional<MountPoint> optionalMountPoint = null;
+        int timeout = 10000;
+        while (!(optionalMountPoint = mountPointService.getMountPoint(instanceIdentifier)).isPresent() && timeout > 0) {
 
-            Optional<MountPoint> optionalMountPoint = null;
-            int timeout = 10000;
-            while (!(optionalMountPoint = mountPointService.getMountPoint(instanceIdentifier)).isPresent() && timeout > 0) {
-
-                LOG.info("Event listener waiting for mount point for Netconf device :: Name : {}", mountPointNodeName);
-                try {
-                    Thread.sleep(1000);
-                    timeout -= 1000;
-                } catch (InterruptedException e) {
-                    LOG.info("Event listener waiting for mount point for Netconf device :: Name : {} Time: {}",
-                            mountPointNodeName, timeout);
-                }
+            LOG.info("Event listener waiting for mount point for Netconf device :: Name : {}", mountPointNodeName);
+            try {
+                Thread.sleep(1000);
+                timeout -= 1000;
+            } catch (InterruptedException e) {
+                LOG.info("Event listener waiting for mount point for Netconf device :: Name : {} Time: {}",
+                        mountPointNodeName, timeout);
             }
-
-            if (!optionalMountPoint.isPresent()) {
-                LOG.warn("Event listener timeout while waiting for mount point for Netconf device :: Name : {} ",
-                        mountPointNodeName);
-                return;
-            }
-            // Mountpoint is present for sure
-            MountPoint mountPoint = optionalMountPoint.get();
-
-            DataBroker netconfNodeDataBroker = mountPoint.getService(DataBroker.class).orNull();
-            if (netconfNodeDataBroker == null) {
-                LOG.info("Mountpoint is slave mountpoint {}", mountPointNodeName);
-                return;
-            }
-
-            LOG.info("Databroker service 1:{} 2:{}", dataBroker.hashCode(), netconfNodeDataBroker.hashCode());
-            // getNodeInfoTest(dataBroker);
-
-            //create automatic empty maintenance entry into db before reading and listening for problems
-            this.maintenanceService.createIfNotExists(mountPointNodeName);
-
-            // Setup microwaveEventListener for Notificationservice
-
-            // MicrowaveEventListener microwaveEventListener = new
-            // MicrowaveEventListener(mountPointNodeName, websocketmanagerService,
-            // xmlMapper, databaseClientEvents);
-            ONFCoreNetworkElementRepresentation ne = ONFCoreNetworkElementFactory.create(mountPointNodeName, dataBroker,
-                    webSocketService, databaseClientEvents, instanceIdentifier, netconfNodeDataBroker, dcaeProviderClient,
-                    aotsMProvider,maintenanceService,notificationDelayService);
-            networkElementRepresentations.put(mountPointNodeName, ne);
-            ne.doRegisterMicrowaveEventListener(mountPoint);
-
-            // Register netconf stream
-            registerNotificationStream(mountPointNodeName, mountPoint, "NETCONF");
-
-            // -- Read data from NE
-            ne.initialReadFromNetworkElement();
-            ne.initSynchronizationExtension();
-
-            // Setup Service that monitors registration/ deregistration of session
-            odlEventListener.registration(mountPointNodeName);
-
-            if (aaiProviderClient != null) {
-                aaiProviderClient.onDeviceRegistered(mountPointNodeName);
-            }
-            // -- Register NE to performance manager
-            if (performanceManager != null) {
-                performanceManager.registration(mountPointNodeName, ne);
-            }
-
-            deviceMonitor.deviceConnectMasterIndication(mountPointNodeName, ne);
-
-            LOG.info("Starting Event listener on Netconf device :: Name : {} finished", mountPointNodeName);
         }
+
+        if (!optionalMountPoint.isPresent()) {
+            LOG.warn("Event listener timeout while waiting for mount point for Netconf device :: Name : {} ",
+                    mountPointNodeName);
+            return;
+        }
+        // Mountpoint is present for sure
+        MountPoint mountPoint = optionalMountPoint.get();
+
+        DataBroker netconfNodeDataBroker = mountPoint.getService(DataBroker.class).orNull();
+        if (netconfNodeDataBroker == null) {
+            LOG.info("Mountpoint is slave mountpoint {}", mountPointNodeName);
+            return;
+        }
+
+        LOG.info("Databroker service 1:{} 2:{}", dataBroker.hashCode(), netconfNodeDataBroker.hashCode());
+        // getNodeInfoTest(dataBroker);
+
+        // create automatic empty maintenance entry into db before reading and listening for problems
+        this.maintenanceService.createIfNotExists(mountPointNodeName);
+
+        // Setup microwaveEventListener for Notificationservice
+
+        // MicrowaveEventListener microwaveEventListener = new
+        // MicrowaveEventListener(mountPointNodeName, websocketmanagerService,
+        // xmlMapper, databaseClientEvents);
+        ONFCoreNetworkElementRepresentation ne = ONFCoreNetworkElementFactory.create(mountPointNodeName, dataBroker,
+                webSocketService, databaseClientEvents, instanceIdentifier, netconfNodeDataBroker, dcaeProviderClient,
+                aotsMProvider, maintenanceService, notificationDelayService);
+        networkElementRepresentations.put(mountPointNodeName, ne);
+        ne.doRegisterMicrowaveEventListener(mountPoint);
+
+        // Register netconf stream
+        registerNotificationStream(mountPointNodeName, mountPoint, "NETCONF");
+
+        // -- Read data from NE
+        ne.initialReadFromNetworkElement();
+        ne.initSynchronizationExtension();
+
+        // Setup Service that monitors registration/ deregistration of session
+        odlEventListener.registration(mountPointNodeName);
+
+        if (aaiProviderClient != null) {
+            aaiProviderClient.onDeviceRegistered(mountPointNodeName);
+        }
+        // -- Register NE to performance manager
+        if (performanceManager != null) {
+            performanceManager.registration(mountPointNodeName, ne);
+        }
+
+        deviceMonitor.deviceConnectMasterIndication(mountPointNodeName, ne);
+
+        LOG.info("Starting Event listener on Netconf device :: Name : {} finished", mountPointNodeName);
     }
 
     // removeListenerOnNode
@@ -422,13 +424,11 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
     }
 
     /*
-    @Override
-    public void mountpointNodeCreation(NodeId nNodeId, NetconfNode nNode) {
-        String mountPointNodeName = nNodeId.getValue();
-        LOG.info("mountpointNodeCreation {} {}", nNodeId.getValue(), nNode.getConnectionStatus());
-        deviceMonitor.createMountpointIndication(mountPointNodeName);
-    }
-    */
+     * @Override public void mountpointNodeCreation(NodeId nNodeId, NetconfNode nNode) { String
+     * mountPointNodeName = nNodeId.getValue(); LOG.info("mountpointNodeCreation {} {}",
+     * nNodeId.getValue(), nNode.getConnectionStatus());
+     * deviceMonitor.createMountpointIndication(mountPointNodeName); }
+     */
     @Override
     public void mountpointNodeRemoved(NodeId nNodeId) {
         String mountPointNodeName = nNodeId.getValue();
@@ -440,7 +440,8 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
      * Async RPC Interface implementation
      */
     @Override
-    public @Nonnull List<String> doClearCurrentFaultByNodename(@Nullable List<String> nodeNamesInput) throws IllegalStateException {
+    public @Nonnull List<String> doClearCurrentFaultByNodename(@Nullable List<String> nodeNamesInput)
+            throws IllegalStateException {
 
         if (this.databaseClientEvents == null) {
             throw new IllegalStateException("dbEvents service not instantiated");
@@ -455,7 +456,8 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
                 nodeNamesInput = this.databaseClientEvents.getAllNodesWithCurrentAlarms();
             }
 
-            // Filter all mountpoints from input that were found and are known to this Cluster-node instance of DeviceManager
+            // Filter all mountpoints from input that were found and are known to this Cluster-node instance of
+            // DeviceManager
             final List<String> nodeNamesHandled = new ArrayList<>();
             for (String mountpointName : nodeNamesInput) {
                 LOG.info("Work with mountpoint {}", mountpointName);
@@ -463,21 +465,21 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
                 if (odlEventListener != null && mountpointName.equals(odlEventListener.getOwnKeyName())) {
 
                     // SDN Controller related alarms
-                    //  -- can not be recreated on all nodes in connected state
-                    //  -- would result in a DCAE/AAI Notification
+                    // -- can not be recreated on all nodes in connected state
+                    // -- would result in a DCAE/AAI Notification
                     // Conclusion for 1810 Delivery ... not covered by RPC function (See issue #43)
                     LOG.info("Ignore SDN Controller related alarms for {}", mountpointName);
-                    //this.databaseClientEvents.clearFaultsCurrentOfNode(mountpointName);
-                    //nodeNamesHandled.add(mountpointName);
+                    // this.databaseClientEvents.clearFaultsCurrentOfNode(mountpointName);
+                    // nodeNamesHandled.add(mountpointName);
 
                 } else {
 
                     if (mountPointService != null) {
-                        InstanceIdentifier<Node> instanceIdentifier = NETCONF_TOPO_IID.child(Node.class,
-                                new NodeKey(new NodeId(mountpointName)));
+                        InstanceIdentifier<Node> instanceIdentifier =
+                                NETCONF_TOPO_IID.child(Node.class, new NodeKey(new NodeId(mountpointName)));
                         Optional<MountPoint> optionalMountPoint = mountPointService.getMountPoint(instanceIdentifier);
 
-                        if (! optionalMountPoint.isPresent()) {
+                        if (!optionalMountPoint.isPresent()) {
                             LOG.info("Remove Alarms for unknown mountpoint {}", mountpointName);
                             this.databaseClientEvents.clearFaultsCurrentOfNode(mountpointName);
                             nodeNamesHandled.add(mountpointName);
@@ -501,14 +503,14 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
             threadDoClearCurrentFaultByNodename = new Thread(() -> {
                 refreshCounter++;
                 LOG.info("Start refresh mountpoint task {}", refreshCounter);
-                //    for(String nodeName:nodeNamesOutput) {
-                for(String nodeName:nodeNamesHandled) {
+                // for(String nodeName:nodeNamesOutput) {
+                for (String nodeName : nodeNamesHandled) {
                     ONFCoreNetworkElementRepresentation ne = networkElementRepresentations.get(nodeName);
-                    if(ne!=null) {
+                    if (ne != null) {
                         LOG.info("Refresh mountpoint {}", nodeName);
                         ne.initialReadFromNetworkElement();
                     } else {
-                        LOG.info("Unhandled mountpoint {}",nodeName);
+                        LOG.info("Unhandled mountpoint {}", nodeName);
                     }
                 }
                 LOG.info("End refresh mountpoint task {}", refreshCounter);
@@ -520,6 +522,7 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
 
     /**
      * Get initialization status of database.
+     *
      * @return true if fully initialized false if not
      */
     public boolean getInitialized() {
@@ -538,17 +541,19 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
      */
     private void registerNotificationStream(String mountPointNodeName, MountPoint mountPoint, String streamName) {
 
-        final Optional<RpcConsumerRegistry> optionalRpcConsumerService = mountPoint
-                .getService(RpcConsumerRegistry.class);
+        final Optional<RpcConsumerRegistry> optionalRpcConsumerService =
+                mountPoint.getService(RpcConsumerRegistry.class);
         if (optionalRpcConsumerService.isPresent()) {
             final RpcConsumerRegistry rpcConsumerRegitry = optionalRpcConsumerService.get();
             final NotificationsService rpcService = rpcConsumerRegitry.getRpcService(NotificationsService.class);
             if (rpcService == null) {
                 LOG.warn("rpcService is null for mountpoint {}", mountPointNodeName);
             } else {
-                final CreateSubscriptionInputBuilder createSubscriptionInputBuilder = new CreateSubscriptionInputBuilder();
+                final CreateSubscriptionInputBuilder createSubscriptionInputBuilder =
+                        new CreateSubscriptionInputBuilder();
                 createSubscriptionInputBuilder.setStream(new StreamNameType(streamName));
-                LOG.info("Event listener triggering notification stream {} for node {}", streamName, mountPointNodeName);
+                LOG.info("Event listener triggering notification stream {} for node {}", streamName,
+                        mountPointNodeName);
                 try {
                     CreateSubscriptionInput createSubscriptionInput = createSubscriptionInputBuilder.build();
                     if (createSubscriptionInput == null) {
@@ -568,10 +573,11 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
 
     /**
      * Get NE object
+     *
      * @param mountpoint mount point name
      * @return null or NE specific data
      */
-    public @Nullable ONFCoreNetworkElementRepresentation getNeByMountpoint( String mountpoint ) {
+    public @Nullable ONFCoreNetworkElementRepresentation getNeByMountpoint(String mountpoint) {
 
         return networkElementRepresentations.get(mountpoint);
 
@@ -581,30 +587,27 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
 
 
     private boolean isInClusterMode() {
-        return this.akkaConfig==null?false:this.akkaConfig.isCluster();
+        return this.akkaConfig == null ? false : this.akkaConfig.isCluster();
     }
 
     private String getClusterNetconfNodeName() {
-        return this.akkaConfig==null?"":this.akkaConfig.getClusterConfig().getClusterSeedNodeName("abc");
+        return this.akkaConfig == null ? "" : this.akkaConfig.getClusterConfig().getClusterSeedNodeName("abc");
     }
 
-    private boolean isMaster(NetconfNode nnode)
-    {
-        if(isInClusterMode())
-        {
+    private boolean isMaster(NetconfNode nnode) {
+        if (isInClusterMode()) {
             LOG.debug("check if me is responsible for node");
-            String masterNodeName = nnode.getClusteredConnectionStatus()==null?"null":nnode.getClusteredConnectionStatus().getNetconfMasterNode();
-            /*List<NodeStatus> clusterNodeStatusList=nnode.getClusteredConnectionStatus()==null?null:nnode.getClusteredConnectionStatus().getNodeStatus();
-            if(clusterNodeStatusList!=null)
-            {
-                for(NodeStatus s: clusterNodeStatusList)
-                    LOG.debug("node "+s.getNode()+ " with status "+(s.getStatus()==null?"null":s.getStatus().getName()));
-            }
-            */
-            String myNodeName=getClusterNetconfNodeName();
-            LOG.debug("sdnMasterNode="+masterNodeName+" and sdnMyNode="+myNodeName);
-            if(!masterNodeName.equals(myNodeName))
-            {
+            String masterNodeName = nnode.getClusteredConnectionStatus() == null ? "null"
+                    : nnode.getClusteredConnectionStatus().getNetconfMasterNode();
+            /*
+             * List<NodeStatus> clusterNodeStatusList=nnode.getClusteredConnectionStatus()==null?null:nnode.
+             * getClusteredConnectionStatus().getNodeStatus(); if(clusterNodeStatusList!=null) { for(NodeStatus
+             * s: clusterNodeStatusList) LOG.debug("node "+s.getNode()+
+             * " with status "+(s.getStatus()==null?"null":s.getStatus().getName())); }
+             */
+            String myNodeName = getClusterNetconfNodeName();
+            LOG.debug("sdnMasterNode=" + masterNodeName + " and sdnMyNode=" + myNodeName);
+            if (!masterNodeName.equals(myNodeName)) {
                 LOG.debug("netconf change but me is not master for this node");
                 return false;
             }
