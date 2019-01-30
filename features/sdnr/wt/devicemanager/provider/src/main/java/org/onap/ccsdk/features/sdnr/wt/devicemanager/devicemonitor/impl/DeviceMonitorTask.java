@@ -50,10 +50,11 @@ public class DeviceMonitorTask implements Runnable {
     private int tickCounter; //Added for each tick. Not relevant for internal status
 
     private ScheduledFuture<?> taskHandle;
-    private final Object lock = new Object();    //USe top lock access to member ne
+    private final Object lockNe = new Object();    //USe top lock access to member ne
     private @Nullable DeviceMonitoredNe ne; //Indication if in status connect or disconnect
     private @Nonnull Boolean mountpointConnectingStateSupervision; //Indication of mountpoint supervision
 
+    private final Object lockDisconnectSupervisionTickout = new Object();
     private Integer disconnectSupervisionTickout; //Tickcounter of task ticks for "not connected indication"
     private Set<DeviceMonitorProblems> currentProblems; //List with actual problems. Synchronized by itself
 
@@ -75,7 +76,7 @@ public class DeviceMonitorTask implements Runnable {
         this.checkConnectionToMediator = new Checker() {
             @Override
             boolean isReachableOnce() {
-                synchronized(lock) {
+                synchronized(lockNe) {
                     //mountpoint state "Connected"
                     //If for any reason the mountpoint is Connected, but Notconf messages are not received
                     return ne == null ? true : ne.checkIfConnectionToMediatorIsOk();
@@ -85,7 +86,7 @@ public class DeviceMonitorTask implements Runnable {
         this.checkConnectionToNe = new Checker() {
             @Override
             boolean isReachableOnce() {
-                synchronized(lock) {
+                synchronized(lockNe) {
                     //mountpoint state "Connected"
                     //If netconf mediator (netconf application software for NE) has connection loss to managed device.
                     //The networkelement object is available, but there is no interfacepack available.
@@ -131,7 +132,7 @@ public class DeviceMonitorTask implements Runnable {
     public void deviceConnectIndication(DeviceMonitoredNe neParam) {
         LOG.info("{} {} Connect {} and stop.", LOGMARKER, tickCounter, mountPointName);
         clear(DeviceMonitorProblems.connectionLossOAM);
-        synchronized(lock) {
+        synchronized(lockNe) {
             this.ne = neParam;
             this.mountpointConnectingStateSupervision = false;
         }
@@ -146,7 +147,7 @@ public class DeviceMonitorTask implements Runnable {
     public void deviceDisconnectIndication() {
         LOG.info("{} {} Disconnect {} and start.", LOGMARKER, tickCounter, mountPointName);
         clear(DeviceMonitorProblems.connectionLossOAM);
-        synchronized(lock) {
+        synchronized(lockNe) {
             this.ne = null;
             this.mountpointConnectingStateSupervision = true;
         }
@@ -238,19 +239,19 @@ public class DeviceMonitorTask implements Runnable {
      */
 
     private void startDisconnectSupervision() {
-        synchronized(disconnectSupervisionTickout) {
+        synchronized(lockDisconnectSupervisionTickout) {
             this.disconnectSupervisionTickout = 2;
         }
     }
 
     private void stopDisconnectSupervision() {
-        synchronized(disconnectSupervisionTickout) {
+        synchronized(lockDisconnectSupervisionTickout) {
             this.disconnectSupervisionTickout = 0;
         }
     }
 
     private boolean processDisconnectSupervisionAndCheckExceeded() {
-        synchronized(disconnectSupervisionTickout) {
+        synchronized(lockDisconnectSupervisionTickout) {
             if (disconnectSupervisionTickout == 0) {
                 return true;
             } else if (disconnectSupervisionTickout > 0) {
@@ -287,7 +288,7 @@ public class DeviceMonitorTask implements Runnable {
                    }
 
                } else {
-                synchronized (lock) {
+                synchronized (lockNe) {
                        if (ne != null) {
                            //checks during "Connected"
                            clear(DeviceMonitorProblems.connectionLossOAM); //Always cleared never raised

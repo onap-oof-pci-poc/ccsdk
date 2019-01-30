@@ -47,7 +47,7 @@ public class IndexConfigService implements AutoCloseable {
         IndexClientBuilder clientBuilder = IndexClientBuilder.getBuilder(INDEX).setModelDataDirectory(MODELDATA);
         client = clientBuilder.create(database);
         clientBuilder.close();
-        LOG.info("Create {} finished. DB Service {} started.", this.getClass().getSimpleName(),  client != null ? "sucessfully" : "not" );
+        LOG.info("Create {} finished. DB Service sucessfully started.", this.getClass().getSimpleName());
     }
 
     @Override

@@ -6,9 +6,9 @@
  * =================================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -34,6 +34,7 @@ public class DcaeProviderClient implements AutoCloseable, ProviderClient {
     private final HtDevicemanagerConfiguration htConfig;
     private final IConfigChangedListener configChangedListener;
 
+    private final Object lock = new Object();;
     private DcaeProviderWorker worker;
 
     public DcaeProviderClient(HtDevicemanagerConfiguration cfg, String entityName, DeviceManagerImpl deviceManager) {
@@ -42,7 +43,7 @@ public class DcaeProviderClient implements AutoCloseable, ProviderClient {
         worker = new DcaeProviderWorker(this.htConfig.getDcae(), entityName, deviceManager);
         this.configChangedListener = () -> {
             LOG.info("Configuration change. Worker exchanged");
-            synchronized(worker) {
+            synchronized(lock) {
                 worker.close();
                 worker = new DcaeProviderWorker(DcaeConfig.reload(), entityName, deviceManager);
             }
@@ -53,7 +54,7 @@ public class DcaeProviderClient implements AutoCloseable, ProviderClient {
 
     @Override
     public void sendProblemNotification(String mountPointName, ProblemNotificationXml notification) {
-        synchronized(worker) {
+        synchronized(lock) {
             worker.sendProblemNotification(mountPointName, notification);
         }
     }
@@ -66,7 +67,7 @@ public class DcaeProviderClient implements AutoCloseable, ProviderClient {
     @Override
     public void close() {
         this.htConfig.unregisterConfigChangedListener(configChangedListener);
-        synchronized(worker) {
+        synchronized(lock) {
             worker.close();
         }
     }
