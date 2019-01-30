@@ -40,9 +40,9 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.node.Node;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.Resources;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.AkkaConfig;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.AkkaConfig.ClusterNodeInfo;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.EsConfig;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.GeoConfig;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.akka.ClusterNodeInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

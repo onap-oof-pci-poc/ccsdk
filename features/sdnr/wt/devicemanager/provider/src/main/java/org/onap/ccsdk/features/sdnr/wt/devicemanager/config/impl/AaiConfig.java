@@ -238,61 +238,116 @@ public class AaiConfig extends BaseSubConfig {
     {
         return p1==null && p2==null || p1 != null && p1.equals(p2);
     }
-    private static boolean propertyEquals(final boolean p1,final boolean p2)
-    {
-        return p1==p2;
-    }
     private static boolean propertyEquals(final int p1,final int p2)
     {
         return p1==p2;
     }
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof AaiConfig) {
-            AaiConfig cobj = (AaiConfig) obj;
-            if(!AaiConfig.propertyEquals(cobj.baseUrl, this.baseUrl)) {
-                return false;
-            }
-            if(!AaiConfig.propertyEquals(cobj.apiVersion, this.apiVersion)) {
-                return false;
-            }
-            if(!AaiConfig.propertyEquals(cobj.username, this.username)) {
-                return false;
-            }
-            if(!AaiConfig.propertyEquals(cobj.password, this.password)) {
-                return false;
-            }
-            if(!AaiConfig.propertyEquals(cobj.deleteOnMountPointRemoved, this.deleteOnMountPointRemoved)) {
-                return false;
-            }
-            if(!AaiConfig.propertyEquals(cobj.headers, this.headers)) {
-                return false;
-            }
-            if(!AaiConfig.propertyEquals(cobj.trustAllCerts, this.trustAllCerts)) {
-                return false;
-            }
-            if(!AaiConfig.propertyEquals(cobj.aaiPropFile, this.aaiPropFile)) {
-                return false;
-            }
-            if(!AaiConfig.propertyEquals(cobj.connectionTimeout, this.connectionTimeout)) {
-                return false;
-            }
-            if(!AaiConfig.propertyEquals(cobj.pcks12CertificateFilename, this.pcks12CertificateFilename)) {
-                return false;
-            }
-            if(!AaiConfig.propertyEquals(cobj.pcks12CertificatePassphrase, this.pcks12CertificatePassphrase)) {
-                return false;
-            }
-            if(!AaiConfig.propertyEquals(cobj.applicationIdentifier, this.applicationIdentifier)) {
-                return false;
-            }
 
-            return true;
-        }
-        return super.equals(obj);
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (aaiPropFile == null ? 0 : aaiPropFile.hashCode());
+        result = prime * result + (apiVersion == null ? 0 : apiVersion.hashCode());
+        result = prime * result + (applicationIdentifier == null ? 0 : applicationIdentifier.hashCode());
+        result = prime * result + (baseUrl == null ? 0 : baseUrl.hashCode());
+        result = prime * result + connectionTimeout;
+        result = prime * result + (deleteOnMountPointRemoved ? 1231 : 1237);
+        result = prime * result + (headers == null ? 0 : headers.hashCode());
+        result = prime * result + (password == null ? 0 : password.hashCode());
+        result = prime * result + (pcks12CertificateFilename == null ? 0 : pcks12CertificateFilename.hashCode());
+        result = prime * result + (pcks12CertificatePassphrase == null ? 0 : pcks12CertificatePassphrase.hashCode());
+        result = prime * result + (trustAllCerts ? 1231 : 1237);
+        result = prime * result + (username == null ? 0 : username.hashCode());
+        return result;
     }
 
-
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        AaiConfig other = (AaiConfig) obj;
+        if (aaiPropFile == null) {
+            if (other.aaiPropFile != null) {
+                return false;
+            }
+        } else if (!aaiPropFile.equals(other.aaiPropFile)) {
+            return false;
+        }
+        if (apiVersion == null) {
+            if (other.apiVersion != null) {
+                return false;
+            }
+        } else if (!apiVersion.equals(other.apiVersion)) {
+            return false;
+        }
+        if (applicationIdentifier == null) {
+            if (other.applicationIdentifier != null) {
+                return false;
+            }
+        } else if (!applicationIdentifier.equals(other.applicationIdentifier)) {
+            return false;
+        }
+        if (baseUrl == null) {
+            if (other.baseUrl != null) {
+                return false;
+            }
+        } else if (!baseUrl.equals(other.baseUrl)) {
+            return false;
+        }
+        if (connectionTimeout != other.connectionTimeout) {
+            return false;
+        }
+        if (deleteOnMountPointRemoved != other.deleteOnMountPointRemoved) {
+            return false;
+        }
+        if (headers == null) {
+            if (other.headers != null) {
+                return false;
+            }
+        } else if (!headers.equals(other.headers)) {
+            return false;
+        }
+        if (password == null) {
+            if (other.password != null) {
+                return false;
+            }
+        } else if (!password.equals(other.password)) {
+            return false;
+        }
+        if (pcks12CertificateFilename == null) {
+            if (other.pcks12CertificateFilename != null) {
+                return false;
+            }
+        } else if (!pcks12CertificateFilename.equals(other.pcks12CertificateFilename)) {
+            return false;
+        }
+        if (pcks12CertificatePassphrase == null) {
+            if (other.pcks12CertificatePassphrase != null) {
+                return false;
+            }
+        } else if (!pcks12CertificatePassphrase.equals(other.pcks12CertificatePassphrase)) {
+            return false;
+        }
+        if (trustAllCerts != other.trustAllCerts) {
+            return false;
+        }
+        if (username == null) {
+            if (other.username != null) {
+                return false;
+            }
+        } else if (!username.equals(other.username)) {
+            return false;
+        }
+        return true;
+    }
 
     public String getBaseUrl() {
         String url=this.baseUrl;
