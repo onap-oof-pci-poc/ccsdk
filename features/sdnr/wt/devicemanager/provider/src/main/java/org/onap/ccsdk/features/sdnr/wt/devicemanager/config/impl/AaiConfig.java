@@ -236,7 +236,7 @@ public class AaiConfig extends BaseSubConfig {
 
     private static boolean propertyEquals(final Object p1,final Object p2)
     {
-        return p1==null && p2==null || p1.equals(p2);
+        return p1==null && p2==null || p1 != null && p1.equals(p2);
     }
     private static boolean propertyEquals(final boolean p1,final boolean p2)
     {
@@ -287,26 +287,12 @@ public class AaiConfig extends BaseSubConfig {
                 return false;
             }
 
-            /*
-            if (!((cobj.baseUrl == null && this.baseUrl == null) || cobj.baseUrl.equals(this.baseUrl)))
-                return false;
-            if (!((cobj.apiVersion == null && this.apiVersion == null) || cobj.apiVersion.equals(this.apiVersion)))
-                return false;
-            if (!((cobj.username == null && this.username == null) || cobj.username.equals(this.username)))
-                return false;
-            if (!((cobj.password == null && this.password == null) || cobj.password.equals(this.password)))
-                return false;
-            if (!(cobj.deleteOnMountPointRemoved != this.deleteOnMountPointRemoved))
-                return false;
-            if (!((cobj.headers == null && this.headers == null) || cobj.headers.equals(this.headers)))
-                return false;
-            if (!(cobj.trustAllCerts != this.trustAllCerts))
-                return false;
-*/
             return true;
         }
         return super.equals(obj);
     }
+
+
 
     public String getBaseUrl() {
         String url=this.baseUrl;

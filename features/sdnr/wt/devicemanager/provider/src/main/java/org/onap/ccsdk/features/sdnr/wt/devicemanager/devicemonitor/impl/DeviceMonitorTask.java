@@ -6,9 +6,9 @@
  * =================================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -40,6 +40,7 @@ public class DeviceMonitorTask implements Runnable {
 
     private static final Logger LOG = LoggerFactory.getLogger(DeviceMonitorTask.class);
     private static final String LOGMARKER = "DMTick";
+    private static final NetconfTimeStamp NETCONFTIME_CONVERTER = NetconfTimeStamp.getConverter();
 
     private final String mountPointName;
     private final ODLEventListener odlEventListener;
@@ -273,7 +274,7 @@ public class DeviceMonitorTask implements Runnable {
         try {
             LOG.debug("{} UTCTime {} START mountpoint {} tick {} connecting supervision {} tickout {}",
                     LOGMARKER,
-                    NetconfTimeStamp.getTimeStamp(),
+                    NETCONFTIME_CONVERTER.getTimeStamp(),
                     mountPointName,
                     tickCounter,
                     mountpointConnectingStateSupervision,
@@ -286,28 +287,28 @@ public class DeviceMonitorTask implements Runnable {
                    }
 
                } else {
-				synchronized (lock) {
-				       if (ne != null) {
-				           //checks during "Connected"
-				           clear(DeviceMonitorProblems.connectionLossOAM); //Always cleared never raised
-				           LOG.debug("{} {} Prepare check", LOGMARKER, tickCounter);
-				           ne.prepareCheck();  // Prepare ne check
-				           // Mediator check
-				           LOG.debug("{} {} Mediator check", LOGMARKER, tickCounter);
-				           clearRaiseIfConnected(checkConnectionToMediator, DeviceMonitorProblems.connectionLossMediator);
+                synchronized (lock) {
+                       if (ne != null) {
+                           //checks during "Connected"
+                           clear(DeviceMonitorProblems.connectionLossOAM); //Always cleared never raised
+                           LOG.debug("{} {} Prepare check", LOGMARKER, tickCounter);
+                           ne.prepareCheck();  // Prepare ne check
+                           // Mediator check
+                           LOG.debug("{} {} Mediator check", LOGMARKER, tickCounter);
+                           clearRaiseIfConnected(checkConnectionToMediator, DeviceMonitorProblems.connectionLossMediator);
 
-				           // NE check
-				           LOG.debug("{} {} Ne check", LOGMARKER, tickCounter);
-				           clearRaiseIfConnected(checkConnectionToNe, DeviceMonitorProblems.connectionLossNeOAM);
-				       } else {
-				           //Monitor switch off.
-				           LOG.debug("{} {} Monitor switch off state", LOGMARKER, tickCounter);
-				           clear(DeviceMonitorProblems.connectionLossOAM); //Always cleared never raised
-				           clear(DeviceMonitorProblems.connectionLossMediator); //Always cleared never raised
-				           clear(DeviceMonitorProblems.connectionLossNeOAM); //Always cleared never raised
-				       }
-				   }
-			}
+                           // NE check
+                           LOG.debug("{} {} Ne check", LOGMARKER, tickCounter);
+                           clearRaiseIfConnected(checkConnectionToNe, DeviceMonitorProblems.connectionLossNeOAM);
+                       } else {
+                           //Monitor switch off.
+                           LOG.debug("{} {} Monitor switch off state", LOGMARKER, tickCounter);
+                           clear(DeviceMonitorProblems.connectionLossOAM); //Always cleared never raised
+                           clear(DeviceMonitorProblems.connectionLossMediator); //Always cleared never raised
+                           clear(DeviceMonitorProblems.connectionLossNeOAM); //Always cleared never raised
+                       }
+                   }
+            }
         } catch (Exception e) {
             //Prevent stopping the task
             LOG.warn("{} {} During DeviceMontoring task",LOGMARKER, tickCounter, e);

@@ -6,9 +6,9 @@
  * =================================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -62,6 +62,8 @@ public class DcaeMessages {
 
     private static final String CONTENT_TYPE_APPJSON = "application/json";
 
+    private static final NetconfTimeStamp NETCONFTIME_CONVERTER = NetconfTimeStamp.getConverter();
+
     //Configurable parameters
     private final DcaeSender dcaeSender;
     private final int heartbeatIntervallSeconds;
@@ -87,7 +89,7 @@ public class DcaeMessages {
         String body = assembleHeartbeatFromTemplate(null,
                 epochTimeMicrosecondsString,
                 heartbeatsequence++,
-                NetconfTimeStamp.getTimeStampAsNetconfString()).toString();
+                NETCONFTIME_CONVERTER.getTimeStampAsNetconfString()).toString();
         return dcaeSender.sendDcaePost( body);
     }
 
@@ -328,7 +330,7 @@ public class DcaeMessages {
 
         long microseconds = -1;
         try {
-            microseconds = NetconfTimeStamp.getTimeStampFromNetconfAsMilliseconds(timeAsString) * 1000;
+            microseconds = NETCONFTIME_CONVERTER.getTimeStampFromNetconfAsMilliseconds(timeAsString) * 1000;
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         } catch (ParseException e) {

@@ -6,9 +6,9 @@
  * =================================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -46,6 +46,8 @@ import org.slf4j.LoggerFactory;
 public class ODLEventListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(ODLEventListener.class);
+    private static final NetconfTimeStamp NETCONFTIME_CONVERTER = NetconfTimeStamp.getConverter();
+
 
     private final String ownKeyName;
 
@@ -101,7 +103,7 @@ public class ODLEventListener {
     public void registration(String registrationName) {
 
         ObjectCreationNotificationXml cNotificationXml = new ObjectCreationNotificationXml(ownKeyName,
-                popEvntNumberAsString(), InternalDateAndTime.valueOf(NetconfTimeStamp.getTimeStamp()),
+                popEvntNumberAsString(), InternalDateAndTime.valueOf(NETCONFTIME_CONVERTER.getTimeStamp()),
                 registrationName);
 
         // Write first to prevent missing entries
@@ -121,7 +123,7 @@ public class ODLEventListener {
     public void deRegistration(String registrationName) {
 
         ObjectDeletionNotificationXml dNotificationXml = new ObjectDeletionNotificationXml(ownKeyName,
-                popEvntNumberAsString(), InternalDateAndTime.valueOf(NetconfTimeStamp.getTimeStamp()),
+                popEvntNumberAsString(), InternalDateAndTime.valueOf(NETCONFTIME_CONVERTER.getTimeStamp()),
                 registrationName);
 
         // Write first to prevent missing entries
@@ -151,7 +153,7 @@ public class ODLEventListener {
         ProblemNotificationXml notificationXml = new ProblemNotificationXml(ownKeyName, registrationName, problemName,
                 problemSeverity,
                 // popEvntNumberAsString(), InternalDateAndTime.TESTPATTERN );
-                popEvntNumberAsString(), InternalDateAndTime.valueOf(NetconfTimeStamp.getTimeStamp()));
+                popEvntNumberAsString(), InternalDateAndTime.valueOf(NETCONFTIME_CONVERTER.getTimeStamp()));
 
         databaseService.writeFaultLog(notificationXml);
         databaseService.updateFaultCurrent(notificationXml);

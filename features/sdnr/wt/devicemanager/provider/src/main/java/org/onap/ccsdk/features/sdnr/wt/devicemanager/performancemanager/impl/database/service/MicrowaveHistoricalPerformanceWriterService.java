@@ -34,6 +34,7 @@ public class MicrowaveHistoricalPerformanceWriterService {
     private static final Logger LOG = LoggerFactory.getLogger(MicrowaveHistoricalPerformanceWriterService.class);
     private static final String INDEX = "sdnperformance";
     private static final String MAPPING = "/elasticsearch/index/sdnperformance/sdnperformanceMapping.json";
+    private static final NetconfTimeStamp NETCONFTIME_CONVERTER = NetconfTimeStamp.getConverter();
 
 
     private HtDatabaseClientAbstract client;
@@ -47,20 +48,25 @@ public class MicrowaveHistoricalPerformanceWriterService {
 
         try {
 
-            IndexClientBuilder clientBuilder = IndexClientBuilder.getBuilder(INDEX).setMappingSettingJsonFileName(MAPPING);
+            IndexClientBuilder clientBuilder =
+                    IndexClientBuilder.getBuilder(INDEX).setMappingSettingJsonFileName(MAPPING);
             client = clientBuilder.create(database);
             clientBuilder.close();
 
-            historicalPerformance15mRW = new HtDataBaseReaderAndWriter<>(client, EsHistoricalPerformance15Minutes.ESDATATYPENAME, EsHistoricalPerformance15Minutes.class);
-            historicalPerformance24hRW = new HtDataBaseReaderAndWriter<>(client, EsHistoricalPerformance24Hours.ESDATATYPENAME, EsHistoricalPerformance24Hours.class);
-            historicalPerformanceLogRW = new HtDataBaseReaderAndWriter<>(client, EsHistoricalPerformanceLogEntry.ESDATATYPENAME, EsHistoricalPerformanceLogEntry.class);
+            historicalPerformance15mRW = new HtDataBaseReaderAndWriter<>(client,
+                    EsHistoricalPerformance15Minutes.ESDATATYPENAME, EsHistoricalPerformance15Minutes.class);
+            historicalPerformance24hRW = new HtDataBaseReaderAndWriter<>(client,
+                    EsHistoricalPerformance24Hours.ESDATATYPENAME, EsHistoricalPerformance24Hours.class);
+            historicalPerformanceLogRW = new HtDataBaseReaderAndWriter<>(client,
+                    EsHistoricalPerformanceLogEntry.ESDATATYPENAME, EsHistoricalPerformanceLogEntry.class);
 
         } catch (Exception e) {
             client = null;
             LOG.error("Can not start database client. Exception: {}", e.getMessage());
         }
 
-        LOG.info("Create {} finished. DB Service {} started.", MicrowaveHistoricalPerformanceWriterService.class,  client != null ? "sucessfully" : "not" );
+        LOG.info("Create {} finished. DB Service {} started.", MicrowaveHistoricalPerformanceWriterService.class,
+                client != null ? "sucessfully" : "not");
     }
 
 
@@ -79,7 +85,8 @@ public class MicrowaveHistoricalPerformanceWriterService {
     public void writePMLog(String mountpointName, String layerProtocolName, String msg) {
 
         LOG.debug("Write PM Log: {}", msg);
-        EsHistoricalPerformanceLogEntry logEntry = new EsHistoricalPerformanceLogEntry(mountpointName,layerProtocolName,NetconfTimeStamp.getTimeStamp().getValue() , msg );
+        EsHistoricalPerformanceLogEntry logEntry = new EsHistoricalPerformanceLogEntry(mountpointName,
+                layerProtocolName, NETCONFTIME_CONVERTER.getTimeStamp().getValue(), msg);
         historicalPerformanceLogRW.doWrite(logEntry);
         LOG.debug("Write PM Log done");
 
