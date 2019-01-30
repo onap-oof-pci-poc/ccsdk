@@ -27,7 +27,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.IniConfigurationFile;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.IniConfigurationFile.ConfigurationException;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.HtDevicemanagerConfiguration.ISubConfigHandler;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.BaseSubConfig;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.ISubConfigHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,11 +102,6 @@ public class AaiConfig extends BaseSubConfig {
         this.applicationIdentifier=DEFAULT_VALUE_APPLICATIONID;
     }
 
-    /*
-     * private void change(AaiConfig cfg) { this.baseUrl=cfg.baseUrl;
-     * this.username=cfg.username; this.password=cfg.password;
-     * this.deleteOnMountPointRemoved=cfg.deleteOnMountPointRemoved; }
-     */
     public AaiConfig(IniConfigurationFile config, ISubConfigHandler configHandler) throws ConfigurationException {
         this(config, configHandler, true);
     }

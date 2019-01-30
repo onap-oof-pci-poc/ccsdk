@@ -42,7 +42,7 @@ import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.Resource
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.AkkaConfig;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.EsConfig;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.GeoConfig;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.akka.ClusterNodeInfo;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.util.ClusterNodeInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

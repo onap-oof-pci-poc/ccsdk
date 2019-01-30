@@ -6,9 +6,9 @@
  * =================================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -19,7 +19,8 @@ package org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl;
 
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.IniConfigurationFile;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.IniConfigurationFile.ConfigurationException;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.HtDevicemanagerConfiguration.ISubConfigHandler;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.BaseSubConfig;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.ISubConfigHandler;
 
 public class DcaeConfig extends BaseSubConfig {
     private static final String SECTION_MARKER_DCAE = "dcae";
@@ -111,26 +112,52 @@ public class DcaeConfig extends BaseSubConfig {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof DcaeConfig) {
-            DcaeConfig cobj = (DcaeConfig) obj;
-            if (!(cobj.eventReceiverUrl == null && this.eventReceiverUrl == null
-                    || cobj.eventReceiverUrl.equals(this.eventReceiverUrl))) {
-                return false;
-            }
-            if (!(cobj.userCredentials == null && this.userCredentials == null
-                    || cobj.userCredentials.equals(this.userCredentials))) {
-                return false;
-            }
-            if (cobj.timerPeriodSeconds != this.timerPeriodSeconds) {
-                return false;
-            }
-            return true;
-        }
-        return super.equals(obj);
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (eventReceiverUrl == null ? 0 : eventReceiverUrl.hashCode());
+        result = prime * result + (timerPeriodSeconds == null ? 0 : timerPeriodSeconds.hashCode());
+        result = prime * result + (userCredentials == null ? 0 : userCredentials.hashCode());
+        return result;
     }
 
-    /*-------------------------------------
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        DcaeConfig other = (DcaeConfig) obj;
+        if (eventReceiverUrl == null) {
+            if (other.eventReceiverUrl != null) {
+                return false;
+            }
+        } else if (!eventReceiverUrl.equals(other.eventReceiverUrl)) {
+            return false;
+        }
+        if (timerPeriodSeconds == null) {
+            if (other.timerPeriodSeconds != null) {
+                return false;
+            }
+        } else if (!timerPeriodSeconds.equals(other.timerPeriodSeconds)) {
+            return false;
+        }
+        if (userCredentials == null) {
+            if (other.userCredentials != null) {
+                return false;
+            }
+        } else if (!userCredentials.equals(other.userCredentials)) {
+            return false;
+        }
+        return true;
+    }
+
+     /*-------------------------------------
      * static Functions
      */
 

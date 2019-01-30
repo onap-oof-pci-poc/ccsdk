@@ -22,8 +22,8 @@ import com.typesafe.config.ConfigFactory;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.akka.ClusterRoleInfo;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.akka.ClusterRoleInfoCollection;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.util.ClusterRoleInfo;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.util.ClusterRoleInfoCollection;
 
 public class GeoConfig {
 

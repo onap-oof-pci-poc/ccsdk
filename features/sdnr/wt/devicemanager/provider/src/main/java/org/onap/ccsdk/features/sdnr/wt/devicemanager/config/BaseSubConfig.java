@@ -15,18 +15,17 @@
  * the License.
  * ============LICENSE_END==========================================================================
  ******************************************************************************/
-package org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl;
+package org.onap.ccsdk.features.sdnr.wt.devicemanager.config;
 
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.IniConfigurationFile;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.IniConfigurationFile.ConversionException;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.IniConfigurationFile.Section;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.HtDevicemanagerConfiguration.ISubConfigHandler;
 
 public class BaseSubConfig {
 
     private final Section subconfig;
     private final ISubConfigHandler configHandler;
-    protected final IniConfigurationFile config;
+    private final IniConfigurationFile config;
 
     protected Section getSubConfig() {
         return this.subconfig;

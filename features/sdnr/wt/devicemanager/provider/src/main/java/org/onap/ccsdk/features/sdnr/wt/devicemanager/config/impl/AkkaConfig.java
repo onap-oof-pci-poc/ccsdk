@@ -20,7 +20,7 @@ package org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import java.io.File;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.akka.ClusterConfig;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.util.ClusterConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

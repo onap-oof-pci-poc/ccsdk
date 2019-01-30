@@ -6,9 +6,9 @@
  * =================================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -20,26 +20,39 @@ package org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.Environment;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.IniConfigurationFile;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.IniConfigurationFile.ConfigurationException;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.HtDevicemanagerConfiguration.ISubConfigHandler;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.BaseSubConfig;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.ISubConfigHandler;
 
 public class EsConfig extends BaseSubConfig {
 
     public static final String SECTION_MARKER_ES = "es";
-
     public static final String ESDATATYPENAME = "database";
-
     private static final String EMPTY = "empty";
-
     private static final String PROPERTY_KEY_CLUSTER = "esCluster";
-
     private static final String DEFAULT_VALUE_CLUSTER = "";
-
     private static EsConfig esConfig;
 
     private String cluster;
     private String host;
     private String node;
     private String index;
+
+    private EsConfig() {
+        super();
+        this.host = EMPTY;
+        this.node = EMPTY;
+        this.index = EMPTY;
+        this.cluster = DEFAULT_VALUE_CLUSTER;
+    }
+
+    public EsConfig cloneWithIndex(String _index) {
+        EsConfig c = new EsConfig();
+        c.index = _index;
+        c.host = this.host;
+        c.node = this.node;
+        c.cluster = this.cluster;
+        return c;
+    }
 
     public static String getESDATATYPENAME() {
         return ESDATATYPENAME;
@@ -106,47 +119,64 @@ public class EsConfig extends BaseSubConfig {
         }
     }
 
-    private EsConfig() {
-        super();
-        this.host = EMPTY;
-        this.node = EMPTY;
-        this.index = EMPTY;
-        this.cluster = DEFAULT_VALUE_CLUSTER;
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (cluster == null ? 0 : cluster.hashCode());
+        result = prime * result + (host == null ? 0 : host.hashCode());
+        result = prime * result + (index == null ? 0 : index.hashCode());
+        result = prime * result + (node == null ? 0 : node.hashCode());
+        return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof EsConfig) {
-            EsConfig cobj = (EsConfig) obj;
-            if (!(cobj.cluster == null && this.cluster == null || cobj.cluster.equals(this.cluster))) {
-                return false;
-            }
-            if (!(cobj.host == null && this.host == null || cobj.host.equals(this.host))) {
-                return false;
-            }
-            if (!(cobj.node == null && this.node == null || cobj.node.equals(this.node))) {
-                return false;
-            }
-            if (!(cobj.index == null && this.index == null || cobj.index.equals(this.index))) {
-                return false;
-            }
+        if (this == obj) {
             return true;
         }
-        return super.equals(obj);
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        EsConfig other = (EsConfig) obj;
+        if (cluster == null) {
+            if (other.cluster != null) {
+                return false;
+            }
+        } else if (!cluster.equals(other.cluster)) {
+            return false;
+        }
+        if (host == null) {
+            if (other.host != null) {
+                return false;
+            }
+        } else if (!host.equals(other.host)) {
+            return false;
+        }
+        if (index == null) {
+            if (other.index != null) {
+                return false;
+            }
+        } else if (!index.equals(other.index)) {
+            return false;
+        }
+        if (node == null) {
+            if (other.node != null) {
+                return false;
+            }
+        } else if (!node.equals(other.node)) {
+            return false;
+        }
+        return true;
     }
 
-    public EsConfig cloneWithIndex(String _index) {
-        EsConfig c = new EsConfig();
-        c.index = _index;
-        c.host = this.host;
-        c.node = this.node;
-        c.cluster = this.cluster;
-        return c;
-    }
     @Override
     public void save()
     {
-        this.config.setProperty(SECTION_MARKER_ES + "." + PROPERTY_KEY_CLUSTER, this.cluster);
+        this.getConfig().setProperty(SECTION_MARKER_ES + "." + PROPERTY_KEY_CLUSTER, this.cluster);
         super.save();
     }
     public static boolean isInstantiated() {

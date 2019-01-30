@@ -28,10 +28,10 @@ import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database.HtDatabaseNod
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.ONFCoreNetworkElementFactory;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.ONFCoreNetworkElementRepresentation;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.toggleAlarmFilter.NotificationDelayService;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.HtDevicemanagerConfiguration;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.AkkaConfig;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.EsConfig;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.GeoConfig;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.HtDevicemanagerConfiguration;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.PmConfig;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.dcaeconnector.impl.DcaeProviderClient;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.devicemonitor.impl.DeviceMonitorImpl;

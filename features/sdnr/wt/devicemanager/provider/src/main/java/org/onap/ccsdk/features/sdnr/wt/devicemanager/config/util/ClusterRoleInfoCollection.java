@@ -15,7 +15,7 @@
  * the License.
  * ============LICENSE_END==========================================================================
  ******************************************************************************/
-package org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.akka;
+package org.onap.ccsdk.features.sdnr.wt.devicemanager.config.util;
 
 import java.util.ArrayList;
 
