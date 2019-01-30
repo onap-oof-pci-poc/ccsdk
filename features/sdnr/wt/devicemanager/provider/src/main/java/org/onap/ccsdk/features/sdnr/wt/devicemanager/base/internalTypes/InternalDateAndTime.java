@@ -30,8 +30,9 @@ import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.core.model.rev170
  */
 public class InternalDateAndTime {
 
-    public static InternalDateAndTime TESTPATTERN = new InternalDateAndTime("2017-01-01T00:00:00.0Z");
     private static final NetconfTimeStamp NETCONFTIME_CONVERTER = NetconfTimeStamp.getConverter();
+
+    private static final InternalDateAndTime TESTPATTERN = new InternalDateAndTime("2017-01-01T00:00:00.0Z");
 
     String internalDateAndTime;
 
@@ -87,6 +88,14 @@ public class InternalDateAndTime {
      */
     private InternalDateAndTime(String internalDateAndTime) {
         this.internalDateAndTime = internalDateAndTime;
+    }
+
+    /**
+     * Get a testpattern
+     * @return testpattern
+     */
+    public static InternalDateAndTime getTestpattern() {
+        return TESTPATTERN;
     }
 
 

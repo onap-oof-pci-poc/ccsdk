@@ -66,7 +66,7 @@ public class AaiWebApiClient extends BaseHTTPClient {
 
     public AaiWebApiClient(String baseUrl, Map<String, String> headers, boolean trustAllCerts, String certFilename,
             String passphrase) {
-        super(baseUrl, trustAllCerts, certFilename, passphrase, BaseHTTPClient.SSLCERT_PCKS);
+        super(baseUrl, trustAllCerts, certFilename, passphrase, BaseHTTPClient.getSslCertPcks());
 
         this.headerMap = new HashMap<>();
         this.headerMap.putAll(headers);

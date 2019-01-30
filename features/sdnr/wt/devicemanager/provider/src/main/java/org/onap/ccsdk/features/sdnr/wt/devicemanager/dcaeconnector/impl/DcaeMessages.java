@@ -247,7 +247,7 @@ public class DcaeMessages {
         }
 
         ONFCoreNetworkElementRepresentation optionalNe = deviceManager != null ? deviceManager.getNeByMountpoint(mountpointName) : null;
-        InventoryInformation neInventory = optionalNe != null ? optionalNe.getInventoryInformation() : InventoryInformation.DEFAULT;
+        InventoryInformation neInventory = optionalNe != null ? optionalNe.getInventoryInformation() : InventoryInformation.getDefault();
 
         sb.append("{\n" +
                 "    \"event\": {\n" +
@@ -324,17 +324,15 @@ public class DcaeMessages {
     /**
      * Time has to be converted into milliseconds
      * @param timeAsString time as string
-     * @return
+     * @return as string
      */
     private String convert(String timeAsString) {
 
         long microseconds = -1;
         try {
             microseconds = NETCONFTIME_CONVERTER.getTimeStampFromNetconfAsMilliseconds(timeAsString) * 1000;
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
+        } catch (IllegalArgumentException | ParseException e) {
+            LOG.info("Can not convert timeAsString", e);
         }
         return String.valueOf(microseconds);
     }

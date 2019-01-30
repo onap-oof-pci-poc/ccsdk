@@ -53,7 +53,9 @@ public class HtDevicemanagerConfiguration {
         try {
             this.mFile = new File(filename);
             if (!this.mFile.exists()) {
-                this.mFile.createNewFile();
+                if (!this.mFile.createNewFile()) {
+                    LOG.error("Can not create file {}", filename);
+                }
             }
             if (mConfig == null) {
                 mConfig = new IniConfigurationFile(this.mFile);
@@ -61,10 +63,9 @@ public class HtDevicemanagerConfiguration {
             mConfig.load();
 
         } catch (ConfigurationException e) {
-            LOG.error("error loading config values:" + e.getMessage());
-
+            LOG.error("Problem loading config values: {}", e.getMessage());
         } catch (IOException e) {
-            LOG.error("error loading config file " + filename + ": " + e.getMessage());
+            LOG.error("Problem loading config file {} : {}", filename, e.getMessage());
         }
 
         this.fileObserver = new ConfigFileObserver(filename, FILE_POLL_INTERVAL_MS, mConfig);

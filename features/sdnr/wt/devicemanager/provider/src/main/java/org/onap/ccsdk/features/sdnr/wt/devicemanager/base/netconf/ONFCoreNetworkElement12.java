@@ -607,7 +607,7 @@ public class ONFCoreNetworkElement12 extends ONFCoreNetworkElement12Base
                 return allPm;
             } else {
                 LOG.debug("Deliver empty, no LTP");
-                return AllPm.EMPTY;
+                return AllPm.getEmpty();
             }
         }
     }

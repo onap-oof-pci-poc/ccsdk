@@ -22,9 +22,9 @@ import java.util.List;
 
 public class InventoryInformation {
 
-    public static final String UNKNOWN = "unknown";
-    public static final List<String> EMPTY = new ArrayList<>();
-    public static final InventoryInformation DEFAULT = new InventoryInformation();
+    private static final String UNKNOWN = "unknown";
+    private static final List<String> EMPTY = new ArrayList<>();
+    private static final InventoryInformation DEFAULT = new InventoryInformation();
 
     private String type;
     private String model;
@@ -115,6 +115,10 @@ public class InventoryInformation {
     public InventoryInformation setInterfaceUuidList(List<String> interfaceUuidList) {
         this.interfaceUuidList = interfaceUuidList != null ? interfaceUuidList : EMPTY;
         return this;
+    }
+
+    public static InventoryInformation getDefault() {
+        return DEFAULT;
     }
 
     @Override

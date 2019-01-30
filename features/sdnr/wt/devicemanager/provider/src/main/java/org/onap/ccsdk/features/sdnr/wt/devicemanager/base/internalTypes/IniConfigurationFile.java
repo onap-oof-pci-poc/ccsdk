@@ -34,8 +34,8 @@ public class IniConfigurationFile {
 
     private static final Logger LOG = LoggerFactory.getLogger(IniConfigurationFile.class);
 
-    public static final String SECTIONNAME_ROOT = "";
-    public static final String DELIMITER = "=";
+    private static final String SECTIONNAME_ROOT = "";
+    private static final String DELIMITER = "=";
     private static final String COMMENTCHARS[] = {"#", ";"};
     private static final String LR = "\n";
 
@@ -220,9 +220,9 @@ public class IniConfigurationFile {
     }
 
     private static class SectionValue {
-        public String Value;
-        public final List<String> Comments;
-        public boolean IsUncommented;
+        private String Value;
+        private final List<String> Comments;
+        private boolean IsUncommented;
 
         public SectionValue(String value) {
             this(value, new ArrayList<String>(), false);
@@ -236,9 +236,9 @@ public class IniConfigurationFile {
     }
 
     public static class Section {
-        public final String Name;
-        public final List<String> rawLines;
-        public final LinkedHashMap<String, SectionValue> values;
+        private final String Name;
+        private final List<String> rawLines;
+        private final LinkedHashMap<String, SectionValue> values;
 
         public Section(String name) {
             LOG.debug("new section created:" + name);

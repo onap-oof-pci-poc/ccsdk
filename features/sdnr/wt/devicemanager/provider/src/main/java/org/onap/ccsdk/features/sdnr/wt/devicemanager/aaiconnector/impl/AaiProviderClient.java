@@ -68,7 +68,7 @@ public class AaiProviderClient implements AutoCloseable {
         ONFCoreNetworkElementRepresentation ne =
                 this.deviceManager != null ? this.deviceManager.getNeByMountpoint(mountPointName) : null;
         this.onDeviceRegistered(mountPointName,
-                ne != null ? ne.getInventoryInformation("MWPS") : InventoryInformation.DEFAULT);
+                ne != null ? ne.getInventoryInformation("MWPS") : InventoryInformation.getDefault());
 
     }
 
