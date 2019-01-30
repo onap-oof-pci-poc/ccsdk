@@ -40,6 +40,7 @@ public class MountPointMock implements MountPoint {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends BindingService> Optional<T> getService(Class<T> service) {
 

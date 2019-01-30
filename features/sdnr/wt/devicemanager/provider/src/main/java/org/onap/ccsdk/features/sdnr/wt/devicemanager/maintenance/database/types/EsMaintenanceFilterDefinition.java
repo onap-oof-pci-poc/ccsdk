@@ -66,13 +66,13 @@ public class EsMaintenanceFilterDefinition implements Definition {
     }
 
     @JsonProperty("problem")
-    public void setProblem(String problem) {
-        this.problem = problem == null ? ALL : problem;
+    public void setProblem(String pProblem) {
+        this.problem = pProblem == null ? ALL : pProblem;
     }
 
-    public boolean appliesToObjectReference(String objectIdRef, String problem) {
-        boolean res = (objectIdRef.isEmpty() || objectIdRef.contains(objectIdRef)) && (problem.isEmpty() || problem.contains(problem));
-        LOG.debug("Check result applies {}: {} {} against: {}",res, objectIdRef, problem, this);
+    public boolean appliesToObjectReference(String pObjectIdRef, String pProblem) {
+        boolean res = (pObjectIdRef.isEmpty() || pObjectIdRef.contains(pObjectIdRef)) && (pProblem.isEmpty() || pProblem.contains(pProblem));
+        LOG.debug("Check result applies {}: {} {} against: {}",res, pObjectIdRef, pProblem, this);
         return res;
     }
 

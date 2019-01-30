@@ -6,9 +6,9 @@
  * =================================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -71,6 +71,7 @@ import org.slf4j.LoggerFactory;
 
 public class EsMaintenanceMode extends EsObject implements MaintenanceModeG {
 
+    @SuppressWarnings("unused")
     private static final Logger LOG = LoggerFactory.getLogger(EsMaintenanceMode.class);
 
     public static final String ESDATATYPENAME = "maintenancemode";
@@ -101,8 +102,8 @@ public class EsMaintenanceMode extends EsObject implements MaintenanceModeG {
         this.node = maintenanceModeG.getNodeName();
         List<Filter> filters = maintenanceModeG.getFilter();
         if (filter != null) {
-            for (Filter filter : filters) {
-                this.filter.add(new EsMaintenanceFilter(filter));
+            for (Filter filterElement : filters) {
+                this.filter.add(new EsMaintenanceFilter(filterElement));
             }
         }
     }
@@ -133,29 +134,29 @@ public class EsMaintenanceMode extends EsObject implements MaintenanceModeG {
 
     /**
      * Add one filter to internal list
-     * @param filter the Filter
+     * @param pFilter the Filter
      */
-    public void addFilter(EsMaintenanceFilter filter) {
-        this.filter.add(filter);
+    public void addFilter(EsMaintenanceFilter pFilter) {
+        this.filter.add(pFilter);
     }
 
     /**
      * Verify maintenance status
-     * @param mountpointReference
-     * @param objectIdRef
-     * @param problem
+     * @param objectIdRef NETCONF object id
+     * @param problem name that was provided
+     * @param now time to verify with
      * @return true if in maintenance status
      */
     public boolean isONFObjectInMaintenance(String objectIdRef, String problem, ZonedDateTime now) {
         if(!active) {
-			return false;
-		}
+            return false;
+        }
         boolean res = false;
         if (this != NOT_IN_MAINTENANCE) {
             for (EsMaintenanceFilter oneFilter : filter) {
                 if (oneFilter.isInMaintenance(objectIdRef, problem, now)) {
-					res = true;
-				}
+                    res = true;
+                }
                     break;
             }
         }

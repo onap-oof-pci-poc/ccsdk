@@ -15,42 +15,25 @@
  * the License.
  * ============LICENSE_END==========================================================================
  ******************************************************************************/
-package org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.database.types.equipment;
 
-import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.core.model.rev170320.Equipment;
+public class TestMappEquipment<T> {
 
-public class ExtendedEquipment {
+    public static void main(String[] args) {
 
-    private final String parentUuid;
-    private final int treeLevel;
-    private final Equipment equipment;
+        /*
+        MyEquipmentBuilder eb = new MyEquipmentBuilder();
+        eb.setAdministrativeState(AdministrativeState.Unlocked);
+        eb.setCategory((new CategoryBuilder()).setCategory(EquipmentCategory.Rack).build());
 
-    /**
-     * Equipment with additional information beside NETCONF equipment
-     *
-     * @param parentUuid of parent equipment
-     * @param equipment NETCONF Equipment
-     * @param treeLevel level of tree starting with root at 0
-     */
-    public ExtendedEquipment(String parentUuid, Equipment equipment, int treeLevel) {
-        super();
-        this.parentUuid = parentUuid;
-        this.equipment = equipment;
-        this.treeLevel = treeLevel;
+        Equipment e2 = eb.build();
+
+        String inspect = HtDatabaseEventsService.inspect(e2,0);
+        System.out.println("Inspect: "+inspect);
+
+        String json = HtDatabaseEventsService.toJson(e2);
+        System.out.println("JSON: "+json);
+         */
+
     }
-
-    public String getParentUuid() {
-        return parentUuid;
-    }
-
-    public Equipment getEquipment() {
-        return equipment;
-    }
-
-    public int getTreeLevel() {
-        return treeLevel;
-    }
-
-
 
 }

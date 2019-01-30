@@ -16,7 +16,6 @@ import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.core.model.rev170
 import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.core.model.rev170320.logical.termination.point.g.Lp;
 import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.core.model.rev170320.logical.termination.point.g.LpBuilder;
 import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev181010.air._interface.historical.performances.g.HistoricalPerformanceDataListBuilder;
-import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev181010.mw.air._interface.pac.AirInterfaceHistoricalPerformancesBuilder;
 
 public class TestMapper {
 
@@ -35,8 +34,9 @@ public class TestMapper {
         EsHistoricalPerformance15Minutes pmData = new EsHistoricalPerformance15Minutes("Testnode", layerProtocol);
         System.out.println(t++);
 
-        AirInterfaceHistoricalPerformancesBuilder builder1 = new AirInterfaceHistoricalPerformancesBuilder();
-        System.out.println(t++);
+        //AirInterfaceHistoricalPerformancesBuilder builder1 = new AirInterfaceHistoricalPerformancesBuilder();
+        //System.out.println(t++);
+
 
         HistoricalPerformanceDataListBuilder builder2 = new HistoricalPerformanceDataListBuilder();
         System.out.println(t++);

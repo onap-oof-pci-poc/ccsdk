@@ -48,6 +48,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
  * @author herbert
  *
  */
+@SuppressWarnings("deprecation")
 public class ReadOnlyTransactionMock implements ReadOnlyTransaction {
 
 
@@ -67,6 +68,7 @@ public class ReadOnlyTransactionMock implements ReadOnlyTransaction {
         NodeBuilder nodeBuilder = new NodeBuilder();
         nodeBuilder.addAugmentation(NetconfNode.class, nnode);
         Node node = nodeBuilder.build();
+        @SuppressWarnings("unchecked")
         Optional<T> res1 = (Optional<T>) Optional.of(node);
         CheckedFuture<Optional<T>, ReadFailedException> res = new CheckedFuture<Optional<T>, ReadFailedException>() {
 

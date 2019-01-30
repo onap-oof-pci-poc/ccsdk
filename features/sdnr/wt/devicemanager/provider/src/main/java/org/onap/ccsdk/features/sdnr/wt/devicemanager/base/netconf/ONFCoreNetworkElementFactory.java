@@ -48,6 +48,7 @@ public class ONFCoreNetworkElementFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(ONFCoreNetworkElementFactory.class);
 
+    @SuppressWarnings("deprecation")
     public static @Nonnull ONFCoreNetworkElementRepresentation create(String mountPointNodeName, DataBroker dataBroker,
             WebSocketServiceClient webSocketService, HtDatabaseEventsService databaseService,
             InstanceIdentifier<Node> instanceIdentifier, DataBroker mountpointDataBroker, ProviderClient dcaeProvider,

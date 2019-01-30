@@ -54,10 +54,10 @@ public class ONFCoreNetworkElement12Equipment {
     private final ONFCOreNetworkElementCoreData coreData;
     private final OnfInterfacePac equipmentPac;
 
-    private final ValueNameList extensions;
+    private final ValueNameList extensionList;
     private final List<UniversalId> topLevelEqUuidList;
-    private final List<ProblemNotificationXml> problemList;
-    private final List<ExtendedEquipment> equipmentList;
+    private final List<ProblemNotificationXml> globalProblemList;
+    private final List<ExtendedEquipment> globalEquipmentList;
 
     public ONFCoreNetworkElement12Equipment(ONFCOreNetworkElementCoreData coreData, Capabilities capabilities) {
         LOG.debug("Initialize " + ONFCoreNetworkElement12Equipment.class.getName());
@@ -70,16 +70,16 @@ public class ONFCoreNetworkElement12Equipment {
             LOG.debug("Equipement pac not supported {}", WrapperEquipmentPacRev170402.QNAME);
         }
 
-        extensions = new ValueNameList();
+        extensionList = new ValueNameList();
         topLevelEqUuidList = new ArrayList<>();
-        problemList = new ArrayList<>();
-        equipmentList = new ArrayList<>();
+        globalProblemList = new ArrayList<>();
+        globalEquipmentList = new ArrayList<>();
 
         initClassVars();
     }
 
     public void addProblemsofNode(List<ProblemNotificationXml> resultList) {
-        resultList.addAll(problemList);
+        resultList.addAll(globalProblemList);
     }
 
     public List<ProblemNotificationXml> addProblemsofNodeObject(String uuidString) {
@@ -92,7 +92,7 @@ public class ONFCoreNetworkElement12Equipment {
     }
 
     public @Nonnull InventoryInformation getInventoryInformation(List<String> uuids) {
-        return getInventoryInformation(this.extensions, uuids);
+        return getInventoryInformation(this.extensionList, uuids);
     }
 
     protected void readNetworkElementEquipment() {
@@ -112,7 +112,7 @@ public class ONFCoreNetworkElement12Equipment {
     }
 
     public List<ExtendedEquipment> getEquipmentList() {
-        return equipmentList;
+        return globalEquipmentList;
     }
 
     public List<Equipment> getEquipmentAll() {
@@ -131,9 +131,9 @@ public class ONFCoreNetworkElement12Equipment {
      */
 
     private void initClassVars() {
-        this.problemList.clear();
-        this.equipmentList.clear();
-        this.extensions.clear();
+        this.globalProblemList.clear();
+        this.globalEquipmentList.clear();
+        this.extensionList.clear();
         this.topLevelEqUuidList.clear();
     }
 
@@ -144,16 +144,16 @@ public class ONFCoreNetworkElement12Equipment {
 
         if (optionalNe != null) {
             // extract Inventory
-            extensions.put(optionalNe.getExtension());
+            extensionList.put(optionalNe.getExtension());
 
-            if (!extensions.isEmpty()) {
+            if (!extensionList.isEmpty()) {
 
                 /*
                  * Loop through network element extension to get "top-level-equipment" <extension>
                  * <value-name>top-level-equipment</value-name> <value>1.0.BKP,1.0.WCS</value> </extension> "ipv4"
                  * address
                  */
-                extensions.getAsUniversalIdList("top-level-equipment", topLevelEqUuidList);
+                extensionList.getAsUniversalIdList("top-level-equipment", topLevelEqUuidList);
 
                 // If top-level-equipment exists get further information
                 if (topLevelEqUuidList.isEmpty()) {
@@ -161,8 +161,8 @@ public class ONFCoreNetworkElement12Equipment {
                 } else {
                     // Read equipment and problems
                     for (UniversalId uuid : topLevelEqUuidList) {
-                        recurseReadEquipmentProblems(uuid, EQUIPMENTROOT, EQUIPMENTROOTLEVEL, problemList,
-                                equipmentList);
+                        recurseReadEquipmentProblems(uuid, EQUIPMENTROOT, EQUIPMENTROOTLEVEL, globalProblemList,
+                                globalEquipmentList);
                     }
                 }
             } else {
@@ -212,8 +212,8 @@ public class ONFCoreNetworkElement12Equipment {
                 LOG.debug("no top level equipment found");
             } else {
                 //
-                if (!equipmentList.isEmpty()) {
-                    Equipment e = equipmentList.get(0).getEquipment();
+                if (!globalEquipmentList.isEmpty()) {
+                    Equipment e = globalEquipmentList.get(0).getEquipment();
                     if (e.getManufacturedThing() != null) {
                         EquipmentType et;
                         if ((et = e.getManufacturedThing().getEquipmentType()) != null) {
@@ -286,8 +286,8 @@ public class ONFCoreNetworkElement12Equipment {
     @Override
     public String toString() {
         return "ONFCoreNetworkElement12Equipment [coreData=" + coreData + ", equipmentPac=" + equipmentPac
-                + ", extensions=" + extensions + ", topLevelEqUuidList=" + topLevelEqUuidList + ", problemList="
-                + problemList + ", equipmentList=" + equipmentList + "]";
+                + ", extensions=" + extensionList + ", topLevelEqUuidList=" + topLevelEqUuidList + ", problemList="
+                + globalProblemList + ", equipmentList=" + globalEquipmentList + "]";
     }
 
 }

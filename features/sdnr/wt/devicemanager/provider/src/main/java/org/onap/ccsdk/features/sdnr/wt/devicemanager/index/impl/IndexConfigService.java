@@ -41,11 +41,12 @@ public class IndexConfigService implements AutoCloseable {
 
     // --- Construct and initialize
 
-    public IndexConfigService(HtDatabaseNode database) {
+    public IndexConfigService(HtDatabaseNode database) throws Exception {
         LOG.info("Create {} start", this.getClass().getSimpleName());
 
         IndexClientBuilder clientBuilder = IndexClientBuilder.getBuilder(INDEX).setModelDataDirectory(MODELDATA);
         client = clientBuilder.create(database);
+        clientBuilder.close();
         LOG.info("Create {} finished. DB Service {} started.", this.getClass().getSimpleName(),  client != null ? "sucessfully" : "not" );
     }
 

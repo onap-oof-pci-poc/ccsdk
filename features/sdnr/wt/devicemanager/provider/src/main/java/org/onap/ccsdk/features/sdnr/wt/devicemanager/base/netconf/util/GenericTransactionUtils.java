@@ -38,6 +38,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.CheckedFuture;
 
+@SuppressWarnings("deprecation")
 public final class GenericTransactionUtils {
     static final Logger LOG = LoggerFactory.getLogger(GenericTransactionUtils.class);
 

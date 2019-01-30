@@ -6,9 +6,9 @@
  * =================================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -18,7 +18,8 @@
 /**
  * Client for ECOMP notification server
  *
- * Reference: @link http://stackoverflow.com/questions/13022717/java-and-https-url-connection-without-downloading-certificate
+ * Reference: @link
+ * http://stackoverflow.com/questions/13022717/java-and-https-url-connection-without-downloading-certificate
  *
  * @author herbert
  */
@@ -48,7 +49,7 @@ import org.slf4j.LoggerFactory;
 public class DcaeSenderImpl implements DcaeSender {
 
     private static final Logger LOG = LoggerFactory.getLogger(DcaeSenderImpl.class);
-    private static String EMPTY = "";
+    private static final String EMPTY = "";
     private static final String charset = "UTF-8";
 
     private final String urlString;
@@ -58,7 +59,7 @@ public class DcaeSenderImpl implements DcaeSender {
     private URL url = null;
     private HttpURLConnection connection = null;
 
-    public DcaeSenderImpl( String url, String userCredentials)  {
+    public DcaeSenderImpl(String url, String userCredentials) {
 
         LOG.info("DcaeSenderImpl setup start with {} {}", url, userCredentials);
 
@@ -69,7 +70,8 @@ public class DcaeSenderImpl implements DcaeSender {
             try {
                 this.url = new URL(url);
                 sc = BaseHTTPClient.setupSsl(true);
-            } catch (KeyManagementException | NoSuchAlgorithmException | UnrecoverableKeyException | CertificateException | KeyStoreException | InvalidKeySpecException | IOException e) {
+            } catch (KeyManagementException | NoSuchAlgorithmException | UnrecoverableKeyException
+                    | CertificateException | KeyStoreException | InvalidKeySpecException | IOException e) {
                 LOG.warn("SSL setup failed: {}", e.getMessage());
             }
         }
@@ -78,6 +80,7 @@ public class DcaeSenderImpl implements DcaeSender {
 
     /**
      * Send message to ECOMP Server
+     *
      * @param body for POST message
      */
     @Override
@@ -100,11 +103,12 @@ public class DcaeSenderImpl implements DcaeSender {
 
     /**
      * Connect to Server and expect answer.
+     *
      * @return with answer body
      */
     public String testConnectServer() {
 
-       if (url != null) {
+        if (url != null) {
             try {
                 connection = DcaeMessages.openConnection(url, null, false, sc);
                 if (connection != null) {
@@ -119,18 +123,19 @@ public class DcaeSenderImpl implements DcaeSender {
 
     /**
      * Show status in readable form for testing
+     *
      * @return String with result
      */
     public String getStatusAsString() {
         StringBuffer sb = new StringBuffer();
 
-        sb.append("URL: "+ url.getPath() +" "+ url.getPort() + " Host: "+ url.getHost());
+        sb.append("URL: " + url.getPath() + " " + url.getPort() + " Host: " + url.getHost());
         sb.append("\n");
         if (connection != null) {
             sb.append("Connection setup: ");
             sb.append(connection.getClass().getName());
             sb.append(" ");
-         } else {
+        } else {
             sb.append("Connection setup: No connection (server problem or switched off)");
         }
         return sb.toString();
@@ -145,62 +150,66 @@ public class DcaeSenderImpl implements DcaeSender {
 
     /**
      * Send Post and wait for answer
+     *
      * @param connection
      * @param body
      * @return
      * @throws IOException
      */
-    private static String processPost( HttpURLConnection connection, String body ) throws IOException {
+    private static String processPost(HttpURLConnection connection, String body) throws IOException {
 
         LOG.debug("Post message: {}", connection.getURL().toString());
         if (LOG.isTraceEnabled()) {
             LOG.trace("Body: {} ", body);
         }
 
-        //Send the message to destination
+        // Send the message to destination
         try (OutputStream output = connection.getOutputStream()) {
             output.write(body.getBytes(charset));
         }
 
-        //Receive answer
+        // Receive answer
+        InputStream response = null;
+        BufferedReader rd = null;
+        StringBuilder result = new StringBuilder();
+
         try {
             int responseCode = connection.getResponseCode();
             LOG.debug("Response code: {}", String.valueOf(responseCode));
 
-            InputStream response= null;
             if (responseCode >= 200 && responseCode < 300) {
-				response = connection.getInputStream();
-			} else {
+                response = connection.getInputStream();
+            } else {
                 response = connection.getErrorStream();
                 if (response == null) {
-					response = connection.getInputStream();
-				}
+                    response = connection.getInputStream();
+                }
             }
-
             if (response != null) {
-                BufferedReader rd = new BufferedReader(new InputStreamReader(response));
+                rd = new BufferedReader(new InputStreamReader(response));
                 String line;
-                StringBuilder result = new StringBuilder();
                 while ((line = rd.readLine()) != null) {
-                     result.append(line);
+                    result.append(line);
                 }
-                rd.close();
-                if (LOG.isTraceEnabled()) {
-                      LOG.trace("Result: {} ", result.toString());
-                }
-                return result.toString();
             }
         } catch (IOException e) {
             LOG.debug("No response received: {}", e.getMessage());
+        } finally {
+            if (response != null) {
+                response.close();
+            }
+            if (rd != null) {
+                rd.close();
+            }
         }
-         return EMPTY;
+
+        LOG.trace("Result: {} ", result);
+        return result.toString();
     }
-
-
-
 
     /**
      * Read initial answer from Server after connect
+     *
      * @param connection that was opened
      * @return String with answer message
      * @throws IOException

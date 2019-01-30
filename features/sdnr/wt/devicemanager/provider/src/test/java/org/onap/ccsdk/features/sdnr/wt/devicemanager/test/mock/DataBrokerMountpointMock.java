@@ -39,6 +39,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
  * @author herbert
  *
  */
+@SuppressWarnings("deprecation")
 public class DataBrokerMountpointMock implements DataBroker, BindingService {
 
     @Override

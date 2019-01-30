@@ -189,9 +189,8 @@ public class BaseHTTPClient {
     }
 
     /**
-     *
-     * @param keyFilename
-     * @param certFilename
+     * @param keyFilename filename for key file
+     * @param certFilename  filename for cert file
      * @throws NoSuchAlgorithmException
      * @throws KeyManagementException
      * @throws IOException
@@ -200,6 +199,22 @@ public class BaseHTTPClient {
      * @throws KeyStoreException
      * @throws UnrecoverableKeyException
      * @throws InvalidKeySpecException
+     */
+    /**
+     * Setup of SSLContext
+     * @param trustall true to switch of certificate verification
+     * @param certFilename filename for certificate file
+     * @param passPhrase for certificate
+     * @param certType of certificate
+     * @return SSL Context according to parameters
+     * @throws NoSuchAlgorithmException according name
+     * @throws KeyManagementException according name
+     * @throws CertificateException according name
+     * @throws FileNotFoundException according name
+     * @throws IOException  according name
+     * @throws UnrecoverableKeyException according name
+     * @throws KeyStoreException according name
+     * @throws InvalidKeySpecException according name
      */
     public static SSLContext setupSsl(boolean trustall, String certFilename, String passPhrase,int certType) throws NoSuchAlgorithmException, KeyManagementException, CertificateException, FileNotFoundException, IOException, UnrecoverableKeyException, KeyStoreException, InvalidKeySpecException {
 
@@ -229,10 +244,12 @@ public class BaseHTTPClient {
             {
                 LOG.debug("try to load pcks file "+certFilename+ " with passphrase="+passPhrase);
                 KeyStore keyStore = KeyStore.getInstance("PKCS12");
-                keyStore.load(new FileInputStream(certFilename), passPhrase.toCharArray());
+                FileInputStream fileInputStream = new FileInputStream(certFilename);
+                keyStore.load(fileInputStream, passPhrase.toCharArray());
                 KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
                 kmf.init(keyStore, passPhrase.toCharArray());
                 kms = kmf.getKeyManagers();
+                fileInputStream.close();
                 LOG.debug("successful");
 
             }

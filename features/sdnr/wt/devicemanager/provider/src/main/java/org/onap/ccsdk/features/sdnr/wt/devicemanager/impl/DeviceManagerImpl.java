@@ -81,6 +81,7 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
     private static final InstanceIdentifier<Topology> NETCONF_TOPO_IID =
             InstanceIdentifier.create(NetworkTopology.class).child(Topology.class,
                     new TopologyKey(new TopologyId(TopologyNetconf.QNAME.getLocalName())));
+    @SuppressWarnings("unused")
     private static final String STARTUPLOG_FILENAME = "etc/devicemanager.startup.log";
     // private static final String STARTUPLOG_FILENAME2 = "data/cache/devicemanager.startup.log";
 
@@ -107,7 +108,6 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
     private IndexConfigService configService;
     private IndexMwtnService mwtnService;
     private HtDatabaseNode htDatabase;
-    private final Object initializedLock = new Object();
     private Boolean devicemanagerInitializationOk = false;
     private MaintenanceServiceImpl maintenanceService;
     private NotificationDelayService<ProblemNotificationXml> notificationDelayService;
@@ -182,8 +182,12 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
             if (akkaConfig == null || akkaConfig.isSingleNode() || akkaConfig != null && akkaConfig.isCluster()
                     && akkaConfig.getClusterConfig().getRoleMemberIndex() == 1) {
                 // Create DB index if not existing and if database is running
-                this.configService = new IndexConfigService(htDatabase);
-                this.mwtnService = new IndexMwtnService(htDatabase);
+                try {
+                    this.configService = new IndexConfigService(htDatabase);
+                    this.mwtnService = new IndexMwtnService(htDatabase);
+                } catch (Exception e) {
+                    LOG.warn("Can not start ES access clients to provide database index config, mwtn. ",e);
+                }
             }
             // start service for device maintenance service
             this.maintenanceService = new MaintenanceServiceImpl(htDatabase);
@@ -522,6 +526,7 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
 
     /**
      * Indication if init() of devicemanager successfully done.
+     *
      * @return true if init() was sucessfull. False if not done or not successfull.
      */
     public boolean isDevicemanagerInitializationOk() {
@@ -530,6 +535,7 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
 
     /**
      * Get initialization status of database.
+     *
      * @return true if fully initialized false if not
      */
     public boolean isDatabaseInitializationFinished() {

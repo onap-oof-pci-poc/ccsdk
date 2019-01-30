@@ -38,6 +38,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
  * @author herbert
  *
  */
+@SuppressWarnings("deprecation")
 public class DataBrokerNetconfMock implements DataBroker {
 
     @Override

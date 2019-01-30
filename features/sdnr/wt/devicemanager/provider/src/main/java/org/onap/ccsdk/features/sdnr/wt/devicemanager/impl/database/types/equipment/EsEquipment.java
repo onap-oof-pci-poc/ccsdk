@@ -60,8 +60,8 @@ public class EsEquipment extends EsObject {
 		this.containedHolder = new ArrayList<>();
 		List<ContainedHolder> containedHolderList = equipment.getContainedHolder();
 		if (containedHolderList != null && !containedHolderList.isEmpty()) {
-			for (ContainedHolder containedHolder: containedHolderList) {
-				this.containedHolder.add(containedHolder.getKey().getUuid().getValue());
+			for (ContainedHolder containedHolderElement: containedHolderList) {
+				this.containedHolder.add(containedHolderElement.getKey().getUuid().getValue());
 			}
 		}
 		ManufacturedThing manufacturedThing = equipment.getManufacturedThing();
