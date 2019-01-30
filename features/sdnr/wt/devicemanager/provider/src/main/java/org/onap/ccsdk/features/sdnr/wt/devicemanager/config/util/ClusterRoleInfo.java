@@ -40,6 +40,10 @@ public class ClusterRoleInfo {
         this.Index=idx;
     }
 
+    public static ClusterRoleInfo defaultSingleNodeRole() {
+        return new ClusterRoleInfo("member",1);
+    }
+
     public String getRole() {
         return Role;
     }
@@ -48,14 +52,37 @@ public class ClusterRoleInfo {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if(obj instanceof ClusterRoleInfo) {
-            return ((ClusterRoleInfo)obj).Index== this.Index && ((ClusterRoleInfo)obj).Role.equals(this.Role);
-        }
-        return super.equals(obj);
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Index;
+        result = prime * result + (Role == null ? 0 : Role.hashCode());
+        return result;
     }
-    public static ClusterRoleInfo defaultSingleNodeRole() {
-        return new ClusterRoleInfo("member",1);
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        ClusterRoleInfo other = (ClusterRoleInfo) obj;
+        if (Index != other.Index) {
+            return false;
+        }
+        if (Role == null) {
+            if (other.Role != null) {
+                return false;
+            }
+        } else if (!Role.equals(other.Role)) {
+            return false;
+        }
+        return true;
     }
     @Override
     public String toString() {

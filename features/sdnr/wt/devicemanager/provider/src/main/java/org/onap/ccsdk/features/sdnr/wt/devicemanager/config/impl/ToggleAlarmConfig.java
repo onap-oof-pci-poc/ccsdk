@@ -63,25 +63,40 @@ public class ToggleAlarmConfig extends BaseSubConfig{
             this.save();
         }
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int) (delay ^ delay >>> 32);
+        result = prime * result + (enabled ? 1231 : 1237);
+        return result;
+    }
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof ToggleAlarmConfig) {
-            ToggleAlarmConfig cobj = (ToggleAlarmConfig) obj;
-            if(cobj.enabled!=this.enabled) {
-                return false;
-            }
-            if (cobj.delay!=this.delay) {
-                return false;
-            }
+        if (this == obj) {
             return true;
         }
-        return super.equals(obj);
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        ToggleAlarmConfig other = (ToggleAlarmConfig) obj;
+        if (delay != other.delay) {
+            return false;
+        }
+        if (enabled != other.enabled) {
+            return false;
+        }
+        return true;
     }
+
     @Override
     public String toString() {
         return "ToggleAlarmConfig [enabled=" + enabled + ", delay=" + delay + "]";
     }
-
 
     public static ToggleAlarmConfig getDefaultConfiguration() {
         ToggleAlarmConfig c = new ToggleAlarmConfig();

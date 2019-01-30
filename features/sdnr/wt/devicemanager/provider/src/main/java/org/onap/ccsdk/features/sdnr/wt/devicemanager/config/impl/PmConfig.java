@@ -110,22 +110,56 @@ public class PmConfig extends BaseSubConfig {
         this.enabled = DEFAULT_VALUE_ENABLED;
     }
 
+
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (cluster == null ? 0 : cluster.hashCode());
+        result = prime * result + (enabled ? 1231 : 1237);
+        result = prime * result + (host == null ? 0 : host.hashCode());
+        result = prime * result + (node == null ? 0 : node.hashCode());
+        return result;
+    }
+
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof PmConfig) {
-            PmConfig cobj = (PmConfig) obj;
-            if (!(cobj.cluster == null && this.cluster == null || cobj.cluster.equals(this.cluster))) {
-                return false;
-            }
-            if (!(cobj.host == null && this.host == null || cobj.host.equals(this.host))) {
-                return false;
-            }
-            if (!(cobj.node == null && this.node == null || cobj.node.equals(this.node))) {
-                return false;
-            }
+        if (this == obj) {
             return true;
         }
-        return super.equals(obj);
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        PmConfig other = (PmConfig) obj;
+        if (cluster == null) {
+            if (other.cluster != null) {
+                return false;
+            }
+        } else if (!cluster.equals(other.cluster)) {
+            return false;
+        }
+        if (enabled != other.enabled) {
+            return false;
+        }
+        if (host == null) {
+            if (other.host != null) {
+                return false;
+            }
+        } else if (!host.equals(other.host)) {
+            return false;
+        }
+        if (node == null) {
+            if (other.node != null) {
+                return false;
+            }
+        } else if (!node.equals(other.node)) {
+            return false;
+        }
+        return true;
     }
 
     public static PmConfig getDefaultConfiguration() {

@@ -39,12 +39,6 @@ public class GeoConfig {
         this(null);
     }
 
-    @Override
-    public String toString() {
-        return "GeoConfig [filename=" + filename + ", rootNodename=" + rootNodename + ", primaryRoles=" + primaryRoles
-                + ", secondayRoles=" + secondayRoles + ", rolesTable=" + rolesTable + "]";
-    }
-
     private GeoConfig(String filename) {
         this(filename, LUMINA_ROOTNODENAME);
     }
@@ -132,6 +126,12 @@ public class GeoConfig {
             }
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "GeoConfig [filename=" + filename + ", rootNodename=" + rootNodename + ", primaryRoles=" + primaryRoles
+                + ", secondayRoles=" + secondayRoles + ", rolesTable=" + rolesTable + "]";
     }
 
     public static class RolesTableEntry {
