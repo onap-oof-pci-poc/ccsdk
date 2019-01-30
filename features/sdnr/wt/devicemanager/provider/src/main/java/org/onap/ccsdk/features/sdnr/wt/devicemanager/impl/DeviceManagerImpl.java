@@ -341,6 +341,8 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
             } catch (InterruptedException e) {
                 LOG.info("Event listener waiting for mount point for Netconf device :: Name : {} Time: {}",
                         mountPointNodeName, timeout);
+                // Restore interrupted state...
+                Thread.currentThread().interrupt();
             }
         }
 

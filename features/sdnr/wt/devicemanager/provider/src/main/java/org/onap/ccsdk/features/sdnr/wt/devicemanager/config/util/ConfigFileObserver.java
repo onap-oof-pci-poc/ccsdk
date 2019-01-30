@@ -19,6 +19,7 @@ package org.onap.ccsdk.features.sdnr.wt.devicemanager.config.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nonnull;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.FileWatchdog;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.IniConfigurationFile;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.IniConfigurationFile.ConfigurationException;
@@ -42,32 +43,19 @@ public class ConfigFileObserver extends FileWatchdog {
     @Override
     protected void doOnChange() {
 
-        boolean succeeded = true;
         LOG.debug("property file has changed");
         try {
             mConfig.reLoad();
-
-        } catch (ConfigurationException e) {
-            LOG.warn("error reloading config: " + e.getMessage());
-            succeeded = false;
-
-        }
-        if (!succeeded) {
-            return;
-        }
-        if (this.mConfigChangedHandlers == null) {
-            LOG.debug("handler list is null");// should never happen
-            return;
-        }
-        // push event to all listeners
-        for (IConfigChangedListener listener : this.mConfigChangedHandlers) {
-            if (listener != null) {
+            // push event to all listeners
+            for (IConfigChangedListener listener : this.mConfigChangedHandlers) {
                 listener.onConfigChanged();
             }
+        } catch (ConfigurationException e) {
+            LOG.warn("error reloading config: " + e.getMessage());
         }
     }
 
-    public void registerConfigChangedListener(IConfigChangedListener l) {
+    public void registerConfigChangedListener(@Nonnull IConfigChangedListener l) {
         if (!this.mConfigChangedHandlers.contains(l)) {
             this.mConfigChangedHandlers.add(l);
         }
