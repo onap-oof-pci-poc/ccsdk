@@ -6,9 +6,9 @@
  * =================================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -35,7 +35,7 @@ public class IndexUpdateService implements AutoCloseable {
 
     private static final Logger LOG = LoggerFactory.getLogger(IndexUpdateService.class);
 
-    protected static final String FILENAME = "etc/elasticsearch_update.zip";
+    private static final String FILENAME = "etc/elasticsearch_update.zip";
 
     private final HtDatabaseWebAPIClient webClient;
 
@@ -53,41 +53,41 @@ public class IndexUpdateService implements AutoCloseable {
         public void read(EsUpdateObject obj,String filename) {
             try {
                 IndexUpdateService.this.webClient.sendRequest(obj.Uri, obj.Method, obj.Body);
-                LOG.info("run database update file "+filename);
+                LOG.info("run database update file {}", filename);
             } catch (IOException e) {
-                LOG.warn("problem for request "+obj.Uri);
+                LOG.warn("problem for request {}", obj.Uri);
             }
         }
 
         @Override
         public void onerror(String filename,IOException e) {
-            LOG.warn("problem reading content file "+filename+ " :"+e.getMessage());
+            LOG.warn("problem reading content file {} : {}", filename, e.getMessage());
         }
 
     };
     private final Runnable checkForUpdateTask = () -> {
-	    File f=new File(FILENAME);
-	    if(f.exists())
-	    {
-	        LOG.debug("found update file "+f.getAbsolutePath());
-	        try {
-	            HtDatabaseUpdateFile updateFile=new HtDatabaseUpdateFile(FILENAME);
-	            if(updateFile.readFiles(onReadUpdateFile))
-	            {
-	                LOG.info("update successful");
-	            }
-	            updateFile.close();
-	            if(IndexUpdateService.this.autoremove)
-	            {
-	                LOG.debug("autodelete updatefile");
-	                f.delete();
-	            }
+        File f=new File(FILENAME);
+        if(f.exists())
+        {
+            LOG.debug("found update file {}", f.getAbsolutePath());
+            try {
+                HtDatabaseUpdateFile updateFile=new HtDatabaseUpdateFile(FILENAME);
+                if(updateFile.readFiles(onReadUpdateFile))
+                {
+                    LOG.info("update successful");
+                }
+                updateFile.close();
+                if(IndexUpdateService.this.autoremove)
+                {
+                    boolean res = f.delete();
+                    LOG.debug("autodelete updatefile done {}", res);
+                }
 
-	        } catch (IOException e) {
-	            LOG.warn("problem with update file:"+e.getMessage());
-	        }
-	    }
-	};
+            } catch (IOException e) {
+                LOG.warn("problem with update file: {}", e.getMessage());
+            }
+        }
+    };
 
 
 

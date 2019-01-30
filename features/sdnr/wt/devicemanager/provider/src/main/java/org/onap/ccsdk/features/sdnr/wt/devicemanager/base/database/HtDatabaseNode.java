@@ -195,7 +195,8 @@ public class HtDatabaseNode implements AutoCloseable {
             }
         }
         if (tmpFile.exists()) {
-            LOGGER.info("Remove file {} with result {}",tmpFile.getName() ,tmpFile.delete() );
+            boolean couldRemove = tmpFile.delete();
+            LOGGER.info("Remove file {} with result {}",tmpFile.getName() , couldRemove);
         }
 
     }
