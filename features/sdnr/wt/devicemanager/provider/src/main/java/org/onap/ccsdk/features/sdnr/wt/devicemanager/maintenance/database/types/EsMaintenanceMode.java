@@ -29,43 +29,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Database record entry for maintenance mode, as specified.
- * Used for read operations
- * Structure:
- *    _id : Contains the mountpoint name, must be specified before read.
- *    startTime:  String representing Java LocalDateTime with absolute UTC Time
- *    endTime: String representing Java LocalDateTime with absolute UTC Time
- * JSON Structure example
-     {
-        "_index": "mwtn_v1",
-        "_type": "maintenancemode",
-        "_id": "LumpiWave-Z3",
-        "_score": 1,
-        "_source": {
-            "node": "LumpiWave-Z3",
-            "filter": [
-                   {
-                       "definition": {
-                               "object-id-ref": "",
-                               "problem": ""
-                       },
-                          "description": "",
-                       "start": "2018-01-01T10:00+00:00",
-                       "end": "2018-10-10T10:00+00:00"
-                   },
-                   {
-                       "definition": {
-                               "object-id-ref": "network-element",
-                               "problem": "power-alarm"
-                           },
-                       "description": "",
-                       "start": "2018-01-01T10:00+00:00",
-                       "end": "2018-10-10T10:00+00:00"
-                   }
-           ]
-        }
-    },
-
+ * Database record entry for maintenance mode, as specified. Used for read operations Structure: _id
+ * : Contains the mountpoint name, must be specified before read. startTime: String representing
+ * Java LocalDateTime with absolute UTC Time endTime: String representing Java LocalDateTime with
+ * absolute UTC Time JSON Structure example { "_index": "mwtn_v1", "_type": "maintenancemode",
+ * "_id": "LumpiWave-Z3", "_score": 1, "_source": { "node": "LumpiWave-Z3", "filter": [ {
+ * "definition": { "object-id-ref": "", "problem": "" }, "description": "", "start":
+ * "2018-01-01T10:00+00:00", "end": "2018-10-10T10:00+00:00" }, { "definition": { "object-id-ref":
+ * "network-element", "problem": "power-alarm" }, "description": "", "start":
+ * "2018-01-01T10:00+00:00", "end": "2018-10-10T10:00+00:00" } ] } },
+ *
  * Two filters for all element and one for network-element power-alarm
  */
 
@@ -85,9 +58,9 @@ public class EsMaintenanceMode extends EsObject implements MaintenanceModeG {
 
     private boolean active;
 
-    //for jackson
+    // for jackson
     public EsMaintenanceMode() {
-        this.active=false;
+        this.active = false;
         this.filter = new ArrayList<>();
     }
 
@@ -121,11 +94,13 @@ public class EsMaintenanceMode extends EsObject implements MaintenanceModeG {
         return filter;
     }
 
-    public void setActive(boolean a)
-    {this.active=a;}
+    public void setActive(boolean a) {
+        this.active = a;
+    }
 
     /**
      * Replace list with new one.
+     *
      * @param filterList new filter list
      */
     public void setFilter(List<EsMaintenanceFilter> filterList) {
@@ -134,6 +109,7 @@ public class EsMaintenanceMode extends EsObject implements MaintenanceModeG {
 
     /**
      * Add one filter to internal list
+     *
      * @param pFilter the Filter
      */
     public void addFilter(EsMaintenanceFilter pFilter) {
@@ -142,13 +118,14 @@ public class EsMaintenanceMode extends EsObject implements MaintenanceModeG {
 
     /**
      * Verify maintenance status
+     *
      * @param objectIdRef NETCONF object id
      * @param problem name that was provided
      * @param now time to verify with
      * @return true if in maintenance status
      */
     public boolean isONFObjectInMaintenance(String objectIdRef, String problem, ZonedDateTime now) {
-        if(!active) {
+        if (!active) {
             return false;
         }
         boolean res = false;
@@ -156,8 +133,8 @@ public class EsMaintenanceMode extends EsObject implements MaintenanceModeG {
             for (EsMaintenanceFilter oneFilter : filter) {
                 if (oneFilter.isInMaintenance(objectIdRef, problem, now)) {
                     res = true;
-                }
                     break;
+                }
             }
         }
         return res;
@@ -201,4 +178,4 @@ public class EsMaintenanceMode extends EsObject implements MaintenanceModeG {
         return filter.isEmpty() ? null : new ArrayList<>(filter);
     }
 
- }
+}

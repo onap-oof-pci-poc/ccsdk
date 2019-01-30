@@ -6,9 +6,9 @@
  * =================================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -31,10 +31,6 @@ import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.r
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author hanif
- *
- */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EsPerformanceData {
 
@@ -403,14 +399,14 @@ public class EsPerformanceData {
     java.lang.Integer getTxEthernetBytesMaxS() {
         return dataEthContainer12 != null ? dataEthContainer12.getTxEthernetBytesMaxS()
                 : dataEthContainer1211 != null ? dataEthContainer1211.getTxEthernetBytesMaxS()
-                        : dataAirInterface1211p != null ? dataAirInterface1211p.getEs() : null;
+                        : dataEthContainer1211p != null ? dataEthContainer1211p.getTxEthernetBytesMaxS() : null;
     }
 
     @JsonGetter("tx-ethernet-bytes-max-m")
     java.lang.Long getTxEthernetBytesMaxM() {
         return dataEthContainer12 != null ? dataEthContainer12.getTxEthernetBytesMaxM()
                 : dataEthContainer1211 != null ? dataEthContainer1211.getTxEthernetBytesMaxM()
-                        : dataAirInterface1211p != null ? dataAirInterface1211p.getEs() : null;
+                        : dataEthContainer1211p != null ? dataEthContainer1211p.getTxEthernetBytesMaxM() : null;
     }
 
     @JsonGetter("tx-ethernet-bytes-sum")
