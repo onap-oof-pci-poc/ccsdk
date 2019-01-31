@@ -79,4 +79,14 @@
 			</resource>
 		</resources>
 	</build>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>highstreet repo</id>
+			<url>https://cloud-highstreet-technologies.com/mvn/</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 </project>

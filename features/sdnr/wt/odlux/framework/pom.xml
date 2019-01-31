@@ -54,7 +54,7 @@
 						</goals>
 						<phase>initialize</phase>
 						<configuration>
-						<arguments>global add lerna</arguments>
+							<arguments>global add lerna</arguments>
 						</configuration>
 					</execution>
 					<execution>
@@ -75,7 +75,7 @@
 							<goal>yarn</goal>
 						</goals>
 						<configuration>
-						<arguments>run build</arguments>
+							<arguments>run build</arguments>
 						</configuration>
 					</execution>
 				</executions>
@@ -92,5 +92,14 @@
 			</resource>
 		</resources>
 	</build>
-	
+	<pluginRepositories>
+		<pluginRepository>
+			<id>highstreet repo</id>
+			<url>https://cloud-highstreet-technologies.com/mvn/</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 </project>
