@@ -15,6 +15,12 @@
 	<version>0.3.2</version>
 	<packaging>jar</packaging>
 	<name>sdnr-wt-odlux-framework</name>
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+		</license>
+	</licenses>
 
 	<build>
 		<plugins>

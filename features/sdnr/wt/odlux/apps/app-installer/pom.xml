@@ -1,126 +1,132 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
-  <artifactId>sdnr-wt-odlux-apps-installer</artifactId>
-  <version>0.3.2</version>
-  <packaging>pom</packaging>
-  <name>ccsdk-features-sdnr-wt :: ${project.artifactId}</name>
+	<groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
+	<artifactId>sdnr-wt-odlux-apps-installer</artifactId>
+	<version>0.3.2</version>
+	<packaging>pom</packaging>
+	<name>ccsdk-features-sdnr-wt :: ${project.artifactId}</name>
 
-  <parent>
-    <groupId>org.onap.ccsdk.parent</groupId>
-    <artifactId>odlparent-lite</artifactId>
-    <version>1.1.2</version>
-    <relativePath />
-  </parent>
+	<parent>
+		<groupId>org.onap.ccsdk.parent</groupId>
+		<artifactId>odlparent-lite</artifactId>
+		<version>1.1.2</version>
+		<relativePath />
+	</parent>
 
-  <properties>
-    <application.name>sdnr-wt-odlux-apps</application.name>
-    <include.transitive.dependencies>false</include.transitive.dependencies>
-  </properties>
+	<properties>
+		<application.name>sdnr-wt-odlux-apps</application.name>
+		<include.transitive.dependencies>false</include.transitive.dependencies>
+	</properties>
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+		</license>
+	</licenses>
 
-  <dependencies>
+	<dependencies>
+		<dependency>
+			<groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
+			<artifactId>${application.name}-feature</artifactId>
+			<version>${project.version}</version>
+			<type>xml</type>
+			<classifier>features</classifier>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>sdnr-wt-odlux-app-apiDemo</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>sdnr-wt-odlux-app-connectApp</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>sdnr-wt-odlux-app-demoApp</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>sdnr-wt-odlux-app-faultApp</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>sdnr-wt-odlux-app-helpApp</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>sdnr-wt-odlux-app-inventoryApp</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>sdnr-wt-odlux-app-minimumApp</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
-    <dependency>
-      <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
-      <artifactId>${application.name}-feature</artifactId>
-      <version>${project.version}</version>
-      <type>xml</type>
-      <classifier>features</classifier>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
- <dependency>
-     <groupId>${project.groupId}</groupId>
-	<artifactId>sdnr-wt-odlux-app-apiDemo</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-<dependency>
-     <groupId>${project.groupId}</groupId>
-	<artifactId>sdnr-wt-odlux-app-connectApp</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-<dependency>
-     <groupId>${project.groupId}</groupId>
-	<artifactId>sdnr-wt-odlux-app-demoApp</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-<dependency>
-     <groupId>${project.groupId}</groupId>
-	<artifactId>sdnr-wt-odlux-app-faultApp</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-<dependency>
-     <groupId>${project.groupId}</groupId>
-	<artifactId>sdnr-wt-odlux-app-helpApp</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-<dependency>
-     <groupId>${project.groupId}</groupId>
-	<artifactId>sdnr-wt-odlux-app-inventoryApp</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-<dependency>
-     <groupId>${project.groupId}</groupId>
-	<artifactId>sdnr-wt-odlux-app-minimumApp</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+	</dependencies>
 
-  </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>maven-repo-zip</id>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <phase>package</phase>
-            <configuration>
-              <attach>true</attach>
-              <finalName>stage/${application.name}-${project.version}</finalName>
-              <descriptors>
-                <descriptor>src/assembly/assemble_mvnrepo_zip.xml</descriptor>
-              </descriptors>
-              <appendAssemblyId>true</appendAssemblyId>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-nested-dependencies</id>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <phase>prepare-package</phase>
-            <configuration>
-              <transitive>true</transitive>
-              <outputDirectory>${project.build.directory}/assembly/system</outputDirectory>
-              <overWriteReleases>false</overWriteReleases>
-              <overWriteSnapshots>true</overWriteSnapshots>
-              <overWriteIfNewer>true</overWriteIfNewer>
-              <useRepositoryLayout>true</useRepositoryLayout>
-              <addParentPoms>false</addParentPoms>
-              <copyPom>false</copyPom>
-              <!--<includeArtifactIds>sdnr-wt-apigateway-provider,${application.name}</includeArtifactIds>-->
-              <!--<scope>provided</scope>-->
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>maven-repo-zip</id>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<phase>package</phase>
+						<configuration>
+							<attach>true</attach>
+							<finalName>stage/${application.name}-${project.version}</finalName>
+							<descriptors>
+								<descriptor>src/assembly/assemble_mvnrepo_zip.xml</descriptor>
+							</descriptors>
+							<appendAssemblyId>true</appendAssemblyId>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-nested-dependencies</id>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<phase>prepare-package</phase>
+						<configuration>
+							<transitive>true</transitive>
+							<outputDirectory>${project.build.directory}/assembly/system</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+							<useRepositoryLayout>true</useRepositoryLayout>
+							<addParentPoms>false</addParentPoms>
+							<copyPom>false</copyPom>
+							<!--<includeArtifactIds>sdnr-wt-apigateway-provider,${application.name}</includeArtifactIds> -->
+							<!--<scope>provided</scope> -->
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
