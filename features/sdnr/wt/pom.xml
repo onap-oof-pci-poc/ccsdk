@@ -21,9 +21,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>org.onap.ccsdk.parent</groupId>
+        <artifactId>odlparent-lite</artifactId>
+        <version>1.2.1-SNAPSHOT</version>
+        <relativePath/>
+    </parent>
+
     <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
     <artifactId>sdnr-wt</artifactId>
-    <version>0.3.2</version>
+    <version>0.4.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>ccsdk-sdnr-wireless transport :: micro-services</name>
     <description>SDN-R wireless transport micro-services</description>

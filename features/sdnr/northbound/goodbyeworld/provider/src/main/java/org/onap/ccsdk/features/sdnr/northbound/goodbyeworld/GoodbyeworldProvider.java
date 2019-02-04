@@ -21,7 +21,6 @@
 
 package org.onap.ccsdk.features.sdnr.northbound.goodbyeworld;
 
-import java.util.concurrent.Future;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
@@ -36,6 +35,7 @@ import org.opendaylight.yang.gen.v1.org.onap.ccsdk.features.sdnr.northbound.good
 import org.opendaylight.yang.gen.v1.org.onap.ccsdk.features.sdnr.northbound.goodbyeworld.rev150105.GoodbyeworldService;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
 public class GoodbyeworldProvider implements GoodbyeworldService, AutoCloseable {
 
@@ -66,12 +66,13 @@ public class GoodbyeworldProvider implements GoodbyeworldService, AutoCloseable 
     /**
      * Method called when the blueprint container is destroyed.
      */
+    @Override
     public void close() {
         LOG.info("GoodbyeworldProvider Closed");
     }
 
     @Override
-    public Future<RpcResult<GreetingOutput>> greeting(GreetingInput input) {
+    public ListenableFuture<RpcResult<GreetingOutput>> greeting(GreetingInput input) {
 
         // Assume success
         Boolean soFarSoGood = true;

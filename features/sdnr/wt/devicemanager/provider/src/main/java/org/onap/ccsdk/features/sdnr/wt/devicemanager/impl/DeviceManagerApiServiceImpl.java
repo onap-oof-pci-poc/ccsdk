@@ -30,6 +30,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.devicema
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.devicemanager.rev190109.GetMaintenanceModeInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.devicemanager.rev190109.GetMaintenanceModeOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.devicemanager.rev190109.GetMaintenanceModeOutputBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.devicemanager.rev190109.GetRequiredNetworkElementKeysInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.devicemanager.rev190109.GetRequiredNetworkElementKeysOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.devicemanager.rev190109.GetRequiredNetworkElementKeysOutputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.devicemanager.rev190109.SetMaintenanceModeInput;
@@ -80,6 +81,12 @@ public class DeviceManagerApiServiceImpl implements DevicemanagerService, AutoCl
      */
 
     @Override
+    public ListenableFuture<RpcResult<GetRequiredNetworkElementKeysOutput>> getRequiredNetworkElementKeys(
+            GetRequiredNetworkElementKeysInput input) {
+        return getRequiredNetworkElementKeys();
+    }
+
+    // For casablanca version no input was generated.
     public ListenableFuture<RpcResult<GetRequiredNetworkElementKeysOutput>> getRequiredNetworkElementKeys() {
 
         LOG.info("RPC Request: getRequiredNetworkElementKeys");
@@ -189,6 +196,5 @@ public class DeviceManagerApiServiceImpl implements DevicemanagerService, AutoCl
     public void setResyncListener(ResyncNetworkElementsListener listener) {
         this.resyncCallbackListener = listener;
     }
-
 
 }

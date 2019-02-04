@@ -1,5 +1,5 @@
 # Base ubuntu with added packages needed for open ecomp
-FROM nexus3.onap.org:10001/onap/ccsdk-odl-oxygen-image:${project.version}
+FROM ${base.image.name}:${base.image.version}
 MAINTAINER CCSDK Team (onap-ccsdk@lists.onap.org)
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 ENV ODL_HOME /opt/opendaylight
@@ -36,11 +36,11 @@ RUN rsync -a /tmp/system $ODL_HOME && rm -rf /tmp/system
 # Add CCSDK repositories to boot repositories
 RUN cp $ODL_HOME/etc/org.apache.karaf.features.cfg $ODL_HOME/etc/org.apache.karaf.features.cfg.orig
 RUN cat $ODL_HOME/etc/org.apache.karaf.features.cfg.orig | sed -e "\|featuresRepositories|s|$|, ${CCSDK_SLI_CORE_REPO}, ${CCSDK_SLI_ADAPTORS_REPO}, ${CCSDK_SLI_NORTHBOUND_REPO}, ${CCSDK_SLI_PLUGINS_REPO}, ${CCSDK_FEATURES_REPO}, ${SDNR_REPOLIST}|" > $ODL_HOME/etc/org.apache.karaf.features.cfg
-RUN echo featuresBoot=config,standard,region,package,kar,ssh,management,${SDNR_ODL_CLUSTER_NODE},odl-daexim-all,${CCSDK_SLI_FEATURELIST},${SDNR_FEATURELIST} >> $ODL_HOME/etc/org.apache.karaf.features.cfg
-#RUN echo featuresBoot=config,standard,region,package,kar,ssh,management,odl-netconf-topology,odl-netconf-connector,odl-restconf-all,odl-mdsal-all,odl-mdsal-apidocs,odl-daexim-all,ccsdk-sli-core-all,ccsdk-sli-adaptors-all,ccsdk-sli-northbound-all,ccsdk-sli-plugins-all,ccsdk-features-all >> $ODL_HOME/etc/org.apache.karaf.features.cfg
+RUN echo featuresBoot=config,standard,region,package,kar,ssh,management,${SDNR_ODL_CLUSTER_NODE},odl-daexim-all, ${SDNR_FEATURELIST} >> $ODL_HOME/etc/org.apache.karaf.features.cfg
+#RUN echo featuresBoot=config,standard,region,package,kar,ssh,management,${SDNR_ODL_CLUSTER_NODE},odl-daexim-all,${CCSDK_SLI_FEATURELIST},${SDNR_FEATURELIST} >> $ODL_HOME/etc/org.apache.karaf.features.cfg
 
 # Create odl user
-RUN useradd odl
+# RUN useradd odl
 
 # Install ansible
 #COPY ansible-sources.list /etc/apt/sources.list.d
@@ -62,7 +62,6 @@ RUN useradd odl
 # copy deliverables to opt
 COPY opt /opt
 COPY org.ops4j.pax.logging.cfg /opt/opendaylight/etc/org.ops4j.pax.logging.cfg
-
 
 ENTRYPOINT /opt/onap/ccsdk/bin/startODL.sh
 EXPOSE 2550 8085 8181 8185 9200 9300

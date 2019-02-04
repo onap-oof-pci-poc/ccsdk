@@ -6,9 +6,9 @@
  * =================================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -19,6 +19,7 @@ package org.onap.ccsdk.features.sdnr.wt.devicemanager.maintenance.database.types
 
 import java.util.Collections;
 import java.util.Map;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.devicemanager.rev190109.maintenance.mode.g.filter.Definition;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
@@ -49,7 +50,7 @@ public class EsMaintenanceFilterDefinition implements Definition {
     }
 
     @Override
-	@JsonProperty("object-id-ref")
+    @JsonProperty("object-id-ref")
     public String getObjectIdRef() {
         return objectIdRef;
     }
@@ -60,7 +61,7 @@ public class EsMaintenanceFilterDefinition implements Definition {
     }
 
     @Override
-	@JsonProperty("problem")
+    @JsonProperty("problem")
     public String getProblem() {
         return problem;
     }
@@ -86,10 +87,9 @@ public class EsMaintenanceFilterDefinition implements Definition {
         return Definition.class;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public <E extends Augmentation<Definition>> E getAugmentation(Class<E> augmentationType) {
-        return (E) augmentation.get(augmentationType);
+    public <E extends Augmentation<Definition>> @Nullable E augmentation(Class<E> augmentationType) {
+        return null;
     }
 
 

@@ -4,6 +4,13 @@
 
 run() {
 
+        if [ -z "$1" ] ; then
+           IMAGE="oof-pci/ccsdk-odlsli-image:latest"
+	else
+           IMAGE="$1"
+        fi
+
+        echo "Used image: $IMAGE"
 	docker run --detach --network="yaml_default" \
 	  --link ccsdk_db_container:dbhost --link ccsdk_db_container:sdnctldb01 --link ccsdk_db_container:sdnctldb02 \
 	  --publish 8181:8181 \
@@ -13,7 +20,7 @@ run() {
 	  --env MYSQL_ROOT_PASSWORD=openECOMP1.0 \
 	  --env SDNC_CONFIG_DIR=/opt/onap/ccsdk/data/properties \
 	  --name sdnr \
-	oof-pci/ccsdk-odlsli-image:latest
+	"$IMAGE"
 
 }
 
@@ -36,4 +43,11 @@ case "$1" in
         echo "Attach to cli"
         cli
 	;;
+     *) 
+        echo "Run specific image sdnr"
+        docker stop sdnr
+        docker rm sdnr
+        run $1
+        cli
+        ;;
 esac

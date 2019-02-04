@@ -6,7 +6,7 @@
 
 	<groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
 	<artifactId>sdnr-wt-feature-aggregator-top</artifactId>
-	<version>0.3.2</version>
+	<version>0.4.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>ccsdk-features-sdnr-wt :: ${project.artifactId}</name>
 

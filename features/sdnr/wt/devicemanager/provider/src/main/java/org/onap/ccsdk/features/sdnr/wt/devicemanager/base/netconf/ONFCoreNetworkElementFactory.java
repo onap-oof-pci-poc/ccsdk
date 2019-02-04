@@ -60,7 +60,7 @@ public class ONFCoreNetworkElementFactory {
             Optional<Node> nodeOption = tx.read(LogicalDatastoreType.OPERATIONAL, instanceIdentifier).checkedGet();
             if (nodeOption.isPresent()) {
                 Node node = nodeOption.get();
-                NetconfNode nnode = node.getAugmentation(NetconfNode.class);
+                NetconfNode nnode = node.augmentation(NetconfNode.class);
                 if (nnode != null) {
                     ConnectionStatus csts = nnode.getConnectionStatus();
                     if (csts == ConnectionStatus.Connected) {

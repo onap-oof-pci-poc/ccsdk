@@ -7,13 +7,13 @@
     <parent>
         <groupId>org.onap.ccsdk.parent</groupId>
         <artifactId>odlparent-lite</artifactId>
-        <version>1.1.2</version>
+        <version>1.2.1-SNAPSHOT</version>
         <relativePath />
     </parent>
 
     <groupId>org.onap.ccsdk.distribution</groupId>
     <artifactId>distribution-odlsli</artifactId>
-    <version>0.3.2</version>
+    <version>0.4.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>ccsdk-distribution :: odlsli</name>
@@ -23,6 +23,8 @@
     </organization>
 
     <properties>
+        <base.image.name>onap/ccsdk-odlsli-image</base.image.name>
+        <base.image.version>0.4.1-SNAPSHOT</base.image.version>
         <image.name>oof-pci/ccsdk-odlsli-image</image.name>
         <ccsdk.project.version>${project.version}</ccsdk.project.version>
         <ccsdk.features.version>${project.version}</ccsdk.features.version>
