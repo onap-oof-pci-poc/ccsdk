@@ -60,7 +60,7 @@
 						</goals>
 						<phase>initialize</phase>
 						<configuration>
-							<arguments>global add lerna</arguments>
+							<arguments>-W add lerna</arguments>
 						</configuration>
 					</execution>
 					<execution>
