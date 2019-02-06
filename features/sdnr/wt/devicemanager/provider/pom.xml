@@ -114,6 +114,11 @@
       <artifactId>elasticsearch</artifactId>
       <version>2.2.0</version>
     </dependency>
+   <dependency>
+    	<groupId>org.elasticsearch.plugin</groupId>
+    	<artifactId>delete-by-query</artifactId>
+    	<version>2.2.0</version>
+    </dependency>
     <dependency>
       <groupId>com.spatial4j</groupId>
       <artifactId>spatial4j</artifactId>
@@ -303,6 +308,54 @@
       </resource>
     </resources>
     <plugins>
+     <plugin>
+    <artifactId>maven-clean-plugin</artifactId>
+    <version>3.1.0</version>
+    <configuration>
+      <filesets>
+        <fileset>
+          <directory>${project.basedir}/src/main/resources/elasticsearch/plugins/delete-by-query</directory>
+          <includes>
+            <include>**/*.jar</include>
+          </includes>
+          <excludes>
+            <exclude>**/plugin-descriptor.properties</exclude>
+          </excludes>
+          <followSymlinks>false</followSymlinks>
+        </fileset>
+      </filesets>
+    </configuration>
+  </plugin>
+    <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.1.1</version>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+            	<artifactItems>
+            		<artifactItem>
+            			
+    	<groupId>org.elasticsearch.plugin</groupId>
+    	<artifactId>delete-by-query</artifactId>
+    	<version>2.2.0</version>
+
+            		</artifactItem>
+            	</artifactItems>
+              <outputDirectory>${project.basedir}/src/main/resources/elasticsearch/plugins/delete-by-query</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>true</overWriteSnapshots>
+              <excludeTransitive>true</excludeTransitive>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
