@@ -19,8 +19,6 @@ package org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database;
 
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
@@ -29,8 +27,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 import javax.annotation.Nullable;
 import org.apache.lucene.util.Version;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
@@ -50,6 +46,9 @@ public class HtDatabaseNode implements AutoCloseable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HtDatabaseNode.class);
     private static final String DBCONFIGFILENAME = "etc/elasticsearch.yml";
+    private static final String RESFOLDER_PLUGIN = "elasticsearch/plugins";
+    private static final String RESFOLDER_PLUGINHEAD = RESFOLDER_PLUGIN + "/head";
+    private static final String RESFOLDER_PLUGINDELETE = RESFOLDER_PLUGIN + "/delete-by-query";
     private static int MIN_PORT_NUMBER = 1024;
     private static int MAX_PORT_NUMBER = 65535;
     private static int ES_PORT = 9200;
@@ -119,86 +118,14 @@ public class HtDatabaseNode implements AutoCloseable {
      */
 
 
-    private static void extractZip(String zipFile, String outputFolder) {
-
-        byte[] buffer = new byte[1024];
-
-        //        try {
-
-        // create output directory is not exists
-        File folder = new File(outputFolder);
-        if (!folder.exists()) {
-            folder.mkdir();
-        }
-
-        // get the zip file content
-        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile))) {
-            // get the zipped file list entry
-            ZipEntry ze = zis.getNextEntry();
-
-            while (ze != null) {
-
-                String fileName = ze.getName();
-
-                File newFile = new File(outputFolder + File.separator + fileName);
-                System.out.println("file unzip : " + newFile.getAbsoluteFile());
-                if (ze.isDirectory()) {
-                    newFile.mkdir();
-                } else {
-
-                    // create all non exists folders
-                    // else you will hit FileNotFoundException for compressed folder
-                    new File(newFile.getParent()).mkdirs();
-
-                    try (FileOutputStream fos = new FileOutputStream(newFile)) {
-                        int len;
-                        while ((len = zis.read(buffer)) > 0) {
-                            fos.write(buffer, 0, len);
-                        }
-                        fos.close();
-                    }
-                }
-                ze = zis.getNextEntry();
-            }
-            zis.closeEntry();
-            zis.close();
-        } catch (IOException ex) {
-            LOGGER.warn("problem extracting {} to {}",zipFile, outputFolder);
-        }
-    }
-
     // Visibility package for test purpose
     static void checkorcreateplugins(String pluginFolder) {
         File f = new File(pluginFolder);
-        String tmpFilename = pluginFolder + "/tmp.zip";
         if (!f.exists()) {
             f.mkdir();
         }
-
-        f = new File(pluginFolder + "/head");
-        File tmpFile = new File(tmpFilename);
-        if (!f.exists()) {
-            LOGGER.debug("extracting head plugin");
-            if (Resources.extractFileTo("/elasticsearch/plugins/head.zip", tmpFile)) {
-                extractZip(tmpFile.getAbsolutePath(), pluginFolder);
-            } else {
-                LOGGER.debug("problem extracting plugin res");
-            }
-        }
-        f = new File(pluginFolder + "/delete-by-query");
-        if (!f.exists()) {
-            LOGGER.debug("extracting head delete-by-query plugin");
-            if (Resources.extractFileTo("/elasticsearch/plugins/delete-by-query.zip", tmpFile)) {
-                extractZip(tmpFile.getAbsolutePath(), pluginFolder);
-            } else {
-                LOGGER.debug("problem extracting plugin res");
-            }
-        }
-        if (tmpFile.exists()) {
-            boolean couldRemove = tmpFile.delete();
-            LOGGER.info("Remove file {} with result {}",tmpFile.getName() , couldRemove);
-        }
-
+        Resources.copyFolderInto(RESFOLDER_PLUGINHEAD, PLUGINFOLDER, RESFOLDER_PLUGIN);
+        Resources.copyFolderInto(RESFOLDER_PLUGINDELETE, PLUGINFOLDER, RESFOLDER_PLUGIN);
     }
 
     /**
