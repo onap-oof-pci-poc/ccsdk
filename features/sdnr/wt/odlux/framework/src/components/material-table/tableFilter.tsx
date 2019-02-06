@@ -23,6 +23,7 @@ interface IEnhancedTableFilterComponentProps extends WithStyles<typeof styles> {
   onFilterChanged: (property: string, filterTerm: string) => void;
   filter: { [property: string]: string };
   columns: ColumnModel<{}>[];
+  enableSelection?: boolean;
 }
 
 class EnhancedTableFilterComponent extends React.Component<IEnhancedTableFilterComponentProps> {
@@ -34,8 +35,11 @@ class EnhancedTableFilterComponent extends React.Component<IEnhancedTableFilterC
     const { columns, filter, classes } = this.props;
     return (
       <TableRow>
-        <TableCell padding="checkbox" style={ { width: "50px" } }>
-        </TableCell>
+         { this.props.enableSelection 
+           ? <TableCell padding="checkbox" style={ { width: "50px" } }>
+             </TableCell>
+           : null
+         }  
         { columns.map(col => {
           const style = col.width ? { width: col.width } : {};
           return (

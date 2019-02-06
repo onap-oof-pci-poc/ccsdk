@@ -28,30 +28,30 @@ export const NavigationMenu = withStyles(styles)(connect()(({ classes, state }: 
   return (
     <Drawer
       variant="permanent"
-      classes={ {
+      classes={{
         paper: classes.drawerPaper,
-      } }
+      }}
     >
-      <div className={ classes.toolbar } />
-      { /* https://fiffty.github.io/react-treeview-mui/ */ }
+      <div className={classes.toolbar} />
+      { /* https://fiffty.github.io/react-treeview-mui/ */}
       <List component="nav">
-        <ListItemLink exact to="/" primary="Home" icon={ <FontAwesomeIcon icon={ faHome } /> } />
+        { process.env.NODE_ENV === "development" ? <ListItemLink exact to="/" primary="Home" icon={<FontAwesomeIcon icon={faHome} />} /> : null } 
         <Divider />
         {
           state.framework.applicationRegistraion && Object.keys(state.framework.applicationRegistraion).map(key => {
             const reg = state.framework.applicationRegistraion[key];
             return reg && (
-              <ListItemLink 
-                key={ reg.name } 
-                to={ reg.path || `/${ reg.name }` }
-                primary={ reg.menuEntry || reg.name }
-                secondary={ reg.subMenuEntry }
-                icon={ reg.icon && <FontAwesomeIcon icon={ reg.icon } /> || null } />
+              <ListItemLink
+                key={reg.name}
+                to={reg.path || `/${reg.name}`}
+                primary={reg.menuEntry || reg.name}
+                secondary={reg.subMenuEntry}
+                icon={reg.icon && <FontAwesomeIcon icon={reg.icon} /> || null} />
             ) || null;
           }) || null
         }
         <Divider />
-        <ListItemLink to="/about" primary="About" icon={ <FontAwesomeIcon icon={ faAddressBook } /> } />
+        { process.env.NODE_ENV === "development" ? <ListItemLink to="/about" primary="About" icon={<FontAwesomeIcon icon={faAddressBook} />} /> : null } 
       </List>
     </Drawer>)
 }));

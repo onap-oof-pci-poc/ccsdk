@@ -60,11 +60,18 @@
     "url-loader": "1.1.2",
     "webpack": "4.28.4",
     "webpack-cli": "3.2.1",
-    "webpack-dev-server": "3.1.9",
+    "webpack-dev-server": "3.1.14",
     "requirejs": "2.3.6",
     "terser-webpack-plugin": "1.2.1",
     "jest": "23.6.0",
     "ts-jest" : "23.10.5",
-    "@types/jest" : "23.3.12"
+    "@types/jest" : "23.3.12",
+    "tslint-config-airbnb" : "5.11.1",
+    "tslint-config-airbnb-base" : "0.2.0",
+    "tslint-react-recommended" : "1.0.15",
+    "tslint-config-prettier" : "1.17.0",
+    "tslint-react" : "3.6.0",
+    "tslint-eslint-rules" : "4.1.1",
+    "tslint" : "5.12.1"
   }
 }

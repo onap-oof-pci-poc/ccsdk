@@ -2,9 +2,10 @@ import * as React from 'react';
 
 import { withStyles, Theme, WithStyles, createStyles } from '@material-ui/core/styles';
 
-import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Typography } from '@material-ui/core';
+import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Typography, ExpansionPanelActions } from '@material-ui/core';
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { SvgIconProps } from '@material-ui/core/SvgIcon';
 
 const styles = (theme: Theme) => createStyles({
   accordion: {
@@ -14,6 +15,9 @@ const styles = (theme: Theme) => createStyles({
   detail: {
     // background: theme.palette.background.paper,
     // color: theme.palette.text.primary,
+    position: "relative", 
+    display: 'flex', 
+    flexDirection: 'column'
   },
   text: {
     // color: theme.palette.common.white,
@@ -25,6 +29,7 @@ type PanalProps = WithStyles<typeof styles> & {
   activePanel: string | null,
   panelId: string,
   title: string,
+  customActionButtons?: JSX.Element[];
   onToggle: (panelId: string | null) => void;
 }
 
@@ -38,6 +43,11 @@ const PanelComponent: React.SFC<PanalProps> = (props) => {
       <ExpansionPanelDetails className={ classes.detail }>
         { props.children }
       </ExpansionPanelDetails>
+      { props.customActionButtons 
+        ? <ExpansionPanelActions>
+          { props.customActionButtons }
+         </ExpansionPanelActions> 
+        : null }  
     </ExpansionPanel>
   );
 };

@@ -28,6 +28,8 @@ const styles = (theme: Theme) => createStyles({
   },
   content: {
     flexGrow: 1,
+    display: "flex", 
+    flexDirection: "column",
     backgroundColor: theme.palette.background.default,
     padding: theme.spacing.unit * 3,
     minWidth: 0, // So the Typography noWrap works

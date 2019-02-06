@@ -5,8 +5,11 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --env debug",
-    "build": "webpack --env release --config webpack.vendor.js && webpack --env release --config webpack.config.js",
-    "build:dev": "webpack --env debug --config webpack.vendor.js && webpack --env debug --config webpack.config.js"
+    "prebuild": "rimraf dist",
+    "build": "webpack --env release --config webpack.vendor.js && webpack --env release --config webpack.config.js && webpack --env release --config webpack.runner.js",
+    "build:run": "webpack --env release --config webpack.runner.js",
+    "build:dev": "webpack --env debug --config webpack.config.js",
+    "vendor:dev": "webpack --env debug --config webpack.vendor.js"
   },
   "repository": {
     "type": "git",
@@ -40,6 +43,7 @@
     "react-router-dom": "4.3.1"
   },
   "dependencies": {
+    "http-server": "^0.11.1",
     "lerna": "^3.10.7"
   }
 }

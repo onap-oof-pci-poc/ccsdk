@@ -28,7 +28,7 @@ import { ApplicationStoreProvider } from './flux/connect';
 
 import { startHistoryListener } from './middleware/navigation';
 
-import theme from './styles/att';
+import theme from './design/default';
 import '!style-loader!css-loader!./app.css';
 
 declare module '@material-ui/core/styles/createMuiTheme' {
@@ -50,31 +50,33 @@ declare module '@material-ui/core/styles/createMuiTheme' {
   }
 }
 
-const applicationStore = applicationStoreCreator();
+export const runApplication = () => {
+  const applicationStore = applicationStoreCreator();
 
-window.onerror = function (msg: string, url: string, line: number, col: number, error: Error) {
-  // Note that col & error are new to the HTML 5 spec and may not be 
-  // supported in every browser.  It worked for me in Chrome.
-  var extra = !col ? '' : '\ncolumn: ' + col;
-  extra += !error ? '' : '\nerror: ' + error;
+  window.onerror = function (msg: string, url: string, line: number, col: number, error: Error) {
+    // Note that col & error are new to the HTML 5 spec and may not be 
+    // supported in every browser.  It worked for me in Chrome.
+    var extra = !col ? '' : '\ncolumn: ' + col;
+    extra += !error ? '' : '\nerror: ' + error;
 
-  // You can view the information in an alert to see things working like this:
-  applicationStore.dispatch(new AddErrorInfoAction({ error, message: msg, url, line, col, info: { extra } }));
+    // You can view the information in an alert to see things working like this:
+    applicationStore.dispatch(new AddErrorInfoAction({ error, message: msg, url, line, col, info: { extra } }));
 
-  var suppressErrorAlert = true;
-  // If you return true, then error alerts (like in older versions of 
-  // Internet Explorer) will be suppressed.
-  return suppressErrorAlert;
+    var suppressErrorAlert = true;
+    // If you return true, then error alerts (like in older versions of 
+    // Internet Explorer) will be suppressed.
+    return suppressErrorAlert;
+  };
+
+  startHistoryListener(applicationStore);
+
+  const App = (): JSX.Element => (
+    <ApplicationStoreProvider applicationStore={applicationStore} >
+      <MuiThemeProvider theme={theme}>
+        <Frame />
+      </MuiThemeProvider>
+    </ApplicationStoreProvider>
+  );
+
+  ReactDOM.render(<App />, document.getElementById('app'));
 };
-
-startHistoryListener(applicationStore);
-
-const App = (): JSX.Element => (
-  <ApplicationStoreProvider applicationStore={ applicationStore } >
-    <MuiThemeProvider theme={ theme  }>
-      <Frame />
-    </MuiThemeProvider>
-  </ApplicationStoreProvider>
-);
-
-ReactDOM.render(<App />, document.getElementById('app')); 

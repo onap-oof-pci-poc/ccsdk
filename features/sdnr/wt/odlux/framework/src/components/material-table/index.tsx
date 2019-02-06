@@ -78,15 +78,16 @@ export type TableApi = { forceRefresh?: () => Promise<void> };
 
 type MaterialTableComponentBaseProps<TData> = WithStyles<typeof styles> & {
   columns: ColumnModel<TData>[];
-  idProperty: string | ((data: any) => React.Key);
+  idProperty: keyof TData | ((data: TData) => React.Key );
   title?: string;
+  enableSelection?: boolean;
   disableSorting?: boolean;
   disableFilter?: boolean;
   customActionButtons?: { icon: React.ComponentType<SvgIconProps>, tooltip?: string, onClick: () => void  }[];
-  onHandleClick?(event: React.MouseEvent<HTMLTableRowElement>, id: string | number): void; 
+  onHandleClick?(event: React.MouseEvent<HTMLTableRowElement>, rowData: TData): void; 
 };
 
-type MaterialTableComponentPropsWithRows<TData={}> = MaterialTableComponentBaseProps<TData> & { rows: {}[]; asynchronus?: boolean; };
+type MaterialTableComponentPropsWithRows<TData={}> = MaterialTableComponentBaseProps<TData> & { rows: TData[]; asynchronus?: boolean; };
 type MaterialTableComponentPropsWithRequestData<TData={}> = MaterialTableComponentBaseProps<TData> & { onRequestData: DataCallback; tableApi?: TableApi; };
 type MaterialTableComponentPropsWithExternalState<TData={}> = MaterialTableComponentBaseProps<TData> & MaterialTableComponentState & {
   onToggleFilter: () => void;
@@ -151,7 +152,7 @@ class MaterialTableComponent<TData extends {} = {}> extends React.Component<Mate
     const { classes, columns } = this.props;
     const { rows, rowCount, order, orderBy, selected, rowsPerPage, page, showFilter, filter } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, rowCount - page * rowsPerPage);
-    const getId = typeof this.props.idProperty === "string" ? (data: TData) => ((data as any)[this.props.idProperty as string] as string | number) : this.props.idProperty;
+    const getId = typeof this.props.idProperty !== "function" ? (data: TData) => ((data as {[key:string]: any })[this.props.idProperty as any as string] as string | number) : this.props.idProperty;
     const toggleFilter = isMaterialTableComponentPropsWithRowsAndRequestData(this.props) ? this.props.onToggleFilter : () => { !this.props.disableFilter && this.setState({ showFilter: !showFilter }, this.update) }
     return (
       <Paper className={ classes.root }>
@@ -167,25 +168,30 @@ class MaterialTableComponent<TData extends {} = {}> extends React.Component<Mate
               onSelectAllClick={ this.handleSelectAllClick }
               onRequestSort={ this.onHandleRequestSort }
               rowCount={ rows.length }
+              enableSelection={ this.props.enableSelection } 
             />
             <TableBody>
-              { showFilter && <EnhancedTableFilter columns={ columns } filter={ filter } onFilterChanged={ this.onFilterChanged } /> || null }
+              { showFilter && <EnhancedTableFilter columns={ columns } filter={ filter } onFilterChanged={ this.onFilterChanged } enableSelection={this.props.enableSelection} /> || null }
               { rows // may need ordering here 
-                .map((entry: { [key: string]: any }) => {
-                  const isSelected = this.isSelected(getId(entry));
+                .map((entry: TData & { [key: string]: any }) => {
+                  const entryId = getId(entry);
+                  const isSelected = this.isSelected(entryId);
                   return (
                     <TableRow
                       hover
-                      onClick={ event => this.handleClick(event, getId(entry)) }
+                      onClick={ event => this.handleClick(event, entry, entryId) }
                       role="checkbox"
                       aria-checked={ isSelected }
                       tabIndex={ -1 }
-                      key={ getId(entry) }
+                      key={ entryId }
                       selected={ isSelected }
                     >
-                      <TableCell padding="checkbox" style={ { width: "50px" } }>
-                        <Checkbox checked={ isSelected } />
-                      </TableCell>
+                      { this.props.enableSelection 
+                       ? <TableCell padding="checkbox" style={ { width: "50px" } }>
+                          <Checkbox checked={ isSelected } />
+                        </TableCell>
+                       : null
+                      }  
                       {
                         this.props.columns.map(
                           col => {
@@ -365,11 +371,14 @@ class MaterialTableComponent<TData extends {} = {}> extends React.Component<Mate
     return (selectedIndex > -1);
   }
 
-  private handleClick(event: React.MouseEvent<HTMLTableRowElement>, id: string | number): void {
+  private handleClick(event: React.MouseEvent<HTMLTableRowElement>, rowData: TData, id: string | number): void {
     if (this.props.onHandleClick instanceof Function) {
-      this.props.onHandleClick(event, id);
+      this.props.onHandleClick(event, rowData);
       return;
     }
+    if (!this.props.enableSelection){
+      return;
+    } 
     let selected = this.state.selected || [];
     const selectedIndex = selected.indexOf(id);
     if (selectedIndex > -1) {
