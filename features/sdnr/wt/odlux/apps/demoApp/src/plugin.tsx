@@ -3,7 +3,6 @@ import { withRouter, RouteComponentProps, Route, Switch, Redirect } from 'react-
 
 import { faAddressBook, faRegistered } from '@fortawesome/free-solid-svg-icons';
 
-import { subscribe, IFormatedMessage } from '../../../framework/src/services/notificationService';
 import applicationManager from '../../../framework/src/services/applicationManager';
 import connect, { Connect } from '../../../framework/src/flux/connect';
 

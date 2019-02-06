@@ -137,7 +137,7 @@ export class UnknownNetworkElementsListComponent extends React.Component<Unknown
               </>
             )
           },
-        ] } idProperty="name" >
+        ] } idProperty="mountId" >
         </UnknownNetworkElementTable>
         
         <EditNetworkElementDialog 
