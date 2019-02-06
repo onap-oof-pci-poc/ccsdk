@@ -18,6 +18,7 @@
 package org.onap.ccsdk.features.sdnr.wt.odlux.model.bundles;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,24 +36,24 @@ public class OdluxBundleLoaderImpl implements OdluxBundleLoader {
 
     private final List<OdluxBundle> bundles;
 
-    public List<OdluxBundle> getBundles() {
+    public synchronized List<OdluxBundle> getBundles() {
         return this.bundles;
     }
 
     public OdluxBundleLoaderImpl() {
-        this.bundles = new ArrayList<OdluxBundle>();
+        this.bundles = Collections.synchronizedList(new ArrayList<OdluxBundle>());
         mObj = this;
     }
 
     @Override
-    public void addBundle(OdluxBundle bundle) {
+    public synchronized void addBundle(OdluxBundle bundle) {
         LOG.debug("odlux bundle " + bundle.getBundleName() + " added");
         this.bundles.add(bundle);
 
     }
 
     @Override
-    public void removeBundle(OdluxBundle bundle) {
+    public synchronized void removeBundle(OdluxBundle bundle) {
         this.bundles.remove(bundle);
         LOG.debug("odlux bundle " + bundle.getBundleName() + " removed");
 

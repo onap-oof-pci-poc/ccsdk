@@ -122,12 +122,12 @@ public class OdluxBundle {
     public String getResourceFileContent(String filename) {
         return this.loadFileContent(this.getResource(filename));
     }
-
-    private URL getResource(String filename) {
+  
+    protected URL getResource(String filename) {
         return ClassLoaderUtilExt.getResource(filename, this.getClass());
     }
 
-    protected String loadFileContent(URL url) {
+    protected String loadFileContent(final URL url ) {
         if (url == null)
             return null;
         LOG.debug("try to load res " + url.toString());
