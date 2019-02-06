@@ -1,6 +1,6 @@
 import * as X2JS from 'x2js';
 
-const socketUrl = [ location.protocol === 'https:' ? 'wss://' : 'ws://', 'admin', ':', 'Kp8bJ4SXszM0WXlhak3eHlcse2gAw84vaoGGmJvUy2U', '@', location.hostname, ':',location.port,'/websocket'].join('');
+const socketUrl = [ location.protocol === 'https:' ? 'wss://' : 'ws://', 'admin', ':', 'admin', '@', location.hostname, ':',location.port,'/websocket'].join('');
 const subscriptions: { [scope: string]: SubscriptionCallback[] } = { };
 
 export interface IFormatedMessage {

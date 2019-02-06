@@ -20,7 +20,7 @@ export class AppFrame extends React.Component<IAppFrameProps & Connect> {
   
   public render(): JSX.Element {
     return (
-      <div style={{ height: "100%", overflow: "auto" }}> 
+      <div style={{ flex: "1", overflow: "auto", display: "flex", flexDirection: "column" }}> 
         { this.props.children }
       </div>
      )

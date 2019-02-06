@@ -1,15 +1,17 @@
 
 const baseUri = `${ window.location.origin }`;
+const absUrlPattern = /^https?:\/\//;  
 
 export async function requestRest<TData>(path: string = '', init: RequestInit = {}, authenticate: boolean = false):  Promise<TData|false|null> {
-  const uri = (baseUri) + ('/' + path).replace(/\/{2,}/i, '/');
+  const isAbsUrl = absUrlPattern.test(path);
+  const uri = isAbsUrl ? path : (baseUri) + ('/' + path).replace(/\/{2,}/i, '/');
   init.headers = {
     'method': 'GET',
     'Content-Type': 'application/json',
     'Accept': 'application/json',
     ...init.headers
   };
-  if (authenticate) {
+  if (!isAbsUrl && authenticate) {
     init.headers = {
       ...init.headers,
       'Authorization': 'Basic YWRtaW46S3A4Yko0U1hzek0wV1hsaGFrM2VIbGNzZTJnQXc4NHZhb0dHbUp2VXkyVQ=='

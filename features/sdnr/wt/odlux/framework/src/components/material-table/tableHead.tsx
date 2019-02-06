@@ -18,6 +18,7 @@ interface IEnhancedTableHeadComponentProps {
   orderBy: string | null;
   rowCount: number;
   columns: ColumnModel<{}>[];
+  enableSelection?: boolean;
 }
 
 class EnhancedTableHeadComponent extends React.Component<IEnhancedTableHeadComponentProps> {
@@ -31,13 +32,16 @@ class EnhancedTableHeadComponent extends React.Component<IEnhancedTableHeadCompo
     return (
       <TableHead>
         <TableRow>
-          <TableCell padding="checkbox" style={ { width: "50px" } }>
-            <Checkbox
-              indeterminate={ numSelected && numSelected > 0 && numSelected < rowCount || undefined }
-              checked={ numSelected === rowCount }
-              onChange={ onSelectAllClick }
-            />
-          </TableCell>
+          { this.props.enableSelection 
+           ? <TableCell padding="checkbox" style={ { width: "50px" } }>
+              <Checkbox
+                 indeterminate={ numSelected && numSelected > 0 && numSelected < rowCount || undefined }
+                 checked={ numSelected === rowCount }
+                 onChange={ onSelectAllClick }
+              />
+            </TableCell>
+          : null
+          }
           { columns.map(col => {
             const style = col.width ? { width: col.width } : {};
             return (

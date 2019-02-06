@@ -77,9 +77,20 @@ module.exports = (env) => {
 
     optimization: {
       noEmitOnErrors: true,
-      namedModules: true,
-      minimize: false,
-      minimizer: [],
+      namedModules: env !== "release",
+      minimize: env === "release",
+      minimizer: env !== "release" ? [] : [new TerserPlugin({
+        terserOptions: {
+          mangle:{
+            reserved:["./app.tsx"] 
+          },
+          warnings: false, // false, true, "verbose"
+          compress: {
+            drop_console: true,
+            drop_debugger: true,
+          }
+        }
+      })],
     },
 
     plugins: [
@@ -90,8 +101,8 @@ module.exports = (env) => {
         from: './favicon.ico',
         to: '.'
       }, {
-        from: './index.html',
-        to: '.'
+        from: env === "release" ? './index.html' : 'index.dev.html',
+        to: './index.html'
       }]),
       new requirejsPlugin({
         path: distPath,
