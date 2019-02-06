@@ -61,9 +61,17 @@ module.exports = (env) => {
     },
     optimization: {
       noEmitOnErrors: true,
-      namedModules: true,
-      minimize: false,
-      minimizer: [],
+      namedModules: env !== "release",
+      minimize: env === "release",
+      minimizer: env !== "release" ? [] : [new TerserPlugin({
+        terserOptions: {
+          warnings: false, // false, true, "verbose"
+          compress: {
+            drop_console: true,
+            drop_debugger: true,
+          }
+        }
+      })],
     },
     plugins: [
       new webpack.DllReferencePlugin({

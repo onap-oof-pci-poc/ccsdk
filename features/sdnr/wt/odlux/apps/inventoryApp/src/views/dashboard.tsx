@@ -1,5 +1,4 @@
 import * as React from "react";
-import { NavLink, RouteComponentProps } from 'react-router-dom';
 import { MaterialTable, DataCallback, MaterialTableCtorType } from '../../../../framework/src/components/material-table';
 
 import { Result, InventoryType } from '../models/inventory';
@@ -56,7 +55,7 @@ const fetchData: DataCallback = async (page, rowsPerPage, orderBy, order, filter
   return { page: 0, rowCount: 0, rows: [] };
 };
 
-const InventoryTable = MaterialTable as MaterialTableCtorType<InventoryType>;
+const InventoryTable = MaterialTable as MaterialTableCtorType<InventoryType & {_id: string}>;
 
 export const Dashboard : React.SFC = (props) => (
   <InventoryTable onRequestData={ fetchData } columns={ [
