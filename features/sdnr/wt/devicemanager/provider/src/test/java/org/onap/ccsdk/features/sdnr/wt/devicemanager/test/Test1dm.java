@@ -21,6 +21,7 @@
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.test;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -76,7 +77,11 @@ public class Test1dm {
         deviceManager.setNotificationPublishService(notificationPublishService);
         deviceManager.setRpcProviderRegistry(rpcProviderRegistry);
 
-        deviceManager.init();
+        try {
+            deviceManager.init();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         System.out.println("Initialization status: "+deviceManager.isDevicemanagerInitializationOk());
         assertTrue("Devicemanager not initialized", deviceManager.isDevicemanagerInitializationOk());
         System.out.println("Initialization done");
@@ -117,7 +122,12 @@ public class Test1dm {
         NetconfNodeBuilder nNodeBuilder = new NetconfNodeBuilder();
 
         System.out.println("Call devicemanager");
-        deviceManager.startListenerOnNodeForConnectedState(Action.ADD, nodeId, nNodeBuilder.build());
+        try {
+            deviceManager.startListenerOnNodeForConnectedState(Action.ADD, nodeId, nNodeBuilder.build());
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Exception received.");
+        }
         System.out.println("Test2: Done");
 
     }
@@ -135,13 +145,12 @@ public class Test1dm {
         try {
             deviceManager.startListenerOnNodeForConnectedState(Action.ADD, nodeId, nNodeBuilder.build());
         } catch (Exception e) {
-            System.out.println("(..something..) failed");
             e.printStackTrace();
+            fail("Exception received.");
         }
         System.out.println("Test3: Done");
 
     }
-
 
     //********************* Private
 
