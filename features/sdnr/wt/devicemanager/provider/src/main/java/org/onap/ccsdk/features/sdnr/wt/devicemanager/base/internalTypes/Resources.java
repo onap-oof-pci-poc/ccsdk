@@ -226,21 +226,14 @@ public class Resources {
         boolean success = true;
         URL srcUrl;
         String srcFilename;
-        File srcUrlAsFile;
         String dstFilename;
         while (urls.hasMoreElements()) {
             srcUrl = urls.nextElement();
-
             srcFilename = srcUrl.getFile();
-            try {
-                srcUrlAsFile = new File(srcUrl.toURI());
-                if (srcUrlAsFile.isDirectory()) {
-                    LOG.warn("Skip directory: {}", srcUrlAsFile);
-                    continue;
-                }
-            } catch (URISyntaxException e1) {
-                LOG.warn("Can not convert to file.", e1);
-                continue;
+
+            if (! srcUrl.getProtocol().equals("file")) {
+               LOG.warn("Skip directory: {} {}", srcUrl.getProtocol(), srcFilename);
+               continue;
             }
 
             LOG.debug("try to copy res {} to {}", srcFilename, dstFolder);
