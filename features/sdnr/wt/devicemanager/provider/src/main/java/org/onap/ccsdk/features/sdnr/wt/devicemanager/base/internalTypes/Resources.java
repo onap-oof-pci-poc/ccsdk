@@ -47,21 +47,14 @@ public class Resources {
     private static final String RESSOURCEROOT = "src/main/resources";
 
     private static URL getFileURL(String resFile) {
-        return getFileURL(resFile, true);
-    }
-
-    private static URL getFileURL(String resFile, boolean inRes) {
         Bundle b = FrameworkUtil.getBundle(Resources.class);
         URL u = null;
-        LOG.debug("try to get file {} {}", resFile, inRes ? "from Resources" : "");
+        LOG.debug("try to get file {}", resFile);
         if (b == null) {
-            LOG.warn("cannot load bundle resources");
-            try {
-                u = new File(inRes ? RESSOURCEROOT + resFile : resFile).toURI().toURL();
-            } catch (MalformedURLException e) {
-                LOG.warn(e.getMessage());
-            }
+            LOG.info("Load resource as file: {}", resFile);
+            u = getUrlForRessource(resFile);
         } else {
+            LOG.info("Load resource from bundle: {}", resFile);
             u = b.getEntry(resFile);
         }
         return u;
@@ -211,7 +204,8 @@ public class Resources {
 
     /**
      * Used for reading plugins from resource files
-     *      /elasticsearch/plugins/head/file /etc/elasticsearch-plugins
+     *      /elasticsearch/plugins/head
+     *      /etc/elasticsearch-plugins
      *      /elasticsearch/plugins
      * @param resFolder resource folder pointing to the related files
      * @param dstFolder destination
@@ -223,19 +217,32 @@ public class Resources {
         Enumeration<URL> urls = null;
         Bundle b = FrameworkUtil.getBundle(Resources.class);
         if (b == null) {
-            LOG.info("Not running in bundle context.");
+            LOG.info("Running in file text.");
             urls = getResourceFolderFiles(resFolder);
         } else {
             urls = b.findEntries(resFolder, "*", true);
         }
 
         boolean success = true;
+        URL srcUrl;
         String srcFilename;
+        File srcUrlAsFile;
         String dstFilename;
-        URL u;
         while (urls.hasMoreElements()) {
-            u = urls.nextElement();
-            srcFilename = u.getFile();
+            srcUrl = urls.nextElement();
+
+            srcFilename = srcUrl.getFile();
+            try {
+                srcUrlAsFile = new File(srcUrl.toURI());
+                if (srcUrlAsFile.isDirectory()) {
+                    LOG.warn("Skip directory: {}", srcUrlAsFile);
+                    continue;
+                }
+            } catch (URISyntaxException e1) {
+                LOG.warn("Can not convert to file.", e1);
+                continue;
+            }
+
             LOG.debug("try to copy res {} to {}", srcFilename, dstFolder);
             if (rootDirToRemove != null) {
                 srcFilename = srcFilename
@@ -244,7 +251,7 @@ public class Resources {
             }
             dstFilename = dstFolder + "/" + srcFilename;
             try {
-                if (!extractFileTo(u, new File(dstFilename), true)) {
+                if (!extractFileTo(srcUrl, new File(dstFilename))) {
                     success = false;
                 }
             } catch (Exception e) {
@@ -256,41 +263,51 @@ public class Resources {
 
     }
     private static Enumeration<URL> getResourceFolderFiles (String folder) {
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        URL url = loader.getResource(folder);
+        LOG.info("Get ressource: {}", folder);
+        URL url = getUrlForRessource(folder);
         String path = url.getPath();
         File[] files = new File(path).listFiles();
         Collection<URL> urlCollection = new ArrayList<>();
-        for (File f : files) {
-            try {
-                urlCollection.add(f.toURI().toURL());
-            } catch (MalformedURLException e) {
-                LOG.error("Can not read ressources", e);
-                break;
+
+        if (files != null) {
+            for (File f : files) {
+                try {
+                    if (f.isDirectory()) {
+                        urlCollection.addAll(Collections.list(getResourceFolderFiles(folder+"/"+f.getName())));
+                    } else {
+                        urlCollection.add(f.toURI().toURL());
+                    }
+                } catch (MalformedURLException e) {
+                    LOG.error("Can not read ressources", e);
+                    break;
+                }
             }
         }
+
         Enumeration<URL> urls = Collections.enumeration(urlCollection);
         return urls;
       }
 
-    public static boolean extractFileTo(String resFile, File oFile) {
-        return extractFileTo(resFile, oFile, true);
-    }
+    private static URL getUrlForRessource (String fileOrDirectory) {
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        URL url = loader.getResource(fileOrDirectory);
+        return url;
+      }
 
-    public static boolean extractFileTo(String resFile, File oFile, boolean isResource) {
+    public static boolean extractFileTo(String resFile, File oFile) {
         if (oFile == null) {
             return false;
         }
         LOG.debug("try to copy {} from res to {}", resFile, oFile.getAbsolutePath());
-        URL u = getFileURL(resFile, isResource);
+        URL u = getFileURL(resFile);
         if (u == null) {
             LOG.warn("cannot find resfile: {}", resFile);
             return false;
         }
-        return extractFileTo(u, oFile, isResource);
+        return extractFileTo(u, oFile);
     }
 
-    public static boolean extractFileTo(URL u, File oFile, boolean isResource) {
+    public static boolean extractFileTo(URL u, File oFile) {
 
         if (oFile.isDirectory()) {
             oFile.mkdirs();

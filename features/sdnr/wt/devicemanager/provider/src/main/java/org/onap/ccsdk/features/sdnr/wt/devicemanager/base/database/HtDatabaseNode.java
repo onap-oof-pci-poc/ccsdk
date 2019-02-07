@@ -168,7 +168,7 @@ public class HtDatabaseNode implements AutoCloseable {
         File f = new File(DBCONFIGFILENAME);
         if (!f.exists()) {
             LOGGER.debug("no " + DBCONFIGFILENAME + " found - extracting from resources");
-            if (Resources.extractFileTo("/elasticsearch/elasticsearch.yml", f)) {
+            if (Resources.extractFileTo("elasticsearch/elasticsearch.yml", f)) {
                 // replace template values
                 LOGGER.debug("replace template values with config:" + config);
                 Charset charset = StandardCharsets.UTF_8;
