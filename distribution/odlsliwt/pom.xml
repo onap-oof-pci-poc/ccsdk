@@ -23,7 +23,7 @@
     </organization>
 
     <properties>
-        <base.image.name>onap/ccsdk-odlsli-image</base.image.name>
+        <base.image.name>oof-pci/ccsdk-odlsli-image</base.image.name>
         <base.image.version>0.4.1-SNAPSHOT</base.image.version>
         <image.name>oof-pci/ccsdk-odlsli-image</image.name>
         <ccsdk.project.version>${project.version}</ccsdk.project.version>
