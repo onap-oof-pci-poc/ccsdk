@@ -231,8 +231,8 @@ public class Resources {
             srcUrl = urls.nextElement();
             srcFilename = srcUrl.getFile();
 
-            if (! srcUrl.getProtocol().equals("file")) {
-               LOG.warn("Skip directory: {} {}", srcUrl.getProtocol(), srcFilename);
+            if (srcFilename.endsWith("/")) {
+               LOG.warn("Skip directory: {}", srcFilename);
                continue;
             }
 
