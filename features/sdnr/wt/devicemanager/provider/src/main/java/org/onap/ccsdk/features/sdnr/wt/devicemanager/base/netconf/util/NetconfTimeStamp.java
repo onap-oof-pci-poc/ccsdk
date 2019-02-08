@@ -70,9 +70,8 @@ public class NetconfTimeStamp {
 
     private static final NetconfTimeStamp CONVERTER = new NetconfTimeStamp();
 
-    private static final TimeZone TIMEZONEUTC = TimeZone.getTimeZone("GMT");
-    private final SimpleDateFormat dateFormatResult = init("yyyy-MM-dd'T'HH:mm:ss.S'Z'", TIMEZONEUTC);
-    private final SimpleDateFormat dateFormatConvert = init("yyyy-MM-dd HH:mm:ss.S", TIMEZONEUTC);
+    private final SimpleDateFormat dateFormatResult = init("yyyy-MM-dd'T'HH:mm:ss.S'Z'", TimeZone.getTimeZone("GMT"));
+    private final SimpleDateFormat dateFormatConvert = init("yyyy-MM-dd HH:mm:ss.S", TimeZone.getTimeZone("GMT"));
     private static int MILLISECONDSDIGITS = 3; // Digits of milliseconds in dateFormatResult
     private static String MILLISECONDZEROS = "000"; // String with zeros for milliseconds in dateFormatResult
     private static final Pattern dateNetconfPatter = Pattern.compile(
@@ -243,10 +242,14 @@ public class NetconfTimeStamp {
      * Static initialization
      */
     private static SimpleDateFormat init(String format, TimeZone zone) {
-        SimpleDateFormat dateFormat;
-        dateFormat = new SimpleDateFormat(format);
-        dateFormat.setTimeZone(zone);
-        return dateFormat;
+        if (zone == null) {
+            throw new ExceptionInInitializerError();
+        } else {
+            SimpleDateFormat dateFormat;
+            dateFormat = new SimpleDateFormat(format);
+            dateFormat.setTimeZone(zone);
+            return dateFormat;
+        }
     }
 
 }
