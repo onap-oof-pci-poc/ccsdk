@@ -23,8 +23,9 @@
     </organization>
 
     <properties>
-        <base.image.name>oof-pci/ccsdk-odlsli-image</base.image.name>
-        <base.image.version>0.4.1-SNAPSHOT</base.image.version>
+    <base.image.repo>onap/ccsdk-odlsli-image:0.4.1-STAGING-20190208T030931Z</base.image.repo>
+        <!-- <base.image.name>oof-pci/ccsdk-odlsli-image</base.image.name>
+        <base.image.version>0.4.1-SNAPSHOT</base.image.version> -->
         <image.name>oof-pci/ccsdk-odlsli-image</image.name>
         <ccsdk.project.version>${project.version}</ccsdk.project.version>
         <ccsdk.features.version>${project.version}</ccsdk.features.version>
@@ -40,112 +41,6 @@
     </properties>
 
   <dependencies>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>dependencies</artifactId>
-            <version>${ccsdk.distribution.version}</version>
-            <classifier>repo</classifier>
-            <type>zip</type>
-        </dependency>
-
-        <dependency>
-            <groupId>org.onap.ccsdk.sli.core</groupId>
-            <artifactId>dblib-installer</artifactId>
-            <version>${ccsdk.sli.core.version}</version>
-            <classifier>repo</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.ccsdk.sli.core</groupId>
-            <artifactId>filters-installer</artifactId>
-            <version>${ccsdk.sli.core.version}</version>
-            <classifier>repo</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.ccsdk.sli.core</groupId>
-            <artifactId>sli-installer</artifactId>
-            <version>${ccsdk.sli.core.version}</version>
-            <classifier>repo</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.ccsdk.sli.core</groupId>
-            <artifactId>sliapi-installer</artifactId>
-            <version>${ccsdk.sli.core.version}</version>
-            <classifier>repo</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.ccsdk.sli.core</groupId>
-            <artifactId>sliPluginUtils-installer</artifactId>
-            <version>${ccsdk.sli.core.version}</version>
-            <classifier>repo</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.ccsdk.sli.core</groupId>
-            <artifactId>utils-installer</artifactId>
-            <version>${ccsdk.sli.core.version}</version>
-            <classifier>repo</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.ccsdk.sli.core</groupId>
-            <artifactId>slicore-features-installer</artifactId>
-            <version>${ccsdk.sli.core.version}</version>
-            <classifier>repo</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.ccsdk.sli.adaptors</groupId>
-            <artifactId>aai-service-installer</artifactId>
-            <version>${ccsdk.sli.adaptors.version}</version>
-            <classifier>repo</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.ccsdk.sli.adaptors</groupId>
-            <artifactId>ansible-adapter-installer</artifactId>
-            <version>${ccsdk.sli.adaptors.version}</version>
-            <classifier>repo</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.ccsdk.sli.adaptors</groupId>
-            <artifactId>mdsal-resource-installer</artifactId>
-            <version>${ccsdk.sli.adaptors.version}</version>
-            <classifier>repo</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.ccsdk.sli.adaptors</groupId>
-            <artifactId>resource-assignment-installer</artifactId>
-            <version>${ccsdk.sli.adaptors.version}</version>
-            <classifier>repo</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.ccsdk.sli.adaptors</groupId>
-            <artifactId>netbox-client-installer</artifactId>
-            <version>${ccsdk.sli.adaptors.version}</version>
-            <classifier>repo</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.ccsdk.sli.adaptors</groupId>
-            <artifactId>sql-resource-installer</artifactId>
-            <version>${ccsdk.sli.adaptors.version}</version>
-            <classifier>repo</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.ccsdk.sli.adaptors</groupId>
-            <artifactId>sliadaptors-features-installer</artifactId>
-            <version>${ccsdk.sli.adaptors.version}</version>
-            <classifier>repo</classifier>
-            <type>zip</type>
-        </dependency>
         <dependency>
             <groupId>org.onap.ccsdk.sli.northbound</groupId>
             <artifactId>asdcApi-installer</artifactId>
