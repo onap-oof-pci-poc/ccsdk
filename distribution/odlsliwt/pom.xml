@@ -23,7 +23,8 @@
     </organization>
 
     <properties>
-    <base.image.repo>onap/ccsdk-odlsli-image:0.4.1-STAGING-20190208T030931Z</base.image.repo>
+	<base.image.repo>onap/ccsdk-odlsli-image:0.4.1-STAGING-20190211T030937Z</base.image.repo>
+        <!-- <base.image.repo>onap/ccsdk-odlsli-image:0.4.1-STAGING-20190208T030931Z</base.image.repo> -->
         <!-- <base.image.name>oof-pci/ccsdk-odlsli-image</base.image.name>
         <base.image.version>0.4.1-SNAPSHOT</base.image.version> -->
         <image.name>oof-pci/ccsdk-odlsli-image</image.name>
