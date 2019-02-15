@@ -34,7 +34,7 @@ RUN cp $ODL_HOME/etc/org.apache.karaf.features.cfg $ODL_HOME/etc/org.apache.kara
 RUN cat $ODL_HOME/etc/org.apache.karaf.features.cfg.orig2 | sed -e "\|featuresRepositories|s|$|, ${SDNR_REPOLIST}|" > $ODL_HOME/etc/org.apache.karaf.features.cfg
 #RUN echo featuresBoot=config,standard,region,package,kar,ssh,management,${SDNR_ODL_CLUSTER_NODE},odl-daexim-all, ${SDNR_FEATURELIST} >> $ODL_HOME/etc/org.apache.karaf.features.cfg
 #RUN echo featuresBoot=config,standard,region,package,kar,ssh,management,${SDNR_ODL_CLUSTER_NODE},odl-daexim-all,${CCSDK_SLI_FEATURELIST},${SDNR_FEATURELIST} >> $ODL_HOME/etc/org.apache.karaf.features.cfg
-RUN echo featuresBoot=config,standard,region,package,kar,ssh,management,odl-mdsal-all,odl-netconf-all,odl-netconf-connector-all,adl-restconf-all,odl-mdsal-apidocs,odl-daexim-all,ccsdk-sli-core-all,ccsdk-sli-adaptors-all,ccsdk-sli-northbound-all,ccsdk-sli-plugins-all,ccsdk-features-all,sdnr-wt-feature-aggregator >> $ODL_HOME/etc/org.apache.karaf.features.cfg
+RUN echo featuresBoot=config,standard,region,package,kar,ssh,management,odl-mdsal-all,odl-netconf-all,odl-netconf-connector-all,odl-restconf-all,odl-mdsal-apidocs,odl-daexim-all,ccsdk-sli-core-all,ccsdk-sli-adaptors-all,ccsdk-sli-northbound-all,ccsdk-sli-plugins-all,ccsdk-features-all,sdnr-wt-feature-aggregator >> $ODL_HOME/etc/org.apache.karaf.features.cfg
 
 
 ENTRYPOINT /opt/onap/ccsdk/bin/startODL.sh
