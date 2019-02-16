@@ -95,6 +95,10 @@ public class Resources {
         return sb.toString();
     }
 
+    public static String getFileContent(String resFile) throws IOException {
+        return readFile(getFileURL(resFile));
+    }
+
     public static List<URL> getFileURLs(String folder, final String filter, final boolean recursive)
             throws IOException {
         Bundle b = FrameworkUtil.getBundle(Resources.class);
@@ -203,10 +207,9 @@ public class Resources {
     }
 
     /**
-     * Used for reading plugins from resource files
-     *      /elasticsearch/plugins/head
-     *      /etc/elasticsearch-plugins
-     *      /elasticsearch/plugins
+     * Used for reading plugins from resource files /elasticsearch/plugins/head
+     * /etc/elasticsearch-plugins /elasticsearch/plugins
+     *
      * @param resFolder resource folder pointing to the related files
      * @param dstFolder destination
      * @param rootDirToRemove part from full path to remove
@@ -232,14 +235,14 @@ public class Resources {
             srcFilename = srcUrl.getFile();
 
             if (srcFilename.endsWith("/")) {
-               LOG.warn("Skip directory: {}", srcFilename);
-               continue;
+                LOG.warn("Skip directory: {}", srcFilename);
+                continue;
             }
 
             LOG.debug("try to copy res {} to {}", srcFilename, dstFolder);
             if (rootDirToRemove != null) {
-                srcFilename = srcFilename
-                        .substring(srcFilename.indexOf(rootDirToRemove) + rootDirToRemove.length() + 1);
+                srcFilename =
+                        srcFilename.substring(srcFilename.indexOf(rootDirToRemove) + rootDirToRemove.length() + 1);
                 LOG.debug("dstfilename trimmed to {}", srcFilename);
             }
             dstFilename = dstFolder + "/" + srcFilename;
@@ -255,7 +258,8 @@ public class Resources {
         return success;
 
     }
-    private static Enumeration<URL> getResourceFolderFiles (String folder) {
+
+    private static Enumeration<URL> getResourceFolderFiles(String folder) {
         LOG.info("Get ressource: {}", folder);
         URL url = getUrlForRessource(folder);
         String path = url.getPath();
@@ -266,7 +270,7 @@ public class Resources {
             for (File f : files) {
                 try {
                     if (f.isDirectory()) {
-                        urlCollection.addAll(Collections.list(getResourceFolderFiles(folder+"/"+f.getName())));
+                        urlCollection.addAll(Collections.list(getResourceFolderFiles(folder + "/" + f.getName())));
                     } else {
                         urlCollection.add(f.toURI().toURL());
                     }
@@ -279,13 +283,13 @@ public class Resources {
 
         Enumeration<URL> urls = Collections.enumeration(urlCollection);
         return urls;
-      }
+    }
 
-    private static URL getUrlForRessource (String fileOrDirectory) {
+    private static URL getUrlForRessource(String fileOrDirectory) {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         URL url = loader.getResource(fileOrDirectory);
         return url;
-      }
+    }
 
     public static boolean extractFileTo(String resFile, File oFile) {
         if (oFile == null) {

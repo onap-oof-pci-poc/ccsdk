@@ -24,6 +24,11 @@ package org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock;
 import com.google.common.base.Optional;
 import org.opendaylight.controller.md.sal.binding.api.BindingService;
 import org.opendaylight.controller.md.sal.binding.api.MountPoint;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.network.topology.topology.topology.types.TopologyNetconf;
+import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.NetworkTopology;
+import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.TopologyId;
+import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.Topology;
+import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.TopologyKey;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
 /**
@@ -34,10 +39,15 @@ public class MountPointMock implements MountPoint {
 
     private boolean databrokerAbsent = true;
     private final DataBrokerMountpointMock dataBroker = new DataBrokerMountpointMock();
+    private final NotificationServiceMock notificationService = new NotificationServiceMock();
+
+    private static final InstanceIdentifier<Topology> NETCONF_TOPO_IID =
+            InstanceIdentifier.create(NetworkTopology.class).child(Topology.class,
+                    new TopologyKey(new TopologyId(TopologyNetconf.QNAME.getLocalName())));
 
     @Override
     public InstanceIdentifier<?> getIdentifier() {
-        return null;
+        return NETCONF_TOPO_IID;
     }
 
     @SuppressWarnings("unchecked")
@@ -46,11 +56,15 @@ public class MountPointMock implements MountPoint {
 
         System.out.println("Requested mountpoint service: "+service.getSimpleName()+" databrokerAbsent state: "+databrokerAbsent);
 
-        Optional<?> res = Optional.absent();
+        Optional<?> res;
         if (service.isInstance(dataBroker)) {
             res =  databrokerAbsent ? Optional.absent() : Optional.of(dataBroker);
         } else if (service.isInstance(org.opendaylight.controller.sal.binding.api.RpcConsumerRegistry.class)) {
             res = Optional.of(new RpcConsumerRegistryMock());
+        } else if (service.isInstance(notificationService)) {
+            res = Optional.of(notificationService);
+        } else {
+            res = Optional.absent();
         }
         return (Optional<T>)res;
     }

@@ -29,13 +29,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.wrapperc.WrapperMicrowaveModelRev181010;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.TestNetconfNode;
 import org.opendaylight.controller.md.sal.binding.api.ReadOnlyTransaction;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNode;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNodeBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNodeConnectionStatus.ConnectionStatus;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.netconf.node.connection.status.AvailableCapabilitiesBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.netconf.node.connection.status.available.capabilities.AvailableCapability;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.netconf.node.connection.status.available.capabilities.AvailableCapabilityBuilder;
@@ -61,13 +59,17 @@ public class ReadOnlyTransactionMock implements ReadOnlyTransaction {
     public <T extends DataObject> CheckedFuture<Optional<T>, ReadFailedException> read(LogicalDatastoreType store,
             InstanceIdentifier<T> path) {
 
+        /*
         NetconfNodeBuilder netconfNodeBuilder = new NetconfNodeBuilder();
         netconfNodeBuilder.setConnectionStatus(ConnectionStatus.Connected);
         netconfNodeBuilder.setAvailableCapabilities(getCababilitiesList(WrapperMicrowaveModelRev181010.QNAME.toString()).build());
         NetconfNode nnode = netconfNodeBuilder.build();
+        */
+        NetconfNode nNode = TestNetconfNode.get();
         NodeBuilder nodeBuilder = new NodeBuilder();
-        nodeBuilder.addAugmentation(NetconfNode.class, nnode);
+        nodeBuilder.addAugmentation(NetconfNode.class, nNode);
         Node node = nodeBuilder.build();
+
         @SuppressWarnings("unchecked")
         Optional<T> res1 = (Optional<T>) Optional.of(node);
         CheckedFuture<Optional<T>, ReadFailedException> res = new CheckedFuture<Optional<T>, ReadFailedException>() {

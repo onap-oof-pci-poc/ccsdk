@@ -55,7 +55,7 @@ public class DataBrokerMountpointMock implements DataBroker, BindingService {
 
     @Override
     public ReadOnlyTransaction newReadOnlyTransaction() {
-        return null;
+        return new ReadOnlyTransactionMock();
     }
 
     @Override

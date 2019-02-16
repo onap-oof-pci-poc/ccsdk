@@ -31,6 +31,7 @@ import java.nio.file.Paths;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.container.Capabilities;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.DeviceManagerImpl;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.DeviceManagerService.Action;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.DataBrokerNetconfMock;
@@ -38,12 +39,15 @@ import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.MountPointMock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.MountPointServiceMock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.NotificationPublishServiceMock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.RpcProviderRegistryMock;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.TestNetconfNode;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.MountPointService;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNodeBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNode;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.NodeId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Test1dm {
 
@@ -53,13 +57,20 @@ public class Test1dm {
     private static DeviceManagerImpl deviceManager;
     private static MountPointMock  mountPoint;
 
+    private static final Logger LOG = LoggerFactory.getLogger(Test1dm.class);
+
+
+    private static NetconfNode nNode = null;
+
 
     @BeforeClass
     public static void before() throws InterruptedException, IOException {
 
+         System.out.println("Logger: "+LOG.getClass().getName() + " " + LOG.getName());
         // Call System property to get the classpath value
         Path etc = KARAF_ETC;
         delete(etc);
+
         System.out.println("Create empty:"+etc.toString());
         Files.createDirectories(etc);
 
@@ -85,6 +96,8 @@ public class Test1dm {
         System.out.println("Initialization status: "+deviceManager.isDevicemanagerInitializationOk());
         assertTrue("Devicemanager not initialized", deviceManager.isDevicemanagerInitializationOk());
         System.out.println("Initialization done");
+
+        nNode = TestNetconfNode.get();
     }
 
     @AfterClass
@@ -118,16 +131,14 @@ public class Test1dm {
         System.out.println("Test2: slave mountpoint");
 
         mountPoint.setDatabrokerAbsent(true);
-        NodeId nodeId = new NodeId("mountpointTest1");
-        NetconfNodeBuilder nNodeBuilder = new NetconfNodeBuilder();
-
-        System.out.println("Call devicemanager");
+        NodeId nodeId = new NodeId("mountpointTest2");
         try {
-            deviceManager.startListenerOnNodeForConnectedState(Action.ADD, nodeId, nNodeBuilder.build());
+            deviceManager.startListenerOnNodeForConnectedState(Action.ADD, nodeId, nNode);
         } catch (Exception e) {
             e.printStackTrace();
             fail("Exception received.");
         }
+
         System.out.println("Test2: Done");
 
     }
@@ -137,13 +148,13 @@ public class Test1dm {
         System.out.println("Test3: master mountpoint");
 
         mountPoint.setDatabrokerAbsent(false);
-        NodeId nodeId = new NodeId("mountpointTest2");
-        NetconfNodeBuilder nNodeBuilder = new NetconfNodeBuilder();
+        NodeId nodeId = new NodeId("mountpointTest3");
 
-        System.out.println("Call devicemanager");
+        Capabilities capabilities = Capabilities.getAvailableCapabilities(nNode);
+        System.out.println("Node capabilites: "+capabilities);
 
         try {
-            deviceManager.startListenerOnNodeForConnectedState(Action.ADD, nodeId, nNodeBuilder.build());
+            deviceManager.startListenerOnNodeForConnectedState(Action.ADD, nodeId, nNode);
         } catch (Exception e) {
             e.printStackTrace();
             fail("Exception received.");
@@ -171,5 +182,6 @@ public class Test1dm {
             throw new FileNotFoundException("Failed to delete file: " + f);
         }
     }
+
 
 }

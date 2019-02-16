@@ -18,6 +18,7 @@
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf;
 
 import com.google.common.base.Optional;
+import com.google.common.util.concurrent.CheckedFuture;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.container.Capabilities;
@@ -57,6 +58,7 @@ public class ONFCoreNetworkElementFactory {
 
         ONFCoreNetworkElementRepresentation res = null;
         try (ReadOnlyTransaction tx = dataBroker.newReadOnlyTransaction();){
+            CheckedFuture<Optional<Node>, ReadFailedException> checkedFuture = tx.read(LogicalDatastoreType.OPERATIONAL, instanceIdentifier);
             Optional<Node> nodeOption = tx.read(LogicalDatastoreType.OPERATIONAL, instanceIdentifier).checkedGet();
             if (nodeOption.isPresent()) {
                 Node node = nodeOption.get();
@@ -64,7 +66,7 @@ public class ONFCoreNetworkElementFactory {
                 if (nnode != null) {
                     ConnectionStatus csts = nnode.getConnectionStatus();
                     if (csts == ConnectionStatus.Connected) {
-                        Capabilities capabilities = new Capabilities(nnode);
+                        Capabilities capabilities = Capabilities.getAvailableCapabilities(nnode);
                         LOG.info("Mountpoint {} capabilities {}", mountPointNodeName, capabilities);
                         res = ONFCoreNetworkElement12.build(mountPointNodeName, capabilities, mountpointDataBroker,
                                 webSocketService, databaseService, dcaeProvider, aotsmClient, maintenanceService,

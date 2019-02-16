@@ -15,10 +15,10 @@
  * the License.
  * ============LICENSE_END==========================================================================
  ******************************************************************************/
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.HtDevicemanagerConfiguration;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.AaiConfig;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.DcaeConfig;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.EsConfig;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.HtDevicemanagerConfiguration;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.PmConfig;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.ToggleAlarmConfig;
 
