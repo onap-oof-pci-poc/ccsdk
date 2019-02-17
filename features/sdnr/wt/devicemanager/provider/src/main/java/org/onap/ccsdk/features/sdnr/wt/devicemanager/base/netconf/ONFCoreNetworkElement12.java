@@ -336,7 +336,7 @@ public class ONFCoreNetworkElement12 extends ONFCoreNetworkElement12Base
                 }
 
             } else {
-                LOG.debug("Mountpoint '{}' NE-Name '{}'", getMountPointNodeName(), optionalNe.getName().toString());
+                LOG.debug("Mountpoint '{}' NE-Name '{}'", getMountPointNodeName(), optionalNe.getName());
                 List<Lp> actualInterfaceList = getLtpList(optionalNe);
                 if (!interfaceList.equals(actualInterfaceList)) {
                     LOG.debug("Mountpoint '{}' Update LTP List. Elements {}", getMountPointNodeName(),
@@ -422,7 +422,7 @@ public class ONFCoreNetworkElement12 extends ONFCoreNetworkElement12Base
     }
 
     /**
-     * Get from LayProtocolExtensions the related generated ONF Interface PAC class which represents it.
+     * Get from LayerProtocolExtensions the related generated ONF Interface PAC class which represents it.
      *
      * @param ltp logical termination point
      * @return Class of InterfacePac

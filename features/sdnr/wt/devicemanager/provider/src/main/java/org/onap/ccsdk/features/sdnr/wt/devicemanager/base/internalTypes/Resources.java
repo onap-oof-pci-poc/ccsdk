@@ -69,10 +69,9 @@ public class Resources {
             f = new File(RESSOURCEROOT + resFile);
         } else {
             try {
-
                 f = new File(b.getEntry(resFile).toURI());
             } catch (URISyntaxException e) {
-
+                LOG.warn("Con not load file: {}",e.getMessage());
             }
         }
         return f;

@@ -33,8 +33,9 @@ public class InternalDateAndTime {
     private static final NetconfTimeStamp NETCONFTIME_CONVERTER = NetconfTimeStamp.getConverter();
 
     private static final InternalDateAndTime TESTPATTERN = new InternalDateAndTime("2017-01-01T00:00:00.0Z");
+    private static final String INITIALPATTERN = "0000-00-00T00:00:00.0Z";
 
-    String internalDateAndTime;
+    String internalDateAndTime = INITIALPATTERN;
 
     /**
      * Static builder ONF1.2
@@ -79,7 +80,11 @@ public class InternalDateAndTime {
      * @param time as input
      */
     private InternalDateAndTime(org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev130715.DateAndTime time) {
-        internalDateAndTime = NETCONFTIME_CONVERTER.getTimeStampFromNetconf(time.getValue());
+        if (time != null) {
+            internalDateAndTime = NETCONFTIME_CONVERTER.getTimeStampFromNetconf(time.getValue());
+        } else {
+            internalDateAndTime = INITIALPATTERN;
+        }
     }
 
     /**

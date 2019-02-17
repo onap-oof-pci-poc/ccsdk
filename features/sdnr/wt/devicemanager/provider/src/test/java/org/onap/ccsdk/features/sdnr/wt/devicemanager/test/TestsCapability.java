@@ -12,7 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.container.Capabilities;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.wrapperc.WrapperMicrowaveModelRev170324;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.TestNetconfNode;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.ModelObjectMock;
 import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.core.model.rev170320.NetworkElement;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNode;
 
@@ -22,7 +22,7 @@ public class TestsCapability {
 
     @BeforeClass
     public static void before() {
-        nNode = TestNetconfNode.get();
+        nNode = ModelObjectMock.getNetconfNode();
     }
 
     @Test

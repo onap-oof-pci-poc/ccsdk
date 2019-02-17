@@ -39,7 +39,7 @@ import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.MountPointMock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.MountPointServiceMock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.NotificationPublishServiceMock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.RpcProviderRegistryMock;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.TestNetconfNode;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.ModelObjectMock;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.md.sal.binding.api.MountPointService;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
@@ -97,7 +97,7 @@ public class Test1dm {
         assertTrue("Devicemanager not initialized", deviceManager.isDevicemanagerInitializationOk());
         System.out.println("Initialization done");
 
-        nNode = TestNetconfNode.get();
+        nNode = ModelObjectMock.getNetconfNode();
     }
 
     @AfterClass

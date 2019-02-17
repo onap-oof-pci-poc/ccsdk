@@ -1,42 +1,34 @@
 /*******************************************************************************
- * ============LICENSE_START=======================================================
- * ONAP : ccsdk feature sdnr wt sdnr-wt-devicemanager-provider
- *  ================================================================================
- * Copyright (C) 2019 highstreet technologies GmbH Intellectual Property.
- * All rights reserved.
- * ================================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * ============LICENSE_START======================================================= ONAP : ccsdk
+ * feature sdnr wt sdnr-wt-devicemanager-provider
+ * ================================================================================ Copyright (C)
+ * 2019 highstreet technologies GmbH Intellectual Property. All rights reserved.
+ * ================================================================================ Licensed under
+ * the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ============LICENSE_END=========================================================
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License. ============LICENSE_END=========================================================
  ******************************************************************************/
 
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock;
 
 import com.google.common.base.Optional;
 import com.google.common.util.concurrent.CheckedFuture;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.TestNetconfNode;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.ModelObjectMock;
 import org.opendaylight.controller.md.sal.binding.api.ReadOnlyTransaction;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
+import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.core.model.rev170320.NetworkElement;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNode;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.netconf.node.connection.status.AvailableCapabilitiesBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.netconf.node.connection.status.available.capabilities.AvailableCapability;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.netconf.node.connection.status.available.capabilities.AvailableCapabilityBuilder;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.Node;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.NodeBuilder;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -55,28 +47,76 @@ public class ReadOnlyTransactionMock implements ReadOnlyTransaction {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends DataObject> CheckedFuture<Optional<T>, ReadFailedException> read(LogicalDatastoreType store,
             InstanceIdentifier<T> path) {
 
-        /*
-        NetconfNodeBuilder netconfNodeBuilder = new NetconfNodeBuilder();
-        netconfNodeBuilder.setConnectionStatus(ConnectionStatus.Connected);
-        netconfNodeBuilder.setAvailableCapabilities(getCababilitiesList(WrapperMicrowaveModelRev181010.QNAME.toString()).build());
-        NetconfNode nnode = netconfNodeBuilder.build();
-        */
-        NetconfNode nNode = TestNetconfNode.get();
-        NodeBuilder nodeBuilder = new NodeBuilder();
-        nodeBuilder.addAugmentation(NetconfNode.class, nNode);
-        Node node = nodeBuilder.build();
+        System.out.println("READ: " + path + " Store: " + store);
 
-        @SuppressWarnings("unchecked")
-        Optional<T> res1 = (Optional<T>) Optional.of(node);
+        /*
+         * NetconfNodeBuilder netconfNodeBuilder = new NetconfNodeBuilder();
+         * netconfNodeBuilder.setConnectionStatus(ConnectionStatus.Connected);
+         * netconfNodeBuilder.setAvailableCapabilities(getCababilitiesList(WrapperMicrowaveModelRev181010.
+         * QNAME.toString()).build()); NetconfNode nnode = netconfNodeBuilder.build();
+         */
+        Optional<T> res1;
+
+        if (path.getTargetType().equals(Node.class)) {
+            System.out.println("Deliver " + path.getTargetType());
+            NetconfNode nNode = ModelObjectMock.getNetconfNode();
+            NodeBuilder nodeBuilder = new NodeBuilder();
+            nodeBuilder.addAugmentation(NetconfNode.class, nNode);
+            Node node = nodeBuilder.build();
+            res1 = (Optional<T>) Optional.of(node);
+
+        } else if (path.getTargetType().equals(NetworkElement.class)) {
+            System.out.println("Deliver " + path.getTargetType());
+            NetworkElement ne = ModelObjectMock.getNetworkElement();
+            res1 = (Optional<T>) Optional.of(ne);
+
+        } else if (path.getTargetType().equals(
+                org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.air._interface.pac.AirInterfaceCurrentProblems.class)) {
+            // MwAirInterfacePac
+            System.out.println("Deliver " + path.getTargetType());
+            res1 = (Optional<T>) Optional.of(ModelObjectMock.getCurrentProblems(
+                    org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.air._interface.current.problems.g.CurrentProblemListBuilder.class,
+                    org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.air._interface.pac.AirInterfaceCurrentProblemsBuilder.class));
+
+        } else if (path.getTargetType().equals(
+                org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.air._interface.diversity.pac.AirInterfaceDiversityCurrentProblems.class)) {
+            // MwAirInterfaceDiversityPac
+            System.out.println("Deliver " + path.getTargetType());
+            res1 = (Optional<T>) Optional.of(ModelObjectMock.getCurrentProblems(
+                    org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.air._interface.diversity.current.problems.g.CurrentProblemListBuilder.class,
+                    org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.air._interface.diversity.pac.AirInterfaceDiversityCurrentProblemsBuilder.class));
+
+        } else if (path.getTargetType().equals(
+                org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.ethernet.container.pac.EthernetContainerCurrentProblems.class)) {
+            //EthernetContainerCurrentProblems
+            System.out.println("Deliver " + path.getTargetType());
+            res1 = (Optional<T>) Optional.of(ModelObjectMock.getCurrentProblems(
+                    org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.ethernet.container.current.problems.g.CurrentProblemListBuilder.class,
+                    org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.ethernet.container.pac.EthernetContainerCurrentProblemsBuilder.class));
+
+        } else if (path.getTargetType().equals(
+                org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.tdm.container.pac.TdmContainerCurrentProblems.class)) {
+            // TdmContainerCurrentProblems
+            System.out.println("Deliver " + path.getTargetType());
+            res1 = (Optional<T>) Optional.of(ModelObjectMock.getCurrentProblems(
+                    org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.tdm.container.current.problems.g.CurrentProblemListBuilder.class,
+                    org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.tdm.container.pac.TdmContainerCurrentProblemsBuilder.class));
+
+        } else {
+            System.err.println("Nothing to deliver for" + path.getTargetType());
+            res1 = Optional.absent();
+        }
+
+
         CheckedFuture<Optional<T>, ReadFailedException> res = new CheckedFuture<Optional<T>, ReadFailedException>() {
 
             @Override
-            public void addListener(Runnable arg0, Executor arg1) {
-            }
+            public void addListener(Runnable arg0, Executor arg1) {}
 
             @Override
             public boolean cancel(boolean mayInterruptIfRunning) {
@@ -85,7 +125,7 @@ public class ReadOnlyTransactionMock implements ReadOnlyTransaction {
 
             @Override
             public Optional<T> get() throws InterruptedException, ExecutionException {
-                return null;
+                return res1;
             }
 
             @Override
@@ -115,31 +155,12 @@ public class ReadOnlyTransactionMock implements ReadOnlyTransaction {
             }
 
         };
-
-
         return res;
+
     }
 
-    private AvailableCapabilitiesBuilder getCababilitiesList(String ... strings) {
-        return getCababilitiesList(null, strings);
-    }
-
-    private AvailableCapabilitiesBuilder getCababilitiesList(AvailableCapabilitiesBuilder valueBuilder, String ... strings) {
-        if (valueBuilder == null) {
-            valueBuilder = new AvailableCapabilitiesBuilder();
-        }
-        List<AvailableCapability> capabilites = new ArrayList<>();
-        for (String s : strings) {
-            AvailableCapabilityBuilder capabilityBuilder = new AvailableCapabilityBuilder();
-            capabilityBuilder.setCapability(s);
-            capabilites.add(capabilityBuilder.build());
-        }
-        valueBuilder.setAvailableCapability(capabilites);
-        return valueBuilder;
-    }
 
     @Override
-    public void close() {
-    }
+    public void close() {}
 
 }
