@@ -176,7 +176,6 @@ public class ReadOnlyTransactionMountpoint12Mock implements ReadOnlyTransaction 
 
     }
 
-
     @Override
     public void close() {}
 
