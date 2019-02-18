@@ -35,9 +35,9 @@ public class IndexMwtnService implements AutoCloseable {
     /** Index name to be used */
     public static final String INDEX = "mwtn";
     /** Location of mapping data **/
-    private static final String MAPPING = "elasticsearch/index/mwtn/mwtnMapping.json";
+    private static final String MAPPING = "/elasticsearch/index/mwtn/mwtnMapping.json";
     /** Location of configuration data **/
-    private static final String MODELDATA = "elasticsearch/index/mwtn/modelDescription";
+    private static final String MODELDATA = "/elasticsearch/index/mwtn/modelDescription";
 
     private final HtDatabaseClientAbstract client;
 

@@ -1,20 +1,23 @@
 /*******************************************************************************
- * ============LICENSE_START======================================================= ONAP : ccsdk
- * feature sdnr wt sdnr-wt-devicemanager-provider
- * ================================================================================ Copyright (C)
- * 2019 highstreet technologies GmbH Intellectual Property. All rights reserved.
- * ================================================================================ Licensed under
- * the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
+ * ============LICENSE_START=======================================================
+ * ONAP : ccsdk feature sdnr wt
+ *  ================================================================================
+ * Copyright (C) 2019 highstreet technologies GmbH Intellectual Property.
+ * All rights reserved.
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License. ============LICENSE_END=========================================================
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============LICENSE_END=========================================================
  ******************************************************************************/
-
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util;
 
 import com.google.common.base.Optional;
@@ -40,10 +43,15 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 @SuppressWarnings("deprecation")
 public class ReadOnlyTransactionMountpoint12Mock implements ReadOnlyTransaction {
 
+    private final Model12ObjectMock mock = new Model12ObjectMock();
 
     @Override
     public Object getIdentifier() {
         return null;
+    }
+
+    public Model12ObjectMock getMock() {
+        return mock;
     }
 
     @SuppressWarnings("unchecked")
@@ -57,7 +65,7 @@ public class ReadOnlyTransactionMountpoint12Mock implements ReadOnlyTransaction 
 
         if (path.getTargetType().equals(Node.class)) {
             System.out.println("Deliver " + path.getTargetType());
-            NetconfNode nNode = Model12ObjectMock.getNetconfNode();
+            NetconfNode nNode = mock.getNetconfNode();
             NodeBuilder nodeBuilder = new NodeBuilder();
             nodeBuilder.addAugmentation(NetconfNode.class, nNode);
             Node node = nodeBuilder.build();
@@ -65,14 +73,14 @@ public class ReadOnlyTransactionMountpoint12Mock implements ReadOnlyTransaction 
 
         } else if (path.getTargetType().equals(NetworkElement.class)) {
             System.out.println("Deliver " + path.getTargetType());
-            NetworkElement ne = Model12ObjectMock.getNetworkElement();
+            NetworkElement ne = mock.getNetworkElement();
             res1 = (Optional<T>) Optional.of(ne);
 
         } else if (path.getTargetType().equals(
                 org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.air._interface.pac.AirInterfaceCurrentProblems.class)) {
             // MwAirInterfacePac
             System.out.println("Deliver " + path.getTargetType());
-            res1 = (Optional<T>) Optional.of(Model12ObjectMock.getCurrentProblems(
+            res1 = (Optional<T>) Optional.of(mock.getCurrentProblems(
                     org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.air._interface.current.problems.g.CurrentProblemListBuilder.class,
                     org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.air._interface.pac.AirInterfaceCurrentProblemsBuilder.class));
 
@@ -80,7 +88,7 @@ public class ReadOnlyTransactionMountpoint12Mock implements ReadOnlyTransaction 
                 org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.hybrid.mw.structure.pac.HybridMwStructureCurrentProblems.class)) {
             // MwHybridMwStructurePac
             System.out.println("Deliver " + path.getTargetType());
-            res1 = (Optional<T>) Optional.of(Model12ObjectMock.getCurrentProblems(
+            res1 = (Optional<T>) Optional.of(mock.getCurrentProblems(
                     org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.hybrid.mw.structure.current.problems.g.CurrentProblemListBuilder.class,
                     org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.hybrid.mw.structure.pac.HybridMwStructureCurrentProblemsBuilder.class));
 
@@ -88,7 +96,7 @@ public class ReadOnlyTransactionMountpoint12Mock implements ReadOnlyTransaction 
                 org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.air._interface.diversity.pac.AirInterfaceDiversityCurrentProblems.class)) {
             // MwAirInterfaceDiversityPac
             System.out.println("Deliver " + path.getTargetType());
-            res1 = (Optional<T>) Optional.of(Model12ObjectMock.getCurrentProblems(
+            res1 = (Optional<T>) Optional.of(mock.getCurrentProblems(
                     org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.air._interface.diversity.current.problems.g.CurrentProblemListBuilder.class,
                     org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.air._interface.diversity.pac.AirInterfaceDiversityCurrentProblemsBuilder.class));
 
@@ -96,7 +104,7 @@ public class ReadOnlyTransactionMountpoint12Mock implements ReadOnlyTransaction 
                 org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.pure.ethernet.structure.pac.PureEthernetStructureCurrentProblems.class)) {
             // MwPureEthernetStructurePac
             System.out.println("Deliver " + path.getTargetType());
-            res1 = (Optional<T>) Optional.of(Model12ObjectMock.getCurrentProblems(
+            res1 = (Optional<T>) Optional.of(mock.getCurrentProblems(
                     org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.pure.ethernet.structure.current.problems.g.CurrentProblemListBuilder.class,
                     org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.pure.ethernet.structure.pac.PureEthernetStructureCurrentProblemsBuilder.class));
 
@@ -104,7 +112,7 @@ public class ReadOnlyTransactionMountpoint12Mock implements ReadOnlyTransaction 
                 org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.ethernet.container.pac.EthernetContainerCurrentProblems.class)) {
             //EthernetContainerCurrentProblems
             System.out.println("Deliver " + path.getTargetType());
-            res1 = (Optional<T>) Optional.of(Model12ObjectMock.getCurrentProblems(
+            res1 = (Optional<T>) Optional.of(mock.getCurrentProblems(
                     org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.ethernet.container.current.problems.g.CurrentProblemListBuilder.class,
                     org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.ethernet.container.pac.EthernetContainerCurrentProblemsBuilder.class));
 
@@ -112,7 +120,7 @@ public class ReadOnlyTransactionMountpoint12Mock implements ReadOnlyTransaction 
                 org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.tdm.container.pac.TdmContainerCurrentProblems.class)) {
             // TdmContainerCurrentProblems
             System.out.println("Deliver " + path.getTargetType());
-            res1 = (Optional<T>) Optional.of(Model12ObjectMock.getCurrentProblems(
+            res1 = (Optional<T>) Optional.of(mock.getCurrentProblems(
                     org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.tdm.container.current.problems.g.CurrentProblemListBuilder.class,
                     org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.tdm.container.pac.TdmContainerCurrentProblemsBuilder.class));
 

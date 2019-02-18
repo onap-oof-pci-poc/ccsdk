@@ -22,7 +22,7 @@ public class TestsCapability {
 
     @BeforeClass
     public static void before() {
-        nNode = Model12ObjectMock.getNetconfNode();
+        nNode = new Model12ObjectMock().getNetconfNode();
     }
 
     @Test

@@ -39,9 +39,6 @@ import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.MountPointMock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.MountPointServiceMock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.NotificationPublishServiceMock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.RpcProviderRegistryMock;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.Model1211ObjectMock;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.Model1211pObjectMock;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.Model12ObjectMock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.ReadOnlyTransactionMountpoint1211Mock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.ReadOnlyTransactionMountpoint1211pMock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.ReadOnlyTransactionMountpoint12Mock;
@@ -101,6 +98,8 @@ public class Test1dm {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        readOnlyTransaction.close();
         System.out.println("Initialization status: "+deviceManager.isDevicemanagerInitializationOk());
         assertTrue("Devicemanager not initialized", deviceManager.isDevicemanagerInitializationOk());
         System.out.println("Initialization done");
@@ -137,7 +136,11 @@ public class Test1dm {
     public void test2() {
         System.out.println("Test2: slave mountpoint");
 
-        NetconfNode nNode = Model12ObjectMock.getNetconfNode();
+        ReadOnlyTransactionMountpoint12Mock readOnlyTransaction = new ReadOnlyTransactionMountpoint12Mock();
+        dataBrokerNetconf.setReadOnlyTransaction(readOnlyTransaction);
+        mountPoint.setReadOnlyTransaction(readOnlyTransaction);
+        NetconfNode nNode = readOnlyTransaction.getMock().getNetconfNode();
+
         mountPoint.setDatabrokerAbsent(true);
         NodeId nodeId = new NodeId("mountpointTest2");
         try {
@@ -146,7 +149,7 @@ public class Test1dm {
             e.printStackTrace();
             fail("Exception received.");
         }
-
+        readOnlyTransaction.close();
         System.out.println("Test2: Done");
 
     }
@@ -155,7 +158,11 @@ public class Test1dm {
     public void test3() {
         System.out.println("Test3: master mountpoint ONF Model 12");
 
-        NetconfNode nNode = Model12ObjectMock.getNetconfNode();
+        ReadOnlyTransactionMountpoint12Mock readOnlyTransaction = new ReadOnlyTransactionMountpoint12Mock();
+        dataBrokerNetconf.setReadOnlyTransaction(readOnlyTransaction);
+        mountPoint.setReadOnlyTransaction(readOnlyTransaction);
+        NetconfNode nNode = readOnlyTransaction.getMock().getNetconfNode();
+
         mountPoint.setDatabrokerAbsent(false);
         NodeId nodeId = new NodeId("mountpointTest3");
 
@@ -168,6 +175,7 @@ public class Test1dm {
             e.printStackTrace();
             fail("Exception received.");
         }
+        readOnlyTransaction.close();
         System.out.println("Test3: Done");
 
     }
@@ -176,11 +184,11 @@ public class Test1dm {
     public void test4() {
         System.out.println("Test4: master mountpoint ONF Model 1211");
 
-        ReadOnlyTransaction readOnlyTransaction = new ReadOnlyTransactionMountpoint1211Mock();
+        ReadOnlyTransactionMountpoint1211Mock readOnlyTransaction = new ReadOnlyTransactionMountpoint1211Mock();
         dataBrokerNetconf.setReadOnlyTransaction(readOnlyTransaction);
         mountPoint.setReadOnlyTransaction(readOnlyTransaction);
 
-        NetconfNode nNode = Model1211ObjectMock.getNetconfNode();
+        NetconfNode nNode = readOnlyTransaction.getMock().getNetconfNode();
         mountPoint.setDatabrokerAbsent(false);
         NodeId nodeId = new NodeId("mountpointTest4");
 
@@ -202,11 +210,11 @@ public class Test1dm {
     public void test5() {
         System.out.println("Test5: master mountpoint ONF Model 1211p");
 
-        ReadOnlyTransaction readOnlyTransaction = new ReadOnlyTransactionMountpoint1211pMock();
+        ReadOnlyTransactionMountpoint1211pMock readOnlyTransaction = new ReadOnlyTransactionMountpoint1211pMock();
         dataBrokerNetconf.setReadOnlyTransaction(readOnlyTransaction);
         mountPoint.setReadOnlyTransaction(readOnlyTransaction);
 
-        NetconfNode nNode = Model1211pObjectMock.getNetconfNode();
+        NetconfNode nNode = readOnlyTransaction.getMock().getNetconfNode();
         mountPoint.setDatabrokerAbsent(false);
         NodeId nodeId = new NodeId("mountpointTest5");
 
