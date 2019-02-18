@@ -285,7 +285,8 @@ public class Resources {
     }
 
     private static URL getUrlForRessource(String fileOrDirectory) {
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        //ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        ClassLoader loader = Resources.class.getClassLoader();
         URL url = loader.getResource(fileOrDirectory);
         return url;
     }
