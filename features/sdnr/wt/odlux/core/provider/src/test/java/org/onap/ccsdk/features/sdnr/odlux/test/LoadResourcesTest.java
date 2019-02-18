@@ -1,3 +1,4 @@
+package org.onap.ccsdk.features.sdnr.odlux.test;
 import static org.junit.Assert.*;
 
 import java.util.regex.Matcher;
@@ -21,6 +22,10 @@ public class LoadResourcesTest {
 		final Matcher matcher = pattern.matcher(indexhtml);
 		System.out.println(indexhtml);
 		assertTrue(matcher.find());
+	}
+	@Test
+	public void test2() {
+		
 	}
 
 }

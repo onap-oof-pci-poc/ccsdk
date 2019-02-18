@@ -51,7 +51,15 @@ public class ClassLoaderUtilExt {
         if (url == null) {
             LOG.debug("res currently not found. try to find with bundle");
             Bundle b = FrameworkUtil.getBundle(callingClass);
-            url = b.getEntry(resourceName);
+            if(b!=null)
+            {
+            	url = b.getEntry(resourceName);
+            }
+            else {
+            	ClassLoader loader = Thread.currentThread().getContextClassLoader();
+                url = loader.getResource(resourceName);
+            }
+            	
         }
         return url;
     }

@@ -21,11 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * At startup of each karaf bundle, each UI module creates an instance of this class via blueprint.
@@ -81,22 +78,6 @@ public class OdluxBundle {
     public void initialize() {
 
         LOG.info("Registering resources");
-        try {
-            List<String> resources = this.getResourceFiles("/odlux");
-            if (resources.size() > 0) {
-                for (String res : resources) {
-                    LOG.debug("found res " + res);
-                }
-            } else {
-                String res = "/odlux/" + this.getBundleName() + ".js";
-                if (this.hasResource(res)) {
-                    LOG.debug("found res " + res);
-                } else
-                    LOG.warn("no resources found in bundle");
-            }
-        } catch (IOException e) {
-            LOG.debug("problem searching for resources: " + e.getMessage());
-        }
         if (this.loader != null) {
             if (this.bundleName == null)
                 LOG.error("bundle name is missing. Bundle can not be registered with odlux");
@@ -149,36 +130,4 @@ public class OdluxBundle {
         return sb.toString();
     }
 
-    private List<String> getResourceFiles(String path) throws IOException {
-        List<String> filenames = new ArrayList<>();
-
-        try {
-
-            InputStream in = getResourceAsStream(path);
-            if (in != null) {
-                BufferedReader br = new BufferedReader(new InputStreamReader(in));
-                if (br != null) {
-                    String resource;
-
-                    while ((resource = br.readLine()) != null) {
-                        filenames.add(resource);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            LOG.warn("problem loading res " + path);
-        }
-
-        return filenames;
-    }
-
-    private InputStream getResourceAsStream(String resource) {
-        final InputStream in = getContextClassLoader().getResourceAsStream(resource);
-
-        return in == null ? getClass().getResourceAsStream(resource) : in;
-    }
-
-    private ClassLoader getContextClassLoader() {
-        return Thread.currentThread().getContextClassLoader();
-    }
 }

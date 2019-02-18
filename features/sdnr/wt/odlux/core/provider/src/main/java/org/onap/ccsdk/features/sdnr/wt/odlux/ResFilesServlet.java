@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.onap.ccsdk.features.sdnr.wt.odlux.IndexOdluxBundle;
 import org.onap.ccsdk.features.sdnr.wt.odlux.model.bundles.OdluxBundle;
-import org.onap.ccsdk.features.sdnr.wt.odlux.model.bundles.OdluxBundleList;
 import org.onap.ccsdk.features.sdnr.wt.odlux.model.bundles.OdluxBundleLoaderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

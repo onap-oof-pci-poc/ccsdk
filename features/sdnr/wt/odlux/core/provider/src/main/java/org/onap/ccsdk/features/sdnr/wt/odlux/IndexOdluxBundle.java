@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.onap.ccsdk.features.sdnr.wt.odlux.model.bundles.OdluxBundle;
-import org.onap.ccsdk.features.sdnr.wt.odlux.model.bundles.OdluxBundleList;
 import org.onap.ccsdk.features.sdnr.wt.odlux.model.bundles.OdluxBundleLoaderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

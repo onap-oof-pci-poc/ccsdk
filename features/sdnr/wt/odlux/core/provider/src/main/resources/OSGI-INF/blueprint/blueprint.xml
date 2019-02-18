@@ -13,16 +13,6 @@ xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs">
             <entry key="alias" value="/index2.html" />
         </service-properties>
     </service>
-    
-<!--     <bean id="rootServlet" -->
-<!--         class="com.highstreet.technologies.odlux.RootServlet"> -->
-<!--     </bean> -->
-
-<!--    <service interface="javax.servlet.http.HttpServlet" ref="rootServlet"> -->
-<!--         <service-properties> -->
-<!--             <entry key="alias" value="/" /> -->
-<!--         </service-properties> -->
-<!--     </service> -->
 
     <bean id="resFilesServlet"
         class="org.onap.ccsdk.features.sdnr.wt.odlux.ResFilesServlet">
