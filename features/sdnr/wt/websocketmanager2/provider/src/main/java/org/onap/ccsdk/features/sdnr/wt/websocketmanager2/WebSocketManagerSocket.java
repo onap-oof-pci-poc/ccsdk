@@ -182,12 +182,12 @@ public class WebSocketManagerSocket extends WebSocketAdapter {
         }
     }
 
-    private String getSessionId() {
+    public String getSessionId() {
         return this.myUniqueSessionId;
     }
 
     public static void broadCast(String nodeName, String eventType, String xmlEvent) {
-        if (clientList != null && clientList.size() > 0) {
+        if (clientList.size() > 0) {
             for (Map.Entry<String, WebSocketManagerSocket> entry : clientList.entrySet()) {
                 WebSocketManagerSocket socket = entry.getValue();
                 if (socket != null) {
