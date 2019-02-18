@@ -24,9 +24,7 @@ import java.util.regex.Pattern;
 import org.junit.Test;
 import org.onap.ccsdk.features.sdnr.wt.odlux.ResFilesServlet;
 
-import com.opensymphony.xwork2.util.ClassLoaderUtil;
-
-public class LoadResourcesTest {
+public class TestLoadResources {
 
 	@Test
 	public void test() {
