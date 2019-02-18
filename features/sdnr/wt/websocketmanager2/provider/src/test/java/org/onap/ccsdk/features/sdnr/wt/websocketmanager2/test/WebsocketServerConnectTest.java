@@ -17,6 +17,12 @@
  ******************************************************************************/
 package org.onap.ccsdk.features.sdnr.wt.websocketmanager2.test;
 
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.websocket.api.WebSocketPolicy;
+import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.onap.ccsdk.features.sdnr.wt.websocketmanager2.WebSocketManager;
@@ -28,11 +34,10 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.websocke
 import org.opendaylight.yangtools.yang.common.RpcResult;
 
 import com.google.common.util.concurrent.ListenableFuture;
-
+import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import java.util.concurrent.ExecutionException;
 
 public class WebsocketServerConnectTest {
@@ -91,5 +96,12 @@ public class WebsocketServerConnectTest {
 				e.printStackTrace();
 			}
 		}
+
+		WebSocketServletFactory factory = mock(WebSocketServletFactory.class);
+		WebSocketPolicy wspolicy = mock(WebSocketPolicy.class);
+		when(factory.getPolicy()).thenReturn(wspolicy);
+		servlet.configure(factory);
+
 	}
+
 }
