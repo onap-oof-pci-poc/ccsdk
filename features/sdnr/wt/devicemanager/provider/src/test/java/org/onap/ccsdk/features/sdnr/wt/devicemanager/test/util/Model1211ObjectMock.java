@@ -25,6 +25,9 @@ import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.wrapperc.Wrapp
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev130715.DateAndTime;
 import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.core.model.rev170320.NetworkElement;
 import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.core.model.rev170320.NetworkElementBuilder;
+import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.core.model.rev170320.UniversalId;
+import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev180907.ProblemNotification;
+import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev180907.ProblemNotificationBuilder;
 import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev180907.MwAirInterfaceDiversityPac;
 import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev180907.MwHybridMwStructurePac;
 import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev180907.MwPureEthernetStructurePac;
@@ -133,6 +136,16 @@ public class Model1211ObjectMock {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public ProblemNotification getProblemNotification() {
+        ProblemNotificationBuilder b = new ProblemNotificationBuilder();
+        b.setProblem("ProblemNotification");
+        b.setSeverity(SeverityType.Minor);
+        b.setCounter(2);
+        b.setObjectIdRef(new UniversalId("test"));
+        b.setTimeStamp(new DateAndTime(InternalDateAndTime.getTestpattern().getValue()));
+        return b.build();
     }
 
 }

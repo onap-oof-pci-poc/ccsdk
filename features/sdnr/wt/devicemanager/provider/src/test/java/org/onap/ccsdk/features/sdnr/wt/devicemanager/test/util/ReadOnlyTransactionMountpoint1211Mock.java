@@ -26,24 +26,29 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import org.opendaylight.controller.md.sal.binding.api.NotificationService;
 import org.opendaylight.controller.md.sal.binding.api.ReadOnlyTransaction;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
 import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.core.model.rev170320.NetworkElement;
+import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev180907.MicrowaveModelListener;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNode;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.Node;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology.NodeBuilder;
+import org.opendaylight.yangtools.concepts.ListenerRegistration;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.binding.NotificationListener;
 
 /**
  * @author herbert
  *
  */
 @SuppressWarnings("deprecation")
-public class ReadOnlyTransactionMountpoint1211Mock implements ReadOnlyTransaction {
+public class ReadOnlyTransactionMountpoint1211Mock implements ReadOnlyTransaction, NotificationService {
 
     private final Model1211ObjectMock mock = new Model1211ObjectMock();
+    private MicrowaveModelListener modelListener;
 
     @Override
     public Object getIdentifier() {
@@ -187,5 +192,17 @@ public class ReadOnlyTransactionMountpoint1211Mock implements ReadOnlyTransactio
 
     @Override
     public void close() {}
+
+    @Override
+    public <T extends NotificationListener> ListenerRegistration<T> registerNotificationListener(T listener) {
+        this.modelListener = (MicrowaveModelListener)listener;
+        return null;
+    }
+
+
+    public void sendProblemNotification() {
+        System.out.println("Send out Problemnotification");
+        modelListener.onProblemNotification(mock.getProblemNotification());
+    }
 
 }

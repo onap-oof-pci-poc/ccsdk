@@ -24,6 +24,7 @@ package org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock;
 import com.google.common.base.Optional;
 import org.opendaylight.controller.md.sal.binding.api.BindingService;
 import org.opendaylight.controller.md.sal.binding.api.MountPoint;
+import org.opendaylight.controller.md.sal.binding.api.NotificationService;
 import org.opendaylight.controller.md.sal.binding.api.ReadOnlyTransaction;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.network.topology.topology.topology.types.TopologyNetconf;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.NetworkTopology;
@@ -40,7 +41,8 @@ public class MountPointMock implements MountPoint {
 
     private boolean databrokerAbsent = true;
     private final DataBrokerMountpointMock dataBroker = new DataBrokerMountpointMock();
-    private final NotificationServiceMock notificationService = new NotificationServiceMock();
+    private final RpcConsumerRegistryMock rpcConsumerRegistry = new RpcConsumerRegistryMock();
+    private NotificationService setReadOnlyTransaction;
 
     private static final InstanceIdentifier<Topology> NETCONF_TOPO_IID =
             InstanceIdentifier.create(NetworkTopology.class).child(Topology.class,
@@ -59,12 +61,16 @@ public class MountPointMock implements MountPoint {
 
         Optional<?> res;
         if (service.isInstance(dataBroker)) {
+            System.out.println("Delivering databroker");
             res =  databrokerAbsent ? Optional.absent() : Optional.of(dataBroker);
-        } else if (service.isInstance(org.opendaylight.controller.sal.binding.api.RpcConsumerRegistry.class)) {
-            res = Optional.of(new RpcConsumerRegistryMock());
-        } else if (service.isInstance(notificationService)) {
-            res = Optional.of(notificationService);
+        } else if (service.isInstance(rpcConsumerRegistry)) {
+            System.out.println("Delivering RpcConsumerRegistryMock");
+            res = Optional.of(rpcConsumerRegistry);
+        } else if (service.isInstance(setReadOnlyTransaction)) {
+            System.out.println("Delivering notificationService");
+            res = Optional.of(setReadOnlyTransaction);
         } else {
+            System.out.println("Delivering no service");
             res = Optional.absent();
         }
         return (Optional<T>)res;
@@ -74,7 +80,10 @@ public class MountPointMock implements MountPoint {
         this.databrokerAbsent = state;
     }
 
-    public void setReadOnlyTransaction(ReadOnlyTransaction readOnlyTransaction) {
+    public <T extends NotificationService&ReadOnlyTransaction>void setReadOnlyTransaction(T readOnlyTransaction) {
+        this.setReadOnlyTransaction = readOnlyTransaction;
         dataBroker.setReadOnlyTransaction(readOnlyTransaction);
     }
+
+
 }

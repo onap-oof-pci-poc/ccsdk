@@ -48,7 +48,6 @@ import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.ReadOnlyTransacti
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.ReadOnlyTransactionMountpoint12Mock;
 import org.opendaylight.controller.md.sal.binding.api.MountPointService;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
-import org.opendaylight.controller.md.sal.binding.api.ReadOnlyTransaction;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNode;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.NodeId;
@@ -80,7 +79,7 @@ public class TestDeviceManagerWithDatabase {
         Files.createDirectories(etc);
 
         //Create mocks
-        ReadOnlyTransaction readOnlyTransaction = new ReadOnlyTransactionMountpoint12Mock();
+        ReadOnlyTransactionMountpoint12Mock readOnlyTransaction = new ReadOnlyTransactionMountpoint12Mock();
         dataBrokerNetconf = new DataBrokerNetconfMock();
         dataBrokerNetconf.setReadOnlyTransaction(readOnlyTransaction);
         mountPoint = new MountPointMock();
@@ -165,6 +164,7 @@ public class TestDeviceManagerWithDatabase {
             e.printStackTrace();
             fail("Exception received.");
         }
+
         readOnlyTransaction.close();
         System.out.println("Test2: Done");
 
@@ -191,6 +191,13 @@ public class TestDeviceManagerWithDatabase {
             e.printStackTrace();
             fail("Exception received.");
         }
+
+        readOnlyTransaction.sendProblemNotification();
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+        }
+
         readOnlyTransaction.close();
         System.out.println("Test3: Done");
 
@@ -217,6 +224,14 @@ public class TestDeviceManagerWithDatabase {
             e.printStackTrace();
             fail("Exception received.");
         }
+
+        readOnlyTransaction.sendProblemNotification();
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            Thread.interrupted();
+        }
+
         readOnlyTransaction.close();
         System.out.println("Test4: Done");
 
@@ -243,6 +258,13 @@ public class TestDeviceManagerWithDatabase {
             e.printStackTrace();
             fail("Exception received.");
         }
+        readOnlyTransaction.sendProblemNotification();
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            Thread.interrupted();
+        }
+
         readOnlyTransaction.close();
         System.out.println("Test5: Done");
 

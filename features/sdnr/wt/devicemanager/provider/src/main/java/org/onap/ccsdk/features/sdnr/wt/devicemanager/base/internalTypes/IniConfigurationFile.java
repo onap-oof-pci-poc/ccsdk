@@ -108,21 +108,6 @@ public class IniConfigurationFile {
         this.load();
     }
 
-    public String getProperty(String key, String defValue) {
-        Section s;
-        if (key.contains(".")) {
-            s = this.getSection(key.substring(0, key.indexOf(".")));
-            key = key.substring(key.indexOf(".") + 1);
-        } else {
-            s = this.getSection(SECTIONNAME_ROOT);
-        }
-
-        String v = s.getProperty(key);
-        if (v == null || v.isEmpty()) {
-            return defValue;
-        }
-        return v;
-    }
 
     public void setProperty(String key, String value) {
         Section s;
@@ -135,17 +120,6 @@ public class IniConfigurationFile {
         s.setProperty(key, value);
     }
 
-    public int getProperty(String key, int defValue) throws ConversionException {
-        Section s;
-        if (key.contains(".")) {
-            s = this.getSection(key.substring(0, key.indexOf(".")));
-            key = key.substring(key.indexOf(".") + 1);
-        } else {
-            s = this.getSection(SECTIONNAME_ROOT);
-        }
-
-        return s.getInt(key, defValue);
-    }
 
     public void setProperty(String key, int value) {
         Section s;
@@ -158,17 +132,6 @@ public class IniConfigurationFile {
         s.setProperty(key, String.format("%d", value));
     }
 
-    public boolean getProperty(String key, boolean defValue) throws ConversionException {
-        Section s;
-        if (key.contains(".")) {
-            s = this.getSection(key.substring(0, key.indexOf(".")));
-            key = key.substring(key.indexOf(".") + 1);
-        } else {
-            s = this.getSection(SECTIONNAME_ROOT);
-        }
-
-        return s.getBoolean(key, defValue);
-    }
 
     public void setProperty(String key, boolean value) {
         Section s;
