@@ -104,12 +104,12 @@
       <artifactId>elasticsearch</artifactId>
       <version>2.2.0</version>
     </dependency>
-    <!--
     <dependency>
       <groupId>org.elasticsearch.plugin</groupId>
       <artifactId>delete-by-query</artifactId>
       <version>2.2.0</version>
-    </dependency> -->
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>com.spatial4j</groupId>
       <artifactId>spatial4j</artifactId>
