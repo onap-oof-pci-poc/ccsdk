@@ -23,20 +23,27 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.aaiconnector.impl.AaiProviderClient;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.InternalDateAndTime;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.InternalSeverity;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.InventoryInformation;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.util.NetconfTimeStamp;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.HtDevicemanagerConfiguration;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.dcaeconnector.impl.DcaeProviderClient;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.ProblemNotificationXml;
+
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import com.google.common.io.Files;
 
-public class TestAai {
+public class TestDcae {
 
-    private static final String ENABLEDAAI_TESTCONFIG_FILENAME = "test2.properties";
-    private static final int AAI_SERVER_PORT=45454;
-    private static final String TESTCONFIG_CONTENT="[dcae]\n" + 
+    private static final String ENABLEDDCAE_TESTCONFIG_FILENAME = "test2.properties";
+    private static final int DCAE_SERVER_PORT=45451;
+    private static final String URI = "/abc";
+	private static final String TESTCONFIG_CONTENT="[dcae]\n" + 
     		"dcaeUserCredentials=admin:admin\n" + 
-    		"dcaeUrl=off\n" + 
+    		"dcaeUrl=http://localhost:"+DCAE_SERVER_PORT+URI+"\n" + 
     		"dcaeHeartbeatPeriodSeconds=120\n" + 
     		"dcaeTestCollector=no\n" + 
     		"\n" + 
@@ -66,7 +73,7 @@ public class TestAai {
     		"[aai]\n" + 
     		"#keep comment\n" + 
     		"aaiHeaders=[\"X-TransactionId: 9999\"]\n" + 
-    		"aaiUrl=http://localhost:"+AAI_SERVER_PORT+"\n" + 
+    		"aaiUrl=off\n" + 
     		"aaiUserCredentials=AAI:AAI\n" + 
     		"aaiDeleteOnMountpointRemove=true\n" + 
     		"aaiTrustAllCerts=false\n" + 
@@ -85,38 +92,7 @@ public class TestAai {
 	private HttpServer server;
 	private ExecutorService httpThreadPool;
 	private HtDevicemanagerConfiguration cfg;
-    
-	@Test
-    public void test() {
-        HtDevicemanagerConfiguration cfg=HtDevicemanagerConfiguration.getTestConfiguration();
-
-        AaiProviderClient provider = new AaiProviderClient(cfg, null);
-
-        String mountPointName = "testDevice 01";
-        String type="Unit";
-        String model="Horizon Compact+";
-        String vendor="DragonWave-X";
-        String ipv4="127.0.0.1";
-        String ipv6="::1";
-        List<String> ifInfos = new ArrayList<>();
-        ifInfos.add("LP-MWPS-RADIO");
-        InventoryInformation ii=new InventoryInformation(type, model, vendor, ipv4, ipv6, ifInfos);
-        System.out.println("registering device");
-        provider.onDeviceRegistered(mountPointName,ii);
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println("unregistering device");
-        provider.onDeviceUnregistered(mountPointName);
-        System.out.println("finished");
-        try {
-            provider.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+ 
     @Test
     public void test2() {
     	try {
@@ -125,7 +101,7 @@ public class TestAai {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-        AaiProviderClient provider = new AaiProviderClient(cfg, null);
+        DcaeProviderClient provider = new DcaeProviderClient(cfg,"mountpoint",null);
 
         String mountPointName = "testDevice 01";
         String type="Unit";
@@ -137,16 +113,15 @@ public class TestAai {
         ifInfos.add("LP-MWPS-RADIO");
         InventoryInformation ii=new InventoryInformation(type, model, vendor, ipv4, ipv6, ifInfos);
         System.out.println("registering device");
-        provider.onDeviceRegistered(mountPointName);
-        provider.onDeviceRegistered(mountPointName,ii);
-        try {
+        boolean neDeviceAlarm = false;
+		ProblemNotificationXml notification = new ProblemNotificationXml(mountPointName, "network-element", "problemName", InternalSeverity.Critical,"123", InternalDateAndTime.getTestpattern());
+		provider.sendProblemNotification(mountPointName, notification, neDeviceAlarm);
+        
+		try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("unregistering device");
-        provider.onDeviceUnregistered(mountPointName);
-        System.out.println("finished");
         try {
             provider.close();
         } catch (Exception e) {
@@ -154,18 +129,24 @@ public class TestAai {
         }
     }
     @Before
-	public void initAaiTestWebserver() throws IOException {
+	public void initDcaeTestWebserver() throws IOException {
     	try {
-			Files.asCharSink(new File(ENABLEDAAI_TESTCONFIG_FILENAME), StandardCharsets.UTF_8).write(TESTCONFIG_CONTENT);
+			Files.asCharSink(new File(ENABLEDDCAE_TESTCONFIG_FILENAME), StandardCharsets.UTF_8).write(TESTCONFIG_CONTENT);
 		} catch (IOException e1) {
 			fail(e1.getMessage());
 		}
-        cfg=HtDevicemanagerConfiguration.getTestConfiguration(ENABLEDAAI_TESTCONFIG_FILENAME,true);
-        cfg.getAai().reload();
-		this.server = HttpServer.create(new InetSocketAddress(AAI_SERVER_PORT), 0);
+        cfg=HtDevicemanagerConfiguration.getTestConfiguration(ENABLEDDCAE_TESTCONFIG_FILENAME,true);
+        cfg.getDcae().reload();
+        try
+        {
+		this.server = HttpServer.create(new InetSocketAddress(DCAE_SERVER_PORT), 0);
+        }
+        catch(Exception e) {
+        	fail(e.getMessage());
+        }
 		this.httpThreadPool = Executors.newFixedThreadPool(5);
 		this.server.setExecutor(this.httpThreadPool);
-		this.server.createContext(cfg.getAai().getBaseUri(), new MyHandler());
+		this.server.createContext(URI, new MyHandler());
 		//server.createContext("/", new MyRootHandler());
 		this.server.setExecutor(null); // creates a default executor
 		this.server.start();

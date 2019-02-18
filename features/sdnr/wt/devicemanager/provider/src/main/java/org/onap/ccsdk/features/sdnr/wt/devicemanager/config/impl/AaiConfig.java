@@ -345,6 +345,15 @@ public class AaiConfig extends BaseSubConfig {
         return true;
     }
 
+    public String getBaseUri() {
+    	String s;
+    	if(!this.apiVersion.startsWith("/")) {
+            s="/"+this.apiVersion;
+        }
+    	else
+    		s=this.apiVersion;
+    	return s;
+    }
     public String getBaseUrl() {
         String url=this.baseUrl;
         if(!url.endsWith("/")) {
