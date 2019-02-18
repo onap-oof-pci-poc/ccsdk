@@ -34,6 +34,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database.HtDatabaseWebAPIClient;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.Resources;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.container.Capabilities;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.DeviceManagerImpl;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.DeviceManagerService.Action;
@@ -244,6 +245,27 @@ public class Test1dm {
         }
         readOnlyTransaction.close();
         System.out.println("Test5: Done");
+
+    }
+
+    @Test
+    public void test6() {
+
+        System.out.println("Test6: Write zip data file file");
+        File testFile = new File("etc/elasticsearch_update.zip");
+        Resources.extractFileTo("elasticsearch_update.zip", testFile);
+        int wait=130;
+        while ( testFile.exists() && wait-- > 0) {
+            System.out.println("Waiting "+wait);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                Thread.interrupted();
+            }
+        }
+
+
+        System.out.println("Test6: Done");
 
     }
 

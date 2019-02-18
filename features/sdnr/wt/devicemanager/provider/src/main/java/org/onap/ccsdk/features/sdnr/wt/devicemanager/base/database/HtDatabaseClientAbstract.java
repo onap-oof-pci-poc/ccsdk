@@ -23,7 +23,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,7 +31,6 @@ import org.elasticsearch.action.admin.indices.alias.IndicesAliasesResponse;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
-import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequestBuilder;
@@ -248,107 +246,6 @@ public class HtDatabaseClientAbstract implements HtDataBase, AutoCloseable {
      */
     public void doCreateIndex() {
         doCreateIndexWithMapping(null);
-    }
-
-    /**
-     * Write a JSON mapping definition for a document from a file to ES Hint: A later change of the
-     * mapping is not possible.
-     *
-     * @param jsonString String with mapping definition in JSON Format
-     */
-
-    public void doWriteMappingJson(String jsonString) {
-
-        if (esIndexAlias == null) {
-            throw new IllegalArgumentException("Missing Index");
-        }
-        if (jsonString == null) {
-            String s = "Mapping string parameter is null";
-            log.warn(s);
-            throw new IllegalArgumentException(s);
-        }
-
-        try {
-            // MAPPING GOES HERE
-            log.debug("Check status of ES index: {}", esIndexAlias);
-
-            final IndicesExistsResponse indexStatus =
-                    client.admin().indices().prepareExists(esIndexAlias).execute().actionGet();
-
-            if (indexStatus.isExists()) {
-                log.debug("ES index exists: {}", esIndexAlias);
-                // A change of mapping is not working. This here works only for new datatypes
-
-                PutMappingResponse res = client.admin().indices().preparePutMapping(esIndexAlias).setSource(jsonString)
-                        .execute().actionGet();
-                if (log.isDebugEnabled()) {
-                    log.debug("Result: {}", res);
-                }
-
-            } else {
-                log.debug("Create not existing ES index: {}", esIndexAlias);
-
-                CreateIndexRequestBuilder createIndexRequestBuilder =
-                        client.admin().indices().prepareCreate(esIndexAlias);
-                createIndexRequestBuilder.addMapping(jsonString).execute().actionGet();
-            }
-
-        } catch (ElasticsearchException e) {
-            log.warn(e.getDetailedMessage());
-        }
-    }
-
-    /**
-     * Write a Json mapping definition for a document from a file to ES
-     *
-     * @param fileName Filename with json definition.
-     */
-    public void doWriteMappingFromFile(String fileName) {
-
-
-        log.info("Write mapping from File: {}", fileName);
-
-        if (esIndexAlias == null) {
-            throw new IllegalArgumentException("Missing Index");
-        }
-
-        if (fileName == null) {
-            log.warn("No mapping for {} specified in parameter file.", esIndexAlias);
-            return;
-        }
-
-        String content = null;
-
-        try {
-            content = new String(Files.readAllBytes(Paths.get(fileName)), StandardCharsets.UTF_8);
-        } catch (IOException e1) {
-            log.warn("Problem with file {}: {}", fileName, e1.getMessage());
-        }
-
-        doWriteMappingJson(content);
-
-    }
-
-    /**
-     * Write list with json objects from json files
-     *
-     * @param docTypeAndFileName List with 2 String Array. String[0] Contains the dataType name
-     *        String[1] Contains the filename
-     */
-    public void doWriteJsonFiles(List<String[]> docTypeAndFileName) {
-
-        if (docTypeAndFileName != null) {
-            log.debug("Write number of JSONFiles: {}", docTypeAndFileName.size());
-            int t = 1;
-            for (String[] s : docTypeAndFileName) {
-                if (s.length == 2) {
-                    writeJsonObjectsFromFile(s[0], s[1]);
-                } else {
-                    log.warn("Wrong parameters number. Entry: {}", t);
-                }
-                t++;
-            }
-        }
     }
 
     /**

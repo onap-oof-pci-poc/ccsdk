@@ -98,7 +98,7 @@ public class IndexUpdateService implements AutoCloseable {
     }
     public void start()
     {
-        this.taskHandle = this.scheduler.scheduleAtFixedRate(checkForUpdateTask, 0, 120, TimeUnit.SECONDS);
+        this.taskHandle = this.scheduler.scheduleAtFixedRate(checkForUpdateTask, 0, 30, TimeUnit.SECONDS);
     }
     public void stop()
     {
