@@ -24,6 +24,7 @@ package org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock;
 import com.google.common.base.Optional;
 import org.opendaylight.controller.md.sal.binding.api.BindingService;
 import org.opendaylight.controller.md.sal.binding.api.MountPoint;
+import org.opendaylight.controller.md.sal.binding.api.ReadOnlyTransaction;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.network.topology.topology.topology.types.TopologyNetconf;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.NetworkTopology;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.TopologyId;
@@ -73,4 +74,7 @@ public class MountPointMock implements MountPoint {
         this.databrokerAbsent = state;
     }
 
+    public void setReadOnlyTransaction(ReadOnlyTransaction readOnlyTransaction) {
+        dataBroker.setReadOnlyTransaction(readOnlyTransaction);
+    }
 }

@@ -39,10 +39,15 @@ import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.MountPointMock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.MountPointServiceMock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.NotificationPublishServiceMock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.RpcProviderRegistryMock;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.ModelObjectMock;
-import org.opendaylight.controller.md.sal.binding.api.DataBroker;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.Model1211ObjectMock;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.Model1211pObjectMock;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.Model12ObjectMock;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.ReadOnlyTransactionMountpoint1211Mock;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.ReadOnlyTransactionMountpoint1211pMock;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.ReadOnlyTransactionMountpoint12Mock;
 import org.opendaylight.controller.md.sal.binding.api.MountPointService;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
+import org.opendaylight.controller.md.sal.binding.api.ReadOnlyTransaction;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNode;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.NodeId;
@@ -56,11 +61,10 @@ public class Test1dm {
     private static Path KARAF_ETC = Paths.get("etc");
     private static DeviceManagerImpl deviceManager;
     private static MountPointMock  mountPoint;
+    private static DataBrokerNetconfMock dataBrokerNetconf;
 
     private static final Logger LOG = LoggerFactory.getLogger(Test1dm.class);
 
-
-    private static NetconfNode nNode = null;
 
 
     @BeforeClass
@@ -75,15 +79,19 @@ public class Test1dm {
         Files.createDirectories(etc);
 
         //Create mocks
-        DataBroker dataBroker = new DataBrokerNetconfMock();
-        MountPointService mountPointService = new MountPointServiceMock(mountPoint = new MountPointMock());
+        ReadOnlyTransaction readOnlyTransaction = new ReadOnlyTransactionMountpoint12Mock();
+        dataBrokerNetconf = new DataBrokerNetconfMock();
+        dataBrokerNetconf.setReadOnlyTransaction(readOnlyTransaction);
+        mountPoint = new MountPointMock();
+        mountPoint.setReadOnlyTransaction(readOnlyTransaction);
+        MountPointService mountPointService = new MountPointServiceMock(mountPoint);
         NotificationPublishService notificationPublishService = new NotificationPublishServiceMock();
         RpcProviderRegistry rpcProviderRegistry = new RpcProviderRegistryMock();
 
         //start using blueprint interface
         deviceManager = new DeviceManagerImpl();
 
-        deviceManager.setDataBroker(dataBroker);
+        deviceManager.setDataBroker(dataBrokerNetconf);
         deviceManager.setMountPointService(mountPointService);
         deviceManager.setNotificationPublishService(notificationPublishService);
         deviceManager.setRpcProviderRegistry(rpcProviderRegistry);
@@ -97,7 +105,6 @@ public class Test1dm {
         assertTrue("Devicemanager not initialized", deviceManager.isDevicemanagerInitializationOk());
         System.out.println("Initialization done");
 
-        nNode = ModelObjectMock.getNetconfNode();
     }
 
     @AfterClass
@@ -130,6 +137,7 @@ public class Test1dm {
     public void test2() {
         System.out.println("Test2: slave mountpoint");
 
+        NetconfNode nNode = Model12ObjectMock.getNetconfNode();
         mountPoint.setDatabrokerAbsent(true);
         NodeId nodeId = new NodeId("mountpointTest2");
         try {
@@ -145,8 +153,9 @@ public class Test1dm {
 
     @Test
     public void test3() {
-        System.out.println("Test3: master mountpoint");
+        System.out.println("Test3: master mountpoint ONF Model 12");
 
+        NetconfNode nNode = Model12ObjectMock.getNetconfNode();
         mountPoint.setDatabrokerAbsent(false);
         NodeId nodeId = new NodeId("mountpointTest3");
 
@@ -160,6 +169,58 @@ public class Test1dm {
             fail("Exception received.");
         }
         System.out.println("Test3: Done");
+
+    }
+
+    @Test
+    public void test4() {
+        System.out.println("Test4: master mountpoint ONF Model 1211");
+
+        ReadOnlyTransaction readOnlyTransaction = new ReadOnlyTransactionMountpoint1211Mock();
+        dataBrokerNetconf.setReadOnlyTransaction(readOnlyTransaction);
+        mountPoint.setReadOnlyTransaction(readOnlyTransaction);
+
+        NetconfNode nNode = Model1211ObjectMock.getNetconfNode();
+        mountPoint.setDatabrokerAbsent(false);
+        NodeId nodeId = new NodeId("mountpointTest4");
+
+        Capabilities capabilities = Capabilities.getAvailableCapabilities(nNode);
+        System.out.println("Node capabilites: "+capabilities);
+
+        try {
+            deviceManager.startListenerOnNodeForConnectedState(Action.ADD, nodeId, nNode);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Exception received.");
+        }
+        readOnlyTransaction.close();
+        System.out.println("Test4: Done");
+
+    }
+
+    @Test
+    public void test5() {
+        System.out.println("Test5: master mountpoint ONF Model 1211p");
+
+        ReadOnlyTransaction readOnlyTransaction = new ReadOnlyTransactionMountpoint1211pMock();
+        dataBrokerNetconf.setReadOnlyTransaction(readOnlyTransaction);
+        mountPoint.setReadOnlyTransaction(readOnlyTransaction);
+
+        NetconfNode nNode = Model1211pObjectMock.getNetconfNode();
+        mountPoint.setDatabrokerAbsent(false);
+        NodeId nodeId = new NodeId("mountpointTest5");
+
+        Capabilities capabilities = Capabilities.getAvailableCapabilities(nNode);
+        System.out.println("Node capabilites: "+capabilities);
+
+        try {
+            deviceManager.startListenerOnNodeForConnectedState(Action.ADD, nodeId, nNode);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Exception received.");
+        }
+        readOnlyTransaction.close();
+        System.out.println("Test5: Done");
 
     }
 

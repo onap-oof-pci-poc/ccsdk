@@ -41,40 +41,42 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 @SuppressWarnings("deprecation")
 public class DataBrokerNetconfMock implements DataBroker {
 
+
+    ReadOnlyTransaction readOnlyTransaction;
+
+    public void setReadOnlyTransaction(ReadOnlyTransaction readOnlyTransaction) {
+        this.readOnlyTransaction = readOnlyTransaction;
+    }
+
     @Override
     public <T extends DataObject, L extends DataTreeChangeListener<T>> ListenerRegistration<L> registerDataTreeChangeListener(
             DataTreeIdentifier<T> arg0, L arg1) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public BindingTransactionChain createTransactionChain(TransactionChainListener listener) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public ReadOnlyTransaction newReadOnlyTransaction() {
-        return new ReadOnlyTransactionMock();
+        return readOnlyTransaction;
     }
 
     @Override
     public ReadWriteTransaction newReadWriteTransaction() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public WriteTransaction newWriteOnlyTransaction() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public ListenerRegistration<DataChangeListener> registerDataChangeListener(LogicalDatastoreType store,
             InstanceIdentifier<?> path, DataChangeListener listener, DataChangeScope triggeringScope) {
-        // TODO Auto-generated method stub
         return null;
     }
 

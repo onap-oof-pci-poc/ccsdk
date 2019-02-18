@@ -31,32 +31,19 @@ import org.opendaylight.yangtools.yang.binding.Notification;
  */
 public class NotificationPublishServiceMock implements NotificationPublishService {
 
-    /* (non-Javadoc)
-     * @see org.opendaylight.controller.md.sal.binding.api.NotificationPublishService#offerNotification(org.opendaylight.yangtools.yang.binding.Notification)
-     */
     @Override
     public ListenableFuture<?> offerNotification(Notification notification) {
-        // TODO Auto-generated method stub
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.opendaylight.controller.md.sal.binding.api.NotificationPublishService#offerNotification(org.opendaylight.yangtools.yang.binding.Notification, int, java.util.concurrent.TimeUnit)
-     */
-    @Override
+   @Override
     public ListenableFuture<?> offerNotification(Notification notification, int timeout, TimeUnit unit)
             throws InterruptedException {
-        // TODO Auto-generated method stub
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.opendaylight.controller.md.sal.binding.api.NotificationPublishService#putNotification(org.opendaylight.yangtools.yang.binding.Notification)
-     */
     @Override
     public void putNotification(Notification notification) throws InterruptedException {
-        // TODO Auto-generated method stub
-
-    }
+   }
 
 }

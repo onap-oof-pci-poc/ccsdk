@@ -42,6 +42,12 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 @SuppressWarnings("deprecation")
 public class DataBrokerMountpointMock implements DataBroker, BindingService {
 
+    ReadOnlyTransaction readOnlyTransaction;
+
+    public void setReadOnlyTransaction(ReadOnlyTransaction readOnlyTransaction) {
+        this.readOnlyTransaction = readOnlyTransaction;
+    }
+
     @Override
     public <T extends DataObject, L extends DataTreeChangeListener<T>> ListenerRegistration<L> registerDataTreeChangeListener(
             DataTreeIdentifier<T> arg0, L arg1) {
@@ -55,7 +61,7 @@ public class DataBrokerMountpointMock implements DataBroker, BindingService {
 
     @Override
     public ReadOnlyTransaction newReadOnlyTransaction() {
-        return new ReadOnlyTransactionMock();
+        return readOnlyTransaction;
     }
 
     @Override

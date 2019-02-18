@@ -18,8 +18,6 @@
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -30,12 +28,9 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.elasticsearch.action.admin.cluster.node.info.NodesInfoResponse;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesResponse;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
 import org.elasticsearch.action.delete.DeleteResponse;
@@ -44,12 +39,8 @@ import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.common.bytes.BytesReference;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
@@ -65,64 +56,8 @@ public class HtDatabaseClientAbstract implements HtDataBase, AutoCloseable {
 
     private final Logger log = LoggerFactory.getLogger(HtDatabaseClientAbstract.class);
 
-    private static int DELAYSECONDS = 10;
     private final Client client;
     private String esIndexAlias;
-
-    /**
-     * Full database initialization.
-     *
-     * @param esIndex Database index
-     * @param esNodeserverName Servername or Server-IP that hosts the node.
-     * @param esClusterName Name of the cluster
-     * @param esNodeName Name of the node within the cluster to connect to.
-     * @throws UnknownHostException Servername not known.
-     */
-    public HtDatabaseClientAbstract(String esIndex, String esNodeserverName, String esClusterName, String esNodeName)
-            throws UnknownHostException {
-
-        this.esIndexAlias = esIndex;
-
-        Settings settings =
-                Settings.settingsBuilder().put("cluster.name", esClusterName).put("node.name", esNodeName).build();
-        this.client = getClient(esNodeserverName, settings);
-
-    }
-
-    /**
-     * Do not use the hostname, but use the IP for getting the client
-     *
-     * @param esIndex index to be used by the client
-     * @param esClusterName name of the ES cluster
-     * @param esNodeName name of the node
-     * @throws UnknownHostException if hostname not known
-     */
-    public HtDatabaseClientAbstract(String esIndex, String esClusterName, String esNodeName)
-            throws UnknownHostException {
-
-        this.esIndexAlias = esIndex;
-        Settings settings =
-                Settings.settingsBuilder().put("cluster.name", esClusterName).put("node.name", esNodeName).build();
-        this.client = getClient(null, settings);
-    }
-
-
-    /**
-     * Simple database initialization. Query all ES configuration information from cluster node.
-     *
-     * @param esIndex Database index
-     * @param esNodeserverHostName Servername or Server-IP that hosts the node.
-     * @throws UnknownHostException Servername not known.
-     */
-
-    public HtDatabaseClientAbstract(String esIndex, String esNodeserverHostName) throws UnknownHostException {
-
-        this.esIndexAlias = esIndex;
-
-        Settings settings = Settings.settingsBuilder().put("client.transport.ignore_cluster_name", true)
-                .put("client.transport.sniff", true).build();
-        this.client = getClient(esNodeserverHostName, settings);
-    }
 
     /**
      * Simple database initialization. Query all ES configuration information from cluster node.
@@ -140,75 +75,6 @@ public class HtDatabaseClientAbstract implements HtDataBase, AutoCloseable {
     /*----------------------------------
      * some constructing functions, used by public constructors
      */
-    /**
-     *
-     * @param esNodeserverName
-     * @param settings
-     * @return
-     * @throws UnknownHostException
-     */
-    private final TransportClient getClient(@Nullable String esNodeserverName, Settings settings)
-            throws UnknownHostException {
-
-        TransportClient newClient = TransportClient.builder().settings(settings).build();
-
-        if (esNodeserverName != null) {
-            InetAddress nodeIp = InetAddress.getByName(esNodeserverName);
-            newClient.addTransportAddress(new InetSocketTransportAddress(nodeIp, 9300));
-        }
-
-        setup(newClient);
-        return newClient;
-    }
-
-    private void setup(TransportClient newClient) {
-        NodesInfoResponse nodeInfos = newClient.admin().cluster().prepareNodesInfo().get();
-        String clusterName = nodeInfos.getClusterName().value();
-
-        // ------ Debug/ Info
-        StringBuffer logInfo = new StringBuffer();
-        logInfo.append("Create ES Client an localhost for Cluster '");
-        logInfo.append(clusterName);
-        logInfo.append("' for index '");
-        logInfo.append(esIndexAlias);
-        logInfo.append("' Nodelist: ");
-        for (DiscoveryNode node : newClient.connectedNodes()) {
-            logInfo.append("(");
-            logInfo.append(node.toString());
-            logInfo.append(") ");
-        }
-        log.info(logInfo.toString());
-        // ------ Debug/ Info
-
-        log.info("Starting Database service. Short wait.");
-
-        ClusterHealthResponse nodeStatus = newClient.admin().cluster().prepareHealth().setWaitForGreenStatus()
-                // .setWaitForYellowStatus()
-                .setTimeout(TimeValue.timeValueSeconds(DELAYSECONDS)).get();
-        log.debug("Elasticsearch client started with status {}", nodeStatus.toString());
-
-
-        List<DiscoveryNode> nodeList = newClient.connectedNodes();
-
-        if (nodeList.isEmpty()) {
-            log.info("ES Client created for nodes: <empty node list>");
-        } else {
-            int t = 0;
-            for (DiscoveryNode dn : nodeList) {
-                log.info("ES Client created for node#{}: {}", t, dn.getName());
-            }
-        }
-
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                log.info("Shutdown node " + HtDatabaseClientAbstract.class.getSimpleName());
-            }
-        });
-
-        log.info("Database service started.");
-
-    }
 
 
     /*----------------------------------
@@ -240,33 +106,6 @@ public class HtDatabaseClientAbstract implements HtDataBase, AutoCloseable {
     @Override
     public void close() {
         client.close();
-    }
-
-    /**
-     * Create an ES index. Delete an existing index.
-     */
-    public void doDeleteIndex() {
-        log.info("Remove index {}", esIndexAlias);
-
-        if (esIndexAlias == null) {
-            throw new IllegalArgumentException("Missing Index");
-        }
-
-        try {
-
-            // Delete index
-            IndicesExistsResponse res = client.admin().indices().prepareExists(esIndexAlias).execute().actionGet();
-
-            if (res.isExists()) {
-                log.info("Delete Index start: {}", esIndexAlias);
-                DeleteIndexRequestBuilder delIdx = client.admin().indices().prepareDelete(esIndexAlias);
-                delIdx.execute().actionGet();
-                log.info("Delete Index done.");
-            }
-
-        } catch (ElasticsearchException e) {
-            log.warn(e.getDetailedMessage());
-        }
     }
 
     /**

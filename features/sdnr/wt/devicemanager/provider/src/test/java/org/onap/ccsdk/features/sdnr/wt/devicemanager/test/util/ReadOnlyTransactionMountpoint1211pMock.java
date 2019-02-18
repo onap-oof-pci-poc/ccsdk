@@ -1,5 +1,5 @@
 /*******************************************************************************
- * ============LICENSE_START======================================================= ONAP : ccsdk
+rev170324 * ============LICENSE_START======================================================= ONAP : ccsdk
  * feature sdnr wt sdnr-wt-devicemanager-provider
  * ================================================================================ Copyright (C)
  * 2019 highstreet technologies GmbH Intellectual Property. All rights reserved.
@@ -15,7 +15,7 @@
  * the License. ============LICENSE_END=========================================================
  ******************************************************************************/
 
-package org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock;
+package org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util;
 
 import com.google.common.base.Optional;
 import com.google.common.util.concurrent.CheckedFuture;
@@ -23,7 +23,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.ModelObjectMock;
 import org.opendaylight.controller.md.sal.binding.api.ReadOnlyTransaction;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
@@ -39,7 +38,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
  *
  */
 @SuppressWarnings("deprecation")
-public class ReadOnlyTransactionMock implements ReadOnlyTransaction {
+public class ReadOnlyTransactionMountpoint1211pMock implements ReadOnlyTransaction {
 
 
     @Override
@@ -54,17 +53,11 @@ public class ReadOnlyTransactionMock implements ReadOnlyTransaction {
 
         System.out.println("READ: " + path + " Store: " + store);
 
-        /*
-         * NetconfNodeBuilder netconfNodeBuilder = new NetconfNodeBuilder();
-         * netconfNodeBuilder.setConnectionStatus(ConnectionStatus.Connected);
-         * netconfNodeBuilder.setAvailableCapabilities(getCababilitiesList(WrapperMicrowaveModelRev181010.
-         * QNAME.toString()).build()); NetconfNode nnode = netconfNodeBuilder.build();
-         */
         Optional<T> res1;
 
         if (path.getTargetType().equals(Node.class)) {
             System.out.println("Deliver " + path.getTargetType());
-            NetconfNode nNode = ModelObjectMock.getNetconfNode();
+            NetconfNode nNode = Model1211pObjectMock.getNetconfNode();
             NodeBuilder nodeBuilder = new NodeBuilder();
             nodeBuilder.addAugmentation(NetconfNode.class, nNode);
             Node node = nodeBuilder.build();
@@ -72,40 +65,40 @@ public class ReadOnlyTransactionMock implements ReadOnlyTransaction {
 
         } else if (path.getTargetType().equals(NetworkElement.class)) {
             System.out.println("Deliver " + path.getTargetType());
-            NetworkElement ne = ModelObjectMock.getNetworkElement();
+            NetworkElement ne = Model1211pObjectMock.getNetworkElement();
             res1 = (Optional<T>) Optional.of(ne);
 
         } else if (path.getTargetType().equals(
-                org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.air._interface.pac.AirInterfaceCurrentProblems.class)) {
+                org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev181010.mw.air._interface.pac.AirInterfaceCurrentProblems.class)) {
             // MwAirInterfacePac
             System.out.println("Deliver " + path.getTargetType());
-            res1 = (Optional<T>) Optional.of(ModelObjectMock.getCurrentProblems(
-                    org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.air._interface.current.problems.g.CurrentProblemListBuilder.class,
-                    org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.air._interface.pac.AirInterfaceCurrentProblemsBuilder.class));
+            res1 = (Optional<T>) Optional.of(Model1211pObjectMock.getCurrentProblems(
+                    org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev181010.air._interface.current.problems.g.CurrentProblemListBuilder.class,
+                    org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev181010.mw.air._interface.pac.AirInterfaceCurrentProblemsBuilder.class));
 
         } else if (path.getTargetType().equals(
-                org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.air._interface.diversity.pac.AirInterfaceDiversityCurrentProblems.class)) {
+                org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev181010.mw.air._interface.diversity.pac.AirInterfaceDiversityCurrentProblems.class)) {
             // MwAirInterfaceDiversityPac
             System.out.println("Deliver " + path.getTargetType());
-            res1 = (Optional<T>) Optional.of(ModelObjectMock.getCurrentProblems(
-                    org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.air._interface.diversity.current.problems.g.CurrentProblemListBuilder.class,
-                    org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.air._interface.diversity.pac.AirInterfaceDiversityCurrentProblemsBuilder.class));
+            res1 = (Optional<T>) Optional.of(Model1211pObjectMock.getCurrentProblems(
+                    org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev181010.air._interface.diversity.current.problems.g.CurrentProblemListBuilder.class,
+                    org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev181010.mw.air._interface.diversity.pac.AirInterfaceDiversityCurrentProblemsBuilder.class));
 
         } else if (path.getTargetType().equals(
-                org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.ethernet.container.pac.EthernetContainerCurrentProblems.class)) {
+                org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev181010.mw.ethernet.container.pac.EthernetContainerCurrentProblems.class)) {
             //EthernetContainerCurrentProblems
             System.out.println("Deliver " + path.getTargetType());
-            res1 = (Optional<T>) Optional.of(ModelObjectMock.getCurrentProblems(
-                    org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.ethernet.container.current.problems.g.CurrentProblemListBuilder.class,
-                    org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.ethernet.container.pac.EthernetContainerCurrentProblemsBuilder.class));
+            res1 = (Optional<T>) Optional.of(Model1211pObjectMock.getCurrentProblems(
+                    org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev181010.ethernet.container.current.problems.g.CurrentProblemListBuilder.class,
+                    org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev181010.mw.ethernet.container.pac.EthernetContainerCurrentProblemsBuilder.class));
 
         } else if (path.getTargetType().equals(
-                org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.tdm.container.pac.TdmContainerCurrentProblems.class)) {
+                org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev181010.mw.tdm.container.pac.TdmContainerCurrentProblems.class)) {
             // TdmContainerCurrentProblems
             System.out.println("Deliver " + path.getTargetType());
-            res1 = (Optional<T>) Optional.of(ModelObjectMock.getCurrentProblems(
-                    org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.tdm.container.current.problems.g.CurrentProblemListBuilder.class,
-                    org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.tdm.container.pac.TdmContainerCurrentProblemsBuilder.class));
+            res1 = (Optional<T>) Optional.of(Model1211pObjectMock.getCurrentProblems(
+                    org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev181010.tdm.container.current.problems.g.CurrentProblemListBuilder.class,
+                    org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev181010.mw.tdm.container.pac.TdmContainerCurrentProblemsBuilder.class));
 
         } else {
             System.err.println("Nothing to deliver for" + path.getTargetType());

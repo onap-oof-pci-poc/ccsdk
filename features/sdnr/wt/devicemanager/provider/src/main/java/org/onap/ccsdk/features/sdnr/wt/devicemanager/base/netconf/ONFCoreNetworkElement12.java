@@ -364,13 +364,13 @@ public class ONFCoreNetworkElement12 extends ONFCoreNetworkElement12Base
         UniversalId uuid;
 
         synchronized (pmLock) {
-            for (Lp ltp : interfaceList) {
+            for (Lp lp : interfaceList) {
 
                 idxStart = resultList.size();
-                uuid = ltp.getUuid();
-                Class<?> lpClass = getLpExtension(ltp);
+                uuid = lp.getUuid();
+                Class<?> lpClass = getLpExtension(lp);
 
-                ONFLayerProtocolName lpName = ONFLayerProtocolName.valueOf(ltp.getLayerProtocolName());
+                ONFLayerProtocolName lpName = ONFLayerProtocolName.valueOf(lp.getLayerProtocolName());
 
                 microwaveModel.readTheFaultsOfMicrowaveModel(lpName, lpClass, uuid, resultList);
 
@@ -424,19 +424,19 @@ public class ONFCoreNetworkElement12 extends ONFCoreNetworkElement12Base
     /**
      * Get from LayerProtocolExtensions the related generated ONF Interface PAC class which represents it.
      *
-     * @param ltp logical termination point
+     * @param lp logical termination point
      * @return Class of InterfacePac
      */
     @Nullable
-    private Class<?> getLpExtension(@Nullable Lp ltp) {
+    private Class<?> getLpExtension(@Nullable Lp lp) {
 
         String capability = EMPTY;
         String revision = EMPTY;
         String conditionalPackage = EMPTY;
         Class<?> res = null;
 
-        if (ltp != null) {
-            for (Extension e : getExtensionList(ltp)) {
+        if (lp != null) {
+            for (Extension e : getExtensionList(lp)) {
                 if (e.getValueName().contentEquals("capability")) {
                     capability = e.getValue();
                     int idx = capability.indexOf("?");

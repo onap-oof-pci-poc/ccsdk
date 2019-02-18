@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.InternalDateAndTime;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.container.ONFLayerProtocolName;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.wrapperc.WrapperMicrowaveModelRev170324;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.wrapperc.WrapperMicrowaveModelRev180907;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.yang.types.rev130715.DateAndTime;
 import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.core.model.rev170320.LayerProtocolName;
 import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.core.model.rev170320.NetworkElement;
@@ -28,13 +28,10 @@ import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.core.model.rev170
 import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.core.model.rev170320.network.element.Ltp;
 import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.core.model.rev170320.network.element.LtpBuilder;
 import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.core.model.rev170320.network.element.LtpKey;
-import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.MwAirInterfacePac;
-import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.MwEthernetContainerPac;
-import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.MwTdmContainerPac;
-import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.SeverityType;
-import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.air._interface.current.problems.g.CurrentProblemListBuilder;
-import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.air._interface.pac.AirInterfaceCurrentProblems;
-import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.mw.air._interface.pac.AirInterfaceCurrentProblemsBuilder;
+import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev180907.MwAirInterfacePac;
+import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev180907.MwEthernetContainerPac;
+import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev180907.MwTdmContainerPac;
+import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev180907.SeverityType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNode;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNodeBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNodeConnectionStatus.ConnectionStatus;
@@ -44,12 +41,12 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev15
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.common.QName;
 
-public class ModelObjectMock {
+public class Model1211ObjectMock {
 
     public static NetconfNode getNetconfNode() {
 
         AvailableCapabilitiesBuilder availableCapabilitiesBuilder =
-                getAvailableCababilitiesList(NetworkElement.QNAME, WrapperMicrowaveModelRev170324.QNAME);
+                getAvailableCababilitiesList(NetworkElement.QNAME, WrapperMicrowaveModelRev180907.QNAME);
 
         NetconfNodeBuilder nNodeBuilder = new NetconfNodeBuilder();
         nNodeBuilder.setAvailableCapabilities(availableCapabilitiesBuilder.build());
@@ -66,16 +63,16 @@ public class ModelObjectMock {
 
         // LTP/LP1
         /*
-        LpBuilder lpBuilder1 = new LpBuilder();
-        lpBuilder1.withKey(new LpKey(new UniversalId("MwAirInterfacePacLpKey")));
-        lpBuilder1.setLayerProtocolName(new LayerProtocolName(ONFLayerProtocolName.MWAirInterface.getValue()));
-        lpBuilder1.setExtension(Arrays.asList(getExtension("e1", "capability", MwAirInterfacePac.QNAME.getLocalName()),
-                getExtension("e1", "revision", MwAirInterfacePac.QNAME.getRevision().get().toString()),
-                getExtension("e1", "conditional-package", MwAirInterfacePac.QNAME.getModule().toString())));
-        LtpBuilder ltpBuilder1 = new LtpBuilder();
-        ltpBuilder1.setUuid(new UniversalId("MwAirInterfacePac"));
-        ltpBuilder1.withKey(new LtpKey(new UniversalId("MwAirInterfacePacKey")));
-        ltpBuilder1.setLp(values)
+         * LpBuilder lpBuilder1 = new LpBuilder(); lpBuilder1.withKey(new LpKey(new
+         * UniversalId("MwAirInterfacePacLpKey"))); lpBuilder1.setLayerProtocolName(new
+         * LayerProtocolName(ONFLayerProtocolName.MWAirInterface.getValue()));
+         * lpBuilder1.setExtension(Arrays.asList(getExtension("e1", "capability",
+         * MwAirInterfacePac.QNAME.getLocalName()), getExtension("e1", "revision",
+         * MwAirInterfacePac.QNAME.getRevision().get().toString()), getExtension("e1",
+         * "conditional-package", MwAirInterfacePac.QNAME.getModule().toString()))); LtpBuilder ltpBuilder1
+         * = new LtpBuilder(); ltpBuilder1.setUuid(new UniversalId("MwAirInterfacePac"));
+         * ltpBuilder1.withKey(new LtpKey(new UniversalId("MwAirInterfacePacKey")));
+         * ltpBuilder1.setLp(values)
          */
         // ---- LTP List
         networkElementBuilder.setLtp(Arrays.asList(
@@ -86,24 +83,6 @@ public class ModelObjectMock {
         // build
         NetworkElement networkElement = networkElementBuilder.build();
         return networkElement;
-    }
-
-    public static AirInterfaceCurrentProblems getMwAirInterfacePacCurrentProblems() {
-        /*
-         * CurrentProblemListBuilder currentProblemListBuilder = new CurrentProblemListBuilder();
-         * currentProblemListBuilder.setProblemName("Problem1");
-         * currentProblemListBuilder.setProblemSeverity(SeverityType.Critical);
-         * currentProblemListBuilder.setSequenceNumber(1); currentProblemListBuilder.setTimeStamp(new
-         * DateAndTime(InternalDateAndTime.getTestpattern().getValue()));
-         *
-         * AirInterfaceCurrentProblemsBuilder airInterfaceCurrentProblemsBuilder = new
-         * AirInterfaceCurrentProblemsBuilder();
-         * airInterfaceCurrentProblemsBuilder.setCurrentProblemList(Arrays.asList(currentProblemListBuilder.
-         * build()));
-         *
-         * return airInterfaceCurrentProblemsBuilder.build();
-         */
-        return getCurrentProblems(CurrentProblemListBuilder.class, AirInterfaceCurrentProblemsBuilder.class);
     }
 
     public static <R, RB extends Builder<R>, PLB extends Builder<?>> R getCurrentProblems(Class<PLB> plbClazz,

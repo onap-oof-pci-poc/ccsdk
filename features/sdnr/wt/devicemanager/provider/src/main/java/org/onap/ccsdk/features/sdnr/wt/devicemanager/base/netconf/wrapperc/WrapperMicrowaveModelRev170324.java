@@ -26,7 +26,6 @@ import java.util.List;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.InternalDateAndTime;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.InternalSeverity;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.ONFCOreNetworkElementCoreData;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.ONFCoreNetworkElement12;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.container.ExtendedAirInterfaceHistoricalPerformanceType12;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.container.ONFLayerProtocolName;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.util.GenericTransactionUtils;
@@ -79,7 +78,7 @@ import org.slf4j.LoggerFactory;
 
 public class WrapperMicrowaveModelRev170324 implements OnfMicrowaveModel, MicrowaveModelListener {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ONFCoreNetworkElement12.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WrapperMicrowaveModelRev170324.class);
 
     public static final QName QNAME = MwAirInterfacePac.QNAME;
 
