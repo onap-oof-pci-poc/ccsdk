@@ -55,7 +55,7 @@ import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Test1dm {
+public class TestDeviceManagerWithDatabase {
 
     private static int DATABASETIMEOUTSECONDS = 30;
 
@@ -64,7 +64,7 @@ public class Test1dm {
     private static MountPointMock  mountPoint;
     private static DataBrokerNetconfMock dataBrokerNetconf;
 
-    private static final Logger LOG = LoggerFactory.getLogger(Test1dm.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TestDeviceManagerWithDatabase.class);
 
 
 

@@ -94,10 +94,6 @@ public class Resources {
         return sb.toString();
     }
 
-    public static String getFileContent(String resFile) throws IOException {
-        return readFile(getFileURL(resFile));
-    }
-
     public static List<URL> getFileURLs(String folder, final String filter, final boolean recursive)
             throws IOException {
         Bundle b = FrameworkUtil.getBundle(Resources.class);

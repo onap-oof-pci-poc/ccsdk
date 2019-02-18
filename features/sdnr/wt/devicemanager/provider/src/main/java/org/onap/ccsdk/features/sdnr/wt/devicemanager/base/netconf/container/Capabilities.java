@@ -23,7 +23,6 @@ package org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.container;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -101,24 +100,6 @@ public class Capabilities {
     }
 
     /**
-     * check if namespace is supported by given capabilites
-     *
-     * @param theCapability Capability to search
-     * @return true if available
-     */
-    @Deprecated
-    public boolean isSupportingNamespace(QName theCapability) {
-        String theNameSpace = theCapability.getNamespace().toString();
-        for (String capability : capabilities) {
-            if (capability.contains(theNameSpace)) {
-                LOG.trace("Check {} against {}", capability, theNameSpace);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * check if the namespace and its revision are supported by the given capabilities
      *
      * @param qCapability capability from the model
@@ -156,32 +137,9 @@ public class Capabilities {
     }
 
 
-    public void add(String qname) {
-        capabilities.add(qname);
-    }
-
     @Override
     public String toString() {
         return "Capabilities [capabilities=" + capabilities + "]";
-    }
-
-    /**
-     * Check if object is proxy and has specific interface
-     *
-     * @param object Name of the object to verify
-     * @param interfaceName is the name of the interface
-     * @return boolean accordingly
-     */
-    static boolean hasInterface(Object object, String interfaceName) {
-        if (object instanceof Proxy) {
-            Class<?>[] interfaces = object.getClass().getInterfaces();
-            for (Class<?> i : interfaces) {
-                if (i.getName().equals(interfaceName)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
 }
