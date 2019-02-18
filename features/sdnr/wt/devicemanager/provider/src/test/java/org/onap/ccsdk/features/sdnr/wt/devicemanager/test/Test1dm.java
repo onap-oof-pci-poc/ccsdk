@@ -28,9 +28,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database.HtDatabaseWebAPIClient;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.container.Capabilities;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.DeviceManagerImpl;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.DeviceManagerService.Action;
@@ -118,6 +121,18 @@ public class Test1dm {
         }
         delete(KARAF_ETC);
 
+    }
+
+    @Test
+    public void test0() throws InterruptedException {
+        HtDatabaseWebAPIClient client = new HtDatabaseWebAPIClient();
+        try {
+            String response = client.sendRequest("/mwtn/mediator-server/_search", "GET",
+                    new JSONObject("{\"match\":{\"id\":id}}"));
+            System.out.println(response);
+        } catch (JSONException | IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
