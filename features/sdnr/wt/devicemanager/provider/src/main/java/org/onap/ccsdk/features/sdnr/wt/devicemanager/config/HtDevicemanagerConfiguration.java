@@ -79,13 +79,18 @@ public class HtDevicemanagerConfiguration {
         }
         return mObj;
     }
-
     public static HtDevicemanagerConfiguration getTestConfiguration() {
-        return getTestConfiguration(CONFIGURATIONTESTFILE);
+        return getTestConfiguration(CONFIGURATIONTESTFILE,false);
     }
-
-    public static HtDevicemanagerConfiguration getTestConfiguration(final String filename) {
-        if (mObjTest == null) {
+   
+    public static HtDevicemanagerConfiguration getTestConfiguration(boolean newInstance) {
+        return getTestConfiguration(CONFIGURATIONTESTFILE,newInstance);
+    }
+    public static HtDevicemanagerConfiguration getTestConfiguration(String filename) {
+        return getTestConfiguration(filename,false);
+    }
+    public static HtDevicemanagerConfiguration getTestConfiguration(final String filename,boolean newInstance) {
+        if (mObjTest == null || newInstance) {
             mObjTest = new HtDevicemanagerConfiguration(filename);
         }
         return mObjTest;
