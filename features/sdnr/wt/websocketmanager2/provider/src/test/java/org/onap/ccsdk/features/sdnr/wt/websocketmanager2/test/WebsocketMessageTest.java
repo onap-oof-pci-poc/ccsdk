@@ -1,107 +1,48 @@
 package org.onap.ccsdk.features.sdnr.wt.websocketmanager2.test;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
-import java.net.URISyntaxException;
+import java.net.InetSocketAddress;
 
-import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.java_websocket.handshake.ServerHandshake;
-import org.junit.After;
-import org.junit.Before;
+import org.eclipse.jetty.websocket.api.Session;
 import org.junit.Test;
-import org.onap.ccsdk.features.sdnr.wt.websocketmanager2.WebSocketManager;
-import org.onap.ccsdk.features.sdnr.wt.websocketmanager2.websocket.SyncWebSocketClient;
-import org.onap.ccsdk.features.sdnr.wt.websocketmanager2.websocket.SyncWebSocketClient.WebsocketEventHandler;
+import org.onap.ccsdk.features.sdnr.wt.websocketmanager2.WebSocketManagerSocket;
 
 public class WebsocketMessageTest {
 
-	private static final String MSG1 = "{\"data\":{\"sopes\":[]}}";
-	private static final int PORT = 54321;
-	private Server server;
-	private SyncWebSocketClient client1=null;
-	private boolean fin=false;
-	@Before
-	public void init() {
-		
-		server=new Server(PORT);
-		assertNotNull("unable to initialize server");
-		ServletContextHandler handlerV1 = new ServletContextHandler(server, "");
-		handlerV1.addServlet(WebSocketManager.class,"/websocket");
-		HandlerList handlers = new HandlerList();
-		handlers.setHandlers(new Handler[] { handlerV1 });
-		server.setHandler(handlers);
-		server.setStopTimeout(2000);
-		try {
-			server.start();
-			System.out.println("server started");
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
+	private static final String MSG1 = "{\"data\":\"scopes\",\"scopes\":[\"scope1\"]}";
+	private static final String MSG2 = "{\"nodename\":\"n1\",\"eventtype\":\"scope1\",\"xmlevent\":\"eventdesc\"}";
+	public String expectAnswer;
+
+	@Test
+	public void test() {
+		MyWebSocketManagerSocket socketToTest = new MyWebSocketManagerSocket();
+		Session sess = mock(Session.class);
+		InetSocketAddress remoteAdr = new InetSocketAddress("127.0.0.1", 4444);
+		when(sess.getRemoteAddress()).thenReturn(remoteAdr);
+		socketToTest.onWebSocketConnect(sess);
+		// message from client
+		this.expectAnswer = MSG1;
+		socketToTest.onWebSocketText(MSG1);
+		socketToTest.onWebSocketClose(0, "by default");
+
 	}
-	@After
-	public void deinit() {
-		
-		try {
-			server.stop();
-			System.out.println("server stopped");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public void test2() {
+		//message from devmgr (notification)
+//		this.expectAnswer = MSG2;
+//		socketToTest.onWebSocketText(MSG2);
+	}
+	private class MyWebSocketManagerSocket extends WebSocketManagerSocket {
+
+		public MyWebSocketManagerSocket() {
+
+		}
+
+		@Override
+		public void send(String msg) {
+			assertTrue(msg.contains(expectAnswer));
 		}
 
 	}
-	@Test
-	public void test() {
-		System.out.println("starting test");
-		try {
-			client1 =new SyncWebSocketClient(String.format("ws://localhost:%d/websocket",PORT));
-		} catch (URISyntaxException e) {
-			fail(e.getMessage());
-		}
-		
-		
-		client1.addEventHandler(new WebsocketEventHandler() {			
-			@Override
-			public void onOpen(ServerHandshake arg0) {
-				System.out.println("sending message");
-				client1.send(MSG1);
-				
-			}
-			
-			@Override
-			public void onMessageReceived(String message) {
-				assertTrue(message.contains(MSG1));
-				
-			}
-			
-			@Override
-			public void onError(Exception e) {
-				fail(e.getMessage());
-				
-			}
-			
-			@Override
-			public void onClose(int arg0, String arg1, boolean arg2) {
-				System.out.println(String.format("session closed with code=%d, msg=%s",arg0,arg1));
-				fin=true;
-				
-			}
-		});
-		client1.connect();
-		
-	
-		while(!fin)
-		{
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				
-			}
-		}
-		client1.close();
-	}
-	
 }
