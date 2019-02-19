@@ -225,8 +225,5 @@ public class HelpServlet extends HttpServlet implements AutoCloseable {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {}
-
-    @Override
     public void close() throws Exception {}
 }

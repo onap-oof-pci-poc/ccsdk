@@ -1,17 +1,13 @@
 package org.onap.ccsdk.features.sdnr.wt.websocketmanager2.test;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
 import java.net.InetSocketAddress;
 import java.net.URISyntaxException;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.websocket.common.WebSocketSession;
 import org.eclipse.jetty.websocket.server.WebSocketHandler;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
@@ -21,7 +17,6 @@ import org.java_websocket.handshake.ServerHandshake;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.cglib.core.CollectionUtils;
 import org.onap.ccsdk.features.sdnr.wt.websocketmanager2.WebSocketManager;
 import org.onap.ccsdk.features.sdnr.wt.websocketmanager2.WebSocketManagerSocket;
 import org.onap.ccsdk.features.sdnr.wt.websocketmanager2.websocket.SyncWebSocketClient;
