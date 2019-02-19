@@ -17,19 +17,29 @@ package org.onap.ccsdk.features.sdnr.wt.helpserver.test;
  * ============LICENSE_END==========================================================================
  ******************************************************************************/
 import static org.junit.Assert.assertNotNull;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onap.ccsdk.features.sdnr.wt.helpserver.HelpServlet;
 
 public class TestHelpServer {
 
-    @Test
-    public void test() throws Exception {
+    static HelpServlet helpServelet;
 
-        HelpServlet helpServelet = new HelpServlet();
+    @BeforeClass
+    public static void before() {
+        helpServelet = new HelpServlet();
+    }
 
-        assertNotNull("Helpservelet created", helpServelet);
-
+    @AfterClass
+    public static void after() throws Exception {
         helpServelet.close();
+    }
+
+
+    @Test
+    public void test1() {
+        assertNotNull("Helpservelet created", helpServelet);
     }
 
 }

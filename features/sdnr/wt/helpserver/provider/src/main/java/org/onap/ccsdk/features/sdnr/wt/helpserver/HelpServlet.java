@@ -22,10 +22,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.file.Path;
 import java.util.regex.Matcher;
@@ -43,8 +41,6 @@ public class HelpServlet extends HttpServlet implements AutoCloseable {
     private static Logger LOG = LoggerFactory.getLogger(HelpServlet.class);
     private static final long serialVersionUID = -4285072760648493461L;
 
-    private static final boolean USE_FILESYSTEM = true;
-    private static final boolean USE_RESSOURCES = !USE_FILESYSTEM;
     private static final String BASEURI = "/help";
 
     private static final boolean REDIRECT_LINKS = true;
@@ -58,21 +54,14 @@ public class HelpServlet extends HttpServlet implements AutoCloseable {
     }
 
     @Override
-    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    public void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.addHeader("Access-Control-Allow-Origin", "*");
         resp.addHeader("Access-Control-Allow-Methods", "OPTIONS, HEAD, GET, POST, PUT, DELETE");
         resp.addHeader("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, Content-Length");
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest,
-     * javax.servlet.http.HttpServletResponse) Handle Get Request: if query=?meta=send json
-     * infrastructure for README.md else if file exist send file
-     */
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String query = req.getQueryString();
         resp.addHeader("Access-Control-Allow-Origin", "*");
         resp.addHeader("Access-Control-Allow-Methods", "OPTIONS, HEAD, GET, POST, PUT, DELETE");
@@ -99,106 +88,70 @@ public class HelpServlet extends HttpServlet implements AutoCloseable {
             } else {
                 LOG.debug("start walking from path=" + basePath.toAbsolutePath().toString());
                 HelpInfrastructureObject o = null;
-                if (USE_FILESYSTEM) {
-                    try {
-                        o = new HelpInfrastructureObject(this.basePath);
-                    } catch (URISyntaxException e) {
-                        LOG.debug("Can not relsolve URI. ", e);
-                    }
-                } else if (USE_RESSOURCES) {
-                    // o=new HelpInfrastructureObject()
+                try {
+                    o = new HelpInfrastructureObject(this.basePath);
+                } catch (URISyntaxException e) {
+                    LOG.debug("Can not relsolve URI. ", e);
                 }
                 resp.getOutputStream().println(o != null ? o.toString() : "");
             }
             resp.setHeader("Content-Type", "application/json");
-       } else {
+        } else {
             LOG.debug("received get with uri=" + req.getRequestURI());
             String uri = URLDecoder.decode(req.getRequestURI().substring(BASEURI.length()), "UTF-8");
             if (uri.startsWith("/")) {
                 uri = uri.substring(1);
             }
             Path p = basePath.resolve(uri);
-            if (USE_FILESYSTEM) {
-                File f = p.toFile();
-                if (f.isFile() && f.exists()) {
-                    LOG.debug("found file for request");
-                    if (this.isTextFile(f)) {
-                        resp.setHeader("Content-Type", "application/text");
-                        resp.setHeader("charset", "utf-8");
-                    } else if (this.isImageFile(f)) {
-                        resp.setHeader("Content-Type", "image/*");
-                    } else if (this.ispdf(f)) {
-                        resp.setHeader("Content-Type", "application/pdf");
-                    } else {
-                        LOG.debug("file is not allowed to deliver");
-                        resp.setStatus(404);
-                        return;
-                    }
-                    LOG.debug("delivering file");
-                    OutputStream out = resp.getOutputStream();
-                    String version = null;
-                    if (REDIRECT_LINKS) {
-                        version = getVersionFromRequestedUri(uri);
-                    }
-                    if (this.isTextFile(f) && REDIRECT_LINKS && version != null) {
-                        final String regex =
-                                "(!?\\[[^\\]]*?\\])\\(((?:(?!http|www\\.|\\#|\\.com|\\.net|\\.info|\\.org|\\.svg|\\.png|\\.jpg|\\.gif|\\.jpeg|\\.pdf).)*?)\\)";
-                        final Pattern pattern = Pattern.compile(regex);
-                        Matcher matcher;
-                        String line;
-                        try (BufferedReader br = new BufferedReader(new FileReader(f))) {
-                            line = br.readLine();
-                            while (line != null) {
-                                // check line for internal link
-                                matcher = pattern.matcher(line);
-                                if (matcher.find()) {
-                                    // extend link with specific version
-                                    line = line.replace(matcher.group(2),
-                                            "../" + matcher.group(2) + version + "/README.md");
-                                }
-                                out.write((line + "\n").getBytes());
-                                line = br.readLine();
-
-                            }
-                            out.flush();
-                            out.close();
-                            br.close();
-                        }
-
-                    } else {
-                        try (FileInputStream in = new FileInputStream(f)) {
-
-                            byte[] buffer = new byte[1024];
-                            int len;
-                            while ((len = in.read(buffer)) != -1) {
-                                out.write(buffer, 0, len);
-                            }
-                            in.close();
-                            out.flush();
-                            out.close();
-                        }
-                    }
+            File f = p.toFile();
+            if (f.isFile() && f.exists()) {
+                LOG.debug("found file for request");
+                if (this.isTextFile(f)) {
+                    resp.setHeader("Content-Type", "application/text");
+                    resp.setHeader("charset", "utf-8");
+                } else if (this.isImageFile(f)) {
+                    resp.setHeader("Content-Type", "image/*");
+                } else if (this.ispdf(f)) {
+                    resp.setHeader("Content-Type", "application/pdf");
                 } else {
-                    LOG.debug("found not file for request");
+                    LOG.debug("file is not allowed to deliver");
                     resp.setStatus(404);
+                    return;
                 }
-            } else if (USE_RESSOURCES) {
-                URL resurl = this.getClass().getResource(p.toString());
-                if (resurl != null)// resource file found
-                {
-                    if (this.isTextFile(resurl)) {
-                        resp.setHeader("Content-Type", "application/text");
-                        resp.setHeader("charset", "utf-8");
-                    } else if (this.isImageFile(resurl)) {
-                        resp.setHeader("Content-Type", "image/*");
-                    } else if (this.ispdf(resurl)) {
-                        resp.setHeader("Content-Type", "application/pdf");
-                    } else {
-                        resp.setStatus(404);
-                        return;
+                LOG.debug("delivering file");
+                OutputStream out = resp.getOutputStream();
+                String version = null;
+                if (REDIRECT_LINKS) {
+                    version = getVersionFromRequestedUri(uri);
+                }
+                if (this.isTextFile(f) && REDIRECT_LINKS && version != null) {
+                    final String regex =
+                            "(!?\\[[^\\]]*?\\])\\(((?:(?!http|www\\.|\\#|\\.com|\\.net|\\.info|\\.org|\\.svg|\\.png|\\.jpg|\\.gif|\\.jpeg|\\.pdf).)*?)\\)";
+                    final Pattern pattern = Pattern.compile(regex);
+                    Matcher matcher;
+                    String line;
+                    try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+                        line = br.readLine();
+                        while (line != null) {
+                            // check line for internal link
+                            matcher = pattern.matcher(line);
+                            if (matcher.find()) {
+                                // extend link with specific version
+                                line = line.replace(matcher.group(2),
+                                        "../" + matcher.group(2) + version + "/README.md");
+                            }
+                            out.write((line + "\n").getBytes());
+                            line = br.readLine();
+
+                        }
+                        out.flush();
+                        out.close();
+                        br.close();
                     }
-                    try (InputStream in = this.getClass().getResourceAsStream(p.toString())) {
-                        OutputStream out = resp.getOutputStream();
+
+                } else {
+                    try (FileInputStream in = new FileInputStream(f)) {
+
                         byte[] buffer = new byte[1024];
                         int len;
                         while ((len = in.read(buffer)) != -1) {
@@ -208,18 +161,18 @@ public class HelpServlet extends HttpServlet implements AutoCloseable {
                         out.flush();
                         out.close();
                     }
-
-                } else // resource file not found
-                {
-                    resp.setStatus(404);
                 }
+            } else {
+                LOG.debug("found not file for request");
+                resp.setStatus(404);
             }
         }
     }
 
-    /*
-     *
-     * uri = "help/folder1/folder2/version/README.md"
+    /**
+     * Extract version from URI string
+     * @param uri = "help/folder1/folder2/version/README.md"
+     * @return version as a string
      */
     private static String getVersionFromRequestedUri(String uri) {
         if (uri == null) {
@@ -235,18 +188,6 @@ public class HelpServlet extends HttpServlet implements AutoCloseable {
         }
         return uri.substring(slastidx + 1, lastidx);
 
-    }
-
-    private boolean isTextFile(URL url) {
-        return url != null ? this.isTextFile(url.toString()) : false;
-    }
-
-    private boolean ispdf(URL url) {
-        return url != null ? this.ispdf(url.toString()) : false;
-    }
-
-    private boolean isImageFile(URL url) {
-        return url != null ? this.isImageFile(url.toString()) : false;
     }
 
     private boolean ispdf(File f) {

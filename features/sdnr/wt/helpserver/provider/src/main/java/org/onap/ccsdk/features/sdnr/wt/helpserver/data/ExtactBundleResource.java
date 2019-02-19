@@ -37,7 +37,7 @@ import org.osgi.framework.Bundle;
  *   Open the file: data/cache/com.highstreet.technologies.help/help/FAQ/0.4.0/README.md
  *   Problem: Binary, JPG files => do not use buffer related functions
  *
- * Hint: Werify with file manager the content of the bundle.jar file to see the location of the resources.
+ * Hint: Verify with file manager the content of the bundle.jar file to see the location of the resources.
  * There is no need to mark them via the classpath.
  */
 
