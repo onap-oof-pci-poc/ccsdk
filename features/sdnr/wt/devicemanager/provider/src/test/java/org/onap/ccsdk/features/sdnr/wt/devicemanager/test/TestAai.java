@@ -21,7 +21,10 @@
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.test;
 
 import static org.junit.Assert.fail;
-
+import com.google.common.io.Files;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -31,21 +34,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.aaiconnector.impl.AaiProviderClient;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.InventoryInformation;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.HtDevicemanagerConfiguration;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
-import com.google.common.io.Files;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.AaiConfig;
 
+@SuppressWarnings("restriction")
 public class TestAai {
 
     private static final String ENABLEDAAI_TESTCONFIG_FILENAME = "test2.properties";
+    private static final File ENABLEDAAI_TESTCONFIG_FILE = new File(ENABLEDAAI_TESTCONFIG_FILENAME);
     private static final int AAI_SERVER_PORT=45454;
     private static final String TESTCONFIG_CONTENT="[dcae]\n" +
             "dcaeUserCredentials=admin:admin\n" +
@@ -97,7 +98,7 @@ public class TestAai {
             "";
     private HttpServer server;
     private ExecutorService httpThreadPool;
-    private HtDevicemanagerConfiguration cfg;
+    private HtDevicemanagerConfiguration globalCfg;
 
     @Test
     public void test() {
@@ -135,10 +136,9 @@ public class TestAai {
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e1) {
-            // TODO Auto-generated catch block
             e1.printStackTrace();
         }
-        AaiProviderClient provider = new AaiProviderClient(cfg, null);
+        AaiProviderClient provider = new AaiProviderClient(globalCfg, null);
 
         String mountPointName = "testDevice 01";
         String type="Unit";
@@ -169,16 +169,16 @@ public class TestAai {
     @Before
     public void initAaiTestWebserver() throws IOException {
         try {
-            Files.asCharSink(new File(ENABLEDAAI_TESTCONFIG_FILENAME), StandardCharsets.UTF_8).write(TESTCONFIG_CONTENT);
+            Files.asCharSink(ENABLEDAAI_TESTCONFIG_FILE, StandardCharsets.UTF_8).write(TESTCONFIG_CONTENT);
         } catch (IOException e1) {
             fail(e1.getMessage());
         }
-        cfg=HtDevicemanagerConfiguration.getTestConfiguration(ENABLEDAAI_TESTCONFIG_FILENAME,true);
-        cfg.getAai().reload();
+        globalCfg=HtDevicemanagerConfiguration.getTestConfiguration(ENABLEDAAI_TESTCONFIG_FILENAME,true);
+        AaiConfig.reload();
         this.server = HttpServer.create(new InetSocketAddress(AAI_SERVER_PORT), 0);
         this.httpThreadPool = Executors.newFixedThreadPool(5);
         this.server.setExecutor(this.httpThreadPool);
-        this.server.createContext(cfg.getAai().getBaseUri(), new MyHandler());
+        this.server.createContext(globalCfg.getAai().getBaseUri(), new MyHandler());
         //server.createContext("/", new MyRootHandler());
         this.server.setExecutor(null); // creates a default executor
         this.server.start();
@@ -192,6 +192,10 @@ public class TestAai {
             this.httpThreadPool.shutdownNow();
             System.out.println("http server stopped" );
         }
+        if (ENABLEDAAI_TESTCONFIG_FILE.exists()) {
+            ENABLEDAAI_TESTCONFIG_FILE.delete();
+        }
+
     }
     static class MyHandler implements HttpHandler {
         @Override

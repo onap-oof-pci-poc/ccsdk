@@ -23,8 +23,7 @@ xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs">
             <entry key="alias" value="/odlux" />
         </service-properties>
     </service>
-    
-    <bean id="loadersvc" class="org.onap.ccsdk.features.sdnr.wt.odlux.model.bundles.OdluxBundleLoaderImpl"/>
+    <bean id="loadersvc" class="org.onap.ccsdk.features.sdnr.wt.odlux.OdluxBundleLoaderImpl"/>
     <service id="serviceRegistration" interface="org.onap.ccsdk.features.sdnr.wt.odlux.model.bundles.OdluxBundleLoader" ref="loadersvc"/>
-    
+
 </blueprint>
