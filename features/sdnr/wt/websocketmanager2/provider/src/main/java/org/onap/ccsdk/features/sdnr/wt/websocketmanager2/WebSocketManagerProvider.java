@@ -18,6 +18,7 @@
 package org.onap.ccsdk.features.sdnr.wt.websocketmanager2;
 
 import javax.servlet.ServletException;
+
 import org.opendaylight.mdsal.binding.api.RpcProviderService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.websocketmanager.rev150105.WebsocketmanagerService;
 import org.opendaylight.yangtools.concepts.ObjectRegistration;

@@ -23,7 +23,8 @@
   <reference id="rpcProviderRegistry"
     interface="org.opendaylight.mdsal.binding.api.RpcProviderService"
     odl:type="default" />
-
+  
+    
   <bean id="provider"
     class="org.onap.ccsdk.features.sdnr.wt.websocketmanager2.WebSocketManagerProvider"
     init-method="init" destroy-method="close">
