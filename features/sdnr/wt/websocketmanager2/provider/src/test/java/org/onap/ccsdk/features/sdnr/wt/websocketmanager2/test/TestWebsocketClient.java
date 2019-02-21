@@ -18,15 +18,10 @@
 package org.onap.ccsdk.features.sdnr.wt.websocketmanager2.test;
 
 import static org.junit.Assert.*;
-import java.net.InetSocketAddress;
 import java.net.URISyntaxException;
 
-import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.websocket.server.WebSocketHandler;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
@@ -36,7 +31,6 @@ import org.java_websocket.handshake.ServerHandshake;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.onap.ccsdk.features.sdnr.wt.websocketmanager2.WebSocketManager;
 import org.onap.ccsdk.features.sdnr.wt.websocketmanager2.WebSocketManagerSocket;
 import org.onap.ccsdk.features.sdnr.wt.websocketmanager2.websocket.SyncWebSocketClient;
 import org.onap.ccsdk.features.sdnr.wt.websocketmanager2.websocket.SyncWebSocketClient.WebsocketEventHandler;
@@ -95,81 +89,63 @@ public class TestWebsocketClient {
 
 	@Before
 	public void init() {
-		this.server = new Server();
-		ServerConnector connector = new ServerConnector(server);
-		connector.setPort(PORT);
-		server.addConnector(connector);
-		WebSocketHandler wshandler1 = new org.eclipse.jetty.websocket.server.WebSocketHandler() {
-			@Override
-			public void configure(WebSocketServletFactory factory) {
-				factory.setCreator((req, resp) -> {
-					if (req.getSubProtocols().size() > 0) {
-						resp.setAcceptedSubProtocol(req.getSubProtocols().get(0));
-					}
-					return new WebSocketManagerSocket();
-				});
-			}
-		};
-//		HandlerList handlers = new HandlerList();
-//		ServletContextHandler wshandler2 = new ServletContextHandler(server, "/");
-//		wshandler2.addServlet(WebSocketManager.class, "/websocket");
-//		handlers.setHandlers(new Handler[] { wshandler2 });
-//		server.setHandler(handlers);
-		try
-        {
-            WebSocketHandler wsHandler = new WebSocketHandler()
-            {
-                @Override
-                public void configure(WebSocketServletFactory factory)
-                {
-                    factory.getPolicy().setIdleTimeout(1500);
-                    factory.setCreator(new WebSocketCreator()
-                    {
-                        @Override
-                        public Object createWebSocket(ServletUpgradeRequest req, ServletUpgradeResponse resp)
-                        {
-                            return new WebSocketManagerSocket();
-                        }
-                    });
-                }
-            };
-
-            server.setHandler(wsHandler);
-            server.start();
-            server.join();
-        }
-        catch (Throwable t)
-        {
-            t.printStackTrace(System.err);
-        }
-		
-//		new Thread(new Runnable() {
-//
+//		this.server = new Server();
+//		ServerConnector connector = new ServerConnector(server);
+//		connector.setPort(PORT);
+//		server.addConnector(connector);
+//		WebSocketHandler wshandler1 = new org.eclipse.jetty.websocket.server.WebSocketHandler() {
 //			@Override
-//			public void run() {
-//
-//				try {
-//					server.start();
-//				} catch (Exception e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
+//			public void configure(WebSocketServletFactory factory) {
+//				factory.setCreator((req, resp) -> {
+//					if (req.getSubProtocols().size() > 0) {
+//						resp.setAcceptedSubProtocol(req.getSubProtocols().get(0));
+//					}
+//					return new WebSocketManagerSocket();
+//				});
 //			}
+//		};
+
+//		try
+//        {
+//            WebSocketHandler wsHandler = new WebSocketHandler()
+//            {
+//                @Override
+//                public void configure(WebSocketServletFactory factory)
+//                {
+//                    factory.getPolicy().setIdleTimeout(1500);
+//                    factory.setCreator(new WebSocketCreator()
+//                    {
+//                        @Override
+//                        public Object createWebSocket(ServletUpgradeRequest req, ServletUpgradeResponse resp)
+//                        {
+//                            return new WebSocketManagerSocket();
+//                        }
+//                    });
+//                }
+//            };
 //
-//		}).start();
+//            server.setHandler(wsHandler);
+//            server.start();
+//            server.join();
+//        }
+//        catch (Throwable t)
+//        {
+//            t.printStackTrace(System.err);
+//        }
+		
 
 	}
 
 	@After
 	public void deinit() {
-		if (server != null) {
-			try {
-				server.stop();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+//		if (server != null) {
+//			try {
+//				server.stop();
+//			} catch (Exception e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
 	}
 
 }
