@@ -18,9 +18,16 @@
 package org.onap.ccsdk.features.sdnr.wt.websocketmanager2;
 
 import com.google.common.util.concurrent.ListenableFuture;
+
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 import org.json.JSONObject;
@@ -134,6 +141,16 @@ public class WebSocketManager extends WebSocketServlet implements Websocketmanag
 	 * Private functions
 	 */
 
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		if(req.getHeader("Upgrade") != null) {
+	         /* Accept upgrade request */
+	         resp.setStatus(101);
+	         resp.setHeader("Upgrade", "XYZP");
+	         resp.setHeader("Connection", "Upgrade");
+	         resp.setHeader("OtherHeaderB", "Value");
+		}
+	}
 	private void initWSClients(ClusterConfig clusterConfig) {
 		for (ClusterNodeInfo nodeConfig : clusterConfig.getSeedNodes()) {
 			if (clusterConfig.isMe(nodeConfig)) {

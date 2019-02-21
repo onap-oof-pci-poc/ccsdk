@@ -18,9 +18,9 @@
 package org.onap.ccsdk.features.sdnr.wt.websocketmanager2;
 
 import javax.servlet.ServletException;
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
-import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
+import org.opendaylight.mdsal.binding.api.RpcProviderService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.websocketmanager.rev150105.WebsocketmanagerService;
+import org.opendaylight.yangtools.concepts.ObjectRegistration;
 import org.osgi.service.http.HttpService;
 import org.osgi.service.http.NamespaceException;
 import org.slf4j.Logger;
@@ -33,7 +33,7 @@ public class WebSocketManagerProvider extends Blueprint {
     private static final String ALIAS = "/websocket";
 
     private WebSocketManager wsServlet = null;
-    private RpcRegistration<WebsocketmanagerService> websocketService = null;
+    private ObjectRegistration<WebSocketManager> websocketService = null;
 
     public WebSocketManagerProvider() {
         LOG.info("Creating provider for {}", APPLICATION_NAME);
@@ -42,13 +42,14 @@ public class WebSocketManagerProvider extends Blueprint {
     @Override
     public void init() {
         LOG.info("Init provider for {}", APPLICATION_NAME);
-        RpcProviderRegistry rpcProviderRegistry = this.getRpcProviderRegistry();
+        RpcProviderService rpcProviderRegistry = this.getRpcProviderRegistry();
         if (rpcProviderRegistry != null) {
             if (wsServlet != null) {
-                this.websocketService = rpcProviderRegistry.addRpcImplementation(WebsocketmanagerService.class,
+                this.websocketService = rpcProviderRegistry.registerRpcImplementation(WebsocketmanagerService.class,
                         wsServlet);
+                LOG.info("websocketservice initialized");
             } else {
-                LOG.error("wsServlet not provided");
+                LOG.debug("wsServlet not yet provided");
             }
         } else {
             LOG.error("rpcProviderRegistry not provided");

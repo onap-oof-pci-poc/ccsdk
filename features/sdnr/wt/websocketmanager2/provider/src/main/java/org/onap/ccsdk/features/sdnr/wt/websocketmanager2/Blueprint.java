@@ -17,19 +17,19 @@
  ******************************************************************************/
 package org.onap.ccsdk.features.sdnr.wt.websocketmanager2;
 
-import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
+import org.opendaylight.mdsal.binding.api.RpcProviderService;
 
 public abstract class Blueprint implements AutoCloseable {
 
-    private RpcProviderRegistry rpcProviderRegistry = null;
+    private RpcProviderService rpcProviderRegistry = null;
 
     public abstract void init();
 
-    public void setRpcProviderRegistry(RpcProviderRegistry rpcProviderRegistry) {
+    public void setRpcProviderRegistry(RpcProviderService rpcProviderRegistry) {
         this.rpcProviderRegistry = rpcProviderRegistry;
     }
 
-    public RpcProviderRegistry getRpcProviderRegistry() {
+    public RpcProviderService getRpcProviderRegistry() {
         return this.rpcProviderRegistry;
     }
 
