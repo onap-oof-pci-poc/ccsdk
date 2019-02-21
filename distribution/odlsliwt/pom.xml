@@ -23,7 +23,7 @@
     </organization>
 
     <properties>
-	<base.image.repo>onap/ccsdk-odlsli-image:0.4.1-STAGING-20190211T030937Z</base.image.repo>
+    <base.image.repo>onap/ccsdk-odlsli-image:0.4.1-STAGING-20190211T030937Z</base.image.repo>
         <!-- <base.image.repo>onap/ccsdk-odlsli-image:0.4.1-STAGING-20190208T030931Z</base.image.repo> -->
         <!-- <base.image.name>oof-pci/ccsdk-odlsli-image</base.image.name>
         <base.image.version>0.4.1-SNAPSHOT</base.image.version> -->
@@ -42,83 +42,6 @@
     </properties>
 
   <dependencies>
-        <dependency>
-            <groupId>org.onap.ccsdk.sli.northbound</groupId>
-            <artifactId>asdcApi-installer</artifactId>
-            <version>${ccsdk.sli.northbound.version}</version>
-            <classifier>repo</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.ccsdk.sli.northbound</groupId>
-            <artifactId>dataChange-installer</artifactId>
-            <version>${ccsdk.sli.northbound.version}</version>
-            <classifier>repo</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.ccsdk.sli.northbound</groupId>
-            <artifactId>lcm-installer</artifactId>
-            <version>${ccsdk.sli.northbound.version}</version>
-            <classifier>repo</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.ccsdk.sli.northbound</groupId>
-            <artifactId>slinorthbound-features-installer</artifactId>
-            <version>${ccsdk.sli.northbound.version}</version>
-            <classifier>repo</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.ccsdk.sli.plugins</groupId>
-            <artifactId>properties-node-installer</artifactId>
-            <version>${ccsdk.sli.plugins.version}</version>
-            <classifier>repo</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.ccsdk.sli.plugins</groupId>
-            <artifactId>restapi-call-node-installer</artifactId>
-            <version>${ccsdk.sli.plugins.version}</version>
-            <classifier>repo</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.ccsdk.sli.plugins</groupId>
-            <artifactId>restconf-client-installer</artifactId>
-            <version>${ccsdk.sli.plugins.version}</version>
-            <classifier>repo</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.ccsdk.sli.plugins</groupId>
-            <artifactId>sshapi-call-node-installer</artifactId>
-            <version>${ccsdk.sli.plugins.version}</version>
-            <classifier>repo</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.ccsdk.sli.plugins</groupId>
-            <artifactId>sliplugins-features-installer</artifactId>
-            <version>${ccsdk.sli.plugins.version}</version>
-            <classifier>repo</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.ccsdk.features</groupId>
-            <artifactId>features-installer</artifactId>
-            <version>${ccsdk.features.version}</version>
-            <classifier>repo</classifier>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.onap.ccsdk.features</groupId>
-            <artifactId>blueprints-processor-installer</artifactId>
-            <version>${ccsdk.features.version}</version>
-            <classifier>repo</classifier>
-            <type>zip</type>
-        </dependency>
     <dependency>
       <groupId>org.onap.ccsdk.features.sdnr.northbound</groupId>
       <artifactId>sdnr-northbound-features-installer</artifactId>
@@ -387,25 +310,6 @@
                                     <directory>src/main/stores</directory>
                                     <includes>
                                         <include>*.jks</include>
-                                    </includes>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy-wireless-transport-addon</id>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <phase>validate</phase>
-                        <configuration>
-                            <outputDirectory>${basedir}/target/docker-stage</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/main/wtaddon</directory>
-                                    <includes>
-                                        <include>*</include>
                                     </includes>
                                     <filtering>false</filtering>
                                 </resource>
