@@ -40,26 +40,28 @@ import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.listener.NetconfChange
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.listener.ODLEventListener;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.ProblemNotificationXml;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.WebSocketServiceClient;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.WebSocketServiceClientDummyImpl;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.WebSocketServiceClientImpl;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.WebSocketServiceClientImpl2;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.index.impl.IndexConfigService;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.index.impl.IndexMwtnService;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.index.impl.IndexUpdateService;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.maintenance.impl.MaintenanceServiceImpl;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.performancemanager.impl.PerformanceManagerImpl;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.performancemanager.impl.database.service.MicrowaveHistoricalPerformanceWriterService;
-import org.opendaylight.controller.md.sal.binding.api.DataBroker;
-import org.opendaylight.controller.md.sal.binding.api.MountPoint;
-import org.opendaylight.controller.md.sal.binding.api.MountPointService;
-import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
-import org.opendaylight.controller.sal.binding.api.RpcConsumerRegistry;
-import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
+import org.opendaylight.mdsal.binding.api.DataBroker;
+import org.opendaylight.mdsal.binding.api.MountPoint;
+import org.opendaylight.mdsal.binding.api.MountPointService;
+import org.opendaylight.mdsal.binding.api.NotificationPublishService;
+import org.opendaylight.mdsal.binding.api.RpcConsumerRegistry;
+import org.opendaylight.mdsal.binding.api.RpcProviderService;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.netconf.notification._1._0.rev080714.CreateSubscriptionInput;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.netconf.notification._1._0.rev080714.CreateSubscriptionInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.netconf.notification._1._0.rev080714.NotificationsService;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.netconf.notification._1._0.rev080714.StreamNameType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNode;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNodeConnectionStatus.ConnectionStatus;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.network.topology.topology.topology.types.TopologyNetconf;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.websocketmanager.rev150105.WebsocketmanagerService;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.NetworkTopology;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.NodeId;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.TopologyId;
@@ -87,7 +89,7 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
 
     private DataBroker dataBroker = null;
     private MountPointService mountPointService = null;
-    private RpcProviderRegistry rpcProviderRegistry = null;
+    private RpcProviderService rpcProviderRegistry = null;
     @SuppressWarnings("unused")
     private NotificationPublishService notificationPublishService = null;
 
@@ -114,6 +116,7 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
     private Thread threadDoClearCurrentFaultByNodename = null;
     private int refreshCounter = 0;
     private AkkaConfig akkaConfig;
+    private WebsocketmanagerService websocketmanagerService = null;
 
     // Blueprint 1
     public DeviceManagerImpl() {
@@ -124,9 +127,8 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
         this.dataBroker = dataBroker;
     }
 
-    public void setRpcProviderRegistry(RpcProviderRegistry rpcProviderRegistry) {
+    public void setRpcProviderRegistry(RpcProviderService rpcProviderRegistry) {
         this.rpcProviderRegistry = rpcProviderRegistry;
-
     }
 
     public void setNotificationPublishService(NotificationPublishService notificationPublishService) {
@@ -135,6 +137,10 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
 
     public void setMountPointService(MountPointService mountPointService) {
         this.mountPointService = mountPointService;
+    }
+
+    public void setWebsocketmanagerService(WebsocketmanagerService websocketmanagerService) {
+        this.websocketmanagerService = websocketmanagerService;
     }
 
     public void init() {
@@ -193,10 +199,10 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
             this.maintenanceService = new MaintenanceServiceImpl(htDatabase);
             // Websockets
             try {
-                this.webSocketService = new WebSocketServiceClientImpl2(rpcProviderRegistry);
+                this.webSocketService = new WebSocketServiceClientImpl(websocketmanagerService);
             } catch (Exception e) {
                 LOG.error("Can not start websocket service. Loading mock class.", e);
-                this.webSocketService = new WebSocketServiceClientImpl();
+                this.webSocketService = new WebSocketServiceClientDummyImpl();
             }
             // DCAE
             this.dcaeProviderClient = new DcaeProviderClient(config, dbConfig.getCluster(), this);
@@ -293,9 +299,12 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
         }
     }
 
+    /*-------------------------------------------------------------------------------------------
+     * Functions for interface DeviceManagerService
+     */
+
     /**
      * For each mounted device a mountpoint is created and this listener is called.
-     *
      */
     @Override
     public void startListenerOnNodeForConnectedState(Action action, NodeId nNodeId, NetconfNode nNode) {
@@ -400,16 +409,16 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
         LOG.info("Starting Event listener on Netconf device :: Name : {} finished", mountPointNodeName);
     }
 
-    // removeListenerOnNode
     @Override
-    public void leaveConnectedState(NodeId nNodeId, NetconfNode nNode) {
+    public void enterNonConnectedState(NodeId nNodeId, NetconfNode nNode, ConnectionStatus csts) {
         String mountPointNodeName = nNodeId.getValue();
         LOG.info("leaveConnectedState for device :: Name : {}", mountPointNodeName);
 
-        this.maintenanceService.deleteIfNotRequired(mountPointNodeName);
         ONFCoreNetworkElementRepresentation ne = networkElementRepresentations.remove(mountPointNodeName);
         if (ne != null) {
-            int problems = ne.removeAllCurrentProblemsOfNode();
+            //Handling transition mountpoint connected -> connecting
+            this.maintenanceService.deleteIfNotRequired(mountPointNodeName);
+           int problems = ne.removeAllCurrentProblemsOfNode();
             LOG.debug("Removed all {} problems from database at deregistration for {}", problems, mountPointNodeName);
             if (odlEventListener != null) {
                 odlEventListener.deRegistration(mountPointNodeName);
@@ -421,7 +430,8 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
                 aaiProviderClient.onDeviceUnregistered(mountPointNodeName);
             }
         } else {
-            LOG.info("No related ne object for mountpoint {} to deregister .", mountPointNodeName);
+            //Handling -> create not connected mountpoint, or change other beside connected.
+            odlEventListener.updateRegistration(mountPointNodeName, csts.getClass().getSimpleName(), csts.getName());
         }
         if (deviceMonitor != null) {
             deviceMonitor.deviceDisconnectIndication(mountPointNodeName);
@@ -429,18 +439,16 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
 
     }
 
-    /*
-     * @Override public void mountpointNodeCreation(NodeId nNodeId, NetconfNode nNode) { String
-     * mountPointNodeName = nNodeId.getValue(); LOG.info("mountpointNodeCreation {} {}",
-     * nNodeId.getValue(), nNode.getConnectionStatus());
-     * deviceMonitor.createMountpointIndication(mountPointNodeName); }
-     */
     @Override
-    public void mountpointNodeRemoved(NodeId nNodeId) {
+    public void removeMountpointState(NodeId nNodeId) {
         String mountPointNodeName = nNodeId.getValue();
         LOG.info("mountpointNodeRemoved {}", nNodeId.getValue());
         deviceMonitor.removeMountpointIndication(mountPointNodeName);
     }
+
+    /*-------------------------------------------------------------------------------------------
+     * Functions
+     */
 
     /**
      * Async RPC Interface implementation

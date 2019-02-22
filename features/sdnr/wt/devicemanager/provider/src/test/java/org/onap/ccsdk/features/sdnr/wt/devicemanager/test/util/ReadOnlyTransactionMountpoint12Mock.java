@@ -20,16 +20,12 @@
  ******************************************************************************/
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util;
 
-import com.google.common.base.Optional;
-import com.google.common.util.concurrent.CheckedFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import org.opendaylight.controller.md.sal.binding.api.NotificationService;
-import org.opendaylight.controller.md.sal.binding.api.ReadOnlyTransaction;
-import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
-import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
+import com.google.common.util.concurrent.FluentFuture;
+import com.google.common.util.concurrent.Futures;
+import java.util.Optional;
+import org.opendaylight.mdsal.binding.api.NotificationService;
+import org.opendaylight.mdsal.binding.api.ReadTransaction;
+import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
 import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.core.model.rev170320.NetworkElement;
 import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev170324.MicrowaveModelListener;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNode;
@@ -44,8 +40,7 @@ import org.opendaylight.yangtools.yang.binding.NotificationListener;
  * @author herbert
  *
  */
-@SuppressWarnings("deprecation")
-public class ReadOnlyTransactionMountpoint12Mock implements ReadOnlyTransaction, NotificationService {
+public class ReadOnlyTransactionMountpoint12Mock implements ReadTransaction, NotificationService {
 
     private final Model12ObjectMock mock = new Model12ObjectMock();
     private MicrowaveModelListener modelListener;
@@ -61,9 +56,8 @@ public class ReadOnlyTransactionMountpoint12Mock implements ReadOnlyTransaction,
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends DataObject> CheckedFuture<Optional<T>, ReadFailedException> read(LogicalDatastoreType store,
+    public <T extends DataObject> FluentFuture<Optional<T>> read(LogicalDatastoreType store,
             InstanceIdentifier<T> path) {
-
         System.out.println("READ: " + path + " Store: " + store);
 
         Optional<T> res1;
@@ -131,52 +125,10 @@ public class ReadOnlyTransactionMountpoint12Mock implements ReadOnlyTransaction,
 
         } else {
             System.err.println("Nothing to deliver for" + path.getTargetType());
-            res1 = Optional.absent();
+            res1 = Optional.empty();
         }
 
-
-        CheckedFuture<Optional<T>, ReadFailedException> res = new CheckedFuture<Optional<T>, ReadFailedException>() {
-
-            @Override
-            public void addListener(Runnable arg0, Executor arg1) {}
-
-            @Override
-            public boolean cancel(boolean mayInterruptIfRunning) {
-                return false;
-            }
-
-            @Override
-            public Optional<T> get() throws InterruptedException, ExecutionException {
-                return res1;
-            }
-
-            @Override
-            public Optional<T> get(long timeout, TimeUnit unit)
-                    throws InterruptedException, ExecutionException, TimeoutException {
-                return null;
-            }
-
-            @Override
-            public boolean isCancelled() {
-                return false;
-            }
-
-            @Override
-            public boolean isDone() {
-                return false;
-            }
-
-            @Override
-            public Optional<T> checkedGet() throws ReadFailedException {
-                return res1;
-            }
-
-            @Override
-            public Optional<T> checkedGet(long arg0, TimeUnit arg1) throws TimeoutException, ReadFailedException {
-                return null;
-            }
-
-        };
+        FluentFuture<Optional<T>> res = FluentFuture.from(Futures.immediateFuture(res1));
         return res;
 
     }

@@ -43,13 +43,15 @@ import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.MountPointMock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.MountPointServiceMock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.NotificationPublishServiceMock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.RpcProviderRegistryMock;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.WebsocketmanagerServiceMock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.ReadOnlyTransactionMountpoint1211Mock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.ReadOnlyTransactionMountpoint1211pMock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.ReadOnlyTransactionMountpoint12Mock;
-import org.opendaylight.controller.md.sal.binding.api.MountPointService;
-import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
-import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
+import org.opendaylight.mdsal.binding.api.MountPointService;
+import org.opendaylight.mdsal.binding.api.NotificationPublishService;
+import org.opendaylight.mdsal.binding.api.RpcProviderService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNode;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.websocketmanager.rev150105.WebsocketmanagerService;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.NodeId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +88,8 @@ public class TestDeviceManagerWithDatabase {
         mountPoint.setReadOnlyTransaction(readOnlyTransaction);
         MountPointService mountPointService = new MountPointServiceMock(mountPoint);
         NotificationPublishService notificationPublishService = new NotificationPublishServiceMock();
-        RpcProviderRegistry rpcProviderRegistry = new RpcProviderRegistryMock();
+        WebsocketmanagerService websocketmanagerService = new WebsocketmanagerServiceMock();
+        RpcProviderService rpcProviderRegistry = new RpcProviderRegistryMock();
 
         //start using blueprint interface
         deviceManager = new DeviceManagerImpl();
@@ -95,6 +98,7 @@ public class TestDeviceManagerWithDatabase {
         deviceManager.setMountPointService(mountPointService);
         deviceManager.setNotificationPublishService(notificationPublishService);
         deviceManager.setRpcProviderRegistry(rpcProviderRegistry);
+        deviceManager.setWebsocketmanagerService(websocketmanagerService);
 
         try {
             deviceManager.init();

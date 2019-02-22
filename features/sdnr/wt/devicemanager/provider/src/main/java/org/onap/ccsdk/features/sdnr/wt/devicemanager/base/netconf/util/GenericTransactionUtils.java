@@ -17,26 +17,24 @@
  ******************************************************************************/
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.util;
 
+import com.google.common.base.Preconditions;
+import com.google.common.util.concurrent.FluentFuture;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nullable;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.opendaylight.controller.md.sal.binding.api.DataBroker;
-import org.opendaylight.controller.md.sal.binding.api.ReadOnlyTransaction;
-import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
-import org.opendaylight.controller.md.sal.common.api.data.ReadFailedException;
+import org.opendaylight.mdsal.binding.api.DataBroker;
+import org.opendaylight.mdsal.binding.api.ReadTransaction;
+import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.util.concurrent.CheckedFuture;
 
-@SuppressWarnings("deprecation")
 public final class GenericTransactionUtils {
     static final Logger LOG = LoggerFactory.getLogger(GenericTransactionUtils.class);
 
@@ -105,15 +103,15 @@ public final class GenericTransactionUtils {
             LOG.debug("Sending message with retry {} ", retry);
             statusIndicator.set("Create Read Transaction");
 
-            try (ReadOnlyTransaction readTransaction = dataBroker.newReadOnlyTransaction();) {
-                CheckedFuture<Optional<T>, ReadFailedException> od = readTransaction.read(dataStoreType, iid);
+            try (ReadTransaction readTransaction = dataBroker.newReadOnlyTransaction();) {
+                FluentFuture<Optional<T>> od = readTransaction.read(dataStoreType, iid);
                 statusIndicator.set("Read done");
                 if (od != null) {
                     statusIndicator.set("Unwrap checkFuture done");
                     Optional<T> optionalData = od.get();
                     if (optionalData != null) {
                         statusIndicator.set("Unwrap optional done");
-                        data = optionalData.orNull();
+                        data = optionalData.orElse(null);
                         statusIndicator.set("Read transaction done");
                         noErrorIndication.set(true);
                     }

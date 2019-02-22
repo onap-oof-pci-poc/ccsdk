@@ -20,31 +20,27 @@
  ******************************************************************************/
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock;
 
-import org.opendaylight.controller.md.sal.binding.api.BindingTransactionChain;
-import org.opendaylight.controller.md.sal.binding.api.DataBroker;
-import org.opendaylight.controller.md.sal.binding.api.DataChangeListener;
-import org.opendaylight.controller.md.sal.binding.api.DataTreeChangeListener;
-import org.opendaylight.controller.md.sal.binding.api.DataTreeIdentifier;
-import org.opendaylight.controller.md.sal.binding.api.ReadOnlyTransaction;
-import org.opendaylight.controller.md.sal.binding.api.ReadWriteTransaction;
-import org.opendaylight.controller.md.sal.binding.api.WriteTransaction;
-import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
-import org.opendaylight.controller.md.sal.common.api.data.TransactionChainListener;
+import org.opendaylight.mdsal.binding.api.BindingTransactionChain;
+import org.opendaylight.mdsal.binding.api.DataBroker;
+import org.opendaylight.mdsal.binding.api.DataTreeChangeListener;
+import org.opendaylight.mdsal.binding.api.DataTreeIdentifier;
+import org.opendaylight.mdsal.binding.api.ReadTransaction;
+import org.opendaylight.mdsal.binding.api.ReadWriteTransaction;
+import org.opendaylight.mdsal.binding.api.WriteTransaction;
+import org.opendaylight.mdsal.common.api.TransactionChainListener;
 import org.opendaylight.yangtools.concepts.ListenerRegistration;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
 /**
  * @author herbert
  *
  */
-@SuppressWarnings("deprecation")
 public class DataBrokerNetconfMock implements DataBroker {
 
 
-    ReadOnlyTransaction readOnlyTransaction;
+    ReadTransaction readOnlyTransaction;
 
-    public void setReadOnlyTransaction(ReadOnlyTransaction readOnlyTransaction) {
+    public void setReadOnlyTransaction(ReadTransaction readOnlyTransaction) {
         this.readOnlyTransaction = readOnlyTransaction;
     }
 
@@ -60,7 +56,7 @@ public class DataBrokerNetconfMock implements DataBroker {
     }
 
     @Override
-    public ReadOnlyTransaction newReadOnlyTransaction() {
+    public ReadTransaction newReadOnlyTransaction() {
         return readOnlyTransaction;
     }
 
@@ -74,10 +70,5 @@ public class DataBrokerNetconfMock implements DataBroker {
         return null;
     }
 
-    @Override
-    public ListenerRegistration<DataChangeListener> registerDataChangeListener(LogicalDatastoreType store,
-            InstanceIdentifier<?> path, DataChangeListener listener, DataChangeScope triggeringScope) {
-        return null;
-    }
 
 }

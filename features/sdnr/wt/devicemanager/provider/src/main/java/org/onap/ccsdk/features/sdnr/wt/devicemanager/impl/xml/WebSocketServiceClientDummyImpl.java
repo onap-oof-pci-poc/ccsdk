@@ -15,15 +15,24 @@
  * the License.
  * ============LICENSE_END==========================================================================
  ******************************************************************************/
-package org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf;
+package org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml;
 
-import org.opendaylight.mdsal.binding.api.DataBroker;
-import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.core.model.rev170320.NetworkElement;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.listener.ODLEventListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public interface ONFCOreNetworkElementCoreData {
+/**
+ * WrapperMock class for web-socket notifications to the web-socket service.
+ */
+public class WebSocketServiceClientDummyImpl implements WebSocketServiceClient {
 
-    public String getMountpoint();
-    public DataBroker getDataBroker();
-    public NetworkElement getOptionalNetworkElement();
+    private static final Logger LOG = LoggerFactory.getLogger(ODLEventListener.class);
 
+    public WebSocketServiceClientDummyImpl() {
+    }
+
+    @Override
+    public <T extends MwtNotificationBase & GetEventType> void sendViaWebsockets(String nodeName, T notificationXml) {
+        LOG.info("Dummy to send websocket event {} for mountpoint {}", notificationXml.getClass().getSimpleName(), nodeName);
+    }
 }

@@ -22,7 +22,7 @@ package org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf;
 
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.InventoryInformation;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.container.AllPm;
-import org.opendaylight.controller.md.sal.binding.api.MountPoint;
+import org.opendaylight.mdsal.binding.api.MountPoint;
 
 /**
  * @author herbert
