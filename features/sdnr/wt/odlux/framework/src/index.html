@@ -15,7 +15,11 @@
   <script type="text/javascript" src="./config.js"></script>
   <script>
     // run the application
-    require(["run"], function (run) {
+    require(["run","connectApp","inventoryApp","faultApp","helpApp"], function (run,connectApp,inventoryApp,faultApp,helpApp) {
+      connectApp.register();
+      inventoryApp.register();
+      faultApp.register();
+      helpApp.register();
       run.runApplication();
     });
   </script>

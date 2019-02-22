@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="./vendor.css" >
-  <title>Document</title>
+  <title>connectApp</title>
 </head>
 
 <body>
@@ -18,7 +18,7 @@
     require(["app","connectApp", "faultApp"], function (app, connectApp, faultApp) {
       connectApp.register();
       faultApp.register();
-      app("./app.tsx")
+      app("./app.tsx").runApplication();
     });
   </script>
 </body>

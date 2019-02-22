@@ -1,6 +1,6 @@
 import { RequiredNetworkElementType } from '../models/requiredNetworkElements';
-import { MountedNetworkElementType } from 'models/mountedNetworkElements';
-import { Topology, TopologyNode } from 'models/topologyNetconf';
+import { MountedNetworkElementType } from '../models/mountedNetworkElements';
+import { Topology, TopologyNode } from '../models/topologyNetconf';
 
 import { requestRest } from '../../../../framework/src/services/restService';
 import { Result, HitEntry } from '../../../../framework/src/models/elasticSearch';
@@ -40,7 +40,6 @@ class ConnectService {
       username: result._source.username,
       password: result._source.password,
     } || null;
-
   }
 
   /**
@@ -61,13 +60,9 @@ class ConnectService {
     return result || null;
   }
 
-  
-
   private static mapTopologyNode = (mountPoint: TopologyNode, required: boolean ) => {
     // handle onfCapabilities
     let onfCapabilities: { module: string, revision: string }[] | undefined = undefined;
-    let onfCoreModelRevision: string[] | undefined = undefined;
-    let onfAirInterfaceRevision: string[] | undefined = undefined;
 
     const capId = 'netconf-node-topology:available-capabilities';
     if (mountPoint[capId] && mountPoint[capId]['available-capability']) {
@@ -161,17 +156,16 @@ class ConnectService {
       '</node>'].join('');
     
     try {
-      const result = await requestRest<{}>(path, {
+      const result = await requestRest<string>(path, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/xml',
-          'Accept': 'application/xml',
-          'Authorization': 'Basic YWRtaW46YWRtaW4='
+          'Accept': 'application/xml'
         },
         body: mountXml
       }, true);
       // expect an empty answer
-      return result === null; 
+      return result !== null; 
     } catch {
       return false;
     }
@@ -182,16 +176,15 @@ class ConnectService {
     const path = 'restconf/config/network-topology:network-topology/topology/topology-netconf/node/' + mountId;
   
     try {
-      const result = await requestRest<{}>(path, {
+      const result = await requestRest<string>(path, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/xml',
-          'Accept': 'application/xml',
-          'Authorization': 'Basic YWRtaW46YWRtaW4='
+          'Accept': 'application/xml'
         },
       }, true);
       // expect an empty answer
-      return result === null; 
+      return result !== null; 
       
     } catch {
       return false;

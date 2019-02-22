@@ -28,6 +28,7 @@
 		<module>apps/helpApp</module>
 		<module>apps/inventoryApp</module>
 		<module>apps/mediatorApp</module>
+		<module>apps/maintenanceApp</module>
 		<module>apps/minimumApp</module>
 		<module>apps/app-feature</module>
 		<module>apps/app-installer</module>

@@ -112,7 +112,7 @@ const settings: { [key: string]: DialogSettings } = {
     readonlyName: true,
   },
   [EditMediatorConfigDialogMode.AddMediatorConfig]: {
-    dialogTitle: "Add Medator Configuration",
+    dialogTitle: "Add Mediator Configuration",
     dialogDescription: "",
     applyButtonText: "Add",
     cancelButtonText: "Cancel",
@@ -120,7 +120,7 @@ const settings: { [key: string]: DialogSettings } = {
     readonlyName: false,
   },
   [EditMediatorConfigDialogMode.EditMediatorConfig]: {
-    dialogTitle: "Edit Medator Configuration",
+    dialogTitle: "Edit Mediator Configuration",
     dialogDescription: "",
     applyButtonText: "Update",
     cancelButtonText: "Cancel",

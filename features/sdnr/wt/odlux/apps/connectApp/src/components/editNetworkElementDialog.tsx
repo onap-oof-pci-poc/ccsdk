@@ -15,8 +15,9 @@ import {
   removeFromRequiredNetworkElementsAsyncActionCreator
 } from '../actions/requiredNetworkElementsActions';
 
+import { unmountNetworkElementAsyncActionCreator, mountNetworkElementAsyncActionCreator } from '../actions/mountedNetworkElementsActions';
 import { RequiredNetworkElementType } from '../models/requiredNetworkElements';
-import { unmountNetworkElementActionCreatorAsync, mountNetworkElementActionCreatorAsync } from '../actions/mountedNetworkElementsActions';
+
 export enum EditNetworkElementDialogMode {
   None = "none",
   UnknownNetworkElementToRequiredNetworkElements = "unknownNetworkElementToRequiredNetworkElements",
@@ -35,14 +36,14 @@ const mapDispatch = (dispatcher: IDispatcher) => ({
     dispatcher.dispatch(removeFromRequiredNetworkElementsAsyncActionCreator(element));
   },
   mountNetworkElement: (element: RequiredNetworkElementType) => {
-    dispatcher.dispatch(mountNetworkElementActionCreatorAsync(element));
+    dispatcher.dispatch(mountNetworkElementAsyncActionCreator(element));
   },
   mountAndRquireNetworkElement: (element: RequiredNetworkElementType) => {
     dispatcher.dispatch(addToRequiredNetworkElementsAsyncActionCreator(element));
-    dispatcher.dispatch(mountNetworkElementActionCreatorAsync(element));
+    dispatcher.dispatch(mountNetworkElementAsyncActionCreator(element));
   },
   unmountNetworkElement: (element: RequiredNetworkElementType) => {
-    dispatcher.dispatch(unmountNetworkElementActionCreatorAsync(element && element.mountId));
+    dispatcher.dispatch(unmountNetworkElementAsyncActionCreator(element && element.mountId));
   }
 }
 );
@@ -70,7 +71,7 @@ const settings: { [key: string]: DialogSettings } = {
   [EditNetworkElementDialogMode.UnknownNetworkElementToRequiredNetworkElements] : {
     dialogTitle: "Add to required network elements" ,
     dialogDescription: "Create a new NetworkElement in planning database as clone of existing real NetworkElement." ,
-    applyButtonText: "Add to required network elements" , 
+    applyButtonText: "Add to required network elements" ,
     cancelButtonText: "Cancel",
     enableMountIdEditor: false,
     enableUsernameEditor: true,
@@ -136,7 +137,7 @@ type EditNetworkElementDialogComponentState = RequiredNetworkElementType & {
 class EditNetworkElementDialogComponent extends React.Component<EditNetworkElementDialogComponentProps, EditNetworkElementDialogComponentState> {
   constructor(props: EditNetworkElementDialogComponentProps) {
     super(props);
-    
+
     this.state = {
       mountId: this.props.initialNetworkElement.mountId,
       host: this.props.initialNetworkElement.host,

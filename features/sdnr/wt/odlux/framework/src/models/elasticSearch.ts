@@ -20,3 +20,24 @@ export type HitEntry<TSource extends {}> = {
   _score: number;
   _source: TSource;
 }
+
+type ActionResponse ={
+  _index: string;
+  _type: string;
+  _id: string;
+  _shards: {
+    total: number,
+    successful: number,
+    failed: number
+    },
+   
+}
+
+export type PostResponse = ActionResponse & {
+  created: boolean
+}
+
+export type DeleteResponse = ActionResponse & {
+  found: boolean
+}
+
