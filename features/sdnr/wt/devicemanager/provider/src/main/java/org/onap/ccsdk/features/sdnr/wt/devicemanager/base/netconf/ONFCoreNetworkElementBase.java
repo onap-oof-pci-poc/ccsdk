@@ -24,7 +24,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.InventoryInformation;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.container.Capabilities;
-import org.opendaylight.mdsal.binding.api.DataBroker;
+import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

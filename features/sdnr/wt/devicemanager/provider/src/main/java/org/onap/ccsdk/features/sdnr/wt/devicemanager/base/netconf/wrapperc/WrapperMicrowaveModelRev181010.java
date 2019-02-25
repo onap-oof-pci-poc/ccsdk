@@ -40,10 +40,10 @@ import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.AttributeValueChan
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.ObjectCreationNotificationXml;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.ObjectDeletionNotificationXml;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.ProblemNotificationXml;
+import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 
 import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.core.model.rev170320.logical.termination.point.g.Lp;
 import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.g._874._1.model.rev170320.OtnHistoryDataG;
-import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
 import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.core.model.rev170320.UniversalId;
 import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev181010.AirInterfaceCurrentProblemTypeG;
 import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.rev181010.AirInterfaceDiversityCurrentProblemTypeG;
@@ -88,7 +88,7 @@ public class WrapperMicrowaveModelRev181010 implements OnfMicrowaveModel, Microw
 
     private ONFCOreNetworkElementCoreData coreData;
 
-    private OnfMicrowaveModelNotification microwaveModelListener;
+	private OnfMicrowaveModelNotification microwaveModelListener;
 
     /*-----------------------------------------------------------------------------
      * Setter/Getter
@@ -96,23 +96,23 @@ public class WrapperMicrowaveModelRev181010 implements OnfMicrowaveModel, Microw
 
     @Override
     public void setCoreData(ONFCOreNetworkElementCoreData coreData) {
-        this.coreData = coreData;
-    }
+		this.coreData = coreData;
+	}
 
-    public ONFCOreNetworkElementCoreData getCoreData() {
-        return coreData;
-    }
+	public ONFCOreNetworkElementCoreData getCoreData() {
+		return coreData;
+	}
 
-    @Override
-    public void setOnfMicrowaveModelListener(OnfMicrowaveModelNotification microwaveModelListener) {
-        this.microwaveModelListener = microwaveModelListener;
-    }
+	@Override
+	public void setOnfMicrowaveModelListener(OnfMicrowaveModelNotification microwaveModelListener) {
+		this.microwaveModelListener = microwaveModelListener;
+	}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T extends NotificationListener> T getNotificationListener() {
-        return (T) this;
-    }
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends NotificationListener> T getNotificationListener() {
+		return (T) this;
+	}
 
     /*-----------------------------------------------------------------------------
      * Interfacefunctions
@@ -120,66 +120,66 @@ public class WrapperMicrowaveModelRev181010 implements OnfMicrowaveModel, Microw
 
     @Override
     public void readTheFaultsOfMicrowaveModel(ONFLayerProtocolName lpName, Class<?> lpClass, UniversalId uuid,
-            List<ProblemNotificationXml> resultList) {
+    		List<ProblemNotificationXml> resultList) {
 
-        switch (lpName) {
-        case MWAirInterface:
-            readTheFaultsOfMwAirInterfacePac(uuid, resultList);
-            break;
+    	switch (lpName) {
+    	case MWAirInterface:
+    		readTheFaultsOfMwAirInterfacePac(uuid, resultList);
+    		break;
 
-        case EthernetContainer12:
-            readTheFaultsOfMwEthernetContainerPac(uuid, resultList);
-            break;
+    	case EthernetContainer12:
+    		readTheFaultsOfMwEthernetContainerPac(uuid, resultList);
+    		break;
 
-        case TDMContainer:
-            readTheFaultsOfMwTdmContainerPac(uuid, resultList);
-            break;
+    	case TDMContainer:
+    		readTheFaultsOfMwTdmContainerPac(uuid, resultList);
+    		break;
 
-        case Structure:
-            if (lpClass == MwHybridMwStructurePac.class) {
-                readTheFaultsOfMwHybridMwStructurePac(uuid, resultList);
+    	case Structure:
+    		if (lpClass == MwHybridMwStructurePac.class) {
+    			readTheFaultsOfMwHybridMwStructurePac(uuid, resultList);
 
-            } else if (lpClass == MwAirInterfaceDiversityPac.class) {
-                readTheFaultsOfMwAirInterfaceDiversityPac(uuid, resultList);
+    		} else if (lpClass == MwAirInterfaceDiversityPac.class) {
+    			readTheFaultsOfMwAirInterfaceDiversityPac(uuid, resultList);
 
-            } else if (lpClass == MwPureEthernetStructurePac.class) {
-                readTheFaultsOfMwPureEthernetStructurePac(uuid, resultList);
+    		} else if (lpClass == MwPureEthernetStructurePac.class) {
+    			readTheFaultsOfMwPureEthernetStructurePac(uuid, resultList);
 
-            } else {
-                LOG.warn("Unassigned lp model {} class {}", lpName, lpClass);
-            }
-            break;
+    		} else {
+    			LOG.warn("Unassigned lp model {} class {}", lpName, lpClass);
+    		}
+    		break;
         case Ethernet:
             // No alarms supported
             break;
         case EthernetContainer10:
         default:
             LOG.warn("Unassigned or not expected lp in model {}", lpName);
-        }
+    	}
     }
 
-    @Override
+	@Override
     public List<? extends OtnHistoryDataG> readTheHistoricalPerformanceData(ONFLayerProtocolName lpName, Lp lp) {
-        switch (lpName) {
-        case MWAirInterface:
-            return readTheHistoricalPerformanceDataOfMwAirInterfacePac(lp);
+    	switch (lpName) {
+    	case MWAirInterface:
+    		return readTheHistoricalPerformanceDataOfMwAirInterfacePac(lp);
 
-        case EthernetContainer12:
-            return readTheHistoricalPerformanceDataOfEthernetContainer(lp);
+    	case EthernetContainer12:
+    		return readTheHistoricalPerformanceDataOfEthernetContainer(lp);
 
-        case EthernetContainer10:
-        case EthernetPhysical:
-        case Ethernet:
-        case TDMContainer:
-        case Structure:
-        case Unknown:
-            LOG.debug("Do not read HistoricalPM data for {} {}", lpName, lp.getUuid().getValue());
-            break;
-        }
-        return new ArrayList<>();
+    	case EthernetContainer10:
+    	case EthernetPhysical:
+    	case Ethernet:
+    	case TDMContainer:
+    	case Structure:
+    	case Unknown:
+    		LOG.debug("Do not read HistoricalPM data for {} {}", lpName, lp.getUuid().getValue());
+    		break;
+    	}
+    	return new ArrayList<>();
     }
 
-    @Override
+	@Override
     public Class<?> getClassForLtpExtension(QName qName) {
         Class<?> res = null;
         if (qName.equals(MwAirInterfacePac.QNAME)) {
@@ -196,8 +196,8 @@ public class WrapperMicrowaveModelRev181010 implements OnfMicrowaveModel, Microw
             res = MwTdmContainerPac.class;
         }
         LOG.info("Found QName {} mapped to {}", String.valueOf(qName), String.valueOf(res));
-        return res;
-    }
+		return res;
+	}
 
     /*-----------------------------------------------------------------------------
      * Reading problems for specific interface pacs
@@ -220,7 +220,7 @@ public class WrapperMicrowaveModelRev181010 implements OnfMicrowaveModel, Microw
         // AirInterfaceCurrentProblemTypeG.class;
 
         LOG.info("DBRead Get problems for class {} from mountpoint {} for uuid {}", clazzPac.getSimpleName(),
-                coreData.getMountpoint(), interfacePacUuid.getValue());
+        		coreData.getMountpoint(), interfacePacUuid.getValue());
 
         // Step 2.2: construct data and the relative iid
         InstanceIdentifier<AirInterfaceCurrentProblems> mwAirInterfaceIID = InstanceIdentifier
@@ -491,7 +491,7 @@ public class WrapperMicrowaveModelRev181010 implements OnfMicrowaveModel, Microw
 
             // Step 2.3: read to the config data store
             AirInterfaceHistoricalPerformances airHistoricalPerformanceData = GenericTransactionUtils.readData(
-                    coreData.getDataBroker(), LogicalDatastoreType.OPERATIONAL, mwAirInterfaceHistoricalPerformanceIID);
+            		coreData.getDataBroker(), LogicalDatastoreType.OPERATIONAL, mwAirInterfaceHistoricalPerformanceIID);
 
             if (airHistoricalPerformanceData == null) {
                 LOG.debug("DBRead MWAirInterfacePac Id {} no AirInterfaceHistoricalPerformances",
@@ -559,7 +559,7 @@ public class WrapperMicrowaveModelRev181010 implements OnfMicrowaveModel, Microw
                 InternalDateAndTime.valueOf(notification.getTimeStamp()),
                 notification.getObjectIdRef().getValue());
         microwaveModelListener.onObjectCreationNotification(notificationXml);
-    }
+	}
 
     @Override
     public void onObjectDeletionNotification(ObjectDeletionNotification notification) {
@@ -571,7 +571,7 @@ public class WrapperMicrowaveModelRev181010 implements OnfMicrowaveModel, Microw
                 notification.getObjectIdRef().getValue()
                 );
         microwaveModelListener.onObjectDeletionNotification(notificationXml);
-    }
+	}
 
     @Override
     public void onProblemNotification(ProblemNotification notification) {
@@ -583,7 +583,7 @@ public class WrapperMicrowaveModelRev181010 implements OnfMicrowaveModel, Microw
                 notification.getCounter().toString(), InternalDateAndTime.valueOf(notification.getTimeStamp()));
 
         microwaveModelListener.onProblemNotification(notificationXml);
-    }
+	}
 
     @Override
     public void onAttributeValueChangedNotification(AttributeValueChangedNotification notification) {
@@ -594,6 +594,6 @@ public class WrapperMicrowaveModelRev181010 implements OnfMicrowaveModel, Microw
                 notification.getObjectIdRef().getValue(), notification.getAttributeName(), notification.getNewValue());
 
         microwaveModelListener.onAttributeValueChangedNotification(notificationXml);
-    }
+	}
 
 }

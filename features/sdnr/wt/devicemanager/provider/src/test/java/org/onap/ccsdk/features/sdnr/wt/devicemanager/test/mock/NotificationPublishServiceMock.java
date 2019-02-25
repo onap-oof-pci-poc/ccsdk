@@ -22,7 +22,7 @@ package org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.concurrent.TimeUnit;
-import org.opendaylight.mdsal.binding.api.NotificationPublishService;
+import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.yangtools.yang.binding.Notification;
 
 /**

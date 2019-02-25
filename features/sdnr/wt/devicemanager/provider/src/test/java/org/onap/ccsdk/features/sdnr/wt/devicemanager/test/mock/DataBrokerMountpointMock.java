@@ -20,28 +20,31 @@
  ******************************************************************************/
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock;
 
-import org.opendaylight.mdsal.binding.api.BindingService;
-import org.opendaylight.mdsal.binding.api.BindingTransactionChain;
-import org.opendaylight.mdsal.binding.api.DataBroker;
-import org.opendaylight.mdsal.binding.api.DataTreeChangeListener;
-import org.opendaylight.mdsal.binding.api.DataTreeIdentifier;
-import org.opendaylight.mdsal.binding.api.ReadTransaction;
-import org.opendaylight.mdsal.binding.api.ReadWriteTransaction;
-import org.opendaylight.mdsal.binding.api.WriteTransaction;
-import org.opendaylight.mdsal.common.api.TransactionChainListener;
+import org.opendaylight.controller.md.sal.binding.api.BindingService;
+import org.opendaylight.controller.md.sal.binding.api.BindingTransactionChain;
+import org.opendaylight.controller.md.sal.binding.api.DataBroker;
+import org.opendaylight.controller.md.sal.binding.api.DataTreeChangeListener;
+import org.opendaylight.controller.md.sal.binding.api.DataTreeIdentifier;
+import org.opendaylight.controller.md.sal.binding.api.ReadOnlyTransaction;
+import org.opendaylight.controller.md.sal.binding.api.ReadWriteTransaction;
+import org.opendaylight.controller.md.sal.binding.api.WriteTransaction;
+import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
+import org.opendaylight.controller.md.sal.common.api.data.TransactionChainListener;
 import org.opendaylight.yangtools.concepts.ListenerRegistration;
 import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
 /**
  * @author herbert
  *
  */
+@SuppressWarnings("deprecation")
 public class DataBrokerMountpointMock implements DataBroker, BindingService {
 
-    ReadTransaction readTransaction;
+    ReadOnlyTransaction readOnlyTransaction;
 
-    public void setReadTransaction(ReadTransaction readOnlyTransaction) {
-        this.readTransaction = readOnlyTransaction;
+    public void setReadOnlyTransaction(ReadOnlyTransaction readOnlyTransaction) {
+        this.readOnlyTransaction = readOnlyTransaction;
     }
 
     @Override
@@ -56,8 +59,8 @@ public class DataBrokerMountpointMock implements DataBroker, BindingService {
     }
 
     @Override
-    public ReadTransaction newReadOnlyTransaction() {
-        return readTransaction;
+    public ReadOnlyTransaction newReadOnlyTransaction() {
+        return readOnlyTransaction;
     }
 
     @Override

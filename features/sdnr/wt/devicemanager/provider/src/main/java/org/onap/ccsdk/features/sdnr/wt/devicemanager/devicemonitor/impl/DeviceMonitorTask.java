@@ -103,7 +103,7 @@ public class DeviceMonitorTask implements Runnable {
         this.currentProblems = Collections.synchronizedSet(EnumSet.noneOf(DeviceMonitorProblems.class));
         this.disconnectSupervisionTickout = 0;
 
-        int removed = this.odlEventListener.removeAllCurrentProblemsOfNode(mountPointName);
+        int removed = odlEventListener.removeAllCurrentProblemsOfNode(mountPointName);
         LOG.debug("{} Init task removed fault entries {}", LOGMARKER, removed);
 
     }

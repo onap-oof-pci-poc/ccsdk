@@ -21,7 +21,10 @@
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.test;
 
 import static org.junit.Assert.fail;
-
+import com.google.common.io.Files;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -31,7 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,17 +41,15 @@ import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.Internal
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.InternalSeverity;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.InventoryInformation;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.HtDevicemanagerConfiguration;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.DcaeConfig;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.dcaeconnector.impl.DcaeProviderClient;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.ProblemNotificationXml;
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
-import com.google.common.io.Files;
-
+@SuppressWarnings("restriction")
 public class TestDcae {
 
     private static final String ENABLEDDCAE_TESTCONFIG_FILENAME = "test2.properties";
+    private static final File ENABLEDDCAE_TESTCONFIG_FILE = new File(ENABLEDDCAE_TESTCONFIG_FILENAME);
     private static final int DCAE_SERVER_PORT=45451;
     private static final String URI = "/abc";
     private static final String TESTCONFIG_CONTENT="[dcae]\n" +
@@ -122,7 +122,7 @@ public class TestDcae {
         String ipv6="::1";
         List<String> ifInfos = new ArrayList<>();
         ifInfos.add("LP-MWPS-RADIO");
-        InventoryInformation ii=new InventoryInformation(type, model, vendor, ipv4, ipv6, ifInfos);
+        new InventoryInformation(type, model, vendor, ipv4, ipv6, ifInfos);
         System.out.println("registering device");
         boolean neDeviceAlarm = false;
         ProblemNotificationXml notification = new ProblemNotificationXml(mountPointName, "network-element", "problemName", InternalSeverity.Critical,"123", InternalDateAndTime.getTestpattern());
@@ -142,12 +142,12 @@ public class TestDcae {
     @Before
     public void initDcaeTestWebserver() throws IOException {
         try {
-            Files.asCharSink(new File(ENABLEDDCAE_TESTCONFIG_FILENAME), StandardCharsets.UTF_8).write(TESTCONFIG_CONTENT);
+            Files.asCharSink(ENABLEDDCAE_TESTCONFIG_FILE, StandardCharsets.UTF_8).write(TESTCONFIG_CONTENT);
         } catch (IOException e1) {
             fail(e1.getMessage());
         }
         cfg=HtDevicemanagerConfiguration.getTestConfiguration(ENABLEDDCAE_TESTCONFIG_FILENAME,true);
-        cfg.getDcae().reload();
+        DcaeConfig.reload();
         try
         {
         this.server = HttpServer.create(new InetSocketAddress(DCAE_SERVER_PORT), 0);
@@ -170,6 +170,9 @@ public class TestDcae {
             this.server.stop(0);
             this.httpThreadPool.shutdownNow();
             System.out.println("http server stopped" );
+        }
+        if (ENABLEDDCAE_TESTCONFIG_FILE.exists()) {
+            ENABLEDDCAE_TESTCONFIG_FILE.delete();
         }
     }
     static class MyHandler implements HttpHandler {

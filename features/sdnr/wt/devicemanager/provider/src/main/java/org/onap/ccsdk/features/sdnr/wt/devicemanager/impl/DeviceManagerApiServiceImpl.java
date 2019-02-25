@@ -19,9 +19,10 @@ package org.onap.ccsdk.features.sdnr.wt.devicemanager.impl;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.List;
+import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.maintenance.MaintenanceRPCServiceAPI;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.maintenance.impl.MaintenanceServiceImpl;
-import org.opendaylight.mdsal.binding.api.RpcProviderService;
+import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.devicemanager.rev190109.ClearCurrentFaultByNodenameInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.devicemanager.rev190109.ClearCurrentFaultByNodenameOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.devicemanager.rev190109.ClearCurrentFaultByNodenameOutputBuilder;
@@ -41,7 +42,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.devicema
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.devicemanager.rev190109.TestMaintenanceModeInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.devicemanager.rev190109.TestMaintenanceModeOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.devicemanager.rev190109.TestMaintenanceModeOutputBuilder;
-import org.opendaylight.yangtools.concepts.ObjectRegistration;
 import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
@@ -52,16 +52,16 @@ public class DeviceManagerApiServiceImpl implements DevicemanagerService, AutoCl
 
     private static final Logger LOG = LoggerFactory.getLogger(DevicemanagerService.class);
 
-    private final ObjectRegistration<DeviceManagerApiServiceImpl> rpcReg;
+    private final RpcRegistration<DevicemanagerService> rpcReg;
 
     private MaintenanceRPCServiceAPI maintenanceService;
     private ResyncNetworkElementsListener resyncCallbackListener;
 
-    DeviceManagerApiServiceImpl(final RpcProviderService rpcProviderRegistry) {
+    DeviceManagerApiServiceImpl(final RpcProviderRegistry rpcProviderRegistry) {
         // Register ourselves as the REST API RPC implementation
         LOG.info("Register RPC Service "+DevicemanagerService.class.getSimpleName());
         this.maintenanceService = null;
-        this.rpcReg = rpcProviderRegistry.registerRpcImplementation(DevicemanagerService.class, this);
+        this.rpcReg = rpcProviderRegistry.addRpcImplementation(DevicemanagerService.class, this);
     }
 
     public void setMaintenanceService(MaintenanceServiceImpl maintenanceService2) {

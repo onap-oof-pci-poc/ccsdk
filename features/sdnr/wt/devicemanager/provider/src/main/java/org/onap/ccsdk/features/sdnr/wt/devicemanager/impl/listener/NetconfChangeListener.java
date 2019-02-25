@@ -20,13 +20,13 @@ package org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.listener;
 import java.util.Collection;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.DeviceManagerService;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.DeviceManagerService.Action;
-import org.opendaylight.mdsal.binding.api.ClusteredDataTreeChangeListener;
-import org.opendaylight.mdsal.binding.api.DataBroker;
-import org.opendaylight.mdsal.binding.api.DataObjectModification;
-import org.opendaylight.mdsal.binding.api.DataObjectModification.ModificationType;
-import org.opendaylight.mdsal.binding.api.DataTreeIdentifier;
-import org.opendaylight.mdsal.binding.api.DataTreeModification;
-import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
+import org.opendaylight.controller.md.sal.binding.api.ClusteredDataTreeChangeListener;
+import org.opendaylight.controller.md.sal.binding.api.DataBroker;
+import org.opendaylight.controller.md.sal.binding.api.DataObjectModification;
+import org.opendaylight.controller.md.sal.binding.api.DataObjectModification.ModificationType;
+import org.opendaylight.controller.md.sal.binding.api.DataTreeIdentifier;
+import org.opendaylight.controller.md.sal.binding.api.DataTreeModification;
+import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNode;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNodeConnectionStatus.ConnectionStatus;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.network.topology.topology.topology.types.TopologyNetconf;
@@ -66,7 +66,7 @@ public class NetconfChangeListener implements ClusteredDataTreeChangeListener<No
     }
 
     public void register() {
-        DataTreeIdentifier<Node> treeId = DataTreeIdentifier.create(LogicalDatastoreType.OPERATIONAL, NETCONF_NODE_TOPO_IID);
+        DataTreeIdentifier<Node> treeId = new DataTreeIdentifier<>(LogicalDatastoreType.OPERATIONAL, NETCONF_NODE_TOPO_IID);
 
         dlcReg = dataBroker.registerDataTreeChangeListener(treeId, this);
     }
@@ -106,7 +106,7 @@ public class NetconfChangeListener implements ClusteredDataTreeChangeListener<No
                         doProcessing(Action.UPDATE, root.getDataAfter());
                     } else {
                         // add(change);
-                        doProcessing(Action.ADD, root.getDataAfter());
+                        doProcessing(Action.CREATE, root.getDataAfter());
                     }
                     break;
                 case DELETE:
@@ -160,11 +160,11 @@ public class NetconfChangeListener implements ClusteredDataTreeChangeListener<No
                     switch (action) {
                         case REMOVE:
                             deviceManagerService.removeMountpointState(nodeId); // Stop Monitor
-                            deviceManagerService.enterNonConnectedState(nodeId, nnode, null); // Remove Mountpoint handler
+                            deviceManagerService.enterNonConnectedState(nodeId, nnode); // Remove Mountpoint handler
                             break;
 
                         case UPDATE:
-                        case ADD:
+                        case CREATE:
                             if (csts != null) {
                                 switch (csts) {
                                     case Connected: {
@@ -174,7 +174,7 @@ public class NetconfChangeListener implements ClusteredDataTreeChangeListener<No
                                     }
                                     case UnableToConnect:
                                     case Connecting: {
-                                        deviceManagerService.enterNonConnectedState(nodeId, nnode, csts);
+                                        deviceManagerService.enterNonConnectedState(nodeId, nnode);
                                         break;
                                     }
                                 }

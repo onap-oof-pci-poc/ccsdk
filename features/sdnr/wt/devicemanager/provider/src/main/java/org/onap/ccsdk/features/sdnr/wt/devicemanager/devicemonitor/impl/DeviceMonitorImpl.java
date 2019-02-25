@@ -6,9 +6,9 @@
  * =================================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.listener.ODLEventListener;
-import org.opendaylight.mdsal.binding.api.DataBroker;
+import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,7 +123,6 @@ public class DeviceMonitorImpl implements AutoCloseable {
     synchronized public void deviceConnectMasterIndication(String mountPointNodeName, DeviceMonitoredNe ne) {
 
         LOG.debug("ne changes to connected state {}",mountPointNodeName);
-
         createMonitoringTask(mountPointNodeName);
         if (queue.containsKey(mountPointNodeName)) {
             DeviceMonitorTask task = queue.get(mountPointNodeName);
@@ -188,23 +187,22 @@ public class DeviceMonitorImpl implements AutoCloseable {
      * createMountpoint registers a new mountpoint monitoring service
      * @param mountPointNodeName name of mountpoint
      */
-    synchronized private boolean createMonitoringTask(String mountPointNodeName) {
+    synchronized private DeviceMonitorTask createMonitoringTask(String mountPointNodeName) {
 
         DeviceMonitorTask task;
-        boolean created = false;
         LOG.debug("Register for monitoring {} {}",mountPointNodeName, mountPointNodeName.hashCode());
 
         if (queue.containsKey(mountPointNodeName)) {
             LOG.info("Monitoring task exists");
-            return false;
+            task = queue.get(mountPointNodeName);
         } else {
             LOG.info("Do start of DeviceMonitor task");
             //Runnable task = new PerformanceManagerTask(queue, databaseService);
             task = new DeviceMonitorTask(mountPointNodeName, this.odlEventListener);
             queue.put(mountPointNodeName, task);
             task.start(scheduler);
-            return true;
         }
+        return task;
     }
 
 }

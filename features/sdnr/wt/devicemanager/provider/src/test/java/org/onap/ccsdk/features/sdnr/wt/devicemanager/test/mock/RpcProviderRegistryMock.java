@@ -20,25 +20,39 @@
  ******************************************************************************/
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock;
 
-import java.util.Set;
-import org.opendaylight.mdsal.binding.api.RpcProviderService;
-import org.opendaylight.yangtools.concepts.ObjectRegistration;
+import org.opendaylight.controller.md.sal.common.api.routing.RouteChangeListener;
+import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RoutedRpcRegistration;
+import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
+import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
+import org.opendaylight.controller.sal.binding.api.rpc.RpcContextIdentifier;
+import org.opendaylight.yangtools.concepts.ListenerRegistration;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.RpcService;
 
-public class RpcProviderRegistryMock implements RpcProviderService {
+public class RpcProviderRegistryMock implements RpcProviderRegistry {
 
     @Override
-    public <S extends RpcService, T extends S> ObjectRegistration<T> registerRpcImplementation(Class<S> type,
-            T implementation) {
-        System.out.println("Register class "+type+" "+implementation);
+    public <T extends RpcService> T getRpcService(Class<T> serviceInterface) {
+        return null;
+    }
+
+   @Override
+    public <L extends RouteChangeListener<RpcContextIdentifier, InstanceIdentifier<?>>> ListenerRegistration<L> registerRouteChangeListener(
+            L listener) {
+        return null;
+    }
+
+
+    @Override
+    public <T extends RpcService> RoutedRpcRegistration<T> addRoutedRpcImplementation(Class<T> serviceInterface,
+            T implementation) throws IllegalStateException {
         return null;
     }
 
     @Override
-    public <S extends RpcService, T extends S> ObjectRegistration<T> registerRpcImplementation(Class<S> type,
-            T implementation, Set<InstanceIdentifier<?>> paths) {
-        System.out.println("Register class "+type+" "+implementation+" Path: "+paths);
+    public <T extends RpcService> RpcRegistration<T> addRpcImplementation(Class<T> serviceInterface, T implementation)
+            throws IllegalStateException {
+        System.out.println("Register class "+serviceInterface);
         return null;
     }
 

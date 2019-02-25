@@ -46,7 +46,17 @@
       <url>http://www.apache.org/licenses/LICENSE-2.0</url>
     </license>
   </licenses>
-
+<!--    <dependencyManagement> -->
+<!--        <dependencies> -->
+<!--            <dependency> -->
+<!--                <groupId>org.opendaylight.controller</groupId> -->
+<!--                <artifactId>mdsal-artifacts</artifactId> -->
+<!--                <version>1.8.1</version> -->
+<!--                <type>pom</type> -->
+<!--                <scope>import</scope> -->
+<!--            </dependency> -->
+<!--        </dependencies> -->
+<!--    </dependencyManagement> -->
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -68,10 +78,26 @@
       <artifactId>org.osgi.core</artifactId>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.opendaylight.controller</groupId>
-      <artifactId>sal-binding-api</artifactId>
-    </dependency>
+<!--     <dependency> -->
+<!--       <groupId>org.opendaylight.mdsal</groupId> -->
+<!--       <artifactId>mdsal-binding-dom-adapter</artifactId> -->
+<!--     </dependency> -->
+<!--     <dependency> -->
+<!--       <groupId>org.opendaylight.mdsal</groupId> -->
+<!--       <artifactId>mdsal-dom-spi</artifactId> -->
+<!--     </dependency> -->
+<!--     <dependency> -->
+<!--       <groupId>org.opendaylight.controller</groupId> -->
+<!--       <artifactId>sal-binding-api</artifactId> -->
+<!--     </dependency> -->
+<!--     <dependency> -->
+<!--       <groupId>org.opendaylight.netconf</groupId> -->
+<!--       <artifactId>sal-netconf-connector</artifactId> -->
+<!--     </dependency> -->
+<!--     <dependency> -->
+<!--       <groupId>org.opendaylight.mdsal</groupId> -->
+<!--       <artifactId>mdsal-dom-broker</artifactId> -->
+<!--     </dependency> -->
     <dependency>
       <groupId>org.opendaylight.netconf</groupId>
       <artifactId>sal-netconf-connector</artifactId>
@@ -293,6 +319,7 @@
     <resources>
       <resource>
         <directory>src/main/resources</directory>
+        <filtering>true</filtering>
       </resource>
       <resource>
         <directory>target/plugins</directory>
@@ -342,7 +369,7 @@
               org.opendaylight.yangtools.concepts;version="[2.0,3)",
               org.opendaylight.yangtools.yang.binding;version="[0.12,1)",
               org.opendaylight.yangtools.yang.common;version="[2.0,3)",
-              org.osgi.framework;version="[1.7,2)",
+              org.osgi.framework,
               org.osgi.service.blueprint.container,
               org.slf4j;version="[1.7,2)",
               org.slf4j.spi;version="[1.7,2)",
@@ -393,7 +420,6 @@
               org.jboss.netty.util;version="[3.10,4)",
 
               org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.websocketmanager.rev150105,
-
               org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.netconf.notification._1._0.rev080714;version="[1.4,2)",
               org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.ptp.dataset.rev170208;version="[0.3,1)",
               org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.ptp.dataset.rev170208.port.ds.entry;version="[0.3,1)",
@@ -452,6 +478,7 @@
               commons-lang3,commons-collections,commons-logging,commons-beanutils</Embed-Dependency>
             <Include-Resource>{maven-resources},{maven-dependencies},META-INF/git.properties=-target/classes/META-INF/git.properties</Include-Resource>
             <Embed-Transitive>true</Embed-Transitive>
+            <Export-Package>org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.devicemanager.*</Export-Package>
           </instructions>
         </configuration>
       </plugin>
