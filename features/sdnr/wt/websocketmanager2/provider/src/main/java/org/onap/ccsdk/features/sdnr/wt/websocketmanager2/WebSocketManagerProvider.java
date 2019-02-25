@@ -18,7 +18,6 @@
 package org.onap.ccsdk.features.sdnr.wt.websocketmanager2;
 
 import javax.servlet.ServletException;
-
 import org.opendaylight.mdsal.binding.api.RpcProviderService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.websocketmanager.rev150105.WebsocketmanagerService;
 import org.opendaylight.yangtools.concepts.ObjectRegistration;
@@ -46,8 +45,8 @@ public class WebSocketManagerProvider extends Blueprint {
         RpcProviderService rpcProviderRegistry = this.getRpcProviderRegistry();
         if (rpcProviderRegistry != null) {
             if (wsServlet != null) {
-                this.websocketService = rpcProviderRegistry.registerRpcImplementation(WebsocketmanagerService.class,
-                        wsServlet);
+                this.websocketService =
+                        rpcProviderRegistry.registerRpcImplementation(WebsocketmanagerService.class, wsServlet);
                 LOG.info("websocketservice initialized");
             } else {
                 LOG.debug("wsServlet not yet provided");
@@ -75,13 +74,17 @@ public class WebSocketManagerProvider extends Blueprint {
             LOG.warn("Unable to inject HttpService into DluxLoader. dlux modules won't work without httpService");
         } else {
 
-            wsServlet = new WebSocketManager();
-            httpService.registerServlet(ALIAS, wsServlet, null, null);
-            LOG.info("websocket servlet registered.");
-            if(this.websocketService==null) {
-                this.init();
+            if (wsServlet == null) {
+                wsServlet = new WebSocketManager();
+                httpService.registerServlet(ALIAS, wsServlet, null, null);
+                LOG.info("websocket servlet registered.");
+                if (this.websocketService == null) {
+                    this.init();
+                } else {
+                    LOG.info("websocketservice already initialized");
+                }
             } else {
-                LOG.info("websocketservice already initialized");
+                LOG.warn("Servelt ");
             }
         }
 

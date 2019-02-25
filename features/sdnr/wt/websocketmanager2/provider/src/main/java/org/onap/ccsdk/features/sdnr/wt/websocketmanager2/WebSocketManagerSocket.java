@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 public class WebSocketManagerSocket extends WebSocketAdapter {
 
     private static final Logger LOG = LoggerFactory.getLogger(WebSocketManagerSocket.class.getName());
-
     public static final String MSG_KEY_DATA = "data";
     public static final String MSG_KEY_SCOPES = "scopes";
     public static final String MSG_KEY_PARAM = "param";
@@ -62,7 +61,7 @@ public class WebSocketManagerSocket extends WebSocketAdapter {
      */
     private static final HashMap<String, WebSocketManagerSocket> clientList = new HashMap<>();
     private final String myUniqueSessionId;
-    
+
     private Session session = null;
 
     public interface EventInputCallback {
@@ -89,16 +88,15 @@ public class WebSocketManagerSocket extends WebSocketAdapter {
 
     @Override
     public void onWebSocketText(String message) {
-        LOG.info(this.getRemoteAdr() + " has sent " + message);
+        LOG.info("{} has sent {}",this.getRemoteAdr(), message);
         if (!this.manageClientRequest(message)) {
             this.manageClientRequest2(message);
         }
-
     }
 
     @Override
     public void onWebSocketBinary(byte[] payload, int offset, int len) {
-
+        LOG.debug("Binary not supported");
     }
 
     @Override
@@ -213,14 +211,14 @@ public class WebSocketManagerSocket extends WebSocketAdapter {
         }
     }
     public static void broadCast(String nodeName, String eventType, String xmlEvent) {
-    	if(clientList.size()>0) {
-    		Set<Entry<String, WebSocketManagerSocket>> e = clientList.entrySet();
-    		WebSocketManagerSocket s = e.iterator().next().getValue();
-    		if(s!=null)
-    		{
-    			s.sendToAll(nodeName, eventType, xmlEvent);
-    		}
-    	}
+        if(clientList.size()>0) {
+            Set<Entry<String, WebSocketManagerSocket>> e = clientList.entrySet();
+            WebSocketManagerSocket s = e.iterator().next().getValue();
+            if(s!=null)
+            {
+                s.sendToAll(nodeName, eventType, xmlEvent);
+            }
+        }
     }
 
 }
