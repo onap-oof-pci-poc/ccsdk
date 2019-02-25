@@ -312,7 +312,7 @@
         <filtering>true</filtering>
       </resource>
       <resource>
-        <directory>target/plugins</directory>
+        <directory>${project.build.directory}/plugins</directory>
         <targetPath>elasticsearch/plugins</targetPath>
       </resource>
     </resources>
@@ -335,7 +335,7 @@
                   <version>2.2.0</version>
                   <type>jar</type>
                   <overWrite>true</overWrite>
-                  <outputDirectory>${project.basedir}/target/plugins/delete-by-query</outputDirectory>
+                  <outputDirectory>${project.build.directory}/plugins/delete-by-query</outputDirectory>
                 </artifactItem>
               </artifactItems>
               <includes>**/*</includes>
