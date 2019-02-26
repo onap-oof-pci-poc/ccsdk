@@ -1,0 +1,18 @@
+[
+	{
+	    "uri":"/mwtn/mediator-server/_query",
+	    "method":"DELETE",
+	    "body":{"query":{"match_all":{}}}
+	},
+
+	{
+		"uri":"/mwtn/mediator-server/1",
+		"method":"POST",
+		"body":{
+			"id": 1,
+			"name": "internal mediatorserver",
+			"url": "http://192.168.178.89:7070"
+
+		}
+	}
+]

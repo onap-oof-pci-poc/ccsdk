@@ -48,6 +48,7 @@ import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("deprecation")
 public class DeviceManagerApiServiceImpl implements DevicemanagerService, AutoCloseable {
 
     private static final Logger LOG = LoggerFactory.getLogger(DevicemanagerService.class);
