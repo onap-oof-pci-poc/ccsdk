@@ -23,6 +23,7 @@ package org.onap.ccsdk.features.sdnr.wt.devicemanager.test;
 import static org.junit.Assert.fail;
 import java.io.File;
 import org.junit.Test;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.AaiConfig;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.AkkaConfig;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.util.ClusterNodeInfo;
 
@@ -121,7 +122,7 @@ public class TestAkkaConfig {
             System.out.println("testing clusternode config1");
             System.out.println("===========================");
             cfg = AkkaConfig.load(file.getAbsolutePath());
-            System.out.println("succeeded: ");
+            System.out.println("succeeded: "+cfg.hashCode());
             System.out.println(cfg.toString());
             System.out.println(String.format("found %d cluster nodes", cfg.getClusterConfig().getSeedNodes().size()));
             for (ClusterNodeInfo n : cfg.getClusterConfig().getSeedNodes()) {
@@ -134,5 +135,10 @@ public class TestAkkaConfig {
         }
     }
 
+    @Test
+    public void test4() {
+        AaiConfig cfg = AaiConfig.getDefaultConfiguration();
+        cfg.hashCode();
+    }
 
 }

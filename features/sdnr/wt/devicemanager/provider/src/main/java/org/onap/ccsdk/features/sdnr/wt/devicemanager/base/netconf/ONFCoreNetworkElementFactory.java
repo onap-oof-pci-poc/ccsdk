@@ -45,6 +45,7 @@ import org.slf4j.LoggerFactory;
  * terms than "revision" are provided.
  *
  */
+@SuppressWarnings("deprecation")
 public class ONFCoreNetworkElementFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(ONFCoreNetworkElementFactory.class);

@@ -56,6 +56,7 @@ import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("deprecation")
 public class TestDeviceManagerWithDatabase {
 
     private static int DATABASETIMEOUTSECONDS = 30;

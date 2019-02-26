@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
  * @author herbert
  *
  */
+@SuppressWarnings("deprecation")
 public class MountPointServiceMock implements MountPointService {
 
     private final MountPointMock mountpoint;

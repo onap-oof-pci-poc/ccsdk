@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.binding.Notification;
  * @author herbert
  *
  */
+@SuppressWarnings("deprecation")
 public class NotificationPublishServiceMock implements NotificationPublishService {
 
     @Override

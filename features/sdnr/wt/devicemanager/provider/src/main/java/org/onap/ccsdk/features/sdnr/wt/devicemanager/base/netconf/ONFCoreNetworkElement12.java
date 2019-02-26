@@ -77,6 +77,7 @@ import com.google.common.base.Optional;
  * @author herbert
  *
  */
+@SuppressWarnings("deprecation")
 public class ONFCoreNetworkElement12 extends ONFCoreNetworkElement12Base
         implements ONFCoreNetworkElementCallback, NotificationActor<AttributeValueChangedNotificationXml> {
 

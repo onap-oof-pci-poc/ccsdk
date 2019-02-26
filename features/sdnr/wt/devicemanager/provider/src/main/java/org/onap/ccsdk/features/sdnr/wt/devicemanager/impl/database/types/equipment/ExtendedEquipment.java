@@ -51,6 +51,10 @@ public class ExtendedEquipment {
         return treeLevel;
     }
 
-
+    @Override
+    public String toString() {
+        return "ExtendedEquipment [parentUuid=" + parentUuid + ", treeLevel=" + treeLevel + ", equipment=" + equipment
+                + "]";
+    }
 
 }

@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
  * @author herbert
  *
  */
+@SuppressWarnings("deprecation")
 public abstract class ONFCoreNetworkElementBase implements AutoCloseable, ONFCoreNetworkElementRepresentation {
 
     private static final Logger LOG = LoggerFactory.getLogger(ONFCoreNetworkElementBase.class);

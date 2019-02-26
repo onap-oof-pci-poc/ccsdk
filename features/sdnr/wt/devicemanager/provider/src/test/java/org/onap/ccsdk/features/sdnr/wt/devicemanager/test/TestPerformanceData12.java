@@ -29,7 +29,7 @@ import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.r
 public class TestPerformanceData12 {
 
     @Test
-    public void test() {
+    public void test1() {
 
         PerformanceDataBuilder p = new PerformanceDataBuilder();
         byte b=100;

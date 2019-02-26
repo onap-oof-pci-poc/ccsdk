@@ -49,6 +49,7 @@ import org.slf4j.LoggerFactory;
  * This class contains the ONF Core model Version 1.2 related functions.
  * It should import
  */
+@SuppressWarnings("deprecation")
 public abstract class ONFCoreNetworkElement12Base extends ONFCoreNetworkElementBase implements ONFCOreNetworkElementCoreData {
 
     private static final Logger LOG = LoggerFactory.getLogger(ONFCoreNetworkElement12Base.class);

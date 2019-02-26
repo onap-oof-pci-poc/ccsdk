@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.binding.RpcService;
  * @author herbert
  *
  */
+@SuppressWarnings("deprecation")
 public class RpcConsumerRegistryMock implements RpcConsumerRegistry {
 
     @Override
