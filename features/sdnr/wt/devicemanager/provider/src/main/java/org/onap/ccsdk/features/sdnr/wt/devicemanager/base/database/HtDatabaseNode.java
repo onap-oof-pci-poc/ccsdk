@@ -123,8 +123,15 @@ public class HtDatabaseNode implements AutoCloseable {
         if (!f.exists()) {
             f.mkdir();
         }
-        Resources.copyFolderInto(RESFOLDER_PLUGINHEAD, PLUGINFOLDER, RESFOLDER_PLUGIN);
-        Resources.copyFolderInto(RESFOLDER_PLUGINDELETE, PLUGINFOLDER, RESFOLDER_PLUGIN);
+        if (!Resources.copyFolderInto(RESFOLDER_PLUGINHEAD, PLUGINFOLDER, RESFOLDER_PLUGIN)) {
+            throw new IllegalArgumentException("Copy not successfull Name: " + RESFOLDER_PLUGINHEAD + " folder src "
+                    + PLUGINFOLDER + " folder dst " + RESFOLDER_PLUGIN);
+        }
+       //Normal JAR loaded by classloader as part of the bundle
+       if (!Resources.copyFolderInto(RESFOLDER_PLUGINDELETE, PLUGINFOLDER, RESFOLDER_PLUGIN)) {
+            throw new IllegalArgumentException("Copy not successfull Name: " + RESFOLDER_PLUGINDELETE + " folder src "
+                    + PLUGINFOLDER + " folder dst " + RESFOLDER_PLUGIN);
+       }
     }
 
     /**
@@ -232,6 +239,7 @@ public class HtDatabaseNode implements AutoCloseable {
 
     /**
      * Start as singleton
+     *
      * @param config data
      * @param akkaConfig data
      * @param geoConfig data

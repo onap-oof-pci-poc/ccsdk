@@ -87,6 +87,10 @@
           <artifactId>*</artifactId>
         </exclusion>
         <exclusion>
+          <groupId>org.elasticsearch.plugin</groupId>
+          <artifactId>delete-by-query</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>org.apache.lucene</groupId>
           <artifactId>*</artifactId>
         </exclusion>

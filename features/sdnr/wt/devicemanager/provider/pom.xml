@@ -298,12 +298,11 @@
       <artifactId>commons-lang3</artifactId>
       <version>3.4</version>
     </dependency>
-<!--     <dependency> -->
-<!--       <groupId>org.elasticsearch.plugin</groupId> -->
-<!--       <artifactId>delete-by-query</artifactId> -->
-<!--       <version>2.2.0</version> -->
-<!--       <scope>test</scope> -->
-<!--     </dependency> -->
+    <dependency>
+      <groupId>org.elasticsearch.plugin</groupId>
+      <artifactId>delete-by-query</artifactId>
+      <version>2.2.0</version>
+    </dependency>
   </dependencies>
   <build>
     <resources>
@@ -311,41 +310,41 @@
         <directory>src/main/resources</directory>
         <filtering>true</filtering>
       </resource>
-      <resource>
-        <directory>${project.build.directory}/plugins</directory>
-        <targetPath>elasticsearch/plugins</targetPath>
-      </resource>
+<!--       <resource> -->
+<!--         <directory>${project.build.directory}/plugins</directory> -->
+<!--         <targetPath>elasticsearch/plugins</targetPath> -->
+<!--       </resource> -->
     </resources>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-plugin</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.elasticsearch.plugin</groupId>
-                  <artifactId>delete-by-query</artifactId>
-                  <version>2.2.0</version>
-                  <type>jar</type>
-                  <overWrite>true</overWrite>
-                  <outputDirectory>${project.build.directory}/plugins/delete-by-query</outputDirectory>
-                </artifactItem>
-              </artifactItems>
-              <includes>**/*</includes>
-              <overWriteReleases>true</overWriteReleases>
-              <overWriteSnapshots>true</overWriteSnapshots>
-              <excludeTransitive>true</excludeTransitive>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+<!--       <plugin> -->
+<!--         <groupId>org.apache.maven.plugins</groupId> -->
+<!--         <artifactId>maven-dependency-plugin</artifactId> -->
+<!--         <executions> -->
+<!--           <execution> -->
+<!--             <id>copy-plugin</id> -->
+<!--             <phase>generate-sources</phase> -->
+<!--             <goals> -->
+<!--               <goal>copy</goal> -->
+<!--             </goals> -->
+<!--             <configuration> -->
+<!--               <artifactItems> -->
+<!--                 <artifactItem> -->
+<!--                   <groupId>org.elasticsearch.plugin</groupId> -->
+<!--                   <artifactId>delete-by-query</artifactId> -->
+<!--                   <version>2.2.0</version> -->
+<!--                   <type>jar</type> -->
+<!--                   <overWrite>true</overWrite> -->
+<!--                   <outputDirectory>${project.build.directory}/plugins/delete-by-query</outputDirectory> -->
+<!--                 </artifactItem> -->
+<!--               </artifactItems> -->
+<!--               <includes>**/*</includes> -->
+<!--               <overWriteReleases>true</overWriteReleases> -->
+<!--               <overWriteSnapshots>true</overWriteSnapshots> -->
+<!--               <excludeTransitive>true</excludeTransitive> -->
+<!--             </configuration> -->
+<!--           </execution> -->
+<!--         </executions> -->
+<!--       </plugin> -->
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
@@ -463,7 +462,7 @@
               org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology;version="[2013.10,2014)",
               org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.network.topology.topology;version="[2013.10,2014)"
             </Import-Package>
-            <Embed-Dependency>jackson*,ela*,joda*,Hdr*,lucene*,
+            <Embed-Dependency>jackson*,ela*,delete-by-query,joda*,Hdr*,lucene*,
               hppc,jsr166e,t-digest,snakeyaml,securesm,spatial4j,compress-lzf,commons-cli,jakarta-regexp,
               commons-lang3,commons-collections,commons-logging,commons-beanutils</Embed-Dependency>
             <Include-Resource>{maven-resources},{maven-dependencies},META-INF/git.properties=-target/classes/META-INF/git.properties</Include-Resource>
