@@ -5,7 +5,7 @@
 run() {
 
         if [ -z "$1" ] ; then
-           IMAGE="oof-pci/ccsdk-odlsliwt-alpine-image:latest"
+           IMAGE="oof-pci/ccsdk-odlsliwt-alpine-image:0.4.1-SNAPSHOT-latest"
     else
            IMAGE="$1"
         fi
