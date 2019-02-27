@@ -6,7 +6,12 @@ import { subscribe, IFormatedMessage } from '../../../framework/src/services/not
 
 import connectAppRootHandler from './handlers/connectAppRootHandler';
 import ConnectApplication  from './views/connectView';
-import { RemoveMountedNetworkElement, addMountedNetworkElementAsyncActionCreator } from './actions/mountedNetworkElementsActions' ;
+
+import {
+  addMountedNetworkElementAsyncActionCreator,
+  updateMountedNetworkElementAsyncActionCreator
+} from './actions/mountedNetworkElementsActions';
+
 import { AddSnackbarNotification } from '../../../framework/src/actions/snackbarActions';
 
 type ObjectNotification = {
@@ -32,8 +37,8 @@ export function register() {
       store.dispatch(addMountedNetworkElementAsyncActionCreator(msg.objectId));
       store.dispatch(new AddSnackbarNotification({ message: `Adding network element [${ msg.objectId }]`, options: { variant: 'info' } }));
     } else if (msg && msg.notifType === "ObjectDeletionNotification" && store) {
-      store.dispatch(new AddSnackbarNotification({ message: `Removing network element [${ msg.objectId }]`, options: { variant: 'info' } }));
-      store.dispatch(new RemoveMountedNetworkElement(msg.objectId));
+      store.dispatch(new AddSnackbarNotification({ message: `Updating network element [${ msg.objectId }]`, options: { variant: 'info' } }));
+      store.dispatch(updateMountedNetworkElementAsyncActionCreator(msg.objectId));
     }
   }));
-}                                     
+}

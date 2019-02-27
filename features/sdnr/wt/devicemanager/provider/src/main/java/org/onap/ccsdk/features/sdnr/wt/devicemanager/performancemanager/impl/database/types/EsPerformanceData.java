@@ -410,7 +410,7 @@ public class EsPerformanceData {
     }
 
     @JsonGetter("tx-ethernet-bytes-sum")
-    java.lang.Long getTxEthernetBytesSum() {
+    public java.lang.Long getTxEthernetBytesSum() {
         return dataEthContainer12 != null ? dataEthContainer12.getTxEthernetBytesSum()
                 : dataEthContainer1211 != null ? dataEthContainer1211.getTxEthernetBytesSum()
                         : dataEthContainer1211p != null ? dataEthContainer1211p.getTxEthernetBytesSum() : null;

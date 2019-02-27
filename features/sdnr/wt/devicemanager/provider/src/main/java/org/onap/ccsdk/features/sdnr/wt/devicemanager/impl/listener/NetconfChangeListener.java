@@ -6,9 +6,9 @@
  * =================================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -42,16 +42,17 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// 07.09.18 Switched to DataTreeChangeListener from ClusteredDataTreeChangeListener -> DM Service is running at all nodes
+// 07.09.18 Switched to DataTreeChangeListener from ClusteredDataTreeChangeListener -> DM Service is
+// running at all nodes
 // This is not correct
 public class NetconfChangeListener implements ClusteredDataTreeChangeListener<Node>, AutoCloseable {
 
     private static final Logger LOG = LoggerFactory.getLogger(NetconfChangeListener.class);
 
-    private static final InstanceIdentifier<Node> NETCONF_NODE_TOPO_IID = InstanceIdentifier
-            .create(NetworkTopology.class)
-            .child(Topology.class, new TopologyKey(new TopologyId(TopologyNetconf.QNAME.getLocalName())))
-            .child(Node.class);
+    private static final InstanceIdentifier<Node> NETCONF_NODE_TOPO_IID =
+            InstanceIdentifier.create(NetworkTopology.class)
+                    .child(Topology.class, new TopologyKey(new TopologyId(TopologyNetconf.QNAME.getLocalName())))
+                    .child(Node.class);
     // Name of ODL controller NETCONF instance
     private static final String CONTROLLER = "controller-config";
 
@@ -65,8 +66,8 @@ public class NetconfChangeListener implements ClusteredDataTreeChangeListener<No
     }
 
     public void register() {
-        DataTreeIdentifier<Node> treeId = new DataTreeIdentifier<>(LogicalDatastoreType.OPERATIONAL,
-                NETCONF_NODE_TOPO_IID);
+        DataTreeIdentifier<Node> treeId = new DataTreeIdentifier<>(LogicalDatastoreType.OPERATIONAL, NETCONF_NODE_TOPO_IID);
+
         dlcReg = dataBroker.registerDataTreeChangeListener(treeId, this);
     }
 
@@ -79,20 +80,16 @@ public class NetconfChangeListener implements ClusteredDataTreeChangeListener<No
     /*---------------------------------------------------------------------------
      * Listener
      */
-
     @Override
     public void onDataTreeChanged(Collection<DataTreeModification<Node>> changes) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("OnDataChange, TreeChange {}", changes);
-        } else if (LOG.isDebugEnabled()) {
-            LOG.debug("OnDataChange, TreeChange");
-        }
+        LOG.debug("OnDataChange, TreeChange, changes:{}", changes.size());
 
         for (final DataTreeModification<Node> change : changes) {
             final DataObjectModification<Node> root = change.getRootNode();
             final ModificationType modificationType = root.getModificationType();
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Handle this modificationType:{} path:{} root:{}", modificationType, change.getRootPath(), root);
+                LOG.trace("Handle this modificationType:{} path:{} root:{}", modificationType, change.getRootPath(),
+                        root);
             }
             switch (modificationType) {
                 case SUBTREE_MODIFIED:
@@ -105,76 +102,92 @@ public class NetconfChangeListener implements ClusteredDataTreeChangeListener<No
                     // Treat an overwrite as an update
                     boolean update = root.getDataBefore() != null;
                     if (update) {
-                        //update(change);
+                        // update(change);
                         doProcessing(Action.UPDATE, root.getDataAfter());
                     } else {
-                        //add(change);
-                        doProcessing(Action.ADD, root.getDataAfter());
+                        // add(change);
+                        doProcessing(Action.CREATE, root.getDataAfter());
                     }
                     break;
                 case DELETE:
                     // Node removed
-                    //remove(change);
+                    // remove(change);
                     doProcessing(Action.REMOVE, root.getDataBefore());
                     break;
             }
         }
     }
 
-    /* ----------------------------------------------------------------
-     * Functions to select the right node from DataObjectModification
+    /*
+     * ---------------------------------------------------------------- Functions to select the right
+     * node from DataObjectModification
      */
 
     /**
      * Process event and forward to clients
+     *
      * @param action
-     * @param node   Basis node
+     * @param node Basis node
      */
     private void doProcessing(Action action, Node node) {
 
-        NodeId nodeId;
-        NetconfNode nnode;
+        NodeId nodeId = null;
+        NetconfNode nnode = null;
+        NodeKey nodeKey = null;
+
         try {
-            NodeKey nodeKey = node.getKey();
-            nodeId = nodeKey.getNodeId();
-            nnode = node.getAugmentation(NetconfNode.class);
-        } catch (NullPointerException e) {
-            LOG.warn("Unexpected null .. stop processing.", e);
-            return;
-        }
-
-        LOG.debug("doProcessing action {} {}",action, nodeId);
-        String nodeIdString = nodeId.getValue();
-        // Do not forward any controller related events to devicemanager
-        if (nodeIdString.equals(CONTROLLER)) {
-            LOG.debug("Stop processing for [{}]", nodeIdString);
-            return;
-        }
-
-        // Related to action
-        if (action == Action.REMOVE) {
-            deviceManagerService.mountpointNodeRemoved(nodeId); //Stop Monitor
-            deviceManagerService.leaveConnectedState(nodeId, nnode); //Remove Mountpoint handler
-            return;
-        }
-
-        // Related to Mountpoint status
-        ConnectionStatus csts = nnode.getConnectionStatus();
-        LOG.debug("NETCONF Node handled with status: {} {}", csts, nnode.getClusteredConnectionStatus());
-        if (csts != null) {
-            switch (csts) {
-                case Connected: {
-                    deviceManagerService.startListenerOnNodeForConnectedState(action, nodeId, nnode);
-                    break;
+            if (node != null) {
+                if ((nodeKey = node.getKey()) != null) {
+                    nodeId = nodeKey.getNodeId();
                 }
-                case UnableToConnect:
-                case Connecting: {
-                    deviceManagerService.leaveConnectedState(nodeId, nnode);
-                    break;
+                nnode = node.getAugmentation(NetconfNode.class);
+            }
+
+            if (node == null || nnode == null || nodeId == null || nodeKey == null) {
+                LOG.warn("Unexpected node {}, netconf node {} or key {} or id {}", node, nnode, nodeKey, nodeId);
+            } else {
+
+                String nodeIdString = nodeId.getValue();
+                ConnectionStatus csts = nnode.getConnectionStatus();
+                LOG.debug("NETCONF Node processing with id {} action {} status {} cluster status {}", nodeIdString,
+                        action, csts, nnode.getClusteredConnectionStatus());
+
+                // Do not forward any controller related events to devicemanager
+                if (nodeIdString.equals(CONTROLLER)) {
+                    LOG.debug("Stop processing for [{}]", nodeIdString);
+                } else {
+                    // Action related to mountpoint status
+                    switch (action) {
+                        case REMOVE:
+                            deviceManagerService.removeMountpointState(nodeId); // Stop Monitor
+                            deviceManagerService.enterNonConnectedState(nodeId, nnode); // Remove Mountpoint handler
+                            break;
+
+                        case UPDATE:
+                        case CREATE:
+                            if (csts != null) {
+                                switch (csts) {
+                                    case Connected: {
+                                        deviceManagerService.startListenerOnNodeForConnectedState(action, nodeId,
+                                                nnode);
+                                        break;
+                                    }
+                                    case UnableToConnect:
+                                    case Connecting: {
+                                        deviceManagerService.enterNonConnectedState(nodeId, nnode);
+                                        break;
+                                    }
+                                }
+                            } else {
+                                LOG.debug("NETCONF Node handled with null status for action", action);
+                            }
+                            break;
+                    }
                 }
             }
-        } else {
-            LOG.debug("NETCONF Node handled with null status");
+        } catch (NullPointerException e) {
+            LOG.warn("Unexpected null .. stop processing.", e);
         }
     }
+
 }

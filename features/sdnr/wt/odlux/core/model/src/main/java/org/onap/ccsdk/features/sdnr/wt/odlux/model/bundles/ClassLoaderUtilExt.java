@@ -6,9 +6,9 @@
  * =================================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -30,15 +30,14 @@ public class ClassLoaderUtilExt {
 
     final static Logger LOG = LoggerFactory.getLogger(ClassLoaderUtilExt.class);
 
-    public static URL getResource(String resourceName, Class callingClass) {
+    public static URL getResource(String resourceName, Class<?> callingClass) {
 
         Iterator<URL> urls = null;
         URL url = null;
         try {
             urls = getResources(resourceName, callingClass, true);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.debug("No resource {}",resourceName);
         }
         if (urls != null) {
             while (urls.hasNext()) {
@@ -51,12 +50,20 @@ public class ClassLoaderUtilExt {
         if (url == null) {
             LOG.debug("res currently not found. try to find with bundle");
             Bundle b = FrameworkUtil.getBundle(callingClass);
-            url = b.getEntry(resourceName);
+            if(b!=null)
+            {
+                url = b.getEntry(resourceName);
+            }
+            else {
+                ClassLoader loader = Thread.currentThread().getContextClassLoader();
+                url = loader.getResource(resourceName);
+            }
+
         }
         return url;
     }
 
-    public static Iterator<URL> getResources(String resourceName, Class callingClass, boolean aggregate)
+    public static Iterator<URL> getResources(String resourceName, Class<?> callingClass, boolean aggregate)
             throws IOException {
         return ClassLoaderUtil.getResources(resourceName, callingClass, aggregate);
     }

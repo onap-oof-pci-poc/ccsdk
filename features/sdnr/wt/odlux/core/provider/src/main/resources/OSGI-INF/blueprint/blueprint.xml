@@ -13,16 +13,6 @@ xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs">
             <entry key="alias" value="/index2.html" />
         </service-properties>
     </service>
-    
-<!--     <bean id="rootServlet" -->
-<!--         class="com.highstreet.technologies.odlux.RootServlet"> -->
-<!--     </bean> -->
-
-<!--    <service interface="javax.servlet.http.HttpServlet" ref="rootServlet"> -->
-<!--         <service-properties> -->
-<!--             <entry key="alias" value="/" /> -->
-<!--         </service-properties> -->
-<!--     </service> -->
 
     <bean id="resFilesServlet"
         class="org.onap.ccsdk.features.sdnr.wt.odlux.ResFilesServlet">
@@ -33,8 +23,7 @@ xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs">
             <entry key="alias" value="/odlux" />
         </service-properties>
     </service>
-    
-    <bean id="loadersvc" class="org.onap.ccsdk.features.sdnr.wt.odlux.model.bundles.OdluxBundleLoaderImpl"/>
+    <bean id="loadersvc" class="org.onap.ccsdk.features.sdnr.wt.odlux.OdluxBundleLoaderImpl"/>
     <service id="serviceRegistration" interface="org.onap.ccsdk.features.sdnr.wt.odlux.model.bundles.OdluxBundleLoader" ref="loadersvc"/>
-    
+
 </blueprint>

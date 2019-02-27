@@ -21,7 +21,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
+import java.util.Set;
 
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
@@ -33,7 +35,6 @@ import org.slf4j.LoggerFactory;
 public class WebSocketManagerSocket extends WebSocketAdapter {
 
     private static final Logger LOG = LoggerFactory.getLogger(WebSocketManagerSocket.class.getName());
-
     public static final String MSG_KEY_DATA = "data";
     public static final String MSG_KEY_SCOPES = "scopes";
     public static final String MSG_KEY_PARAM = "param";
@@ -87,16 +88,15 @@ public class WebSocketManagerSocket extends WebSocketAdapter {
 
     @Override
     public void onWebSocketText(String message) {
-        LOG.info(this.getRemoteAdr() + " has sent " + message);
+        LOG.info("{} has sent {}",this.getRemoteAdr(), message);
         if (!this.manageClientRequest(message)) {
             this.manageClientRequest2(message);
         }
-
     }
 
     @Override
     public void onWebSocketBinary(byte[] payload, int offset, int len) {
-
+        LOG.debug("Binary not supported");
     }
 
     @Override
@@ -166,14 +166,14 @@ public class WebSocketManagerSocket extends WebSocketAdapter {
         try {
             JSONObject o = new JSONObject(request);
             if (o.has(KEY_NODENAME) && o.has(KEY_EVENTTYPE)) {
-                broadCast(o.getString(KEY_NODENAME), o.getString(KEY_EVENTTYPE), o.getString(KEY_XMLEVENT));
+                this.sendToAll(o.getString(KEY_NODENAME), o.getString(KEY_EVENTTYPE), o.getString(KEY_XMLEVENT));
             }
         } catch (Exception e) {
             LOG.warn("handle ws request failed:" + e.getMessage());
         }
     }
 
-    private void send(String msg) {
+    public void send(String msg) {
         try {
             LOG.trace("sending {}", msg);
             this.session.getRemote().sendString(msg);
@@ -181,18 +181,16 @@ public class WebSocketManagerSocket extends WebSocketAdapter {
             LOG.warn("problem sending message: " + e.getMessage());
         }
     }
-
-    private String getSessionId() {
+     public String getSessionId() {
         return this.myUniqueSessionId;
     }
 
-    public static void broadCast(String nodeName, String eventType, String xmlEvent) {
-        if (clientList != null && clientList.size() > 0) {
+    private void sendToAll(String nodeName, String eventType, String xmlEvent) {
+        if (clientList.size() > 0) {
             for (Map.Entry<String, WebSocketManagerSocket> entry : clientList.entrySet()) {
                 WebSocketManagerSocket socket = entry.getValue();
                 if (socket != null) {
                     try {
-
                         UserScopes clientScopes = userScopesList.get(socket.getSessionId());
                         if (clientScopes != null) {
                             if (clientScopes.hasScope(eventType)) {
@@ -209,6 +207,16 @@ public class WebSocketManagerSocket extends WebSocketAdapter {
                 } else {
                     LOG.debug("cannot broadcast. socket is null");
                 }
+            }
+        }
+    }
+    public static void broadCast(String nodeName, String eventType, String xmlEvent) {
+        if(clientList.size()>0) {
+            Set<Entry<String, WebSocketManagerSocket>> e = clientList.entrySet();
+            WebSocketManagerSocket s = e.iterator().next().getValue();
+            if(s!=null)
+            {
+                s.sendToAll(nodeName, eventType, xmlEvent);
             }
         }
     }

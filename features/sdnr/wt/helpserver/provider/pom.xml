@@ -24,6 +24,9 @@
 	<packaging>bundle</packaging>
 	<properties>
 		<checkstyle.skip>true</checkstyle.skip>
+		<buildtime>${maven.build.timestamp} UTC</buildtime>
+		<distversion>ONAP Casablanca (Oxygen)</distversion>
+		<buildno>1.15b7491</buildno>
 	</properties>
 	<parent>
 		<groupId>org.onap.ccsdk.parent</groupId>
@@ -61,6 +64,13 @@
 
 	</dependencies>
 	<build>
+		<resources>
+			<!-- replace properties in about.md -->
+			<resource>
+			<directory>src/main/resources</directory>
+			<filtering>true</filtering>
+			</resource>
+		</resources>
 		<plugins>
 			<!-- fixed bug for sonarcube -->
 			<plugin>

@@ -54,11 +54,11 @@ public class AkkaConfigTest {
         assertTrue("only one node detected",config.getClusterConfig().getSeedNodes().size()>1);
     }
 
-    private String loadResourceContentAsString(String resourceName) throws URISyntaxException, FileNotFoundException, IOException {
+    public static String loadResourceContentAsString(String resourceName) throws URISyntaxException, FileNotFoundException, IOException {
 
         StringBuilder sb = new StringBuilder();
 
-        ClassLoader classLoader = getClass().getClassLoader();
+        ClassLoader classLoader = AkkaConfigTest.class.getClassLoader();
         File file = Paths.get(classLoader.getResource(resourceName).toURI()).toFile();
         try(BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line = br.readLine();

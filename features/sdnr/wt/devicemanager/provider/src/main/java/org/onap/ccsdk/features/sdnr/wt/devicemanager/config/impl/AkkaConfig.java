@@ -72,14 +72,7 @@ public class AkkaConfig {
     public boolean isSingleNode() {
         return !this.isCluster();
     }
-    public static AkkaConfig defaultSingleNodeConfig()
-    {
-        AkkaConfig cfg=new AkkaConfig();
-        cfg.cluserConfig=new ClusterConfig();
-        return cfg;
-    }
-
-    public static AkkaConfig parse(String content) throws Exception {
+     public static AkkaConfig parse(String content) throws Exception {
         Config cfg = ConfigFactory.parseString(content);
         AkkaConfig c = new AkkaConfig();
         c.cluserConfig=new ClusterConfig(cfg.getConfig("odl-cluster-data").getConfig("akka").getConfig("cluster"));

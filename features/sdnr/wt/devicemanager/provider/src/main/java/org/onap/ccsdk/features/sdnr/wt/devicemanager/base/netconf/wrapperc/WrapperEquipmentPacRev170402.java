@@ -21,7 +21,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.InternalDateAndTime;
@@ -100,28 +99,6 @@ public class WrapperEquipmentPacRev170402 implements OnfInterfacePac {
             LOG.warn("Could not reade instance of MwTdmContainerPacKey: ", e);
         }
         return resultList;
-    }
-
-    /**
-     * Read problems of specific interfaces
-     *
-     * @param interfacePacUuid Universal index of Equipmentpac
-     * @return EquipmentPac or null
-     */
-    public @Nullable EquipmentPac readEquipmentPac(UniversalId interfacePacUuid) {
-
-        final Class<?> clazzPac = EquipmentPac.class;
-
-        LOG.info("DBRead Get problems for class {} from mountpoint {} for uuid {}", clazzPac.getSimpleName(),
-                coreData.getMountpoint(), interfacePacUuid.getValue());
-
-        InstanceIdentifier<EquipmentPac> equipmentIID =
-                InstanceIdentifier.builder(EquipmentPac.class, new EquipmentPacKey(interfacePacUuid)).build();
-
-        EquipmentPac res = GenericTransactionUtils.readData(coreData.getDataBroker(), LogicalDatastoreType.OPERATIONAL,
-                equipmentIID);
-
-        return res;
     }
 
 }

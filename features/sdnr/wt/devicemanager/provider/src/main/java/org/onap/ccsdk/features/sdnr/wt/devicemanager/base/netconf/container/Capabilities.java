@@ -23,7 +23,6 @@ package org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.container;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,29 +31,40 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNode;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.netconf.node.connection.status.AvailableCapabilities;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Wrapper class for capabilites for Boron and later releases. Uses generics because yang model was
+ * changed from Boron to later version. Interface class:
+ * org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.netconf.node.connection.status.available.capabilities.AvailableCapability
+ */
 public class Capabilities {
 
     private static final Logger LOG = LoggerFactory.getLogger(Capabilities.class);
-    private static final String INTERFACE_AVAILABLECAPABILITY =
-            "org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.netconf.node.connection.status.available.capabilities.AvailableCapability";
 
+    private static final String METHODNAME = "getCapability";
     private final List<String> capabilities = new ArrayList<>();
     private final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-    public Capabilities() {
+    private Capabilities() {}
 
-    }
-
-    public Capabilities(NetconfNode nnode) {
-        LOG.info("Create Capabilities constructor");
-
+    public static Capabilities getAvailableCapabilities(NetconfNode nnode) {
+        LOG.info("GetAvailableCapabilities for node");
+        Capabilities capabilities = new Capabilities();
         if (nnode != null) {
-            constructor(nnode.getAvailableCapabilities().getAvailableCapability());
+            AvailableCapabilities availableCapabilites = nnode.getAvailableCapabilities();
+            if (availableCapabilites != null) {
+                capabilities.constructor(availableCapabilites.getAvailableCapability());
+            } else {
+                LOG.debug("empty capabilites");
+            }
+        } else {
+            LOG.debug("No node provided");
         }
+        return capabilities;
     }
 
     /**
@@ -66,45 +76,27 @@ public class Capabilities {
      *        - Carbon: List<AvailableCapability>
      */
     private void constructor(List<?> pcapabilities) {
-        for (Object capability : pcapabilities) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("capability class: {} Interfaces: {}", capability.getClass().getName(),
-                        Arrays.toString(capability.getClass().getInterfaces()));
-            }
-            if (capability instanceof String) { // ODL Boron specific
-                this.capabilities.add((String) capability);
-            } else if (hasInterface(capability, INTERFACE_AVAILABLECAPABILITY)) { // Carbon specific part .. handled via
-                                                                                  // generic
-                try {
-                    Method method = capability.getClass().getDeclaredMethod("getCapability");
-                    this.capabilities.add(method.invoke(capability).toString());
-                } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
-                        | InvocationTargetException e) {
-                    LOG.warn("Unknown capability class leads to a problem", e);
-                }
-            } else {
-                LOG.warn("Unknown capability class: {}", capability.getClass(),
-                        Arrays.toString(capability.getClass().getInterfaces()));
-            }
-        }
-    }
+        if (pcapabilities != null) {
+            Method methodGetCapability;
 
-    /**
-     * check if namespace is supported by given capabilites
-     *
-     * @param theCapability Capability to search
-     * @return true if available
-     */
-    @Deprecated
-    public boolean isSupportingNamespace(QName theCapability) {
-        String theNameSpace = theCapability.getNamespace().toString();
-        for (String capability : capabilities) {
-            if (capability.contains(theNameSpace)) {
-                LOG.trace("Check {} against {}", capability, theNameSpace);
-                return true;
+            for (Object capability : pcapabilities) {
+
+                if (capability instanceof String) { // ODL Boron specific
+                    this.capabilities.add((String) capability);
+                } else { // Carbon specific part .. handled via generics
+                    try {
+                        methodGetCapability = capability.getClass().getDeclaredMethod(METHODNAME);
+                        methodGetCapability.setAccessible(true);
+                        this.capabilities.add(methodGetCapability.invoke(capability).toString());
+                    } catch (NoSuchMethodException | SecurityException | IllegalAccessException
+                            | IllegalArgumentException | InvocationTargetException e) {
+                        LOG.warn("Capability class with missing interface method {}: {} {} {}", METHODNAME,
+                                e.getMessage(), capability.getClass(),
+                                Arrays.toString(capability.getClass().getInterfaces()));
+                    }
+                }
             }
         }
-        return false;
     }
 
     /**
@@ -129,45 +121,25 @@ public class Capabilities {
             revision = formatter.format((Date) revisionObject);
         } else {
             revision = revisionObject.toString();
-            LOG.warn("Revision number type not supported. Class:{} String:{}", revisionObject.getClass().getName(),
-                    revisionObject);
+            LOG.debug("Revision number type not supported. Use toString().String:{} Class:{} ", revisionObject,
+                    revisionObject.getClass().getName());
         }
+        LOG.trace("isSupportingNamespaceAndRevision: Model namespace {}?[revision {}]", namespace, revision);
         for (String capability : capabilities) {
             if (capability.contains(namespace) && capability.contains(revision)) {
-                LOG.trace("Model namespace {}?[revision {}]", namespace, revision);
+                LOG.trace("Verify true with: {}", capability);
                 return true;
+            } else {
+                LOG.trace("Verify false with: {}", capability);
             }
         }
         return false;
     }
 
-
-    public void add(String qname) {
-        capabilities.add(qname);
-    }
 
     @Override
     public String toString() {
         return "Capabilities [capabilities=" + capabilities + "]";
-    }
-
-    /**
-     * Check if object is proxy and has specific interface
-     *
-     * @param object Name of the object to verify
-     * @param interfaceName is the name of the interface
-     * @return boolean accordingly
-     */
-    static boolean hasInterface(Object object, String interfaceName) {
-        if (object instanceof Proxy) {
-            Class<?>[] interfaces = object.getClass().getInterfaces();
-            for (Class<?> i : interfaces) {
-                if (i.getName().equals(interfaceName)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
 }

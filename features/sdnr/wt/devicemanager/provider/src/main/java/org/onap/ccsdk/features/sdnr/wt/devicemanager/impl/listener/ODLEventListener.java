@@ -23,6 +23,7 @@ import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.Internal
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.util.NetconfTimeStamp;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.ProviderClient;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.database.service.HtDatabaseEventsService;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.AttributeValueChangedNotificationXml;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.ObjectCreationNotificationXml;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.ObjectDeletionNotificationXml;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.ProblemNotificationXml;
@@ -33,10 +34,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Responsible class for documenting changes in the ODL itself. The occurence of
- * such an event is documented in the database and to clients. Specific example
- * here is the registration or deregistration of a netconf device. This service
- * has an own eventcounter to apply to the ONF Coremodel netconf behaviour.
+ * Responsible class for documenting changes in the ODL itself. The occurence of such an event is
+ * documented in the database and to clients. Specific example here is the registration or
+ * deregistration of a netconf device. This service has an own eventcounter to apply to the ONF
+ * Coremodel netconf behaviour.
  *
  * Important: Websocket notification must be the last action.
  *
@@ -64,11 +65,10 @@ public class ODLEventListener {
     /**
      * Create a Service to document events to clients and within a database
      *
-     * @param ownKeyName          The name of this service, that is used in the
-     *                            database as identification key.
-     * @param webSocketService    service to direct messages to clients
-     * @param databaseService     service to write to the database
-     * @param dcaeProvider        to deliver problems to
+     * @param ownKeyName The name of this service, that is used in the database as identification key.
+     * @param webSocketService service to direct messages to clients
+     * @param databaseService service to write to the database
+     * @param dcaeProvider to deliver problems to
      * @param maintenanceService2
      */
     @SuppressWarnings("javadoc")
@@ -90,56 +90,65 @@ public class ODLEventListener {
     }
 
     /*---------------------------------------------------------------
-     * Functions
+     * Handling of ODL Controller events
      */
 
     /**
-     * A registration of a mountpoint occured.
+     * A registration of a mountpoint occured, that is in connect state
      *
-     * @param registrationName Name of the event that is used as key in the
-     *                         database.
+     * @param registrationName Name of the event that is used as key in the database.
      */
 
     public void registration(String registrationName) {
 
-        ObjectCreationNotificationXml cNotificationXml = new ObjectCreationNotificationXml(ownKeyName,
-                popEvntNumberAsString(), InternalDateAndTime.valueOf(NETCONFTIME_CONVERTER.getTimeStamp()),
-                registrationName);
+        ObjectCreationNotificationXml cNotificationXml =
+                new ObjectCreationNotificationXml(ownKeyName, getEventNumberAsString(),
+                        InternalDateAndTime.valueOf(NETCONFTIME_CONVERTER.getTimeStamp()), registrationName);
 
         // Write first to prevent missing entries
         databaseService.writeEventLog(cNotificationXml);
-
         webSocketService.sendViaWebsockets(registrationName, cNotificationXml);
-
     }
+
 
     /**
      * A deregistration of a mountpoint occured.
      *
-     * @param registrationName Name of the event that is used as key in the
-     *                         database.
+     * @param registrationName Name of the event that is used as key in the database.
      */
 
     public void deRegistration(String registrationName) {
 
-        ObjectDeletionNotificationXml dNotificationXml = new ObjectDeletionNotificationXml(ownKeyName,
-                popEvntNumberAsString(), InternalDateAndTime.valueOf(NETCONFTIME_CONVERTER.getTimeStamp()),
-                registrationName);
+        ObjectDeletionNotificationXml dNotificationXml =
+                new ObjectDeletionNotificationXml(ownKeyName, getEventNumberAsString(),
+                        InternalDateAndTime.valueOf(NETCONFTIME_CONVERTER.getTimeStamp()), registrationName);
 
         // Write first to prevent missing entries
         databaseService.writeEventLog(dNotificationXml);
-
         webSocketService.sendViaWebsockets(registrationName, dNotificationXml);
+
+    }
+
+    /**
+     * Mountpoint state changed .. from connected -> connecting or unable-to-connect or vis-e-versa.
+     *
+     * @param registrationName Name of the event that is used as key in the database.
+     */
+    public void updateRegistration(String registrationName, String attribute, String attributeNewValue) {
+        AttributeValueChangedNotificationXml notificationXml = new AttributeValueChangedNotificationXml(ownKeyName,
+                getEventNumberAsString(), InternalDateAndTime.valueOf(NETCONFTIME_CONVERTER.getTimeStamp()),
+                registrationName, attribute, attributeNewValue);
+        databaseService.writeEventLog(notificationXml);
+        webSocketService.sendViaWebsockets(registrationName, notificationXml);
 
     }
 
     /**
      * At a mountpoint a problem situation is indicated
      *
-     * @param registrationName indicating object within SDN controller, normally the
-     *                         mountpointName
-     * @param problemName      that changed
-     * @param problemSeverity  of the problem according to NETCONF/YANG
+     * @param registrationName indicating object within SDN controller, normally the mountpointName
+     * @param problemName that changed
+     * @param problemSeverity of the problem according to NETCONF/YANG
      */
 
     public void onProblemNotification(String registrationName, String problemName, InternalSeverity problemSeverity) {
@@ -150,10 +159,10 @@ public class ODLEventListener {
                         .getSimpleName());
         // notification
 
-        ProblemNotificationXml notificationXml = new ProblemNotificationXml(ownKeyName, registrationName, problemName,
-                problemSeverity,
-                // popEvntNumberAsString(), InternalDateAndTime.TESTPATTERN );
-                popEvntNumberAsString(), InternalDateAndTime.valueOf(NETCONFTIME_CONVERTER.getTimeStamp()));
+        ProblemNotificationXml notificationXml =
+                new ProblemNotificationXml(ownKeyName, registrationName, problemName, problemSeverity,
+                        // popEvntNumberAsString(), InternalDateAndTime.TESTPATTERN );
+                        getEventNumberAsString(), InternalDateAndTime.valueOf(NETCONFTIME_CONVERTER.getTimeStamp()));
 
         databaseService.writeFaultLog(notificationXml);
         databaseService.updateFaultCurrent(notificationXml);
@@ -172,6 +181,11 @@ public class ODLEventListener {
 
         webSocketService.sendViaWebsockets(registrationName, notificationXml);
     }
+
+
+    /*---------------------------------------------
+     * Handling of ODL Controller events
+     */
 
     /**
      * Called on exit to remove everything for a node from the current list.
@@ -198,7 +212,7 @@ public class ODLEventListener {
      * Private
      */
 
-    private String popEvntNumberAsString() {
+    private String getEventNumberAsString() {
         return String.valueOf(popEvntNumber());
     }
 

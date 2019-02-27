@@ -4,7 +4,6 @@ import { IMountedNetworkElementsState, mountedNetworkElementsActionHandler } fro
 import { IConnectionStatusLogState, connectionStatusLogActionHandler } from './connectionStatusLogHandler';
 
 export interface IConnectAppStoreState {
-
   requiredNetworkElements: IRequiredNetworkElementsState;
   mountedNetworkElements: IMountedNetworkElementsState;
   connectionStatusLog: IConnectionStatusLogState;

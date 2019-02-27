@@ -19,6 +19,8 @@ package org.onap.ccsdk.features.sdnr.wt.websocketmanager2.websocket;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -27,33 +29,53 @@ import org.slf4j.LoggerFactory;
 
 public class SyncWebSocketClient extends WebSocketClient {
 
+	public interface WebsocketEventHandler{
+		void onMessageReceived(String message);
+		void onOpen(ServerHandshake arg0);
+		void onClose(int arg0, String arg1, boolean arg2);
+		void onError(Exception e);
+	}
+	
 	private static final Logger LOG = LoggerFactory.getLogger(SyncWebSocketClient.class.getName());
 	private String messageToSend;
-
+	private final List<WebsocketEventHandler> handlers;
 	public SyncWebSocketClient(URI serverUri) {
 		super(serverUri);
+		this.handlers = new ArrayList<WebsocketEventHandler>();
 	}
 
 	public SyncWebSocketClient(String uri) throws URISyntaxException {
 		this(new URI(uri));
 	}
-
+	public void addEventHandler(WebsocketEventHandler h) {
+		this.handlers.add(h);
+	}
+	public void removeEventHandler(WebsocketEventHandler h) {
+		this.handlers.remove(h);
+	}
+	
 	@Override
 	public void onClose(int arg0, String arg1, boolean arg2) {
 		LOG.debug("socket closed: {} {} {}", arg0, arg1, arg2);
-
+		for(WebsocketEventHandler h:this.handlers) {
+			h.onClose(arg0,arg1,arg2);
+		}
 	}
 
 	@Override
 	public void onError(Exception arg0) {
 		LOG.warn("error on socket: {}", arg0.getMessage());
-
+		for(WebsocketEventHandler h:this.handlers) {
+			h.onError(arg0);
+		}
 	}
 
 	@Override
 	public void onMessage(String arg0) {
 		LOG.debug("received message: {}", arg0);
-
+		for(WebsocketEventHandler h:this.handlers) {
+			h.onMessageReceived(arg0);
+		}
 	}
 
 	@Override
@@ -64,7 +86,9 @@ public class SyncWebSocketClient extends WebSocketClient {
 			this.send(this.messageToSend);
 			this.messageToSend = null;
 		}
-
+		for(WebsocketEventHandler h:this.handlers) {
+			h.onOpen(arg0);
+		}
 	}
 
 	public void openAndSendAsync(String message) {

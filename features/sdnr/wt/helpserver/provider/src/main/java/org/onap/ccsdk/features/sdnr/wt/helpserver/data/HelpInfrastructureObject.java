@@ -103,8 +103,8 @@ public class HelpInfrastructureObject extends JSONObject {
 
     }
 
-    public HelpInfrastructureObject(Path proot) throws URISyntaxException {
-        File root = proot.toFile();
+    public HelpInfrastructureObject(Path pRoot) throws URISyntaxException {
+        File root = pRoot.toFile();
         File[] list = root.listFiles();
         if (list == null) {
             return;
@@ -113,32 +113,8 @@ public class HelpInfrastructureObject extends JSONObject {
             if (f.isDirectory()) {
                 ArrayList<VersionObject> versions = findReadmeVersionFolders(root.toPath(), f.toPath(), true);
                 if (versions != null && versions.size() > 0) {
-                    NodeObject o = new NodeObject(proot, f, f.getName(), versions);
+                    NodeObject o = new NodeObject(pRoot, f, f.getName(), versions);
                     this.put(o.getString("label").toLowerCase(), o);
-                }
-            }
-        }
-
-
-    }
-
-    public static void walk(ArrayList<File> results, String path) {
-
-        File root = new File(path);
-        File[] list = root.listFiles();
-
-        if (list == null) {
-            return;
-        }
-
-        for (File f : list) {
-            if (f.isDirectory()) {
-                walk(results, f.getAbsolutePath());
-                // System.out.println( "Dir:" + f.getAbsoluteFile() );
-            } else {
-                // System.out.println( "File:" + f.getAbsoluteFile() );
-                if (f.isFile() && f.getName().endsWith(".md")) {
-                    results.add(f);
                 }
             }
         }

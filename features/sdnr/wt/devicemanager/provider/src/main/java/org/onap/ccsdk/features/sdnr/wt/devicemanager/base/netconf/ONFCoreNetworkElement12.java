@@ -77,6 +77,7 @@ import com.google.common.base.Optional;
  * @author herbert
  *
  */
+@SuppressWarnings("deprecation")
 public class ONFCoreNetworkElement12 extends ONFCoreNetworkElement12Base
         implements ONFCoreNetworkElementCallback, NotificationActor<AttributeValueChangedNotificationXml> {
 
@@ -336,7 +337,7 @@ public class ONFCoreNetworkElement12 extends ONFCoreNetworkElement12Base
                 }
 
             } else {
-                LOG.debug("Mountpoint '{}' NE-Name '{}'", getMountPointNodeName(), optionalNe.getName().toString());
+                LOG.debug("Mountpoint '{}' NE-Name '{}'", getMountPointNodeName(), optionalNe.getName());
                 List<Lp> actualInterfaceList = getLtpList(optionalNe);
                 if (!interfaceList.equals(actualInterfaceList)) {
                     LOG.debug("Mountpoint '{}' Update LTP List. Elements {}", getMountPointNodeName(),
@@ -364,13 +365,13 @@ public class ONFCoreNetworkElement12 extends ONFCoreNetworkElement12Base
         UniversalId uuid;
 
         synchronized (pmLock) {
-            for (Lp ltp : interfaceList) {
+            for (Lp lp : interfaceList) {
 
                 idxStart = resultList.size();
-                uuid = ltp.getUuid();
-                Class<?> lpClass = getLpExtension(ltp);
+                uuid = lp.getUuid();
+                Class<?> lpClass = getLpExtension(lp);
 
-                ONFLayerProtocolName lpName = ONFLayerProtocolName.valueOf(ltp.getLayerProtocolName());
+                ONFLayerProtocolName lpName = ONFLayerProtocolName.valueOf(lp.getLayerProtocolName());
 
                 microwaveModel.readTheFaultsOfMicrowaveModel(lpName, lpClass, uuid, resultList);
 
@@ -422,21 +423,21 @@ public class ONFCoreNetworkElement12 extends ONFCoreNetworkElement12Base
     }
 
     /**
-     * Get from LayProtocolExtensions the related generated ONF Interface PAC class which represents it.
+     * Get from LayerProtocolExtensions the related generated ONF Interface PAC class which represents it.
      *
-     * @param ltp logical termination point
+     * @param lp logical termination point
      * @return Class of InterfacePac
      */
     @Nullable
-    private Class<?> getLpExtension(@Nullable Lp ltp) {
+    private Class<?> getLpExtension(@Nullable Lp lp) {
 
         String capability = EMPTY;
         String revision = EMPTY;
         String conditionalPackage = EMPTY;
         Class<?> res = null;
 
-        if (ltp != null) {
-            for (Extension e : getExtensionList(ltp)) {
+        if (lp != null) {
+            for (Extension e : getExtensionList(lp)) {
                 if (e.getValueName().contentEquals("capability")) {
                     capability = e.getValue();
                     int idx = capability.indexOf("?");

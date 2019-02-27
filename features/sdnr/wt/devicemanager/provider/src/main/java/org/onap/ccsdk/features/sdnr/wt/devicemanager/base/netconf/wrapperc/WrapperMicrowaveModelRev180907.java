@@ -6,9 +6,9 @@
  * =================================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -33,7 +33,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.InternalDateAndTime;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.InternalSeverity;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.ONFCOreNetworkElementCoreData;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.ONFCoreNetworkElement12;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.container.ExtendedAirInterfaceHistoricalPerformanceType1211;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.container.ONFLayerProtocolName;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.util.GenericTransactionUtils;
@@ -82,7 +81,7 @@ import org.opendaylight.yang.gen.v1.urn.onf.params.xml.ns.yang.microwave.model.r
 
 public class WrapperMicrowaveModelRev180907 implements OnfMicrowaveModel, MicrowaveModelListener {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ONFCoreNetworkElement12.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WrapperMicrowaveModelRev180907.class);
 
     public static final QName QNAME = MwAirInterfacePac.QNAME;
 
@@ -96,6 +95,7 @@ public class WrapperMicrowaveModelRev180907 implements OnfMicrowaveModel, Microw
      * Setter/Getter
      */
 
+    @Override
     public void setCoreData(ONFCOreNetworkElementCoreData coreData) {
 		this.coreData = coreData;
 	}
@@ -119,6 +119,7 @@ public class WrapperMicrowaveModelRev180907 implements OnfMicrowaveModel, Microw
      * Interfacefunctions
      */
 
+    @Override
     public void readTheFaultsOfMicrowaveModel(ONFLayerProtocolName lpName, Class<?> lpClass, UniversalId uuid,
     		List<ProblemNotificationXml> resultList) {
 
@@ -158,7 +159,8 @@ public class WrapperMicrowaveModelRev180907 implements OnfMicrowaveModel, Microw
     	}
     }
 
-	public List<? extends OtnHistoryDataG> readTheHistoricalPerformanceData(ONFLayerProtocolName lpName, Lp lp) {
+	@Override
+    public List<? extends OtnHistoryDataG> readTheHistoricalPerformanceData(ONFLayerProtocolName lpName, Lp lp) {
     	switch (lpName) {
     	case MWAirInterface:
     		return readTheHistoricalPerformanceDataOfMwAirInterfacePac(lp);
@@ -178,7 +180,8 @@ public class WrapperMicrowaveModelRev180907 implements OnfMicrowaveModel, Microw
     	return new ArrayList<>();
     }
 
-	public Class<?> getClassForLtpExtension(QName qName) {
+	@Override
+    public Class<?> getClassForLtpExtension(QName qName) {
         Class<?> res = null;
         if (qName.equals(MwAirInterfacePac.QNAME)) {
             res = MwAirInterfacePac.class;
@@ -571,6 +574,7 @@ public class WrapperMicrowaveModelRev180907 implements OnfMicrowaveModel, Microw
         microwaveModelListener.onObjectDeletionNotification(notificationXml);
 	}
 
+    @Override
     public void onProblemNotification(ProblemNotification notification) {
 
         LOG.debug("Got event of type :: {}", ProblemNotification.class.getSimpleName());

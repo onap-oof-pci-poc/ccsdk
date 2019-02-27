@@ -1,1 +1,1 @@
-Version: @buildtime@
+ONAP SDN-R | ONF Wireless for ${distversion} - Build: ${buildtime} (${buildno})

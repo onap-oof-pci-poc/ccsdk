@@ -6,9 +6,9 @@
  * =================================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -31,62 +31,62 @@ public class EsEquipment extends EsObject {
 
     public static final String ESDATATYPENAME = "inventoryequipment";
 
-	int treeLevel;
-	String parentUuid;
+    int treeLevel;
+    String parentUuid;
     String mountpoint;
-	String uuid;
-	List<String> containedHolder;
-	String manufacturerName;
-	String manufacturerIdentifier;
-	String serial;
-	String date;
-	String version;
-	String description;
-	String partTypeId;
-	String modelIdentifier;
-	String typeName;
+    String uuid;
+    List<String> containedHolder;
+    String manufacturerName;
+    String manufacturerIdentifier;
+    String serial;
+    String date;
+    String version;
+    String description;
+    String partTypeId;
+    String modelIdentifier;
+    String typeName;
 
 
-	public EsEquipment set( String mountpoint, ExtendedEquipment extendedEquipment ) {
+    public EsEquipment set( String mountpoint, ExtendedEquipment extendedEquipment ) {
 
-		Equipment equipment = extendedEquipment.getEquipment();
+        Equipment equipment = extendedEquipment.getEquipment();
 
-		this.parentUuid = extendedEquipment.getParentUuid();
-		this.treeLevel = extendedEquipment.getTreeLevel();
-		this.mountpoint = mountpoint;
-		this.uuid = equipment.getUuid().getValue();
-		this.setEsId(this.mountpoint+"/"+this.uuid);
+        this.parentUuid = extendedEquipment.getParentUuid();
+        this.treeLevel = extendedEquipment.getTreeLevel();
+        this.mountpoint = mountpoint;
+        this.uuid = equipment.getUuid().getValue();
+        this.setEsId(this.mountpoint+"/"+this.uuid);
 
-		this.containedHolder = new ArrayList<>();
-		List<ContainedHolder> containedHolderList = equipment.getContainedHolder();
-		if (containedHolderList != null && !containedHolderList.isEmpty()) {
-			for (ContainedHolder containedHolderElement: containedHolderList) {
-				this.containedHolder.add(containedHolderElement.getKey().getUuid().getValue());
-			}
-		}
-		ManufacturedThing manufacturedThing = equipment.getManufacturedThing();
-		if (manufacturedThing != null) {
-			ManufacturerProperties manufacturedProperties = manufacturedThing.getManufacturerProperties();
-			if (manufacturedProperties != null) {
-				this.manufacturerName = manufacturedProperties.getManufacturerName();
-				this.manufacturerIdentifier = manufacturedProperties.getManufacturerIdentifier();
-			}
-			EquipmentInstance equipmentInstance = manufacturedThing.getEquipmentInstance();
-			if (equipmentInstance != null) {
-				this.serial = equipmentInstance.getSerialNumber();
-				this.date = equipmentInstance.getManufactureDate();
-			}
-			EquipmentType equipmentType = manufacturedThing.getEquipmentType();
-			if (equipmentType != null) {
-				this.version = equipmentType.getVersion();
-				this.description = equipmentType.getDescription();
-				this.partTypeId = equipmentType.getPartTypeIdentifier();
-				this.modelIdentifier = equipmentType.getModelIdentifier();
-				this.typeName = equipmentType.getTypeName();
-			}
-		}
+        this.containedHolder = new ArrayList<>();
+        List<ContainedHolder> containedHolderList = equipment.getContainedHolder();
+        if (containedHolderList != null && !containedHolderList.isEmpty()) {
+            for (ContainedHolder containedHolderElement: containedHolderList) {
+                this.containedHolder.add(containedHolderElement.getKey().getUuid().getValue());
+            }
+        }
+        ManufacturedThing manufacturedThing = equipment.getManufacturedThing();
+        if (manufacturedThing != null) {
+            ManufacturerProperties manufacturedProperties = manufacturedThing.getManufacturerProperties();
+            if (manufacturedProperties != null) {
+                this.manufacturerName = manufacturedProperties.getManufacturerName();
+                this.manufacturerIdentifier = manufacturedProperties.getManufacturerIdentifier();
+            }
+            EquipmentInstance equipmentInstance = manufacturedThing.getEquipmentInstance();
+            if (equipmentInstance != null) {
+                this.serial = equipmentInstance.getSerialNumber();
+                this.date = equipmentInstance.getManufactureDate();
+            }
+            EquipmentType equipmentType = manufacturedThing.getEquipmentType();
+            if (equipmentType != null) {
+                this.version = equipmentType.getVersion();
+                this.description = equipmentType.getDescription();
+                this.partTypeId = equipmentType.getPartTypeIdentifier();
+                this.modelIdentifier = equipmentType.getModelIdentifier();
+                this.typeName = equipmentType.getTypeName();
+            }
+        }
 
-		return(this);
-	}
+        return this;
+    }
 
 }

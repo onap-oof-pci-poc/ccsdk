@@ -27,7 +27,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import javax.annotation.Nullable;
 import org.apache.lucene.util.Version;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.client.Client;
@@ -124,8 +123,15 @@ public class HtDatabaseNode implements AutoCloseable {
         if (!f.exists()) {
             f.mkdir();
         }
-        Resources.copyFolderInto(RESFOLDER_PLUGINHEAD, PLUGINFOLDER, RESFOLDER_PLUGIN);
-        Resources.copyFolderInto(RESFOLDER_PLUGINDELETE, PLUGINFOLDER, RESFOLDER_PLUGIN);
+        if (!Resources.copyFolderInto(RESFOLDER_PLUGINHEAD, PLUGINFOLDER, RESFOLDER_PLUGIN)) {
+            throw new IllegalArgumentException("Copy not successfull Name: " + RESFOLDER_PLUGINHEAD + " folder src "
+                    + PLUGINFOLDER + " folder dst " + RESFOLDER_PLUGIN);
+        }
+       //Normal JAR loaded by classloader as part of the bundle
+       if (!Resources.copyFolderInto(RESFOLDER_PLUGINDELETE, PLUGINFOLDER, RESFOLDER_PLUGIN)) {
+            throw new IllegalArgumentException("Copy not successfull Name: " + RESFOLDER_PLUGINDELETE + " folder src "
+                    + PLUGINFOLDER + " folder dst " + RESFOLDER_PLUGIN);
+       }
     }
 
     /**
@@ -234,12 +240,11 @@ public class HtDatabaseNode implements AutoCloseable {
     /**
      * Start as singleton
      *
+     * @param config data
+     * @param akkaConfig data
+     * @param geoConfig data
      * @return the node or null if external node used
      */
-    public static @Nullable HtDatabaseNode start(EsConfig config) throws IllegalStateException {
-        return start(config, null, null);
-    }
-
     public static HtDatabaseNode start(EsConfig config, AkkaConfig akkaConfig, GeoConfig geoConfig) {
         if (isPortAvailable(ES_PORT)) {
             LOGGER.info("ES Port not in use. Start internal ES.");

@@ -48,7 +48,7 @@ type UnknownNetworkElementDisplayType = NetworkElementBaseType & {
 type UnknownNetworkElementsListProps = WithStyles<typeof styles> & Connect<typeof mapProps, typeof mapDispatch> & {}
 
 type UnknownNetworkElementsListState = {
-  
+
   unknownNetworkElements: UnknownNetworkElementDisplayType[];
 
   networkElementToEdit: RequiredNetworkElementType;
@@ -73,7 +73,7 @@ export class UnknownNetworkElementsListComponent extends React.Component<Unknown
   static getDerivedStateFromProps(props: UnknownNetworkElementsListProps, state: UnknownNetworkElementsListState & { _mountedNetworkElements: IMountedNetworkElementsState }) {
     if (props.mountedNetworkElements != state._mountedNetworkElements) {
       state.unknownNetworkElements = props.mountedNetworkElements.elements.filter(element => !element.required).map(element => {
-        
+
         // handle onfCoreModelRevision
         const onfCoreModelRevision = element.capabilities.find((cap) => {
           return cap.module === 'core-model' || cap.module === 'CoreModel-CoreNetworkModule-ObjectClasses' ;
@@ -94,7 +94,7 @@ export class UnknownNetworkElementsListComponent extends React.Component<Unknown
     }
     return state;
   }
-  
+
   render(): JSX.Element {
     const { classes } = this.props;
     const { networkElementToEdit, networkElementEditorMode, unknownNetworkElements } = this.state;
@@ -125,7 +125,6 @@ export class UnknownNetworkElementsListComponent extends React.Component<Unknown
                 <div className={ classes.spacer }>
                   <Tooltip title={ "Info" } ><Button className={ classes.button } >I</Button></Tooltip>
                 </div>
-                <div className={ classes.spacer }>
                   <div className={ classes.spacer }>
                     <Tooltip title={ "Fault" } ><Button className={ classes.button } onClick={ this.navigateToApplicationHandlerCreator("faultApp", rowData) } >F</Button></Tooltip>
                     <Tooltip title={ "Configure" } ><Button className={ classes.button } onClick={ this.navigateToApplicationHandlerCreator("configureApp", rowData) } >C</Button></Tooltip>
@@ -133,14 +132,13 @@ export class UnknownNetworkElementsListComponent extends React.Component<Unknown
                     <Tooltip title={ "Performance" } ><Button className={ classes.button } onClick={ this.navigateToApplicationHandlerCreator("performanceApp", rowData) }>P</Button></Tooltip>
                     <Tooltip title={ "Security" } ><Button className={ classes.button } onClick={ this.navigateToApplicationHandlerCreator("securityApp", rowData) }>S</Button></Tooltip>
                   </div>
-                </div>                
               </>
             )
           },
         ] } idProperty="mountId" >
         </UnknownNetworkElementTable>
-        
-        <EditNetworkElementDialog 
+
+        <EditNetworkElementDialog
           mode={ networkElementEditorMode }
           initialNetworkElement={ networkElementToEdit }
           onClose={ this.onCloseEditNetworkElementDialog }

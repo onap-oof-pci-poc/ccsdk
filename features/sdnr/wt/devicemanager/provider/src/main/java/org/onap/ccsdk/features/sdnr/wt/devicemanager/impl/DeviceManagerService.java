@@ -6,9 +6,9 @@
  * =================================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -16,35 +16,35 @@
  * ============LICENSE_END==========================================================================
  ******************************************************************************/
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.impl;
+import javax.annotation.Nonnull;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNode;
-
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.NodeId;
 
 public interface DeviceManagerService {
 
     public enum Action {
-        ADD,
+        CREATE,
         REMOVE,
         UPDATE
     }
     /**
-     * Managed device is connected to node/mountpoint.
+     * Mountpoint was created or existing. Managed device is now fully connected to node/mountpoint.
      * @param action provide action
      * @param nNodeId id of the mountpoint
      * @param nNode mountpoint contents
      */
-    void startListenerOnNodeForConnectedState(Action action, NodeId nNodeId, NetconfNode nNode);
+    void startListenerOnNodeForConnectedState(@Nonnull  Action action, @Nonnull NodeId nNodeId, @Nonnull NetconfNode nNode);
 
     /**
-     * Managed device is disconnected from node/mountpoint.
+     * Mountpoint created or existing. Managed device is actually disconnected from node/ mountpoint.
      * @param nNodeId id of the mountpoint
      * @param nNode mountpoint contents
      */
-    void leaveConnectedState(NodeId nNodeId, NetconfNode nNode);
+    void enterNonConnectedState(@Nonnull NodeId nNodeId, @Nonnull NetconfNode nNode);
 
     /**
-     * Removal indication of node/mountpoint.
+     * Mountpoint removed indication.
      * @param nNodeId id of the mountpoint
      */
-    void mountpointNodeRemoved(NodeId nNodeId);
+    void removeMountpointState(@Nonnull NodeId nNodeId);
 }

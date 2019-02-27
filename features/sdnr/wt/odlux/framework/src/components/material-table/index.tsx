@@ -84,7 +84,7 @@ type MaterialTableComponentBaseProps<TData> = WithStyles<typeof styles> & {
   disableSorting?: boolean;
   disableFilter?: boolean;
   customActionButtons?: { icon: React.ComponentType<SvgIconProps>, tooltip?: string, onClick: () => void  }[];
-  onHandleClick?(event: React.MouseEvent<HTMLTableRowElement>, rowData: TData): void; 
+  onHandleClick?(event: React.MouseEvent<HTMLTableRowElement>, rowData: TData): void;
 };
 
 type MaterialTableComponentPropsWithRows<TData={}> = MaterialTableComponentBaseProps<TData> & { rows: TData[]; asynchronus?: boolean; };
@@ -142,7 +142,7 @@ class MaterialTableComponent<TData extends {} = {}> extends React.Component<Mate
 
     if (isMaterialTableComponentPropsWithRequestData(this.props)) {
       this.update();
-    
+
       if (this.props.tableApi) {
         this.props.tableApi.forceRefresh = () => this.update();
       }
@@ -168,11 +168,11 @@ class MaterialTableComponent<TData extends {} = {}> extends React.Component<Mate
               onSelectAllClick={ this.handleSelectAllClick }
               onRequestSort={ this.onHandleRequestSort }
               rowCount={ rows.length }
-              enableSelection={ this.props.enableSelection } 
+              enableSelection={ this.props.enableSelection }
             />
             <TableBody>
               { showFilter && <EnhancedTableFilter columns={ columns } filter={ filter } onFilterChanged={ this.onFilterChanged } enableSelection={this.props.enableSelection} /> || null }
-              { rows // may need ordering here 
+              { rows // may need ordering here
                 .map((entry: TData & { [key: string]: any }) => {
                   const entryId = getId(entry);
                   const isSelected = this.isSelected(entryId);
@@ -186,21 +186,23 @@ class MaterialTableComponent<TData extends {} = {}> extends React.Component<Mate
                       key={ entryId }
                       selected={ isSelected }
                     >
-                      { this.props.enableSelection 
+                      { this.props.enableSelection
                        ? <TableCell padding="checkbox" style={ { width: "50px" } }>
                           <Checkbox checked={ isSelected } />
                         </TableCell>
                        : null
-                      }  
+                      }
                       {
                         this.props.columns.map(
                           col => {
-                            const style = col.width ? { width: col.width } : {};
+                            const style = col.width ? { width: col.width } : { };
                             return (
-                              <TableCell key={ col.property } align={ col.type === ColumnType.numeric ? 'right' : 'left' } style={ style }>
+                              <TableCell key={ col.property } align={ col.type === ColumnType.numeric && !col.align ? "right": col.align } style={ style }>
                                 { col.type === ColumnType.custom && col.customControl
-                                  ? <col.customControl rowData={ entry } />
-                                  : entry[col.property]
+                                  ? <col.customControl className={col.className} style={col.style} rowData={ entry } />
+                                  : col.type === ColumnType.boolean
+                                    ? <span className={col.className} style={col.style}>{col.labels ? col.labels[entry[col.property] ? "true": "false"] : String(entry[col.property]) }</span>
+                                    : <span className={col.className} style={col.style}>{String(entry[col.property])}</span>
                                 }
                               </TableCell>
                             );
@@ -270,10 +272,10 @@ class MaterialTableComponent<TData extends {} = {}> extends React.Component<Mate
       if (state.showFilter) {
         Object.keys(filter).forEach(prop => {
           const exp = filter[prop];
-          filtered = filtered || !!exp;
-          data = exp ? data.filter((val) => {
+          filtered = filtered || exp !== undefined;
+          data = exp !== undefined ? data.filter((val) => {
             const value = val[prop];
-            return value && value.toString().indexOf(exp) > -1;
+            return (value == exp) || (value && value.toString().indexOf(String(exp)) > -1);
           }) : data;
         });
       }
@@ -341,7 +343,7 @@ class MaterialTableComponent<TData extends {} = {}> extends React.Component<Mate
   };
 
   handleSelectAllClick: () => {};
- 
+
   private onHandleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, page: number) => {
     if (isMaterialTableComponentPropsWithRowsAndRequestData(this.props)) {
       this.props.onHandleChangePage(page);
@@ -378,7 +380,7 @@ class MaterialTableComponent<TData extends {} = {}> extends React.Component<Mate
     }
     if (!this.props.enableSelection){
       return;
-    } 
+    }
     let selected = this.state.selected || [];
     const selectedIndex = selected.indexOf(id);
     if (selectedIndex > -1) {

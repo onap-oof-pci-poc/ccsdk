@@ -7,6 +7,7 @@ import { withStyles, WithStyles, createStyles, Theme } from '@material-ui/core/s
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Input from '@material-ui/core/Input';
+import { Select, FormControl, InputLabel, MenuItem } from '@material-ui/core';
 
 
 const styles = (theme: Theme) => createStyles({
@@ -27,7 +28,7 @@ interface IEnhancedTableFilterComponentProps extends WithStyles<typeof styles> {
 }
 
 class EnhancedTableFilterComponent extends React.Component<IEnhancedTableFilterComponentProps> {
-  createFilterHandler = (property: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+  createFilterHandler = (property: string) => (event: React.ChangeEvent<HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement>) => {
     this.props.onFilterChanged && this.props.onFilterChanged(property, event.target.value);
   };
 
@@ -35,11 +36,11 @@ class EnhancedTableFilterComponent extends React.Component<IEnhancedTableFilterC
     const { columns, filter, classes } = this.props;
     return (
       <TableRow>
-         { this.props.enableSelection 
+         { this.props.enableSelection
            ? <TableCell padding="checkbox" style={ { width: "50px" } }>
              </TableCell>
            : null
-         }  
+         }
         { columns.map(col => {
           const style = col.width ? { width: col.width } : {};
           return (
@@ -48,14 +49,17 @@ class EnhancedTableFilterComponent extends React.Component<IEnhancedTableFilterC
               padding={ col.disablePadding ? 'none' : 'default' }
               style={ style }
             >
-              { col.disableFilter || (col.type === ColumnType.custom) ? null : <Input
-                className={ classes.input }
-                inputProps={ {
-                  'aria-label': 'Filter',
-                } }
-                value={ filter[col.property] || '' }
-                onChange={ this.createFilterHandler(col.property) }
-              /> }
+              { col.disableFilter || (col.type === ColumnType.custom)
+                ? null
+                : (col.type === ColumnType.boolean)
+                  ? <Select className={classes.input} value={filter[col.property] !== undefined ? filter[col.property] : ''} onChange={this.createFilterHandler(col.property)} inputProps={{ name: `${col.property}-bool`, id: `${col.property}-bool` }} >
+                    <MenuItem value={undefined}>
+                      <em>None</em>
+                    </MenuItem>
+                    <MenuItem value={true as any as string}>{ col.labels ? col.labels["true"]:"true"}</MenuItem>
+                    <MenuItem value={false as any as string}>{ col.labels ? col.labels["false"] : "false"}</MenuItem>
+                  </Select>
+                  : <Input className={classes.input} inputProps={{ 'aria-label': 'Filter' }} value={filter[col.property] || ''} onChange={this.createFilterHandler(col.property)} />}
             </TableCell>
           );
         }, this) }

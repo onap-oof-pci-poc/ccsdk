@@ -12,7 +12,7 @@ import { connectService } from '../services/connectService';
 export class BaseAction extends Action { }
 
 
-/** Represents an async thunk action that will add an element to the required network elements. */
+/** Represents an async thunk action creator to add an element to the required network elements. */
 export const addToRequiredNetworkElementsAsyncActionCreator = (element: RequiredNetworkElementType) => (dispatch: Dispatch) => {
   connectService.insertRequiredNetworkElement(element).then(_ => {
     window.setTimeout(() => {
@@ -23,7 +23,7 @@ export const addToRequiredNetworkElementsAsyncActionCreator = (element: Required
   });
 };
 
-/** Represents an async thunk action that will delete an element from the required network elements. */
+/** Represents an async thunk action creator to delete an element from the required network elements. */
 export const removeFromRequiredNetworkElementsAsyncActionCreator = (element: RequiredNetworkElementType) => (dispatch: Dispatch) => {
   connectService.deleteRequiredNetworkElement(element).then(_ => {
     window.setTimeout(() => {

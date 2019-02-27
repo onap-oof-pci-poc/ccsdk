@@ -1,7 +1,7 @@
 import { IActionHandler } from '../../../../framework/src/flux/action';
 
 import {
-  AddMountedNetworkElement,
+  AddOrUpdateMountedNetworkElement,
   AllMountedNetworkElementsLoadedAction,
   LoadAllMountedNetworkElementsAction,
   RemoveMountedNetworkElement,
@@ -28,7 +28,7 @@ export const mountedNetworkElementsActionHandler: IActionHandler<IMountedNetwork
       ...state,
       busy: true
     };
-  
+
   } else if (action instanceof AllMountedNetworkElementsLoadedAction) {
     if (!action.error && action.mountedNetworkElements) {
       state = {
@@ -42,11 +42,24 @@ export const mountedNetworkElementsActionHandler: IActionHandler<IMountedNetwork
         busy: false
       };
     }
-  } else if (action instanceof AddMountedNetworkElement) {
-    action.mountedNetworkElement && (state = {
-      ...state,
-      elements: [...state.elements, action.mountedNetworkElement],
-    });
+  } else if (action instanceof AddOrUpdateMountedNetworkElement) {
+    if (!action.mountedNetworkElement) return state; // should handle error here
+    const index = state.elements.findIndex(el => el.mountId === (action.mountedNetworkElement && action.mountedNetworkElement.mountId));
+    if (index > -1) {
+      state = {
+        ...state,
+        elements: [
+          ...state.elements.slice(0, index),
+          action.mountedNetworkElement,
+          ...state.elements.slice(index + 1)
+        ]
+      }
+    } else {
+      state = {
+        ...state,
+        elements: [...state.elements, action.mountedNetworkElement],
+      }
+    };
   } else if (action instanceof RemoveMountedNetworkElement) {
     state = {
       ...state,

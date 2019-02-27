@@ -47,6 +47,7 @@ import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("deprecation")
 public class DeviceManagerApiServiceImpl implements DevicemanagerService, AutoCloseable {
 
     private static final Logger LOG = LoggerFactory.getLogger(DevicemanagerService.class);
@@ -79,7 +80,8 @@ public class DeviceManagerApiServiceImpl implements DevicemanagerService, AutoCl
      * Interfaces for MaintenanceService
      */
 
-    @Override
+    // For casablanca version no input was generated.
+   @Override
     public ListenableFuture<RpcResult<GetRequiredNetworkElementKeysOutput>> getRequiredNetworkElementKeys() {
 
         LOG.info("RPC Request: getRequiredNetworkElementKeys");
@@ -189,6 +191,5 @@ public class DeviceManagerApiServiceImpl implements DevicemanagerService, AutoCl
     public void setResyncListener(ResyncNetworkElementsListener listener) {
         this.resyncCallbackListener = listener;
     }
-
 
 }

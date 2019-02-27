@@ -14,7 +14,6 @@ import { IApplicationStoreState } from '../../../../framework/src/store/applicat
 import { connect, Connect, IDispatcher } from '../../../../framework/src/flux/connect';
 import { NavigateToApplication } from '../../../../framework/src/actions/navigationActions';
 
-
 import { RequiredNetworkElementType } from '../models/requiredNetworkElements';
 import { createRequiredNetworkElementsActions, createRequiredNetworkElementsProperties } from '../handlers/requiredNetworkElementsHandler';
 
@@ -27,7 +26,7 @@ const styles = (theme: Theme) => createStyles({
     color: 'darkgreen',
   },
   connectionStatusConnecting: {
-    color: theme.palette.primary.main,
+    color: 'blue',
   },
   connectionStatusDisconnected: {
     color: 'red',
