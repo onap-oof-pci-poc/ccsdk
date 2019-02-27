@@ -62,6 +62,11 @@
                             <directory>../node_modules</directory>
                             <followSymlinks>false</followSymlinks>
                         </fileset>
+                        <!-- eclipse bug build bin folder in basedir -->
+						<fileset>
+							<directory>bin</directory>
+							<followSymlinks>false</followSymlinks>
+						</fileset>
                     </filesets>
                 </configuration>
             </plugin>
