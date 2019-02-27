@@ -17,7 +17,7 @@
  ******************************************************************************/
 package org.onap.ccsdk.features.sdnr.wt.websocketmanager2.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 import java.net.InetSocketAddress;
@@ -29,7 +29,9 @@ import org.onap.ccsdk.features.sdnr.wt.websocketmanager2.WebSocketManagerSocket;
 public class WebsocketMessageTest {
 
     private static final String MSG1 = "{\"data\":\"scopes\",\"scopes\":[\"scope1\"]}";
-    public String expectAnswer;
+    private static final String MSG2 = "{}";
+    private static final String MSG3 = "{\""+WebSocketManagerSocket.KEY_NODENAME+":\"xy\","+WebSocketManagerSocket.KEY_EVENTTYPE+":\"zu\"}";
+    private static final String MSG4 = "{ Not correct messga}";
 
     @Test
     public void test() {
@@ -39,26 +41,33 @@ public class WebsocketMessageTest {
         when(sess.getRemoteAddress()).thenReturn(remoteAdr);
         socketToTest.onWebSocketConnect(sess);
         // message from client
-        this.expectAnswer = MSG1;
+        socketToTest.setExpected(MSG1);
         socketToTest.onWebSocketText(MSG1);
+        socketToTest.setExpected(MSG2);
+        socketToTest.onWebSocketText(MSG2);
+        socketToTest.setExpected(MSG3);
+        socketToTest.onWebSocketText(MSG3);
+        socketToTest.setExpected(MSG4);
+        socketToTest.onWebSocketText(MSG4);
         socketToTest.onWebSocketClose(0, "by default");
         sess.close();
 
     }
-    public void test2() {
-        //message from devmgr (notification)
-//        this.expectAnswer = MSG2;
-//        socketToTest.onWebSocketText(MSG2);
-    }
-    private class MyWebSocketManagerSocket extends WebSocketManagerSocket {
+
+    private static class MyWebSocketManagerSocket extends WebSocketManagerSocket {
+
+        private String expected;
 
         public MyWebSocketManagerSocket() {
-
+        }
+        void setExpected(String expected) {
+            this.expected = expected;
         }
 
         @Override
         public void send(String msg) {
-            assertTrue(msg.contains(expectAnswer));
+            System.out.println(msg);
+            assertTrue("Expected '"+expected+"' answer '"+msg+"'", msg.contains(expected));
         }
 
     }

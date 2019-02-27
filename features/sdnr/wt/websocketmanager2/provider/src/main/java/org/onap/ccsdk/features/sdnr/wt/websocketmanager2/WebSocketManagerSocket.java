@@ -114,7 +114,6 @@ public class WebSocketManagerSocket extends WebSocketAdapter {
 
     @Override
     public void onWebSocketError(Throwable cause) {
-
         LOG.debug("error caused on " + this.getRemoteAdr() + " :" + cause.getMessage());
         // super.onWebSocketError(cause);
     }
