@@ -26,7 +26,7 @@
 		<checkstyle.skip>true</checkstyle.skip>
 		<buildtime>${maven.build.timestamp} UTC</buildtime>
 		<distversion>ONAP Dublin (Flourine-SR1)</distversion>
-		<buildno>1.15b7491</buildno>
+		<buildno>2.eec921f</buildno>
 	</properties>
 	<parent>
 		<groupId>org.onap.ccsdk.parent</groupId>
