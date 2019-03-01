@@ -126,16 +126,20 @@ module.exports = (env) => {
         colors: true
       },
       proxy: {
+        "/oauth2/": {
+          target: "http://localhost:3000",
+          secure: false
+        },
         "/database/": {
-          target: "http://localhost:8181",
+          target: "http://localhost:3000",
           secure: false
         },
         "/restconf/": {
-          target: "http://localhost:8181",
+          target: "http://localhost:3000",
           secure: false
         },
         "/help/": {
-          target: "http://localhost:8181",
+          target: "http://localhost:3000",
           secure: false
         }
       }

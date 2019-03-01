@@ -2,12 +2,14 @@
 import { DataCallback } from '../components/material-table';
 import { Result, HitEntry } from '../models';
 
+import { requestRest } from '../services/restService';
+
 type propType = string | number | null | undefined | (string | number)[];
 type dataType = { [prop: string]: propType };
 type resultType<TData = dataType> = { page: number, rowCount: number, rows: TData[] };
 
 export function createSearchDataHandler<TResult extends {} = dataType>(uri: string, additionalParameters?: {}): DataCallback<(TResult & { _id: string })>;
-export function createSearchDataHandler<TResult extends {} = dataType, TData = dataType>(uri: string, additionalParameters: {} | null | undefined, mapResult: (res: HitEntry<TResult>, index: number, arr: HitEntry<TResult>[]) => (TData & { _id: string }), mapRequest?: (name?: string | null) => string): DataCallback<(TData & { _id: string })> 
+export function createSearchDataHandler<TResult extends {} = dataType, TData = dataType>(uri: string, additionalParameters: {} | null | undefined, mapResult: (res: HitEntry<TResult>, index: number, arr: HitEntry<TResult>[]) => (TData & { _id: string }), mapRequest?: (name?: string | null) => string): DataCallback<(TData & { _id: string })>
 export function createSearchDataHandler<TResult, TData>(uri: string, additionalParameters?: {} | null | undefined, mapResult?: (res: HitEntry<TResult>, index: number, arr: HitEntry<TResult>[]) => (TData & { _id: string }), mapRequest?: (name?: string | null) => string): DataCallback<(TData & { _id: string })> {
   const url = `${ window.location.origin }/database/${uri}/_search`;
   const fetchData: DataCallback<(TData & { _id: string }) > = async (page, rowsPerPage, orderBy, order, filter) => {
@@ -16,7 +18,7 @@ export function createSearchDataHandler<TResult, TData>(uri: string, additionalP
       : null;
 
     const filterKeys = filter && Object.keys(filter) || [];
-    
+
     const query = {
       ...filterKeys.length > 0 ? {
         query: {
@@ -35,7 +37,7 @@ export function createSearchDataHandler<TResult, TData>(uri: string, additionalP
       ...orderBy && order ? { "sort": [{ [mapRequest ? mapRequest(orderBy) : orderBy]: order }] } : {},
       ...additionalParameters ? additionalParameters : {}
     };
-    const result = await fetch(url, {
+    const result = await requestRest<Result<TResult & { _id: string }>>(url, {
       method: "POST",       // *GET, POST, PUT, DELETE, etc.
       mode: "no-cors",      // no-cors, cors, *same-origin
       cache: "no-cache",    // *default, no-cache, reload, force-cache, only-if-cached
@@ -46,18 +48,17 @@ export function createSearchDataHandler<TResult, TData>(uri: string, additionalP
       body: JSON.stringify(query), // body data type must match "Content-Type" header
     });
 
-    if (result.ok) {
-      const queryResult: Result<TResult & { _id: string }> = await result.json();
+    if (result) {
       let rows: (TData & { _id: string })[] = [];
 
-      if (queryResult && queryResult.hits && queryResult.hits.hits) {
-        rows = queryResult.hits.hits.map( mapResult ? mapResult :  h => (
+      if (result && result.hits && result.hits.hits) {
+        rows = result.hits.hits.map( mapResult ? mapResult :  h => (
           { ...(h._source as any as TData), _id: h._id }
         )) || []
       }
 
       const data = {
-        page: Math.min(page || 0, queryResult.hits.total || 0 / (rowsPerPage || 1)), rowCount: queryResult.hits.total, rows: rows
+        page: Math.min(page || 0, result.hits.total || 0 / (rowsPerPage || 1)), rowCount: result.hits.total, rows: rows
       };
       return data;
     }

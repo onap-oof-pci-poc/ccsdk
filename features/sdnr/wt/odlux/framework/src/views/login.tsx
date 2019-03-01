@@ -3,6 +3,11 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -57,6 +62,8 @@ interface ILoginState {
   busy: boolean;
   email: string;
   password: string;
+  scope: string;
+  message: string;
 }
 
 
@@ -69,7 +76,9 @@ class LoginComponent extends React.Component<LoginProps, ILoginState> {
     this.state = {
       busy: false,
       email: '',
-      password: ''
+      password: '',
+      scope: 'sdn',
+      message: ''
     };
   }
 
@@ -104,6 +113,17 @@ class LoginComponent extends React.Component<LoginProps, ILoginState> {
                   onChange={ event => { this.setState({ password: event.target.value }) } }
                 />
               </FormControl>
+              <FormControl margin="normal" required fullWidth>
+                <InputLabel htmlFor="password">Scope</InputLabel>
+                <Input
+                  name="scope"
+                  type="scope"
+                  id="scope"
+                  disabled={this.state.busy}
+                  value={this.state.scope}
+                  onChange={event => { this.setState({ scope: event.target.value }) }}
+                />
+              </FormControl>
               <FormControlLabel
                 control={ <Checkbox value="remember" color="primary" /> }
                 label="Remember me"
@@ -122,6 +142,24 @@ class LoginComponent extends React.Component<LoginProps, ILoginState> {
             </form>
           </Paper>
         </main>
+        <Dialog
+          open={!!this.state.message}
+          onClose={() => { this.setState({message: ''})}}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">{"Error"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              { this.state.message }
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => { this.setState({ message: '' }) }} color="secondary" autoFocus>
+              OK
+            </Button>
+          </DialogActions>
+        </Dialog>
       </React.Fragment>
     );
   }
@@ -130,14 +168,24 @@ class LoginComponent extends React.Component<LoginProps, ILoginState> {
     event.preventDefault();
 
     this.setState({ busy: true });
-    const token = await authenticationService.authenticateUser(this.state.email, this.state.password);
+    const token = await authenticationService.authenticateUser(this.state.email, this.state.password, this.state.scope);
     this.props.dispatch(new UpdateAuthentication(token));
     this.setState({ busy: false });
 
     if (token) {
-      this.props.history.replace("/");
+      const query =
+        this.props.state.framework.navigationState.search &&
+        this.props.state.framework.navigationState.search.replace(/^\?/, "")
+          .split('&').map(e => e.split("="));
+      const returnTo = query && query.find(e => e[0] === "returnTo");
+      this.props.history.replace(returnTo && returnTo[1] || "/");
     }
-
+    else {
+      this.setState({
+        message: "Could not log in. Please check your credentials or ask your administrator for assistence.",
+        password: ""
+      })
+    }
   }
 }
 

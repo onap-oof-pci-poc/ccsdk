@@ -15,6 +15,7 @@ import Menu from '@material-ui/core/Menu';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { UpdateAuthentication } from '../actions/authentication';
+import { ReplaceAction } from '../actions/navigationActions';
 
 import connect, { Connect, IDispatcher } from '../flux/connect';
 import Logo from './logo';
@@ -37,7 +38,10 @@ const styles = (theme: Theme) => createStyles({
 
 const mapDispatch = (dispatcher: IDispatcher) => {
   return {
-    logout: () => { dispatcher.dispatch(new UpdateAuthentication(null)); }
+    logout: () => {
+      dispatcher.dispatch(new UpdateAuthentication(null));
+      dispatcher.dispatch(new ReplaceAction("/login"));
+    }
   }
 };
 

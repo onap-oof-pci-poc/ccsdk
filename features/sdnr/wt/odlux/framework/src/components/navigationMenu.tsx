@@ -25,6 +25,7 @@ const styles = (theme: Theme) => createStyles({
 });
 
 export const NavigationMenu = withStyles(styles)(connect()(({ classes, state }: WithStyles<typeof styles> & Connect) => {
+  const { user } = state.framework.authenticationState
   return (
     <Drawer
       variant="permanent"
@@ -32,10 +33,11 @@ export const NavigationMenu = withStyles(styles)(connect()(({ classes, state }: 
         paper: classes.drawerPaper,
       }}
     >
-      <div className={classes.toolbar} />
+      {user && user.isValid && <>
+        <div className={classes.toolbar} />
       { /* https://fiffty.github.io/react-treeview-mui/ */}
       <List component="nav">
-        { process.env.NODE_ENV === "development" ? <ListItemLink exact to="/" primary="Home" icon={<FontAwesomeIcon icon={faHome} />} /> : null } 
+        { process.env.NODE_ENV === "development" ? <ListItemLink exact to="/" primary="Home" icon={<FontAwesomeIcon icon={faHome} />} /> : null }
         <Divider />
         {
           state.framework.applicationRegistraion && Object.keys(state.framework.applicationRegistraion).map(key => {
@@ -51,8 +53,10 @@ export const NavigationMenu = withStyles(styles)(connect()(({ classes, state }: 
           }) || null
         }
         <Divider />
-        { process.env.NODE_ENV === "development" ? <ListItemLink to="/about" primary="About" icon={<FontAwesomeIcon icon={faAddressBook} />} /> : null } 
-      </List>
+        { process.env.NODE_ENV === "development" ? <ListItemLink to="/about" primary="About" icon={<FontAwesomeIcon icon={faAddressBook} />} /> : null }
+        </List>
+        </> || null
+      }
     </Drawer>)
 }));
 

@@ -82,7 +82,7 @@ module.exports = (env) => {
       minimizer: env !== "release" ? [] : [new TerserPlugin({
         terserOptions: {
           mangle:{
-            reserved:["./app.tsx"] 
+            reserved:["./app.tsx"]
           },
           warnings: false, // false, true, "verbose"
           compress: {
@@ -173,8 +173,8 @@ module.exports = (env) => {
         colors: true
       },
       proxy: {
-        "/api/**/*": {
-          target: "http://localhost:3001",
+        "/oauth2/**/*": {
+          target: "http://localhost:3000",
           secure: false
         }
       }

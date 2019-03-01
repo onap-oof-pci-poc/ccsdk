@@ -20,6 +20,7 @@
     "@types/flux": "3.1.8",
     "@types/jquery": "3.3.10",
     "@types/jsonwebtoken": "7.2.8",
+    "@types/node": "11.9.5",
     "@types/react": "16.4.14",
     "@types/react-dom": "16.0.8",
     "@types/react-router-dom": "4.3.1",

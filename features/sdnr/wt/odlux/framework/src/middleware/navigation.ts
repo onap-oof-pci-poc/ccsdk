@@ -6,14 +6,14 @@ import { Dispatch } from '../flux/store';
 import { LocationChanged, NavigateToApplication } from "../actions/navigationActions";
 import { PushAction, ReplaceAction, GoAction, GoBackAction, GoForwardeAction } from '../actions/navigationActions';
 
-import applicationManager from "../services/applicationManager";
+import { applicationManager } from "../services/applicationManager";
 
 const routerMiddlewareCreator = (history: History) => () => (next: Dispatch): Dispatch => (action) => {
-  
+
   if (action instanceof NavigateToApplication) {
     const application = applicationManager.applications && applicationManager.applications[action.applicationName];
     if (application) {
-      const href = `/${ application.path || application.name }${ action.href ? '/' + action.href : '' }`.replace(/\/{2,}/i, '/');
+      const href = `/${application.path || application.name}${action.href ? '/' + action.href : ''}`.replace(/\/{2,}/i, '/');
       if (action.replace) {
         history.replace(href, action.state);
       } else {
@@ -30,6 +30,13 @@ const routerMiddlewareCreator = (history: History) => () => (next: Dispatch): Di
     history.goBack();
   } else if (action instanceof GoForwardeAction) {
     history.goForward();
+  } else if (action instanceof LocationChanged) {
+    // ensure user is logged in and token is valid
+    if (!action.pathname.startsWith("/login") && applicationStore && (!applicationStore.state.framework.authenticationState.user || !applicationStore.state.framework.authenticationState.user.isValid)) {
+      history.replace(`/login?returnTo=${action.pathname}`);
+    } else {
+      return next(action);
+    }
   } else {
     return next(action);
   }
@@ -44,8 +51,10 @@ function startListener(history: History, store: ApplicationStore) {
 }
 
 const history = createHashHistory();
+let applicationStore: ApplicationStore | null = null;
 
 export function startHistoryListener(store: ApplicationStore) {
+  applicationStore = store;
   startListener(history, store);
 }
 

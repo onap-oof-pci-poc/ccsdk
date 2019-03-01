@@ -6,7 +6,7 @@ import { requestRest } from '../../../../framework/src/services/restService';
 import { Result, HitEntry } from '../../../../framework/src/models/elasticSearch';
 
 
-/** 
+/**
  * Represents a web api accessor service for all Network Elements actions.
  */
 class ConnectService {
@@ -16,7 +16,7 @@ class ConnectService {
   public async getAllRequiredNetworkElements(): Promise<(RequiredNetworkElementType & { _id: string })[] | null> {
     const path = 'database/mwtn/required-networkelement/_search';
     const query = { "query": { "match_all": {} } };
-    
+
     const result = await requestRest<Result<RequiredNetworkElementType>>(path, { method: "POST", body: JSON.stringify(query) });
     return result && result.hits && result.hits.hits && result.hits.hits.map(ne => ({
       _id: ne._id,
@@ -30,7 +30,7 @@ class ConnectService {
 
   public async getRequiredNetworkElementByMountId(mountId:string): Promise<(RequiredNetworkElementType & { _id: string }) | null> {
     const path = `database/mwtn/required-networkelement/${mountId}`;
-    
+
     const result = await requestRest<HitEntry<RequiredNetworkElementType> & { found: boolean }>(path, { method: "GET" });
     return result && result.found && result._source  && {
       _id: result._id,
@@ -104,8 +104,8 @@ class ConnectService {
   /** Get all mounted network elements and fills the property required according to the database contents. */
   public async getMountedNetworkElementsList(): Promise<MountedNetworkElementType[] | null> {
     const path = 'restconf/operational/network-topology:network-topology/topology/topology-netconf';
-    
-    const topologyRequestPomise = requestRest<{ topology: Topology[] | null }>(path, { method: "GET" }, true);
+
+    const topologyRequestPomise = requestRest<{ topology: Topology[] | null }>(path, { method: "GET" });
     const requiredNetworkElementsPromise = this.getAllRequiredNetworkElements();
 
     const [netconfResponse, requiredNetworkElements] = await Promise.all([topologyRequestPomise, requiredNetworkElementsPromise]);
@@ -122,16 +122,16 @@ class ConnectService {
     return mountPoints || [];
   }
 
-  /** Get one mounted network element. */ 
+  /** Get one mounted network element. */
   public async getMountedNetworkElementByMountId(mountId: string): Promise<MountedNetworkElementType | null> {
     const path = 'restconf/operational/network-topology:network-topology/topology/topology-netconf/node/' + mountId;
-    const getMountedNetworkElementByMountIdPromise = requestRest<{ node: TopologyNode[] | null }>(path, { method: "GET" }, true);
+    const getMountedNetworkElementByMountIdPromise = requestRest<{ node: TopologyNode[] | null }>(path, { method: "GET" });
     const getRequiredNetworkElementByMountIdPromise = this.getRequiredNetworkElementByMountId(mountId);
 
     const [mountedNetworkElement, requiredNetworkElement] = await Promise.all([getMountedNetworkElementByMountIdPromise, getRequiredNetworkElementByMountIdPromise]);
     return mountedNetworkElement && mountedNetworkElement.node && ConnectService.mapTopologyNode(mountedNetworkElement.node[0], requiredNetworkElement && requiredNetworkElement.mountId === mountedNetworkElement.node[0]["node-id"] || false) || null;
   }
-  
+
   /** Mounts an required network element. */
   public async mountNetworkElement(networkElement: RequiredNetworkElementType): Promise<boolean> {
     const path = 'restconf/config/network-topology:network-topology/topology/topology-netconf/node/' + networkElement.mountId;
@@ -154,7 +154,7 @@ class ConnectService {
       '  <!-- keepalive-delay set to 0 turns off keepalives-->',
       '  <keepalive-delay xmlns="urn:opendaylight:netconf-node-topology">120</keepalive-delay>',
       '</node>'].join('');
-    
+
     try {
       const result = await requestRest<string>(path, {
         method: 'PUT',
@@ -163,9 +163,9 @@ class ConnectService {
           'Accept': 'application/xml'
         },
         body: mountXml
-      }, true);
+      });
       // expect an empty answer
-      return result !== null; 
+      return result !== null;
     } catch {
       return false;
     }
@@ -174,7 +174,7 @@ class ConnectService {
   /** Unmounts a network element by its id. */
   public async unmountNetworkElement(mountId: string): Promise<boolean> {
     const path = 'restconf/config/network-topology:network-topology/topology/topology-netconf/node/' + mountId;
-  
+
     try {
       const result = await requestRest<string>(path, {
         method: 'DELETE',
@@ -182,10 +182,10 @@ class ConnectService {
           'Content-Type': 'application/xml',
           'Accept': 'application/xml'
         },
-      }, true);
+      });
       // expect an empty answer
-      return result !== null; 
-      
+      return result !== null;
+
     } catch {
       return false;
     }

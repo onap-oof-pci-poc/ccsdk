@@ -10,19 +10,19 @@ export interface IAuthenticationState {
 const initialToken = localStorage.getItem("userToken");
 
 const authenticationStateInit: IAuthenticationState = {
-  user: initialToken && new User(initialToken) || undefined
+  user: initialToken && User.fromString(initialToken) || undefined
 };
 
 export const authenticationStateHandler: IActionHandler<IAuthenticationState> = (state = authenticationStateInit, action) => {
   if (action instanceof UpdateAuthentication) {
-    
-    if (action.bearerToken) {
-      localStorage.setItem("userToken", action.bearerToken);
+
+    const user = action.bearerToken && new User(action.bearerToken) || undefined;
+    if (user) {
+      localStorage.setItem("userToken", user.toString());
     } else {
       localStorage.removeItem("userToken");
     }
 
-    const user = action.bearerToken && new User(action.bearerToken) || undefined;
     state = {
       ...state,
       user

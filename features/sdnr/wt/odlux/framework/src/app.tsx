@@ -1,12 +1,12 @@
 /******************************************************************************
  * Copyright 2018 highstreet technologies GmbH
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,9 +27,12 @@ import { applicationStoreCreator } from './store/applicationStore';
 import { ApplicationStoreProvider } from './flux/connect';
 
 import { startHistoryListener } from './middleware/navigation';
+import { startRestService } from './services/restService';
+
 
 import theme from './design/default';
 import '!style-loader!css-loader!./app.css';
+import { ReplaceAction } from './actions/navigationActions';
 
 declare module '@material-ui/core/styles/createMuiTheme' {
 
@@ -54,7 +57,7 @@ export const runApplication = () => {
   const applicationStore = applicationStoreCreator();
 
   window.onerror = function (msg: string, url: string, line: number, col: number, error: Error) {
-    // Note that col & error are new to the HTML 5 spec and may not be 
+    // Note that col & error are new to the HTML 5 spec and may not be
     // supported in every browser.  It worked for me in Chrome.
     var extra = !col ? '' : '\ncolumn: ' + col;
     extra += !error ? '' : '\nerror: ' + error;
@@ -63,11 +66,12 @@ export const runApplication = () => {
     applicationStore.dispatch(new AddErrorInfoAction({ error, message: msg, url, line, col, info: { extra } }));
 
     var suppressErrorAlert = true;
-    // If you return true, then error alerts (like in older versions of 
+    // If you return true, then error alerts (like in older versions of
     // Internet Explorer) will be suppressed.
     return suppressErrorAlert;
   };
 
+  startRestService(applicationStore);
   startHistoryListener(applicationStore);
 
   const App = (): JSX.Element => (
@@ -79,4 +83,5 @@ export const runApplication = () => {
   );
 
   ReactDOM.render(<App />, document.getElementById('app'));
+
 };

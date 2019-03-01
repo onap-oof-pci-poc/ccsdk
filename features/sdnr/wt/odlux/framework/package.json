@@ -24,6 +24,7 @@
   "author": "Matthias Fischer",
   "license": "MIT",
   "peerDependencies": {
+    "@types/node" : "11.9.5",
     "@types/react": "16.4.14",
     "@types/react-dom": "16.0.8",
     "@types/react-router-dom": "4.3.1",

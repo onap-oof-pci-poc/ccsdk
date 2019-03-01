@@ -1,50 +1,41 @@
-import * as JWT from 'jsonwebtoken';  
 
-export interface IUserInfo {
-  iss: string,
-  iat: number,
-  exp: number,
-  aud: string,
-  sub: string,
-  firstName: string,
-  lastName: string,
-  email: string,
-  role: string[]
+export type AuthToken = {
+  username: string;
+  access_token: string;
+  token_type: string;
+  expires: number;
 }
 
 
 export class User {
 
-  public _userInfo: IUserInfo | null;
-  
-  constructor(private _bearerToken: string) {
-    //const pem = require('raw-loader!../assets/publicKey.pem');
-    const pem = "kFfAgpf806IKa4z88EEk6Lim7NMGicrw99OmIB38myM9CS44nEmMNJxnFu3ImViS248wSwkuZ3HvrhsPrA1ZFRNb1a6CEtGN4DaPJbfuo35qMp50tIEpy8nsSFpayOBE";
+  constructor (private _bearerToken: AuthToken) {
 
-    try {
-      const dec = (JWT.verify(_bearerToken, pem)) as IUserInfo;
-      this._userInfo = dec;
-    } catch (ex) {
-      this._userInfo = null;
-    }
   }
 
   public get user(): string | null {
-    return this._userInfo && this._userInfo.email;
+    return this._bearerToken && this._bearerToken.username;
   };
 
-  public get roles(): string[] | null {
-    return this._userInfo && this._userInfo.role;
-  }
   public get token(): string | null {
-    return this._userInfo && this._bearerToken;
+    return this._bearerToken && this._bearerToken.access_token;
   }
 
-  public isInRole(role: string | string[]): boolean {
-    return false;
+  public get tokenType(): string | null {
+    return this._bearerToken && this._bearerToken.token_type;
   }
+
+  public get isValid(): boolean {
+    return (this._bearerToken && (new Date().valueOf()) < this._bearerToken.expires) || false;
+  }
+
+  public toString() {
+    return JSON.stringify(this._bearerToken);
+  }
+
+  public static fromString(data: string) {
+    return new User(JSON.parse(data));
+  }
+
 
 }
-
-// key:kFfAgpf806IKa4z88EEk6Lim7NMGicrw99OmIB38myM9CS44nEmMNJxnFu3ImViS248wSwkuZ3HvrhsPrA1ZFRNb1a6CEtGN4DaPJbfuo35qMp50tIEpy8nsSFpayOBE
-// token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPRExVWCIsImlhdCI6MTUzODQ2NDMyMCwiZXhwIjoxNTcwMDAwMzIwLCJhdWQiOiJsb2NhbGhvc3QiLCJzdWIiOiJsb2NhbGhvc3QiLCJmaXJzdE5hbWUiOiJNYXgiLCJsYXN0TmFtZSI6Ik11c3Rlcm1hbm4iLCJlbWFpbCI6Im1heEBvZGx1eC5jb20iLCJyb2xlIjpbInVzZXIiLCJhZG1pbiJdfQ.9e5hDi2uxmIXNwHkJoScBZsHBk0jQ8CcZ7YIcZhDtuI

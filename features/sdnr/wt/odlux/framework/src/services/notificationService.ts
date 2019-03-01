@@ -1,6 +1,6 @@
 import * as X2JS from 'x2js';
 
-const socketUrl = [ location.protocol === 'https:' ? 'wss://' : 'ws://', 'admin', ':', 'admin', '@', location.hostname, ':',location.port,'/websocket'].join('');
+const socketUrl = [location.protocol === 'https:' ? 'wss://' : 'ws://', 'admin', ':', 'admin', '@', location.hostname, ':', location.port, '/websocket'].join('');
 const subscriptions: { [scope: string]: SubscriptionCallback[] } = { };
 
 export interface IFormatedMessage {
@@ -29,7 +29,7 @@ function formatData(event: MessageEvent) : IFormatedMessage | undefined {
 export function subscribe<TMessage extends IFormatedMessage = IFormatedMessage>(scope: string | string[], callback: SubscriptionCallback<TMessage>): Promise<boolean> {
   return socketReady.then((notificationSocket) => {
     const scopes = scope instanceof Array ? scope : [scope];
-    
+
     // send all new scopes to subscribe
     const newScopesToSubscribe: string[] = scopes.reduce((acc: string[], cur: string) => {
       const currentCallbacks = subscriptions[cur];
@@ -102,7 +102,7 @@ const connect = (): Promise<WebSocket> => {
           const callbacks = subscriptions[formated.notifType];
           if (callbacks) {
             callbacks.forEach(cb => {
-              // ensure all callbacks will be called 
+              // ensure all callbacks will be called
               try {
                 return cb(formated);
               } catch (reason) {

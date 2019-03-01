@@ -37,11 +37,12 @@ class ConnectApplicationComponent extends React.Component<ConnectApplicationComp
    */
   constructor(props: ConnectApplicationComponentProps) {
     super(props);
-    
+
     this.state = {
       activePanel: null
     };
   }
+
   private onTogglePanel = (panelId: PanelId) => {
     const nextActivePanel = panelId === this.state.activePanel ? null : panelId;
     this.setState({
@@ -69,7 +70,7 @@ class ConnectApplicationComponent extends React.Component<ConnectApplicationComp
 
   render(): JSX.Element {
     const { activePanel } = this.state;
-    
+
     return (
       <>
         <Panel activePanel={ activePanel } panelId={ 'RequiredNetworkElements' } onToggle={ this.onTogglePanel } title={ "Required Network Elements" }>
@@ -85,6 +86,7 @@ class ConnectApplicationComponent extends React.Component<ConnectApplicationComp
     );
   };
   public componentDidMount() {
+    this.onTogglePanel("RequiredNetworkElements");
     this.props.onLoadUnknownNetworkElements();
   }
 }

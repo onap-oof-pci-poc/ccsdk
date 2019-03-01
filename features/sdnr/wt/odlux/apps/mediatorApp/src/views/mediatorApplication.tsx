@@ -120,7 +120,7 @@ class MediatorApplicationComponent extends React.Component<MediatorApplicationCo
           <Tooltip title={"Info"} ><IconButton className={classes.button}><InfoIcon /></IconButton></Tooltip>
         </div>
         <div className={classes.spacer}>
-          {process.env.NODE_ENV === "development" ? <Tooltip title={"Edit"} ><IconButton disabled={rowData[BusySymbol]} className={classes.button} onClick={event => this.onOpenEditConfigurationDialog(event, rowData)}><EditIcon /></IconButton></Tooltip> : null}
+          { process.env.NODE_ENV === "development" ? <Tooltip title={"Edit"} ><IconButton disabled={rowData[BusySymbol]} className={classes.button} onClick={event => this.onOpenEditConfigurationDialog(event, rowData)}><EditIcon /></IconButton></Tooltip> : null}
           <Tooltip title={"Remove"} ><IconButton disabled={rowData[BusySymbol]} className={classes.button} onClick={event => this.onOpenRemoveConfigutationDialog(event, rowData)}><DeleteIcon /></IconButton></Tooltip>
         </div>
       </>
@@ -159,8 +159,8 @@ class MediatorApplicationComponent extends React.Component<MediatorApplicationCo
   private onOpenAddConfigurationDialog = () => {
     // Tries to determine a free port for netconf listener and snpm listener
     // it it could not determine free ports the dialog will open any way
-    // those ports should not be configured from the fontend, furthermore 
-    // the backend should auto configure them and tell the user the result 
+    // those ports should not be configured from the fontend, furthermore
+    // the backend should auto configure them and tell the user the result
     // after the creation process.
 
     this.setState({
