@@ -19,7 +19,8 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
@@ -39,24 +40,73 @@
   <properties>
     <application.name>sdnr-wt-feature-aggregator</application.name>
     <include.transitive.dependencies>false</include.transitive.dependencies>
+    <ccsdk.features.version>${project.version}</ccsdk.features.version>
   </properties>
 
   <dependencies>
+<!--     <dependency> -->
+<!--       <groupId>${project.groupId}</groupId> -->
+<!--       <artifactId>${application.name}</artifactId> -->
+<!--       <version>${project.version}</version> -->
+<!--       <type>xml</type> -->
+<!--       <classifier>features</classifier> -->
+<!--       <exclusions> -->
+<!--         <exclusion> -->
+<!--           <groupId>*</groupId> -->
+<!--           <artifactId>*</artifactId> -->
+<!--         </exclusion> -->
+<!--       </exclusions> -->
+<!--     </dependency> -->
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>${application.name}</artifactId>
-      <version>${project.version}</version>
-      <type>xml</type>
-      <classifier>features</classifier>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
+      <artifactId>sdnr-wt-apigateway-installer</artifactId>
+      <version>${ccsdk.features.version}</version>
+      <classifier>repo</classifier>
+      <type>zip</type>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
+      <artifactId>sdnr-wt-helpserver-installer</artifactId>
+      <version>${ccsdk.features.version}</version>
+      <classifier>repo</classifier>
+      <type>zip</type>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
+      <artifactId>sdnr-wt-devicemodel-installer</artifactId>
+      <version>${ccsdk.features.version}</version>
+      <classifier>repo</classifier>
+      <type>zip</type>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
+      <artifactId>sdnr-wt-devicemanager-installer</artifactId>
+      <version>${ccsdk.features.version}</version>
+      <classifier>repo</classifier>
+      <type>zip</type>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
+      <artifactId>sdnr-wt-websocketmanager2-installer</artifactId>
+      <version>${ccsdk.features.version}</version>
+      <classifier>repo</classifier>
+      <type>zip</type>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
+      <artifactId>sdnr-wt-odlux-core-installer</artifactId>
+      <version>${ccsdk.features.version}</version>
+      <classifier>repo</classifier>
+      <type>zip</type>
+    </dependency>
+    <dependency>
+      <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
+      <artifactId>sdnr-wt-odlux-apps-installer</artifactId>
+      <version>${ccsdk.features.version}</version>
+      <classifier>repo</classifier>
+      <type>zip</type>
     </dependency>
   </dependencies>
-
   <build>
     <plugins>
       <plugin>
@@ -80,6 +130,17 @@
               <copyPom>false</copyPom>
               <includeGroupIds>${project.groupId}</includeGroupIds>
               <scope>provided</scope>
+            </configuration>
+          </execution>
+          <execution>
+            <id>unpack features</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>unpack-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/assembly2</outputDirectory>
+              <excludeTransitive>true</excludeTransitive>
             </configuration>
           </execution>
         </executions>
