@@ -230,7 +230,7 @@ public class Resources {
             srcFilename = srcUrl.getFile();
 
             if (srcFilename.endsWith("/")) {
-                LOG.warn("Skip directory: {}", srcFilename);
+                LOG.debug("Skip directory: {}", srcFilename);
                 continue;
             }
 

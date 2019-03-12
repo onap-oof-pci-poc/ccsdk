@@ -23,7 +23,8 @@
   </organization>
 
   <properties>
-    <base.image.repo>onap/ccsdk-odlsli-alpine-image:0.4.1-STAGING-20190212T030930Z</base.image.repo>
+    <!-- <base.image.repo>onap/ccsdk-odlsli-alpine-image:0.4.1-STAGING-20190212T030930Z</base.image.repo> -->
+    <base.image.repo>onap/ccsdk-odlsli-alpine-image:0.4.1-STAGING-20190219T030935Z</base.image.repo>
     <image.name>oof-pci/ccsdk-odlsliwt-alpine-image</image.name>
     <ccsdk.project.version>${project.version}</ccsdk.project.version>
     <ccsdk.build.timestamp>${maven.build.timestamp}</ccsdk.build.timestamp>
@@ -71,55 +72,6 @@
     <dependency>
       <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
       <artifactId>sdnr-wt-feature-aggregator-installer</artifactId>
-      <version>${ccsdk.features.version}</version>
-      <classifier>repo</classifier>
-      <type>zip</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
-      <artifactId>sdnr-wt-apigateway-installer</artifactId>
-      <version>${ccsdk.features.version}</version>
-      <classifier>repo</classifier>
-      <type>zip</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
-      <artifactId>sdnr-wt-helpserver-installer</artifactId>
-      <version>${ccsdk.features.version}</version>
-      <classifier>repo</classifier>
-      <type>zip</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
-      <artifactId>sdnr-wt-devicemodel-installer</artifactId>
-      <version>${ccsdk.features.version}</version>
-      <classifier>repo</classifier>
-      <type>zip</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
-      <artifactId>sdnr-wt-devicemanager-installer</artifactId>
-      <version>${ccsdk.features.version}</version>
-      <classifier>repo</classifier>
-      <type>zip</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
-      <artifactId>sdnr-wt-websocketmanager2-installer</artifactId>
-      <version>${ccsdk.features.version}</version>
-      <classifier>repo</classifier>
-      <type>zip</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
-      <artifactId>sdnr-wt-odlux-core-installer</artifactId>
-      <version>${ccsdk.features.version}</version>
-      <classifier>repo</classifier>
-      <type>zip</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
-      <artifactId>sdnr-wt-odlux-apps-installer</artifactId>
       <version>${ccsdk.features.version}</version>
       <classifier>repo</classifier>
       <type>zip</type>
