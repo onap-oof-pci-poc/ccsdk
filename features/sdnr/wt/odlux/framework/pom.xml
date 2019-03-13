@@ -86,6 +86,7 @@
 							<arguments>bootstrap</arguments>
 							<installDirectory>${project.basedir}</installDirectory>
 							<workingDirectory>${project.basedir}/../</workingDirectory>
+							<lernaInheritsProxyConfigFromMaven>false</lernaInheritsProxyConfigFromMaven>
 						</configuration>
 					</execution>
 					<execution>
