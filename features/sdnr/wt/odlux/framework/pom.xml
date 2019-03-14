@@ -76,7 +76,7 @@
 						</goals>
 						<phase>initialize</phase>
 						<configuration>
-							<arguments>-W add lerna</arguments>
+							<arguments>add lerna@3.13.1 -W --exact</arguments>
 							<installDirectory>${project.basedir}</installDirectory>
 							<workingDirectory>${project.basedir}/../</workingDirectory>
 						</configuration>
