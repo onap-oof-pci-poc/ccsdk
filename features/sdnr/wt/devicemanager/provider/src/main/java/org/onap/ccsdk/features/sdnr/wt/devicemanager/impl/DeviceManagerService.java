@@ -16,8 +16,9 @@
  * ============LICENSE_END==========================================================================
  ******************************************************************************/
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.impl;
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNode;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNodeConnectionStatus.ConnectionStatus;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.NodeId;
 
 public interface DeviceManagerService {
@@ -28,23 +29,11 @@ public interface DeviceManagerService {
         UPDATE
     }
     /**
-     * Mountpoint was created or existing. Managed device is now fully connected to node/mountpoint.
-     * @param action provide action
-     * @param nNodeId id of the mountpoint
-     * @param nNode mountpoint contents
+     * MountpointChangeHandler, called to indicate change to DeviceManager
+     * @param action provided
+     * @param csts provided
+     * @param nodeId provided
+     * @param nnode provided
      */
-    void startListenerOnNodeForConnectedState(@Nonnull  Action action, @Nonnull NodeId nNodeId, @Nonnull NetconfNode nNode);
-
-    /**
-     * Mountpoint created or existing. Managed device is actually disconnected from node/ mountpoint.
-     * @param nNodeId id of the mountpoint
-     * @param nNode mountpoint contents
-     */
-    void enterNonConnectedState(@Nonnull NodeId nNodeId, @Nonnull NetconfNode nNode);
-
-    /**
-     * Mountpoint removed indication.
-     * @param nNodeId id of the mountpoint
-     */
-    void removeMountpointState(@Nonnull NodeId nNodeId);
+    void netconfChangeHandler(Action action, @Nullable ConnectionStatus csts, NodeId nodeId, NetconfNode nnode);
 }

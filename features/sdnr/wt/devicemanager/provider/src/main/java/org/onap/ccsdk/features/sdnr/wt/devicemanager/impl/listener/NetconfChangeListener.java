@@ -156,33 +156,8 @@ public class NetconfChangeListener implements ClusteredDataTreeChangeListener<No
                 if (nodeIdString.equals(CONTROLLER)) {
                     LOG.debug("Stop processing for [{}]", nodeIdString);
                 } else {
-                    // Action related to mountpoint status
-                    switch (action) {
-                        case REMOVE:
-                            deviceManagerService.removeMountpointState(nodeId); // Stop Monitor
-                            deviceManagerService.enterNonConnectedState(nodeId, nnode); // Remove Mountpoint handler
-                            break;
-
-                        case UPDATE:
-                        case CREATE:
-                            if (csts != null) {
-                                switch (csts) {
-                                    case Connected: {
-                                        deviceManagerService.startListenerOnNodeForConnectedState(action, nodeId,
-                                                nnode);
-                                        break;
-                                    }
-                                    case UnableToConnect:
-                                    case Connecting: {
-                                        deviceManagerService.enterNonConnectedState(nodeId, nnode);
-                                        break;
-                                    }
-                                }
-                            } else {
-                                LOG.debug("NETCONF Node handled with null status for action", action);
-                            }
-                            break;
-                    }
+                    // Action forwarded to devicehandler
+                    deviceManagerService.netconfChangeHandler(action, csts, nodeId, nnode);
                 }
             }
         } catch (NullPointerException e) {

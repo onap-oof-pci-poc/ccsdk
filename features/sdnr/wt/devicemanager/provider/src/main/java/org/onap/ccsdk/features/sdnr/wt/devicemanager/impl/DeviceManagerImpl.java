@@ -300,8 +300,11 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
 
     /**
      * For each mounted device a mountpoint is created and this listener is called.
+     * Mountpoint was created or existing. Managed device is now fully connected to node/mountpoint.
+     * @param action provide action
+     * @param nNodeId id of the mountpoint
+     * @param nNode mountpoint contents
      */
-    @Override
     public void startListenerOnNodeForConnectedState(Action action, NodeId nNodeId, NetconfNode nNode) {
 
         String mountPointNodeName = nNodeId.getValue();
@@ -384,7 +387,8 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
         ne.initSynchronizationExtension();
 
         // Setup Service that monitors registration/ deregistration of session
-        odlEventListener.registration(mountPointNodeName);
+        ConnectionStatus csts = nNode.getConnectionStatus();
+        sendCreateOrUpdateNotification(mountPointNodeName, action, csts);
 
         if (aaiProviderClient != null) {
             aaiProviderClient.onDeviceRegistered(mountPointNodeName);
@@ -399,46 +403,103 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
         LOG.info("Starting Event listener on Netconf device :: Name : {} finished", mountPointNodeName);
     }
 
-    @Override
-    public void enterNonConnectedState(NodeId nNodeId, NetconfNode nNode) {
+    /**
+     * Mountpoint created or existing. Managed device is actually disconnected from node/ mountpoint.
+     * Origin state: Connecting, Connected
+     * Target state: are UnableToConnect or Connecting
+     * @param action create or update
+     * @param nNodeId id of the mountpoint
+     * @param nNode mountpoint contents
+     */
+    public void enterNonConnectedState(Action action, NodeId nNodeId, NetconfNode nNode) {
         String mountPointNodeName = nNodeId.getValue();
-        LOG.info("enter Non ConnectedState for device :: Name : {}", mountPointNodeName);
+        ConnectionStatus csts = nNode.getConnectionStatus();
 
-        ONFCoreNetworkElementRepresentation ne = networkElementRepresentations.remove(mountPointNodeName);
-        if (ne != null) {
-            // Handling transition mountpoint connected -> connecting
-            this.maintenanceService.deleteIfNotRequired(mountPointNodeName);
-            int problems = ne.removeAllCurrentProblemsOfNode();
-            LOG.debug("Removed all {} problems from database at deregistration for {}", problems, mountPointNodeName);
-            if (odlEventListener != null) {
-                odlEventListener.deRegistration(mountPointNodeName);
-            }
-            if (performanceManager != null) {
-                performanceManager.deRegistration(mountPointNodeName);
-            }
-            if (aaiProviderClient != null) {
-                aaiProviderClient.onDeviceUnregistered(mountPointNodeName);
-            }
-        } else {
-            // Handling -> create not connected mountpoint, or change other beside connected.
-            ConnectionStatus csts = nNode.getConnectionStatus();
-            if (csts != null) {
-                odlEventListener.updateRegistration(mountPointNodeName, csts.getClass().getSimpleName(), csts.getName());
-            } else {
-                LOG.info("Unknown connection status");
-            }
-        }
+        sendCreateOrUpdateNotification(mountPointNodeName, action, csts);
+
+        // Handling if mountpoint exist. connected -> connecting/UnableToConnect
+        stopListenerOnNodeForConnectedState(mountPointNodeName);
+
         if (deviceMonitor != null) {
             deviceMonitor.deviceDisconnectIndication(mountPointNodeName);
         }
 
     }
 
-    @Override
+    /**
+     * Mountpoint removed indication.
+     * @param nNodeId id of the mountpoint
+     */
     public void removeMountpointState(NodeId nNodeId) {
         String mountPointNodeName = nNodeId.getValue();
         LOG.info("mountpointNodeRemoved {}", nNodeId.getValue());
+
+        stopListenerOnNodeForConnectedState(mountPointNodeName);
         deviceMonitor.removeMountpointIndication(mountPointNodeName);
+        if (odlEventListener != null) {
+            odlEventListener.deRegistration(mountPointNodeName);
+        }
+    }
+
+    /**
+     * Do all tasks necessary to move from mountpoint state connected -> connecting
+     * @param mountPointNodeName provided
+     * @param ne representing the device connected to mountpoint
+     */
+    private void stopListenerOnNodeForConnectedState( String mountPointNodeName) {
+        ONFCoreNetworkElementRepresentation ne = networkElementRepresentations.remove(mountPointNodeName);
+        if (ne != null) {
+            this.maintenanceService.deleteIfNotRequired(mountPointNodeName);
+            int problems = ne.removeAllCurrentProblemsOfNode();
+            LOG.debug("Removed all {} problems from database at deregistration for {}", problems, mountPointNodeName);
+            if (performanceManager != null) {
+                performanceManager.deRegistration(mountPointNodeName);
+            }
+            if (aaiProviderClient != null) {
+                aaiProviderClient.onDeviceUnregistered(mountPointNodeName);
+            }
+        }
+    }
+
+    private void sendCreateOrUpdateNotification(String mountPointNodeName, Action action, ConnectionStatus csts) {
+        LOG.info("enter Non ConnectedState for device :: Name : {} Action {} ConnectionStatus {}", mountPointNodeName, action, csts);
+        if (action == Action.CREATE) {
+            odlEventListener.registration(mountPointNodeName);
+        } else {
+            odlEventListener.updateRegistration(mountPointNodeName, ConnectionStatus.class.getSimpleName(), csts != null ? csts.getName() : "null");
+        }
+    }
+
+    /**
+     * Handle netconf/mountpoint changes
+     */
+    @Override
+    public void netconfChangeHandler(Action action, @Nullable ConnectionStatus csts, NodeId nodeId, NetconfNode nnode) {
+        switch (action) {
+            case REMOVE:
+                removeMountpointState(nodeId); // Stop Monitor
+                //deviceManagerService.enterNonConnectedState(nodeId, nnode); // Remove Mountpoint handler
+                break;
+
+            case UPDATE:
+            case CREATE:
+                if (csts != null) {
+                    switch (csts) {
+                        case Connected: {
+                            startListenerOnNodeForConnectedState(action, nodeId, nnode);
+                            break;
+                        }
+                        case UnableToConnect:
+                        case Connecting: {
+                            enterNonConnectedState(action, nodeId, nnode);
+                            break;
+                        }
+                    }
+                } else {
+                    LOG.debug("NETCONF Node handled with null status for action", action);
+                }
+                break;
+        }
     }
 
     /*-------------------------------------------------------------------------------------------
