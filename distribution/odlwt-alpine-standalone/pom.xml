@@ -24,7 +24,7 @@
 
   <properties>
     <base.image.repo>onap/ccsdk-odl-fluorine-alpine-image:0.4.1-STAGING-latest</base.image.repo>
-    <image.name>oof-pci/ccsdk-odl-alpine-image</image.name>
+    <image.name>oof-pci/ccsdk-odlwt-alpine-image</image.name>
     <ccsdk.project.version>${project.version}</ccsdk.project.version>
     <ccsdk.build.timestamp>${maven.build.timestamp}</ccsdk.build.timestamp>
     <ccsdk.features.version>${project.version}</ccsdk.features.version>
@@ -41,7 +41,7 @@
     <SDNR_ODL_SINGLE_NODE>odl-mdsal-all,odl-netconf-topology,odl-netconf-connector</SDNR_ODL_SINGLE_NODE>
     <SDNR_ODL_CLUSTER_NODE>odl-mdsal-clustering,odl-netconf-clustered-topology</SDNR_ODL_CLUSTER_NODE>
     <odl.boot.features.odl>${SDNR_ODL_SINGLE_NODE},odl-mdsal-apidocs,odl-daexim-all</odl.boot.features.odl>
-    <ccsdk.odl.features>odl-dev-all</ccsdk.odl.features>
+    <ccsdk.odl.features>sdnr-wt-feature-aggregator</ccsdk.odl.features>
     <odl.boot.features.all>${odl.boot.features.odl},${ccsdk.odl.features}</odl.boot.features.all>
   </properties>
 
@@ -103,26 +103,25 @@
               </resources>
             </configuration>
           </execution>
-          <!--
-           <execution>
-            <id>copy-config</id>
+          <execution>
+            <id>copy-scripts</id>
             <goals>
               <goal>copy-resources</goal>
-            </goals>
+            </goals><!-- here the phase you need -->
             <phase>validate</phase>
             <configuration>
-              <outputDirectory>${basedir}/target/docker-stage</outputDirectory>
+              <outputDirectory>${basedir}/target/docker-stage/opt/onap/ccsdk/bin</outputDirectory>
               <resources>
                 <resource>
-                  <directory>../src/main/resources</directory>
+                  <directory>src/main/scripts</directory>
                   <includes>
-                    <include>org.ops4j.pax.logging.cfg</include>
+                    <include>*.sh</include>
                   </includes>
                   <filtering>false</filtering>
                 </resource>
               </resources>
             </configuration>
-          </execution> -->
+          </execution>
         </executions>
       </plugin>
       <plugin>

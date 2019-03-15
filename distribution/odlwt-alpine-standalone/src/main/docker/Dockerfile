@@ -15,10 +15,13 @@ ENV CCSDK_SDNR_REPOLIST=${CCSDK_SDNR_WT_REPO}
 COPY system /tmp/system
 RUN rsync -a /tmp/system $ODL_HOME && rm -rf /tmp/system
 
+COPY opt /opt
+
 # Add additonal repositories to boot repositories
 RUN cp $ODL_HOME/etc/org.apache.karaf.features.cfg $ODL_HOME/etc/org.apache.karaf.features.cfg.orig
 RUN cat $ODL_HOME/etc/org.apache.karaf.features.cfg.orig | sed -e "\|featuresRepositories|s|$|, ${odl.repolist.features}|" > $ODL_HOME/etc/org.apache.karaf.features.cfg
 RUN echo featuresBoot=config,standard,region,package,kar,ssh,management,${odl.boot.features.all} >> $ODL_HOME/etc/org.apache.karaf.features.cfg
 
-ENTRYPOINT /opt/onap/ccsdk/bin/startODL.sh
+RUN chmod 755 /opt/onap/ccsdk/bin/startSdnr.sh
+ENTRYPOINT /opt/onap/ccsdk/bin/startSdnr.sh
 EXPOSE 2550 8085 8181 8185 9200 9300

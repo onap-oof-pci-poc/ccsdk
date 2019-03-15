@@ -35,8 +35,9 @@
     <docker.push.phase>deploy</docker.push.phase>
     <docker.verbose>true</docker.verbose>
     <ansible.gpg.key>93C4A3FD7BB9C367</ansible.gpg.key>
+    <!-- Features overrided by Dockerfile -->
     <odl.features.extra>odl-restconf-all,odl-mdsal-all,odl-mdsal-apidocs,odl-daexim-all</odl.features.extra>
-    <ccsdk.odl.features>ccsdk-sli-core-all,ccsdk-sli-adaptors-all,ccsdk-sli-northbound-all,ccsdk-sli-plugins-all,ccsdk-features-all</ccsdk.odl.features>
+    <ccsdk.odl.features>ccsdk-sli-core-all,ccsdk-sli-adaptors-all,ccsdk-sli-northbound-all,ccsdk-sli-plugins-all,ccsdk-features-all,sdnr-wt-feature-aggregator</ccsdk.odl.features>
     <odl.boot.features.extra>${odl.features.extra},${ccsdk.odl.features}</odl.boot.features.extra>
   </properties>
 
