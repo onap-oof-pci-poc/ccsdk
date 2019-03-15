@@ -42,34 +42,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.onap.ccsdk.features.sdnr.northbound</groupId>
-      <artifactId>sdnr-northbound-features-installer</artifactId>
-      <version>${ccsdk.features.version}</version>
-      <classifier>repo</classifier>
-      <type>zip</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onap.ccsdk.features.sdnr.northbound</groupId>
-      <artifactId>helloworld-installer</artifactId>
-      <version>${ccsdk.features.version}</version>
-      <classifier>repo</classifier>
-      <type>zip</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onap.ccsdk.features.sdnr.northbound</groupId>
-      <artifactId>goodbyeworld-installer</artifactId>
-      <version>${ccsdk.features.version}</version>
-      <classifier>repo</classifier>
-      <type>zip</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onap.ccsdk.features.sdnr.northbound</groupId>
-      <artifactId>oofpcipoc-installer</artifactId>
-      <version>${ccsdk.sli.core.version}</version>
-      <classifier>repo</classifier>
-      <type>zip</type>
-    </dependency>
-    <dependency>
       <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
       <artifactId>sdnr-wt-feature-aggregator-installer</artifactId>
       <version>${ccsdk.features.version}</version>
@@ -162,6 +134,9 @@
             <configuration>
               <outputDirectory>${basedir}/target/docker-stage</outputDirectory>
               <excludeTransitive>true</excludeTransitive>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>true</overWriteSnapshots>
+              <overWriteIfNewer>true</overWriteIfNewer>
             </configuration>
           </execution>
           <execution>
