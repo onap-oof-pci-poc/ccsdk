@@ -24,7 +24,7 @@ export function register() {
     icon: faLock,
     rootComponent: FinalApp,
     rootActionHandler: minimumAppRootHandler,
-    menuEntry: "Minimum App"
+    menuEntry: "Minimum"
   });
 }
 

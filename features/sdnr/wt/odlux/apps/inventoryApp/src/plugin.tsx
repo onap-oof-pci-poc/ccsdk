@@ -12,6 +12,6 @@ export function register() {
     name: "inventoryApp",
     icon: faShoppingBag,
     rootComponent: Dashboard,
-    menuEntry: "Inventory App"
+    menuEntry: "Inventory"
   });
 }

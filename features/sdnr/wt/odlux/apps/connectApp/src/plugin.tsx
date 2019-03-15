@@ -27,7 +27,7 @@ export function register() {
     icon: faPlug,
     rootComponent: ConnectApplication,
     rootActionHandler: connectAppRootHandler,
-    menuEntry: "Connect App"
+    menuEntry: "Connect"
   });
 
   // subscribe to the websocket notifications

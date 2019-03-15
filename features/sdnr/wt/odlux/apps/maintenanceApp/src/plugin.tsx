@@ -20,7 +20,7 @@ export function register() {
     icon: faLock,
     rootComponent: App,
     rootActionHandler: maintenanceAppRootHandler,
-    menuEntry: "Maintenance App"
+    menuEntry: "Maintenance"
   });
 }
 

@@ -1,4 +1,4 @@
-import * as React from "react"; 
+import * as React from "react";
 import { withRouter, RouteComponentProps, Route, Switch, Redirect } from 'react-router-dom';
 
 import { faAddressBook, faRegistered } from '@fortawesome/free-solid-svg-icons';
@@ -17,13 +17,13 @@ type AppProps = RouteComponentProps & Connect;
 
 const App = (props: AppProps) => (
   <Switch>
-    <Route exact path={ `${ props.match.path }/authors` } component={AuthorsList} /> 
-    <Route path={ `${ props.match.path }/authors/:authorId` } component={EditAuthor } /> 
+    <Route exact path={ `${ props.match.path }/authors` } component={AuthorsList} />
+    <Route path={ `${ props.match.path }/authors/:authorId` } component={EditAuthor } />
     <Redirect to={ `${ props.match.path }/authors` } />
    </Switch>
-); 
- 
-const FinalApp = withRouter(connect()(App)); 
+);
+
+const FinalApp = withRouter(connect()(App));
 
 export function register() {
   const applicationApi = applicationManager.registerApplication({
@@ -32,6 +32,6 @@ export function register() {
     rootComponent: FinalApp,
     rootActionHandler: demoAppRootHandler,
     exportedComponents: { counter: Counter },
-    menuEntry: "Demo App"
+    menuEntry: "Demo"
   });
 }
