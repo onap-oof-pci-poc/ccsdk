@@ -26,26 +26,17 @@ const theme = createMuiTheme({
       logoHeight: 32,
     },
     palette: {
-      type: "light",
-      common: {
-        black: "#000",
-        white: "#fff"
-      },
-      background: {
-        paper: "#fff",
-        default: "#fafafa"
-      },
       primary: {
-        light: "#eee",
-        main: "#fff",
+        light: "#eeeeee",
+        main: "#ffffff",
         dark: "#e0e0e0",
         contrastText: "#07819B"
       },
       secondary: {
-        light: "#07819b5e",
-        main: "#07819bc9",
+        light: "rgba(7, 129, 155, 94)",
+        main: "rgba(7, 129, 155, 201)",
         dark: "#07819B",
-        contrastText: "#fff"
+        contrastText: "#ffffff"
       },
     }
   });

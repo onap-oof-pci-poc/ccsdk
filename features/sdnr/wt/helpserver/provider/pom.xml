@@ -1,85 +1,85 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- * ============LICENSE_START======================================================= 
-	* ONAP : CCSDK.sdnr.wt.apigateway.provider * ================================================================================ 
-	* Copyright (C) 2018 highstreet technologies GmbH Intellectual Property. 
-	* All rights reserved. * ================================================================================ 
-	* Licensed under the Apache License, Version 2.0 (the "License"); * you may 
-	not use this file except in compliance with the License. * You may obtain 
-	a copy of the License at * * http://www.apache.org/licenses/LICENSE-2.0 * 
-	* Unless required by applicable law or agreed to in writing, software * distributed 
-	under the License is distributed on an "AS IS" BASIS, * WITHOUT WARRANTIES 
-	OR CONDITIONS OF ANY KIND, either express or implied. * See the License for 
-	the specific language governing permissions and * limitations under the License. 
-	* ============LICENSE_END========================================================= -->
+<!-- * ============LICENSE_START=======================================================
+    * ONAP : CCSDK.sdnr.wt.apigateway.provider * ================================================================================
+    * Copyright (C) 2018 highstreet technologies GmbH Intellectual Property.
+    * All rights reserved. * ================================================================================
+    * Licensed under the Apache License, Version 2.0 (the "License"); * you may
+    not use this file except in compliance with the License. * You may obtain
+    a copy of the License at * * http://www.apache.org/licenses/LICENSE-2.0 *
+    * Unless required by applicable law or agreed to in writing, software * distributed
+    under the License is distributed on an "AS IS" BASIS, * WITHOUT WARRANTIES
+    OR CONDITIONS OF ANY KIND, either express or implied. * See the License for
+    the specific language governing permissions and * limitations under the License.
+    * ============LICENSE_END========================================================= -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
-	<artifactId>sdnr-wt-helpserver-provider</artifactId>
-	<version>0.4.1-SNAPSHOT</version>
-	<name>ccsdk-features-sdnr-wt :: ${project.artifactId}</name>
-	<packaging>bundle</packaging>
-	<properties>
-		<checkstyle.skip>true</checkstyle.skip>
-		<buildtime>${maven.build.timestamp} UTC</buildtime>
-		<distversion>ONAP Dublin (Flourine-SR1)</distversion>
-		<buildno>2.eec921f</buildno>
-	</properties>
-	<parent>
-		<groupId>org.onap.ccsdk.parent</groupId>
-		<artifactId>binding-parent</artifactId>
-		<version>1.2.1-SNAPSHOT</version>
-		<relativePath />
-	</parent>
-	<dependencies>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.json</groupId>
-			<artifactId>json</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.compendium</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<scope>test</scope>
-		</dependency>
+    <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
+    <artifactId>sdnr-wt-helpserver-provider</artifactId>
+    <version>0.4.1-SNAPSHOT</version>
+    <name>ccsdk-features-sdnr-wt :: ${project.artifactId}</name>
+    <packaging>bundle</packaging>
+    <properties>
+        <checkstyle.skip>true</checkstyle.skip>
+        <buildtime>${maven.build.timestamp} UTC</buildtime>
+        <distversion>ONAP Dublin (Flourine-SR1)</distversion>
+        <buildno>3.dde89c3(19/03/15)</buildno>
+    </properties>
+    <parent>
+        <groupId>org.onap.ccsdk.parent</groupId>
+        <artifactId>binding-parent</artifactId>
+        <version>1.2.1-SNAPSHOT</version>
+        <relativePath />
+    </parent>
+    <dependencies>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-	</dependencies>
-	<build>
-		<resources>
-			<!-- replace properties in about.md -->
-			<resource>
-			<directory>src/main/resources</directory>
-			<filtering>true</filtering>
-			</resource>
-		</resources>
-		<plugins>
-			<!-- fixed bug for sonarcube -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<useSystemClassLoader>false</useSystemClassLoader>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+    </dependencies>
+    <build>
+        <resources>
+            <!-- replace properties in about.md -->
+            <resource>
+            <directory>src/main/resources</directory>
+            <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <!-- fixed bug for sonarcube -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <useSystemClassLoader>false</useSystemClassLoader>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

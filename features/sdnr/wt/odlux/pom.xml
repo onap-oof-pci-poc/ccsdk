@@ -1,37 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-	<parent>
-		<groupId>org.onap.ccsdk.parent</groupId>
-		<artifactId>odlparent-lite</artifactId>
-		<version>1.2.1-SNAPSHOT</version>
-		<relativePath />
-	</parent>
+    <parent>
+        <groupId>org.onap.ccsdk.parent</groupId>
+        <artifactId>odlparent-lite</artifactId>
+        <version>1.2.1-SNAPSHOT</version>
+        <relativePath />
+    </parent>
 
 
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
-	<artifactId>odlux-top</artifactId>
-	<version>0.4.1-SNAPSHOT</version>
-	<packaging>pom</packaging>
-	<name>odlux</name>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
+    <artifactId>odlux-top</artifactId>
+    <version>0.4.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>odlux</name>
 
-	<modules>
-		<module>framework</module>
-		<module>core</module>
-		<module>apps/apiDemo</module>
-		<module>apps/connectApp</module>
-		<module>apps/demoApp</module>
-		<module>apps/faultApp</module>
-		<module>apps/helpApp</module>
-		<module>apps/inventoryApp</module>
-		<module>apps/mediatorApp</module>
-		<module>apps/maintenanceApp</module>
-		<module>apps/minimumApp</module>
-		<module>apps/app-feature</module>
-		<module>apps/app-installer</module>
-	</modules>
-	
+    <modules>
+        <module>framework</module>
+        <module>core</module>
+        <module>apps/apiDemo</module>
+        <module>apps/connectApp</module>
+        <module>apps/demoApp</module>
+        <module>apps/faultApp</module>
+        <module>apps/helpApp</module>
+        <module>apps/inventoryApp</module>
+        <module>apps/mediatorApp</module>
+        <module>apps/maintenanceApp</module>
+        <module>apps/minimumApp</module>
+        <module>apps/performanceHistoryApp</module>
+        <module>apps/app-feature</module>
+        <module>apps/app-installer</module>
+    </modules>
+
 </project>

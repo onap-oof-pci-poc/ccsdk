@@ -60,7 +60,7 @@ type LoginProps = RouteComponentProps<{}> & WithStyles<typeof styles> & Connect 
 
 interface ILoginState {
   busy: boolean;
-  email: string;
+  username: string;
   password: string;
   scope: string;
   message: string;
@@ -75,7 +75,7 @@ class LoginComponent extends React.Component<LoginProps, ILoginState> {
 
     this.state = {
       busy: false,
-      email: '',
+      username: '',
       password: '',
       scope: 'sdn',
       message: ''
@@ -95,11 +95,11 @@ class LoginComponent extends React.Component<LoginProps, ILoginState> {
             <Typography variant="caption">Sign in</Typography>
             <form className={ classes.form }>
               <FormControl margin="normal" required fullWidth>
-                <InputLabel htmlFor="email">Email Address</InputLabel>
-                <Input id="email" name="email" autoComplete="email" autoFocus
+                <InputLabel htmlFor="username">Username</InputLabel>
+                <Input id="username" name="username" autoComplete="username" autoFocus
                   disabled={ this.state.busy }
-                  value = {this.state.email }
-                  onChange={ event => { this.setState({ email: event.target.value }) } }/>
+                  value = {this.state.username }
+                  onChange={ event => { this.setState({ username: event.target.value }) } }/>
               </FormControl>
               <FormControl margin="normal" required fullWidth>
                 <InputLabel htmlFor="password">Password</InputLabel>
@@ -114,7 +114,7 @@ class LoginComponent extends React.Component<LoginProps, ILoginState> {
                 />
               </FormControl>
               <FormControl margin="normal" required fullWidth>
-                <InputLabel htmlFor="password">Scope</InputLabel>
+                <InputLabel htmlFor="password">Domain</InputLabel>
                 <Input
                   name="scope"
                   type="scope"
@@ -168,7 +168,7 @@ class LoginComponent extends React.Component<LoginProps, ILoginState> {
     event.preventDefault();
 
     this.setState({ busy: true });
-    const token = await authenticationService.authenticateUser(this.state.email, this.state.password, this.state.scope);
+    const token = await authenticationService.authenticateUser(this.state.username, this.state.password, this.state.scope);
     this.props.dispatch(new UpdateAuthentication(token));
     this.setState({ busy: false });
 

@@ -37,8 +37,8 @@ export const NavigationMenu = withStyles(styles)(connect()(({ classes, state }: 
         <div className={classes.toolbar} />
       { /* https://fiffty.github.io/react-treeview-mui/ */}
       <List component="nav">
-        { process.env.NODE_ENV === "development" ? <ListItemLink exact to="/" primary="Home" icon={<FontAwesomeIcon icon={faHome} />} /> : null }
-        <Divider />
+          <ListItemLink exact to="/" primary="Home" icon={<FontAwesomeIcon icon={faHome} />} />
+          <Divider />
         {
           state.framework.applicationRegistraion && Object.keys(state.framework.applicationRegistraion).map(key => {
             const reg = state.framework.applicationRegistraion[key];

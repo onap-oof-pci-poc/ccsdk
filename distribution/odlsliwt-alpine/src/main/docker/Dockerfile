@@ -15,7 +15,7 @@ ENV ODL_BOOT_FEATURES_EXTRA ${odl.boot.features.extra}
 # ccsdk-features/sdnr specific
 ENV CCSDK_SDNR_NORTHBOUND_REPO mvn:org.onap.ccsdk.features.sdnr.northbound/sdnr-northbound-all/${project.version}/xml/features
 ENV CCSDK_SDNR_WT_REPO mvn:org.onap.ccsdk.features.sdnr.wt/sdnr-wt-feature-aggregator/${project.version}/xml/features
-ENV CCSDK_SDNR_REPOLIST=${CCSDK_SDNR_NORTHBOUND_REPO},${CCSDK_SDNR_WT_REPO}
+ENV CCSDK_SDNR_REPOLIST=${CCSDK_SDNR_WT_REPO}
 
 # copy CCSDK mvn artifacts to ODL repository
 COPY system /tmp/system
@@ -26,7 +26,7 @@ RUN cp $ODL_HOME/etc/org.apache.karaf.features.cfg $ODL_HOME/etc/org.apache.kara
 RUN sed -i -e "\|featuresRepositories|s|$|,${CCSDK_SDNR_REPOLIST}|"  $ODL_HOME/etc/org.apache.karaf.features.cfg
 #RUN sed -i -e "\|featuresBoot[^a-zA-Z]|s|$|,${ODL_BOOT_FEATURES_EXTRA}|"  $ODL_HOME/etc/org.apache.karaf.features.cfg
 
-RUN echo featuresBoot=config,standard,region,package,kar,ssh,management,odl-mdsal-all,odl-netconf-all,odl-netconf-connector-all,odl-restconf-all,odl-mdsal-apidocs,odl-daexim-all,ccsdk-sli-core-all,ccsdk-sli-adaptors-all,ccsdk-sli-northbound-all,ccsdk-sli-plugins-all,ccsdk-features-all,sdnr-wt-feature-aggregator >> $ODL_HOME/etc/org.apache.karaf.features.cfg
+RUN echo featuresBoot=config,standard,region,package,kar,ssh,management,odl-mdsal-all,odl-netconf-all,odl-netconf-connector-all,odl-restconf-all,odl-mdsal-apidocs,odl-daexim-all,ccsdk-sli-core-all,ccsdk-sli-adaptors-all,ccsdk-sli-northbound-all,ccsdk-sli-plugins-all,sdnr-wt-feature-aggregator >> $ODL_HOME/etc/org.apache.karaf.features.cfg
 
 ENTRYPOINT /opt/onap/ccsdk/bin/startODL.sh
 EXPOSE 2550 8085 8181 8185 9200 9300

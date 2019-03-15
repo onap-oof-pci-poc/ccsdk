@@ -1,4 +1,5 @@
 export type Result<TSource extends {}> = {
+  aggregations: TSource;
   took: number;
   timed_out: boolean;
   _shards: {

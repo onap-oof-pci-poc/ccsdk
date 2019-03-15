@@ -16,6 +16,7 @@ export interface IExternalTableState<TData> {
   loading: boolean;
   showFilter: boolean;
   filter: { [property: string]: string };
+  preFilter: { [property: string]: string };
 }
 
 /** Create an actionHandler and actions for external table states. */
@@ -24,7 +25,7 @@ export function createExternal<TData>(callback: DataCallback<TData>, selectState
   //#region Actions
   abstract class TableAction extends Action { }
 
- 
+
   class RequestSortAction extends TableAction {
     constructor(public orderBy: string) {
       super();
@@ -49,8 +50,14 @@ export function createExternal<TData>(callback: DataCallback<TData>, selectState
     }
   }
 
+  class SetPreFilterChangedAction extends TableAction {
+    constructor(public preFilter: {[key: string]: string}) {
+      super();
+    }
+  }
+
   class SetFilterChangedAction extends TableAction {
-    constructor(public filter: {[key: string]: string}) {
+    constructor (public filter: { [key: string]: string }) {
       super();
     }
   }
@@ -74,7 +81,7 @@ export function createExternal<TData>(callback: DataCallback<TData>, selectState
   }
 
   // #endregion
- 
+
   //#region Action Handler
   const externalTableStateInit: IExternalTableState<TData> = {
     order: 'asc',
@@ -86,7 +93,8 @@ export function createExternal<TData>(callback: DataCallback<TData>, selectState
     rowsPerPage: 10,
     loading: false,
     showFilter: false,
-    filter: {}
+    filter: {},
+    preFilter: {}
   };
 
   const externalTableStateActionHandler: IActionHandler<IExternalTableState<TData>> = (state = externalTableStateInit, action) => {
@@ -117,6 +125,12 @@ export function createExternal<TData>(callback: DataCallback<TData>, selectState
         loading: true,
         showFilter: action.show
       }
+    } else if (action instanceof SetPreFilterChangedAction) {
+      state = {
+        ...state,
+        loading: true,
+        preFilter: action.preFilter
+      }
     } else if (action instanceof SetFilterChangedAction) {
       state = {
         ...state,
@@ -135,7 +149,7 @@ export function createExternal<TData>(callback: DataCallback<TData>, selectState
         loading: true,
         rowsPerPage: action.rowsPerPage
       }
-    } 
+    }
     return state;
   }
 
@@ -145,10 +159,20 @@ export function createExternal<TData>(callback: DataCallback<TData>, selectState
   const reloadAction = (dispatch: Dispatch, getAppState: () => IApplicationStoreState) => {
     dispatch(new RefreshAction());
     const ownState = selectState(getAppState());
-    Promise.resolve(callback(ownState.page, ownState.rowsPerPage, ownState.orderBy, ownState.order, ownState.showFilter && ownState.filter || {})).then(result => {
+    const filter = { ...ownState.preFilter, ...(ownState.showFilter && ownState.filter || {})};
+    Promise.resolve(callback(ownState.page, ownState.rowsPerPage, ownState.orderBy, ownState.order, filter )).then(result => {
       dispatch(new SetResultAction(result));
     }).catch(error => new AddErrorInfoAction(error));
   };
+
+  const createPreActions = (dispatch: Dispatch, skipRefresh: boolean = false) => {
+    return {
+      onPreFilterChanged: (preFilter: { [key: string]: string }) => {
+        dispatch(new SetPreFilterChangedAction(preFilter));
+          (!skipRefresh) && dispatch(reloadAction);
+        }
+    };
+  }
 
   const createActions = (dispatch: Dispatch, skipRefresh: boolean = false) => {
     return {
@@ -176,7 +200,7 @@ export function createExternal<TData>(callback: DataCallback<TData>, selectState
           (!skipRefresh) && dispatch(reloadAction);
         });
       },
-      onHandleChangePage: (page: number) => { 
+      onHandleChangePage: (page: number) => {
         dispatch((dispatch: Dispatch) => {
           dispatch(new SetPageAction(page));
           (!skipRefresh) && dispatch(reloadAction);
@@ -195,13 +219,14 @@ export function createExternal<TData>(callback: DataCallback<TData>, selectState
   const createProperties = (state: IApplicationStoreState) => {
     return {
       ...selectState(state)
-     }   
+     }
   }
-  
+
   return {
     reloadAction: reloadAction,
     createActions: createActions,
     createProperties: createProperties,
+    createPreActions: createPreActions,
     actionHandler: externalTableStateActionHandler
   }
 }

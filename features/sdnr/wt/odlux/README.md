@@ -63,6 +63,7 @@ You can install these globally or let it be installed by maven due "mvn clean in
 ### Default menu positions
 
  * from 0 for top to 999 for bottom.
+ 
 ```
 0	Connect
 10	Fault

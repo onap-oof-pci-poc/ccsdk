@@ -221,7 +221,7 @@ class MaterialTableComponent<TData extends {} = {}> extends React.Component<Mate
           </Table>
         </div>
         <TablePagination
-          rowsPerPageOptions={ [5, 10, 25] }
+          rowsPerPageOptions={[10, 50, 100, 500, 1000] }
           component="div"
           count={ rowCount }
           rowsPerPage={ rowsPerPage }

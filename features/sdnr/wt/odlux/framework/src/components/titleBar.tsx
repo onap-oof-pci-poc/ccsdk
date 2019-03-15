@@ -32,7 +32,8 @@ const styles = (theme: Theme) => createStyles({
     marginRight: 20,
   },
   icon: {
-    marginRight: 12
+    marginLeft: 16,
+    marginRight: 8
   }
 });
 

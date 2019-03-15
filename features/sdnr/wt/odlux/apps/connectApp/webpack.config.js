@@ -126,11 +126,15 @@ module.exports = (env) => {
       },
       proxy: {
         "/restconf": {
-          target: "http://localhost:8181",
+          target: "http://10.20.6.29:48181",
           secure: false
         },
         "/database": {
-          target: "http://localhost:8181",
+          target: "http://10.20.6.29:48181",
+          secure: false
+        },
+        "/oauth2/**/*": {
+          target: "http://10.20.6.29:48181",
           secure: false
         }
       }

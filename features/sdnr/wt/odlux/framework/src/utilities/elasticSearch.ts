@@ -25,7 +25,7 @@ export function createSearchDataHandler<TResult, TData>(uri: string, additionalP
           bool: {
             must: filterKeys.reduce((acc, cur) => {
               if (acc && filter && filter[cur]) {
-                acc.push({ [filter[cur].indexOf("*") > -1 || filter[cur].indexOf("?") > -1 ? "wildcard" : "prefix"]: { [mapRequest ? mapRequest(cur) : cur]: filter[cur] } });
+                acc.push({ [filter[cur].indexOf("*") > -1 || filter[cur].indexOf("?") > -1 ? "wildcard" : "term"]: { [mapRequest ? mapRequest(cur) : cur]: filter[cur] } });
               }
               return acc;
             }, [] as any[])
