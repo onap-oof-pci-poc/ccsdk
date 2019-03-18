@@ -173,20 +173,5 @@
             }
         },
         "label": "Abbreviations"
-    },
-    "about": {
-        "versions": {
-            "0.4.0": {
-                "date": "2018-02-24",
-                "path": "sdnr/0.4.0/about.md",
-                "label": "About"
-            },
-            "current": {
-                "date": "2018-02-24",
-                "path": "sdnr/0.4.0/about.md",
-                "label": "About"
-            }
-        },
-        "label": "About"
     }
 }

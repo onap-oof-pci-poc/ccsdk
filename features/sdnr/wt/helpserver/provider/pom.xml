@@ -24,10 +24,7 @@
     <packaging>bundle</packaging>
     <properties>
         <checkstyle.skip>true</checkstyle.skip>
-        <buildtime>${maven.build.timestamp} UTC</buildtime>
-        <distversion>ONAP Dublin (Flourine-SR1)</distversion>
-        <buildno>3.dde89c3(19/03/15)</buildno>
-    </properties>
+     </properties>
     <parent>
         <groupId>org.onap.ccsdk.parent</groupId>
         <artifactId>binding-parent</artifactId>
@@ -64,13 +61,6 @@
 
     </dependencies>
     <build>
-        <resources>
-            <!-- replace properties in about.md -->
-            <resource>
-            <directory>src/main/resources</directory>
-            <filtering>true</filtering>
-            </resource>
-        </resources>
         <plugins>
             <!-- fixed bug for sonarcube -->
             <plugin>
