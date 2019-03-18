@@ -23,8 +23,9 @@
   </organization>
 
   <properties>
-    <!-- <base.image.repo>onap/ccsdk-odlsli-alpine-image:0.4.1-STAGING-20190212T030930Z</base.image.repo> -->
-    <base.image.repo>onap/ccsdk-odlsli-alpine-image:0.4.1-STAGING-20190219T030935Z</base.image.repo>
+    <!-- OK: 0.4.1-STAGING-20190221T214924Z, 0.4.1-STAGING-20190222T030928Z, 0.4.1-STAGING-20190304T030924Z,
+    0.4.1-STAGING-20190305T030947Z, 0.4.1-STAGING-20190307T030932Z-->
+    <base.image.repo>onap/ccsdk-odlsli-alpine-image:0.4.1-STAGING-20190313T030941Z</base.image.repo>
     <image.name>oof-pci/ccsdk-odlsliwt-alpine-image</image.name>
     <ccsdk.project.version>${project.version}</ccsdk.project.version>
     <ccsdk.build.timestamp>${maven.build.timestamp}</ccsdk.build.timestamp>
@@ -35,10 +36,23 @@
     <docker.push.phase>deploy</docker.push.phase>
     <docker.verbose>true</docker.verbose>
     <ansible.gpg.key>93C4A3FD7BB9C367</ansible.gpg.key>
-    <!-- Features overrided by Dockerfile -->
-    <odl.features.extra>odl-restconf-all,odl-mdsal-all,odl-mdsal-apidocs,odl-daexim-all</odl.features.extra>
-    <ccsdk.odl.features>ccsdk-sli-core-all,ccsdk-sli-adaptors-all,ccsdk-sli-northbound-all,ccsdk-sli-plugins-all,ccsdk-features-all,sdnr-wt-feature-aggregator</ccsdk.odl.features>
-    <odl.boot.features.extra>${odl.features.extra},${ccsdk.odl.features}</odl.boot.features.extra>
+
+    <!-- Docker needs: ${ccsdk.sdnr.repolist}, ${odl.boot.features.all} and ${docker.entrypoint} -->
+    <!-- Repositories -->
+    <CCSDK_SDNR_NORTHBOUND_REPO>mvn:org.onap.ccsdk.features.sdnr.northbound/sdnr-northbound-all/${project.version}/xml/features</CCSDK_SDNR_NORTHBOUND_REPO>
+    <CCSDK_SDNR_WT_REPO>mvn:org.onap.ccsdk.features.sdnr.wt/sdnr-wt-feature-aggregator/${project.version}/xml/features</CCSDK_SDNR_WT_REPO>
+    <!-- <ccsdk.sdnr.repolist>${CCSDK_SDNR_NORTHBOUND_REPO}, ${CCSDK_SDNR_WT_REPO}</ccsdk.sdnr.repolist> -->
+    <ccsdk.sdnr.repolist>${CCSDK_SDNR_WT_REPO}</ccsdk.sdnr.repolist>
+    <!-- Features -->
+    <!-- <SDNR_ODL_SINGLE_NODE>odl-mdsal-all,odl-netconf-topology,odl-netconf-connector</SDNR_ODL_SINGLE_NODE>
+    <SDNR_ODL_CLUSTER_NODE>odl-mdsal-clustering,odl-netconf-clustered-topology</SDNR_ODL_CLUSTER_NODE>
+    <ccsdk.boot.features.odl>${SDNR_ODL_SINGLE_NODE},odl-mdsal-apidocs,odl-daexim-all</ccsdk.boot.features.odl>
+    <ccsdk.boot.features.sli>ccsdk-sli-core-all,ccsdk-sli-adaptors-all,ccsdk-sli-northbound-all,ccsdk-sli-plugins-all</ccsdk.boot.features.sli> -->
+    <!--  <ccsdk.boot.features.sdnr>ccsdk-features-all, sdnr-wt-feature-aggregator</ccsdk.boot.features.sdnr> -->
+    <ccsdk.boot.features.sdnr>odl-netconf-topology,odl-netconf-connector,sdnr-wt-feature-aggregator</ccsdk.boot.features.sdnr>
+    <odl.boot.features.add>${ccsdk.boot.features.sdnr}</odl.boot.features.add>
+    <!-- docker -->
+    <docker.entrypoint>/opt/onap/ccsdk/bin/startODL.sh</docker.entrypoint>
   </properties>
 
   <dependencies>

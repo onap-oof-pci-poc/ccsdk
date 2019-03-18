@@ -3,7 +3,6 @@
 
 
 run() {
-
         if [ -z "$1" ] ; then
            IMAGE="oof-pci/ccsdk-odlsliwt-alpine-image:0.4.1-SNAPSHOT-latest"
     else
@@ -30,6 +29,7 @@ cli() {
 
 
 echo "Docker onap helper"
+HERE="$PWD"
 
 case "$1" in
      "")
@@ -42,7 +42,18 @@ case "$1" in
      e)
         echo "Attach to cli"
         cli
-    ;;
+       ;;
+     c) 
+        echo "Start environment"
+        export NEXUS_DOCKER_REPO="nexus3.onap.org:10001"
+        export CCSDK_DOCKER_IMAGE_VERSION="0.4-STAGING-latest"
+        echo "Repo: $NEXUS_DOCKER_REPO" Version: "$CCSDK_DOCKER_IMAGE_VERSION\n"
+        cd src/main/yaml
+        docker-compose up -d
+        echo "\nStop ccsdk_odlsli_container"
+        docker stop ccsdk_odlsli_container
+        ;;
+        
      *)
         echo "Run specific image sdnr"
         docker stop sdnr
@@ -51,3 +62,5 @@ case "$1" in
         cli
         ;;
 esac
+
+cd $HERE
