@@ -37,8 +37,8 @@ const styles = (theme: Theme) => createStyles({
 const MaintenenceEntriesTable = MaterialTable as MaterialTableCtorType<MaintenenceEntry>;
 
 const mapProps = (state: IApplicationStoreState) => ({
-   maintenenceEntries: state.maintenanceApp.maintenenceEntries.entries,
-   busy: state.maintenanceApp.maintenenceEntries.busy
+   maintenenceEntries: state.maintenance.maintenenceEntries.entries,
+   busy: state.maintenance.maintenenceEntries.busy
 });
 
 const mapDispatcher = (dispatcher: IDispatcher) => ({

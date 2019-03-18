@@ -19,6 +19,6 @@ export const {
   createProperties: createCurrentProblemsProperties,
   reloadAction: currentProblemsReloadAction,
 
-  // set value action, to change a value 
-} = createExternal<Fault>(currentProblemsSearchHandler, appState => appState.faultApp.currentProblems);
+  // set value action, to change a value
+} = createExternal<Fault>(currentProblemsSearchHandler, appState => appState.fault.currentProblems);
 

@@ -13,6 +13,6 @@ export const {
   createProperties: createRequiredNetworkElementsProperties,
   reloadAction: requiredNetworkElementsReloadAction,
 
-  // set value action, to change a value 
-} = createExternal<RequiredNetworkElementType>(requiredNetworkElementsSearchHandler, appState => appState.connectApp.requiredNetworkElements);
+  // set value action, to change a value
+} = createExternal<RequiredNetworkElementType>(requiredNetworkElementsSearchHandler, appState => appState.connect.requiredNetworkElements);
 

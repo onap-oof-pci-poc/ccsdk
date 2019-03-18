@@ -31,7 +31,7 @@ type ActionResponse ={
     successful: number,
     failed: number
     },
-   
+
 }
 
 export type PostResponse = ActionResponse & {

@@ -1,7 +1,7 @@
 // app configuration and main entry point for the app
 
 
-import * as React from "react"; 
+import * as React from "react";
 import { withRouter, RouteComponentProps, Route, Switch, Redirect } from 'react-router-dom';
 
 import connect, { Connect, IDispatcher } from '../../../framework/src/flux/connect';
@@ -22,7 +22,7 @@ import { AddFaultNotificationAction } from "./actions/notificationActions";
 
 import { createCurrentProblemsProperties, createCurrentProblemsActions } from "./handlers/currentProblemsHandler";
 
-let currentMountId: string | undefined = undefined; 
+let currentMountId: string | undefined = undefined;
 
 const mapProps = (state: IApplicationStoreState) => ({
   currentProblemsProperties: createCurrentProblemsProperties(state),
@@ -35,7 +35,7 @@ const mapDisp = (dispatcher: IDispatcher) => ({
 
 const FaultApplicationRouteAdapter = connect(mapProps, mapDisp)((props: RouteComponentProps<{ mountId?: string }> & Connect<typeof mapProps, typeof mapDisp>) => {
   if (currentMountId !== props.match.params.mountId) {
-    // route parameter has changed 
+    // route parameter has changed
     currentMountId = props.match.params.mountId || undefined;
     // Hint: This timeout is need, since it is not recommended to change the state while rendering is in progress !
     window.setTimeout(() => {
@@ -54,14 +54,14 @@ const FaultApplicationRouteAdapter = connect(mapProps, mapDisp)((props: RouteCom
 
 const App = withRouter((props: RouteComponentProps) => (
   <Switch>
-    <Route path={ `${ props.match.path }/:mountId?` } component={ FaultApplicationRouteAdapter } /> 
+    <Route path={ `${ props.match.path }/:mountId?` } component={ FaultApplicationRouteAdapter } />
     <Redirect to={ `${ props.match.path }` } />
    </Switch>
-)); 
- 
+));
+
 export function register() {
   const applicationApi = applicationManager.registerApplication({
-    name: "faultApp",
+    name: "fault",
     icon: faBell,
     rootComponent: App,
     rootActionHandler: faultAppRootHandler,

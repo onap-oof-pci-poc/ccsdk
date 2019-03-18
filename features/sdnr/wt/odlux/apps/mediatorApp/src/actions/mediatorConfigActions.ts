@@ -38,11 +38,11 @@ export class RemoveMediatorConfig extends BaseAction {
 
 export const startMediatorByNameAsyncActionCreator = (name: string) => (dispatch: Dispatch, getState: () => IApplicationStoreState) => {
   dispatch(new SetMediatorBusyByName(name, true));
-  const { mediatorApp: { mediatorServerState: { url } } } = getState();
+  const { mediator: { mediatorServerState: { url } } } = getState();
   if (url) {
     mediatorService.startMediatorByName(url, name).then(msg => {
       dispatch(new AddSnackbarNotification({ message: msg + ' ' + name, options: { variant: 'info' } }));
-      // since there is no notification, a timeout will be need here 
+      // since there is no notification, a timeout will be need here
       window.setTimeout(() => {
         mediatorService.getMediatorServerConfigByName(url, name).then(config => {
           if (config) {
@@ -62,11 +62,11 @@ export const startMediatorByNameAsyncActionCreator = (name: string) => (dispatch
 
 export const stopMediatorByNameAsyncActionCreator = (name: string) => (dispatch: Dispatch, getState: () => IApplicationStoreState) => {
   dispatch(new SetMediatorBusyByName(name, true));
-  const { mediatorApp: { mediatorServerState: { url } } } = getState();
+  const { mediator: { mediatorServerState: { url } } } = getState();
   if (url) {
     mediatorService.stopMediatorByName(url, name).then(msg => {
       dispatch(new AddSnackbarNotification({ message: msg + ' ' + name, options: { variant: 'info' } }));
-      // since there is no notification, a timeout will be need here 
+      // since there is no notification, a timeout will be need here
       window.setTimeout(() => {
         mediatorService.getMediatorServerConfigByName(url, name).then(config => {
           if (config) {
@@ -86,11 +86,11 @@ export const stopMediatorByNameAsyncActionCreator = (name: string) => (dispatch:
 
 export const addMediatorConfigAsyncActionCreator = (config: MediatorConfig) => (dispatch: Dispatch, getState: () => IApplicationStoreState) => {
   const { Name: name } = config;
-  const { mediatorApp: { mediatorServerState: { url } } } = getState();
+  const { mediator: { mediatorServerState: { url } } } = getState();
   if (url) {
     mediatorService.createMediatorConfig(url, config).then(msg => {
       dispatch(new AddSnackbarNotification({ message: msg + ' ' + name, options: { variant: 'info' } }));
-      // since there is no notification, a timeout will be need here 
+      // since there is no notification, a timeout will be need here
       window.setTimeout(() => {
         mediatorService.getMediatorServerConfigByName(url, name).then(config => {
           if (config) {
@@ -112,11 +112,11 @@ export const updateMediatorConfigAsyncActionCreator = (config: MediatorConfig) =
 
 export const removeMediatorConfigAsyncActionCreator = (config: MediatorConfig) => (dispatch: Dispatch, getState: () => IApplicationStoreState) => {
   const { Name: name } = config;
-  const { mediatorApp: { mediatorServerState: { url } } } = getState();
+  const { mediator: { mediatorServerState: { url } } } = getState();
   if (url) {
     mediatorService.deleteMediatorConfigByName(url, name).then(msg => {
       dispatch(new AddSnackbarNotification({ message: msg + ' ' + name, options: { variant: 'info' } }));
-      // since there is no notification, a timeout will be need here 
+      // since there is no notification, a timeout will be need here
       window.setTimeout(() => {
         mediatorService.getMediatorServerConfigByName(url, config.Name).then(config => {
           if (!config) {

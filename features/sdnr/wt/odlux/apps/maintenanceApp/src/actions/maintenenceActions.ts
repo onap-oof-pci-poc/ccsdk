@@ -30,7 +30,7 @@ export const loadAllMainteneceEntriesAsyncAction = (dispatch: Dispatch , getStat
     }
 
     // combine ell entries from the maintenance index with all networkelements
-    const networkElements = getState().connectApp.mountedNetworkElements;
+    const networkElements = getState().connect.mountedNetworkElements;
     const maintenenceEntries = networkElements.elements.reduce((acc, cur) => {
       const entry = entries.find(e => e.mountId === cur.mountId);
       acc.push(entry || {

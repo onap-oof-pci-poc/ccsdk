@@ -50,13 +50,13 @@ const styles = (theme: Theme) => createStyles({
 });
 
 const mapProps = (state: IApplicationStoreState) => ({
-  serverName: state.mediatorApp.mediatorServerState.name,
-  serverUrl: state.mediatorApp.mediatorServerState.url,
-  serverVersion: state.mediatorApp.mediatorServerState.serverVersion,
-  mediatorVersion: state.mediatorApp.mediatorServerState.mediatorVersion,
-  configurations: state.mediatorApp.mediatorServerState.configurations,
-  supportedDevices: state.mediatorApp.mediatorServerState.supportedDevices,
-  busy: state.mediatorApp.mediatorServerState.busy,
+  serverName: state.mediator.mediatorServerState.name,
+  serverUrl: state.mediator.mediatorServerState.url,
+  serverVersion: state.mediator.mediatorServerState.serverVersion,
+  mediatorVersion: state.mediator.mediatorServerState.mediatorVersion,
+  configurations: state.mediator.mediatorServerState.configurations,
+  supportedDevices: state.mediator.mediatorServerState.supportedDevices,
+  busy: state.mediator.mediatorServerState.busy,
 });
 
 const mapDispatch = (dispatcher: IDispatcher) => ({

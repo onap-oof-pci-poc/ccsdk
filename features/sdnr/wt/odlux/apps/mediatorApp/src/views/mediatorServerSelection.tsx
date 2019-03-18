@@ -37,7 +37,7 @@ const mapProps = (state: IApplicationStoreState) => ({
 
 const mapDispatch = (dispatcher: IDispatcher) => ({
   mediatorServersActions: createAvaliableMediatorServersActions(dispatcher.dispatch),
-  selectMediatorServer: (mediatorServerId: string) => mediatorServerId && dispatcher.dispatch(new NavigateToApplication("mediatorApp", mediatorServerId)),
+  selectMediatorServer: (mediatorServerId: string) => mediatorServerId && dispatcher.dispatch(new NavigateToApplication("mediator", mediatorServerId)),
 });
 
 const emptyMediatorServer: MediatorServer = {
@@ -77,7 +77,7 @@ class MediatorServerSelectionComponent extends React.Component<MediatorServerSel
     };
     return (
       <>
-        <MediatorServersTable customActionButtons={[addMediatorServerActionButton]} idProperty={"_id"} 
+        <MediatorServersTable customActionButtons={[addMediatorServerActionButton]} idProperty={"_id"}
           {...this.props.mediatorServersActions} {...this.props.mediatorServersProperties} columns={[
             { property: "name", title: "Name", type: ColumnType.text },
             { property: "url", title: "Url", type: ColumnType.text },
@@ -90,7 +90,7 @@ class MediatorServerSelectionComponent extends React.Component<MediatorServerSel
               )
             }
           ]} onHandleClick={ this.onSelectMediatorServer } />
-        <EditMediatorServerDialog  
+        <EditMediatorServerDialog
           mediatorServer={ this.state.mediatorServerToEdit }
           mode={ this.state.mediatorServerEditorMode }
           onClose={ this.onCloseEditMediatorServerDialog } />
@@ -103,7 +103,7 @@ class MediatorServerSelectionComponent extends React.Component<MediatorServerSel
     event.stopPropagation();
     this.props.selectMediatorServer(server && server._id);
 
-  } 
+  }
 
   private onEditMediatorServer = (event: React.MouseEvent<HTMLElement>, server: MediatorServer) => {
     event.preventDefault();
@@ -121,7 +121,7 @@ class MediatorServerSelectionComponent extends React.Component<MediatorServerSel
       mediatorServerEditorMode: EditMediatorServerDialogMode.RemoveMediatorServer,
       mediatorServerToEdit: server,
     });
-  } 
+  }
 
   private onCloseEditMediatorServerDialog = () => {
     this.setState({

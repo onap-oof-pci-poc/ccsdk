@@ -41,7 +41,7 @@ const styles = (theme: Theme) => createStyles({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    padding: `${ theme.spacing.unit * 2 }px ${ theme.spacing.unit * 3 }px ${ theme.spacing.unit * 3 }px`,
+    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
   },
   avatar: {
     margin: theme.spacing.unit,
@@ -56,7 +56,7 @@ const styles = (theme: Theme) => createStyles({
   },
 });
 
-type LoginProps = RouteComponentProps<{}> & WithStyles<typeof styles> & Connect ;
+type LoginProps = RouteComponentProps<{}> & WithStyles<typeof styles> & Connect;
 
 interface ILoginState {
   busy: boolean;
@@ -70,7 +70,7 @@ interface ILoginState {
 // todo: ggf. redirect to einbauen
 class LoginComponent extends React.Component<LoginProps, ILoginState> {
 
-  constructor(props: LoginProps) {
+  constructor (props: LoginProps) {
     super(props);
 
     this.state = {
@@ -87,19 +87,19 @@ class LoginComponent extends React.Component<LoginProps, ILoginState> {
     return (
       <React.Fragment>
         <CssBaseline />
-        <main className={ classes.layout }>
-          <Paper className={ classes.paper }>
-            <Avatar className={ classes.avatar }>
+        <main className={classes.layout}>
+          <Paper className={classes.paper}>
+            <Avatar className={classes.avatar}>
               <LockIcon />
             </Avatar>
             <Typography variant="caption">Sign in</Typography>
-            <form className={ classes.form }>
+            <form className={classes.form}>
               <FormControl margin="normal" required fullWidth>
                 <InputLabel htmlFor="username">Username</InputLabel>
                 <Input id="username" name="username" autoComplete="username" autoFocus
-                  disabled={ this.state.busy }
-                  value = {this.state.username }
-                  onChange={ event => { this.setState({ username: event.target.value }) } }/>
+                  disabled={this.state.busy}
+                  value={this.state.username}
+                  onChange={event => { this.setState({ username: event.target.value }) }} />
               </FormControl>
               <FormControl margin="normal" required fullWidth>
                 <InputLabel htmlFor="password">Password</InputLabel>
@@ -108,9 +108,9 @@ class LoginComponent extends React.Component<LoginProps, ILoginState> {
                   type="password"
                   id="password"
                   autoComplete="current-password"
-                  disabled={ this.state.busy }
-                  value={ this.state.password }
-                  onChange={ event => { this.setState({ password: event.target.value }) } }
+                  disabled={this.state.busy}
+                  value={this.state.password}
+                  onChange={event => { this.setState({ password: event.target.value }) }}
                 />
               </FormControl>
               <FormControl margin="normal" required fullWidth>
@@ -125,7 +125,7 @@ class LoginComponent extends React.Component<LoginProps, ILoginState> {
                 />
               </FormControl>
               <FormControlLabel
-                control={ <Checkbox value="remember" color="primary" /> }
+                control={<Checkbox value="remember" color="primary" />}
                 label="Remember me"
               />
               <Button
@@ -133,9 +133,9 @@ class LoginComponent extends React.Component<LoginProps, ILoginState> {
                 fullWidth
                 variant="raised"
                 color="primary"
-                disabled = { this.state.busy }
-                className={ classes.submit }
-                onClick = { this.onSignIn }
+                disabled={this.state.busy}
+                className={classes.submit}
+                onClick={this.onSignIn}
               >
                 Sign in
             </Button>
@@ -144,14 +144,14 @@ class LoginComponent extends React.Component<LoginProps, ILoginState> {
         </main>
         <Dialog
           open={!!this.state.message}
-          onClose={() => { this.setState({message: ''})}}
+          onClose={() => { this.setState({ message: '' }) }}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
           <DialogTitle id="alert-dialog-title">{"Error"}</DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
-              { this.state.message }
+              {this.state.message}
             </DialogContentText>
           </DialogContent>
           <DialogActions>

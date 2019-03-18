@@ -62,11 +62,11 @@ export const initializeMediatorServerAsyncActionCreator = (serverId: string) => 
     if (!mediatorServer) {
       dispatch(new SetMediatorServerBusy(false));
       dispatch(new AddSnackbarNotification({ message: `Error loading mediator server [${serverId}]`, options: { variant: 'error' } }));
-      dispatch(new NavigateToApplication("mediatorApp"));
-      return; 
+      dispatch(new NavigateToApplication("mediator"));
+      return;
     }
     dispatch(new SetMediatorServerInfo(mediatorServer.name, mediatorServer.url));
-  
+
     mediatorService.getMediatorServerVersion(mediatorServer.url).then(versionInfo => {
       dispatch(new SetMediatorServerVersion(versionInfo));
     });

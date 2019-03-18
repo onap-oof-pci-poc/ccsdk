@@ -174,7 +174,7 @@ module.exports = (env) => {
       },
       proxy: {
         "/oauth2/**/*": {
-          target: "http://10.20.6.29:48181",
+          target: "http://localhost:3000",
           secure: false
         }
       }

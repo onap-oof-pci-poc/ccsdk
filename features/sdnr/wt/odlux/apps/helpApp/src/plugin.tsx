@@ -1,6 +1,6 @@
 // app configuration and main entry point for the app
 
-import * as React from "react"; 
+import * as React from "react";
 import { withRouter, RouteComponentProps, Route, Switch, Redirect } from 'react-router-dom';
 
 import { faFirstAid } from '@fortawesome/free-solid-svg-icons';  // select app icon
@@ -18,7 +18,7 @@ import { SubMenuEntry } from "./components/subMenuEntry";
 import '!style-loader!css-loader!highlight.js/styles/default.css';
 
 const mapProps = (state: IApplicationStoreState) => ({
-  
+
 });
 
 const mapDisp = (dispatcher: IDispatcher) => ({
@@ -31,7 +31,7 @@ let currentHelpPath: string | undefined = undefined;
 
 const HelpApplicationRouteAdapter = connect(mapProps, mapDisp)((props: RouteComponentProps<{ '0'?: string }> & Connect<typeof mapProps, typeof mapDisp>) => {
   if (currentHelpPath !== props.match.params["0"]) {
-    // route parameter has changed 
+    // route parameter has changed
     currentHelpPath = props.match.params["0"] || undefined;
     // Hint: This timeout is need, since it is not recommended to change the state while rendering is in progress !
     window.setTimeout(() => {
@@ -54,7 +54,7 @@ const App = withRouter((props: RouteComponentProps) => (
 
 export async function register() {
   const applicationApi = applicationManager.registerApplication({
-    name: "helpApp",
+    name: "help",
     icon: faFirstAid,
     rootComponent: App,
     rootActionHandler: helpAppRootHandler,
@@ -63,7 +63,7 @@ export async function register() {
   });
 
   // start the initial toc request after the application store is initalized
-  const store = await applicationApi.applicationStoreInitialized; 
+  const store = await applicationApi.applicationStoreInitialized;
   store.dispatch(requestTocAsyncAction);
 
 }

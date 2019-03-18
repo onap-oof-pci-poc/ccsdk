@@ -14,8 +14,8 @@ export interface IMaintenanceAppStoreState {
 
 declare module '../../../../framework/src/store/applicationStore' {
   interface IApplicationStoreState {
-    maintenanceApp: IMaintenanceAppStoreState,
-    connectApp: IConnectAppStoreState
+    maintenance: IMaintenanceAppStoreState,
+    connect: IConnectAppStoreState
   }
 }
 

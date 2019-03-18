@@ -11,8 +11,8 @@ import { Markdown } from "../components/markdown";
 import '!style-loader!css-loader!github-markdown-css/github-markdown.css'
 
 const mapProps = (state: IApplicationStoreState) => ({
-  content: state.helpApp.content,
-  currentPath: state.helpApp.currentPath
+  content: state.help.content,
+  currentPath: state.help.currentPath
 });
 
 type HelpApplicationComponentProps = Connect<typeof mapProps>;
@@ -24,7 +24,7 @@ class HelpApplicationComponent extends React.Component<HelpApplicationComponentP
    */
   constructor(props: HelpApplicationComponentProps) {
     super(props);
-    
+
     this.renderer = new marked.Renderer();
 
     this.renderer.link = (href: string, title: string, text: string) => {
@@ -41,7 +41,7 @@ class HelpApplicationComponent extends React.Component<HelpApplicationComponentP
 
   render(): JSX.Element {
     return this.props.content ? (
-      <Markdown text={ this.props.content } markedOptions={ { renderer: this.renderer } } className="markdown-body" 
+      <Markdown text={ this.props.content } markedOptions={ { renderer: this.renderer } } className="markdown-body"
          style={{ maxWidth: "960px", margin: "1.5em auto" }} />
     ) : (<h2>Loading ...</h2>)
   }

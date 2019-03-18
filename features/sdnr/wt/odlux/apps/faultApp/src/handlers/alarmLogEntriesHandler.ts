@@ -19,6 +19,6 @@ export const {
   createProperties: createAlarmLogEntriesProperties,
   reloadAction: alarmLogEntriesReloadAction,
 
-  // set value action, to change a value 
-} = createExternal<Fault>(alarmLogEntriesSearchHandler, appState => appState.faultApp.alarmLogEntries);
+  // set value action, to change a value
+} = createExternal<Fault>(alarmLogEntriesSearchHandler, appState => appState.fault.alarmLogEntries);
 

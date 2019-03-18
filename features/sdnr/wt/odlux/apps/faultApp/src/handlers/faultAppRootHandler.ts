@@ -27,7 +27,7 @@ const currentOpenPanelHandler: IActionHandler<string | null> = (state = null, ac
 
 declare module '../../../../framework/src/store/applicationStore' {
   interface IApplicationStoreState {
-    faultApp: IFaultAppStoreState;
+    fault: IFaultAppStoreState;
   }
 }
 

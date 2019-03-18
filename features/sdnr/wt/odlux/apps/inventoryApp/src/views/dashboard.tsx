@@ -6,13 +6,13 @@ import { Result, InventoryType } from '../models/inventory';
 
 const url = `${ window.location.origin}/database/sdnevents/inventoryequipment/_search`;
 
-const fetchData: DataCallback = async (page, rowsPerPage, orderBy, order, filter) => { 
+const fetchData: DataCallback = async (page, rowsPerPage, orderBy, order, filter) => {
   const from = rowsPerPage && page != null && !isNaN(+page)
     ? (+page) * rowsPerPage
     : null;
 
   const filterKeys = filter && Object.keys(filter) || [];
-  
+
   const query = {
     ...filterKeys.length > 0 ? {
       query: {
@@ -30,7 +30,7 @@ const fetchData: DataCallback = async (page, rowsPerPage, orderBy, order, filter
     ...from ? { "from": from } : {},
     ...orderBy && order ? { "sort": [{ [orderBy]: order }] } : {},
   };
-  
+
   const result = await fetch(url, {
     method: "POST",       // *GET, POST, PUT, DELETE, etc.
     mode: "no-cors",      // no-cors, cors, *same-origin
@@ -45,8 +45,13 @@ const fetchData: DataCallback = async (page, rowsPerPage, orderBy, order, filter
   if (result.ok) {
     const queryResult: Result<InventoryType> = await result.json();
     const data = {
-      page: Math.min(page || 0, queryResult.hits.total || 0 / (rowsPerPage || 1)), rowCount: queryResult.hits.total, rows: queryResult && queryResult.hits && queryResult.hits.hits && queryResult.hits.hits.map(h => (
-      { ...h._source, _id: h._id }
+      page: Math.min(page || 0, queryResult.hits.total || 0 / (rowsPerPage || 1)),
+      rowCount: queryResult.hits.total,
+      rows: queryResult && queryResult.hits && queryResult.hits.hits && queryResult.hits.hits.map(h => (
+        {
+          ...h._source,
+          _id: h._id
+        }
       )) || []
     };
     return data;

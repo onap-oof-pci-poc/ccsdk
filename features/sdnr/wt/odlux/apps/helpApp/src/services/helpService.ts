@@ -23,7 +23,7 @@ class HelpService {
     if (this.tocNodeCollection) return Promise.resolve(this.tocNodeCollection);
 
     // request the table of contents
-    const result = await requestRest<TocNodeCollection>('/help/?meta');
+    const result = await requestRest<TocNodeCollection>('/help/?meta', undefined, false);
     if (result !== false) {
       const mapNodesCollection = (col: TocNodeCollection): TocTreeNode[] => {
         return Object.keys(col).reduce <TocTreeNode[]>((acc, key) => {

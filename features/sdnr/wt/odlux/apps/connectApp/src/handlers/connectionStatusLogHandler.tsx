@@ -25,6 +25,6 @@ export const {
   createProperties: createConnectionStatusLogProperties,
   reloadAction: connectionStatusLogReloadAction,
 
-  // set value action, to change a value 
-} = createExternal<ConnectionStatusLogType>(connectionStatusLogSearchHandler, appState => appState.connectApp.connectionStatusLog);
+  // set value action, to change a value
+} = createExternal<ConnectionStatusLogType>(connectionStatusLogSearchHandler, appState => appState.connect.connectionStatusLog);
 

@@ -13,7 +13,7 @@ export interface IMediatorAppStoreState {
 
 declare module '../../../../framework/src/store/applicationStore' {
   interface IApplicationStoreState {
-    mediatorApp: IMediatorAppStoreState
+    mediator: IMediatorAppStoreState
   }
 }
 

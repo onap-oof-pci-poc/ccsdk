@@ -13,7 +13,7 @@ export interface IDemoAppStoreState {
 
 declare module '../../../../framework/src/store/applicationStore' {
   interface IApplicationStoreState {
-    demoApp: IDemoAppStoreState
+    demo: IDemoAppStoreState
   }
 }
 

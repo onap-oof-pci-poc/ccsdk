@@ -14,14 +14,14 @@ export interface IHelpAppStoreState {
 
 declare module '../../../../framework/src/store/applicationStore' {
   interface IApplicationStoreState {
-    helpApp: IHelpAppStoreState
+    help: IHelpAppStoreState
   }
 }
 
 const helpAppStoreStateInit: IHelpAppStoreState = {
   busy: false,
   toc: undefined,
-  content: undefined, 
+  content: undefined,
   currentPath: undefined
 };
 

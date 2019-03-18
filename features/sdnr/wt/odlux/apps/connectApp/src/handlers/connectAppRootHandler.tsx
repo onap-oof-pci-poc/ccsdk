@@ -11,7 +11,7 @@ export interface IConnectAppStoreState {
 
 declare module '../../../../framework/src/store/applicationStore' {
   interface IApplicationStoreState {
-    connectApp: IConnectAppStoreState
+    connect: IConnectAppStoreState
   }
 }
 

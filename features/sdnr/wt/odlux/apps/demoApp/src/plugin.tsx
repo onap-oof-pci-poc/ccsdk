@@ -27,7 +27,7 @@ const FinalApp = withRouter(connect()(App));
 
 export function register() {
   const applicationApi = applicationManager.registerApplication({
-    name: "demoApp",
+    name: "demo",
     icon: faAddressBook,
     rootComponent: FinalApp,
     rootActionHandler: demoAppRootHandler,

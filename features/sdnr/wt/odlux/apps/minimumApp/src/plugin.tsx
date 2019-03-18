@@ -20,7 +20,7 @@ const FinalApp = withRouter(connect()(App));
 
 export function register() {
   applicationManager.registerApplication({
-    name: "minimumApp",
+    name: "minimum",
     icon: faLock,
     rootComponent: FinalApp,
     rootActionHandler: minimumAppRootHandler,

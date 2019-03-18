@@ -52,7 +52,7 @@ const FinalApp = withRouter(connect()(App));
 
 export function register() {
   const applicationApi = applicationManager.registerApplication({
-    name: "mediatorApp",
+    name: "mediator",
     icon: faGlobe,
     rootComponent: FinalApp,
     rootActionHandler: mediatorAppRootHandler,

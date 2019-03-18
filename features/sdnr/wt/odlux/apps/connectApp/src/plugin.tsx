@@ -23,7 +23,7 @@ type ObjectNotification = {
 
 export function register() {
   const applicationApi = applicationManager.registerApplication({
-    name: "connectApp",
+    name: "connect",
     icon: faPlug,
     rootComponent: ConnectApplication,
     rootActionHandler: connectAppRootHandler,

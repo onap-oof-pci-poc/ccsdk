@@ -20,7 +20,7 @@ interface IAuthorsListProps {
 }
 
 class AuthorsListComponent extends React.Component<RouteComponentProps & IAuthorsListProps> {
- 
+
   render(): JSX.Element {
     const { authors, busy } = this.props;
     return (
@@ -58,7 +58,7 @@ class AuthorsListComponent extends React.Component<RouteComponentProps & IAuthor
 
 export const AuthorsList = withRouter(
   connect(
-    ({ demoApp: state }) => ({
+    ({ demo: state }) => ({
       authors: state.listAuthors.authors,
       busy: state.listAuthors.busy
     }),

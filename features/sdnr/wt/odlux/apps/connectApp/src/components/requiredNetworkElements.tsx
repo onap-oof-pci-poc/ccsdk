@@ -45,7 +45,7 @@ const styles = (theme: Theme) => createStyles({
 
 const mapProps = (state: IApplicationStoreState) => ({
   requiredNetworkElementsProperties: createRequiredNetworkElementsProperties(state),
-  mountedNetworkElements: state.connectApp.mountedNetworkElements
+  mountedNetworkElements: state.connect.mountedNetworkElements
 });
 
 const mapDispatch = (dispatcher: IDispatcher) => ({
@@ -74,7 +74,7 @@ export class RequiredNetworkElementsListComponent extends React.Component<Requir
     };
   }
 
-  //  private navigationCreator 
+  //  private navigationCreator
 
   render(): JSX.Element {
     const { classes } = this.props;
@@ -123,11 +123,11 @@ export class RequiredNetworkElementsListComponent extends React.Component<Requir
                     <Tooltip title={ "Info" } ><Button className={ classes.button } >I</Button></Tooltip>
                   </div>
                   <div className={ classes.spacer }>
-                    <Tooltip title={ "Fault" } ><Button className={ classes.button } onClick={ this.navigateToApplicationHandlerCreator("faultApp", rowData) } >F</Button></Tooltip>
-                    <Tooltip title={ "Configure" } ><Button className={ classes.button } onClick={ this.navigateToApplicationHandlerCreator("configureApp", rowData)} >C</Button></Tooltip>
-                    <Tooltip title={ "Accounting " } ><Button className={ classes.button } onClick={ this.navigateToApplicationHandlerCreator("accountingApp", rowData) }>A</Button></Tooltip>
-                    <Tooltip title={ "Performance" } ><Button className={ classes.button } onClick={ this.navigateToApplicationHandlerCreator("performanceApp", rowData) }>P</Button></Tooltip>
-                    <Tooltip title={ "Security" } ><Button className={ classes.button } onClick={ this.navigateToApplicationHandlerCreator("securityApp", rowData) }>S</Button></Tooltip>
+                    <Tooltip title={ "Fault" } ><Button className={ classes.button } onClick={ this.navigateToApplicationHandlerCreator("fault", rowData) } >F</Button></Tooltip>
+                    <Tooltip title={ "Configure" } ><Button className={ classes.button } onClick={ this.navigateToApplicationHandlerCreator("configure", rowData)} >C</Button></Tooltip>
+                    <Tooltip title={ "Accounting " } ><Button className={ classes.button } onClick={ this.navigateToApplicationHandlerCreator("accounting", rowData) }>A</Button></Tooltip>
+                    <Tooltip title={ "Performance" } ><Button className={ classes.button } onClick={ this.navigateToApplicationHandlerCreator("performance", rowData) }>P</Button></Tooltip>
+                    <Tooltip title={ "Security" } ><Button className={ classes.button } onClick={ this.navigateToApplicationHandlerCreator("security", rowData) }>S</Button></Tooltip>
                   </div>
                 </>
               )

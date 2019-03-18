@@ -78,7 +78,7 @@ export enum EditMediatorConfigDialogMode {
 }
 
 const mapProps = (state: IApplicationStoreState) => ({
-  supportedDevices: state.mediatorApp.mediatorServerState.supportedDevices
+  supportedDevices: state.mediator.mediatorServerState.supportedDevices
 });
 
 const mapDispatch = (dispatcher: IDispatcher) => ({

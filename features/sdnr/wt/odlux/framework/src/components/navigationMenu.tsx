@@ -53,7 +53,7 @@ export const NavigationMenu = withStyles(styles)(connect()(({ classes, state }: 
           }) || null
         }
         <Divider />
-        { process.env.NODE_ENV === "development" ? <ListItemLink to="/about" primary="About" icon={<FontAwesomeIcon icon={faAddressBook} />} /> : null }
+        <ListItemLink to="/about" primary="About" icon={<FontAwesomeIcon icon={faAddressBook} />} />
         </List>
         </> || null
       }

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';  
+import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 
 import { MaterialTable, ColumnType, MaterialTableCtorType } from '../../../../framework/src/components/material-table';
 import { Panel } from '../../../../framework/src/components/material-ui';
@@ -19,9 +19,9 @@ import { createAlarmLogEntriesProperties, createAlarmLogEntriesActions, alarmLog
 import { SetPanelAction } from '../actions/panelChangeActions';
 
 const mapProps = (state: IApplicationStoreState) => ({
-  activePanel: state.faultApp.currentOpenPanel,
+  activePanel: state.fault.currentOpenPanel,
   currentProblemsProperties: createCurrentProblemsProperties(state),
-  faultNotifications: state.faultApp.faultNotifications,
+  faultNotifications: state.fault.faultNotifications,
   alarmLogEntriesProperties: createAlarmLogEntriesProperties(state)
 });
 
@@ -39,15 +39,15 @@ type FaultApplicationComponentProps = RouteComponentProps & Connect<typeof mapPr
 const FaultTable = MaterialTable as MaterialTableCtorType<Fault>;
 
 class FaultApplicationComponent extends React.Component<FaultApplicationComponentProps>{
-   
+
   render(): JSX.Element {
-    
+
     const { activePanel } = this.props;
-    
+
     const onTogglePanel = (panelId: PanelId) => {
       const nextActivePanel = panelId === this.props.activePanel ? null : panelId;
       this.props.setCurrentPanel(nextActivePanel);
-      
+
       switch (nextActivePanel) {
         case 'CurrentProblem':
           this.props.reloadCurrentProblems();
@@ -66,7 +66,7 @@ class FaultApplicationComponent extends React.Component<FaultApplicationComponen
     return (
       <>
         <Panel activePanel={ activePanel } panelId={ 'CurrentProblem' } onToggle={ onTogglePanel } title={ 'Current Problem List' }>
-          <FaultTable idProperty={ '_id' }  columns={ [ 
+          <FaultTable idProperty={ '_id' }  columns={ [
               { property: "icon", title: "", type: ColumnType.custom, customControl: this.renderIcon },
               { property: "timeStamp", type: ColumnType.text, title: "Time Stamp" },
               { property: "nodeName", title: "Node Name", type: ColumnType.text },
@@ -104,9 +104,9 @@ class FaultApplicationComponent extends React.Component<FaultApplicationComponen
 
   private renderIcon = (props: { rowData: Fault }) => {
     return (
-      <FontAwesomeIcon icon={ faExclamationTriangle } /> 
+      <FontAwesomeIcon icon={ faExclamationTriangle } />
     );
-  }; 
+  };
 
 }
 

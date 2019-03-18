@@ -127,11 +127,11 @@ module.exports = (env) => {
       },
       proxy: {
         "/restconf": {
-          target: "http://localhost:8181",
+          target: "http://localhost:3000",
           secure: false
         },
         "/database": {
-          target: "http://localhost:8181",
+          target: "http://localhost:3000",
           secure: false
         }
       }

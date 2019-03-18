@@ -15,5 +15,5 @@ export const {
   createProperties: createAvaliableMediatorServersProperties,
   reloadAction: avaliableMediatorServersReloadAction,
 
-  // set value action, to change a value 
-} = createExternal<MediatorServer>(avaliableMediatorServersSearchHandler, appState => appState.mediatorApp.avaliableMediatorServers);
+  // set value action, to change a value
+} = createExternal<MediatorServer>(avaliableMediatorServersSearchHandler, appState => appState.mediator.avaliableMediatorServers);

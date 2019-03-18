@@ -9,7 +9,7 @@ export interface IMinimumAppStoreState {
 
 declare module '../../../../framework/src/store/applicationStore' {
   interface IApplicationStoreState {
-    minimumApp: IMinimumAppStoreState
+    minimum: IMinimumAppStoreState
   }
 }
 
