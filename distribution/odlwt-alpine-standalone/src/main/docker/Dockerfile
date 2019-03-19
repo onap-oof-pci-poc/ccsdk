@@ -14,7 +14,7 @@ ENV CCSDK_SDNR_REPOLIST=${CCSDK_SDNR_WT_REPO}
 # copy CCSDK mvn artifacts to ODL repository
 COPY system /tmp/system
 RUN rsync -a /tmp/system $ODL_HOME && rm -rf /tmp/system
-
+COPY preload.cache.schema $ODL_HOME/cache/schema
 COPY opt /opt
 
 # Add additonal repositories to boot repositories

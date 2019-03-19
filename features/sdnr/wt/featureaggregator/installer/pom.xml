@@ -44,7 +44,7 @@
   </properties>
 
   <dependencies>
-      <dependency>
+    <dependency>
       <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
       <artifactId>${application.name}</artifactId>
       <version>${project.version}</version>
@@ -119,6 +119,27 @@
               <useRepositoryLayout>true</useRepositoryLayout>
               <addParentPoms>false</addParentPoms>
               <copyPom>false</copyPom>
+            </configuration>
+          </execution>
+          <execution>
+            <id>unpack-cache-schema</id>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <phase>prepare-package</phase>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
+                  <artifactId>sdnr-wt-devicemanager-provider</artifactId>
+                  <version>0.4.1-SNAPSHOT</version>
+                  <type>jar</type>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>${project.build.directory}/assembly</outputDirectory>
+              <includes>preload.cache.schema/**</includes>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>true</overWriteSnapshots>
             </configuration>
           </execution>
         </executions>

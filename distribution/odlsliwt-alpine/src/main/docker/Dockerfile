@@ -11,6 +11,7 @@ USER root
 COPY system /tmp/system
 RUN rsync -a /tmp/system $ODL_HOME
 RUN rm -rf /tmp/system
+COPY preload.cache.schema $ODL_HOME/cache/schema
 USER odl
 
 # Add CCSDK repositories to boot repositories
