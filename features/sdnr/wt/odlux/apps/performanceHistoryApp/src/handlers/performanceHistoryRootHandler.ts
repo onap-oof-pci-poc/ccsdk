@@ -54,7 +54,7 @@ const currentOpenPanelHandler: IActionHandler<string | null> = (state = null, ac
 
 declare module '../../../../framework/src/store/applicationStore' {
   interface IApplicationStoreState {
-    performanceHistoryApp: IPerformanceHistoryStoreState;
+    performanceHistory: IPerformanceHistoryStoreState;
   }
 }
 

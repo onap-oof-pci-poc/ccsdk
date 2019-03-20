@@ -25,5 +25,5 @@ export const {
   createProperties: createReceiveLevel24hoursProperties,
   createPreActions: createReceiveLevel24hoursPreActions,
   reloadAction: receiveLevel24hoursReloadAction,
-} = createExternal<ReceiveLevelDataType>(receiveLevelSearchHandler, appState => appState.performanceHistoryApp.receiveLevel24hours);
+} = createExternal<ReceiveLevelDataType>(receiveLevelSearchHandler, appState => appState.performanceHistory.receiveLevel24hours);
 

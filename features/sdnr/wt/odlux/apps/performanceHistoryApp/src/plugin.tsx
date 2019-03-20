@@ -12,6 +12,6 @@ export function register() {
     icon: faBook,
     rootComponent: PerformanceHistoryApplication,
     rootActionHandler: performanceHistoryRootHandler,
-    menuEntry: "Performance History"
+    menuEntry: "Performance"
   });
 }                                     

@@ -25,5 +25,5 @@ export const {
   createProperties: createTemperature24hoursProperties,
   createPreActions: createTemperature24hoursPreActions,
   reloadAction: temperature24hoursReloadAction,
-} = createExternal<TemperatureDataType>(temperatureSearchHandler, appState => appState.performanceHistoryApp.temperature24hours);
+} = createExternal<TemperatureDataType>(temperatureSearchHandler, appState => appState.performanceHistory.temperature24hours);
 

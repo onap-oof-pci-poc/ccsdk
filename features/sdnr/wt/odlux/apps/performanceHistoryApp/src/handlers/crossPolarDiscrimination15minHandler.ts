@@ -25,5 +25,5 @@ export const {
   createProperties: createCrossPolarDiscrimination15minProperties,
   createPreActions: createCrossPolarDiscrimination15minPreActions,
   reloadAction: crossPolarDiscrimination15minReloadAction,
-} = createExternal<CrossPolarDiscriminationDataType>(crossPolarDiscriminationSearchHandler, appState => appState.performanceHistoryApp.crossPolarDiscrimination15min);
+} = createExternal<CrossPolarDiscriminationDataType>(crossPolarDiscriminationSearchHandler, appState => appState.performanceHistory.crossPolarDiscrimination15min);
 

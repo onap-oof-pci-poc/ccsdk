@@ -25,5 +25,5 @@ export const {
   createProperties: createAdaptiveModulation15minProperties,
   createPreActions: createAdaptiveModulation15minPreActions,
   reloadAction: adaptiveModulation15minReloadAction,
-} = createExternal<AdaptiveModulationDataType>(adaptiveModulationSearchHandler, appState => appState.performanceHistoryApp.adaptiveModulation15min);
+} = createExternal<AdaptiveModulationDataType>(adaptiveModulationSearchHandler, appState => appState.performanceHistory.adaptiveModulation15min);
 

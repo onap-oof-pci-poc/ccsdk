@@ -18,7 +18,7 @@
 	<properties>
 		<buildtime>${maven.build.timestamp} UTC</buildtime>
 		<distversion>ONAP Dublin (Flourine-SR1)</distversion>
-		<buildno>4.c61d5d2(19/03/18)</buildno>
+		<buildno>5.88e959b(19/03/20)</buildno>
 	</properties>
 	<licenses>
 		<license>

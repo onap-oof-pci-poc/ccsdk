@@ -24,5 +24,5 @@ export const {
   createProperties: createPerformanceData24hoursProperties,
   createPreActions: createPerformanceData24hoursPreActions,
   reloadAction: performanceData24hoursReloadAction
-} = createExternal<PerformanceDataType>(performanceDataSearchHandler, appState => appState.performanceHistoryApp.performanceData24hours);
+} = createExternal<PerformanceDataType>(performanceDataSearchHandler, appState => appState.performanceHistory.performanceData24hours);
 

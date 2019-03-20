@@ -24,5 +24,5 @@ export const {
   createProperties: createPerformanceData15minProperties,
   createPreActions: createPerformanceData15minPreActions,
   reloadAction: performanceData15minReloadAction
-} = createExternal<PerformanceDataType>(performanceDataSearchHandler, appState => appState.performanceHistoryApp.performanceData15min);
+} = createExternal<PerformanceDataType>(performanceDataSearchHandler, appState => appState.performanceHistory.performanceData15min);
 

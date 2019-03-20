@@ -25,5 +25,5 @@ export const {
   createProperties: createTransmissionPower15minProperties,
   createPreActions: createTransmissionPower15minPreActions,
   reloadAction: transmissionPower15minReloadAction,
-} = createExternal<TransmissionPowerDataType>(transmissionPowerSearchHandler, appState => appState.performanceHistoryApp.transmissionPower15min);
+} = createExternal<TransmissionPowerDataType>(transmissionPowerSearchHandler, appState => appState.performanceHistory.transmissionPower15min);
 

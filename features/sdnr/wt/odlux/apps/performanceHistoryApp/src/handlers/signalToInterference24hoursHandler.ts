@@ -25,5 +25,5 @@ export const {
   createProperties: createSignalToInterference24hoursProperties,
   createPreActions: createSignalToInterference24hoursPreActions,
   reloadAction: signalToInterference24hoursReloadAction,
-} = createExternal<SignalToInterferenceDataType>(signalToInterferenceSearchHandler, appState => appState.performanceHistoryApp.signalToInterference24hours);
+} = createExternal<SignalToInterferenceDataType>(signalToInterferenceSearchHandler, appState => appState.performanceHistory.signalToInterference24hours);
 

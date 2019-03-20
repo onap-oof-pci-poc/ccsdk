@@ -59,9 +59,9 @@ const PerformanceHistoryComponentStyles = (theme: Theme) => createStyles({
 });
 
 const mapProps = (state: IApplicationStoreState) => ({
-  activePanel: state.performanceHistoryApp.currentOpenPanel,
-  availableLtps: state.performanceHistoryApp.ltps.distinctLtps,
-  networkElements: state.performanceHistoryApp.networkElements.connectedNetworkElements
+  activePanel: state.performanceHistory.currentOpenPanel,
+  availableLtps: state.performanceHistory.ltps.distinctLtps,
+  networkElements: state.performanceHistory.networkElements.connectedNetworkElements
 });
 
 const mapDispatcher = (dispatcher: IDispatcher) => ({
