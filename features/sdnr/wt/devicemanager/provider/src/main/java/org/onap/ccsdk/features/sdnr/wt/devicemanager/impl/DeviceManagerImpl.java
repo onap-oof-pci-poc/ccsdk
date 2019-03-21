@@ -42,6 +42,7 @@ import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.ProblemNotificatio
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.WebSocketServiceClient;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.WebSocketServiceClientDummyImpl;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.WebSocketServiceClientImpl2;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.index.impl.IndexCleanService;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.index.impl.IndexConfigService;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.index.impl.IndexMwtnService;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.index.impl.IndexUpdateService;
@@ -116,6 +117,7 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
     private Thread threadDoClearCurrentFaultByNodename = null;
     private int refreshCounter = 0;
     private AkkaConfig akkaConfig;
+	private IndexCleanService dbCleanService;
 
     // Blueprint 1
     public DeviceManagerImpl() {
@@ -186,12 +188,14 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
                 try {
                     this.configService = new IndexConfigService(htDatabase);
                     this.mwtnService = new IndexMwtnService(htDatabase);
+                    this.dbCleanService = new IndexCleanService(dbConfig,htDatabase);
                 } catch (Exception e) {
                     LOG.warn("Can not start ES access clients to provide database index config, mwtn. ", e);
                 }
             }
             // start service for device maintenance service
             this.maintenanceService = new MaintenanceServiceImpl(htDatabase);
+            
             // Websockets
             try {
                 this.webSocketService = new WebSocketServiceClientImpl2(rpcProviderRegistry);
@@ -275,7 +279,7 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
         close(maintenanceService);
         close(rpcApiService);
         close(notificationDelayService);
-
+        close(dbCleanService);
         LOG.info("DeviceManagerImpl closing done");
     }
 

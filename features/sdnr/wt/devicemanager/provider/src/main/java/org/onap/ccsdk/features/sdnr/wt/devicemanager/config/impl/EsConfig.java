@@ -25,195 +25,241 @@ import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.ISubConfigHandler;
 
 public class EsConfig extends BaseSubConfig {
 
-    public static final String SECTION_MARKER_ES = "es";
-    public static final String ESDATATYPENAME = "database";
-    private static final String EMPTY = "empty";
-    private static final String PROPERTY_KEY_CLUSTER = "esCluster";
-    private static final String DEFAULT_VALUE_CLUSTER = "";
-    private static EsConfig esConfig;
+	public static final String SECTION_MARKER_ES = "es";
+	public static final String ESDATATYPENAME = "database";
+	private static final String EMPTY = "empty";
+	private static final String PROPERTY_KEY_CLUSTER = "esCluster";
+	private static final String PROPERTY_KEY_ARCHIVE_INTERVAL = "esArchiveInterval";
+	private static final String PROPERTY_KEY_ARCHIVE_LIMIT = "esArchiveLimit";
 
-    private String cluster;
-    private String host;
-    private String node;
-    private String index;
+	private static final String DEFAULT_VALUE_CLUSTER = "";
+	/**
+	 * check db data in this interval [in seconds]
+	 * 0 deactivated
+	 */
+	private static final long DEFAULT_ARCHIVE_INTERVAL_SEC = 0;
+	/**
+	 * keep data for this time [in seconds] 
+	 * 30 days
+	 */
+	private static final long DEFAULT_ARCHIVE_LIMIT_SEC = 60 * 60 * 24 * 30;
 
-    private EsConfig() {
-        super();
-        this.host = EMPTY;
-        this.node = EMPTY;
-        this.index = EMPTY;
-        this.cluster = DEFAULT_VALUE_CLUSTER;
-    }
+	private static EsConfig esConfig;
 
-    public EsConfig cloneWithIndex(String _index) {
-        EsConfig c = new EsConfig();
-        c.index = _index;
-        c.host = this.host;
-        c.node = this.node;
-        c.cluster = this.cluster;
-        return c;
-    }
+	private String cluster;
+	private String host;
+	private String node;
+	private String index;
+	private long archiveInterval;
+	private long archiveLimit;
 
-    public static String getESDATATYPENAME() {
-        return ESDATATYPENAME;
-    }
+	private EsConfig() {
+		super();
+		this.host = EMPTY;
+		this.node = EMPTY;
+		this.index = EMPTY;
+		this.cluster = DEFAULT_VALUE_CLUSTER;
+		this.archiveInterval = DEFAULT_ARCHIVE_INTERVAL_SEC;
+		this.archiveLimit = DEFAULT_ARCHIVE_LIMIT_SEC;
+	}
 
-    public String getCluster() {
-        return cluster;
-    }
+	public EsConfig cloneWithIndex(String _index) {
+		EsConfig c = new EsConfig();
+		c.index = _index;
+		c.host = this.host;
+		c.node = this.node;
+		c.cluster = this.cluster;
+		c.archiveInterval = this.archiveInterval;
+		c.archiveLimit = this.archiveLimit;
+		return c;
+	}
 
-    public void setCluster(String cluster) {
-        this.cluster = cluster;
-    }
+	public static String getESDATATYPENAME() {
+		return ESDATATYPENAME;
+	}
 
-    public String getHost() {
-        return host;
-    }
+	public String getCluster() {
+		return cluster;
+	}
 
-    public void setHost(String host) {
-        this.host = host;
-    }
+	public void setCluster(String cluster) {
+		this.cluster = cluster;
+	}
 
-    public String getNode() {
-        return node;
-    }
+	public String getHost() {
+		return host;
+	}
 
-    public void setNode(String node) {
-        this.node = node;
-    }
+	public void setHost(String host) {
+		this.host = host;
+	}
 
-    public String getIndex() {
-        return index;
-    }
+	public String getNode() {
+		return node;
+	}
 
-    public void setIndex(String index) {
-        this.index = index;
-    }
+	public void setNode(String node) {
+		this.node = node;
+	}
 
-    @Override
-    public String toString() {
-        return "EsConfig [cluster=" + cluster + ", host=" + host + ", node=" + node + ", index=" + index + "]";
-    }
+	public String getIndex() {
+		return index;
+	}
 
-    public EsConfig(IniConfigurationFile config, ISubConfigHandler configHandler) throws ConfigurationException {
-        this(config, configHandler, true);
-    }
+	public void setIndex(String index) {
+		this.index = index;
+	}
 
-    public EsConfig(IniConfigurationFile config, ISubConfigHandler configHandler, boolean save)
-            throws ConfigurationException {
+	public long getArchiveInterval() {
+		return this.archiveInterval;
+	}
 
-        super(config, configHandler, SECTION_MARKER_ES);
-        String clustername = Environment.getVar("$HOSTNAME");
+	public void setArchiveInterval(long x) {
+		this.archiveInterval = x;
+	}
 
-        String c = this.getString(PROPERTY_KEY_CLUSTER, clustername);
-        if (c != null && c.startsWith("$")) {
-            c = Environment.getVar(c);
-        }
-        this.cluster = c;
-        this.node = String.format("%s%s", this.cluster, "n1");
-        this.host = "localhost";
+	public long getArchiveLimit() {
+		return this.archiveLimit;
+	}
 
-        if (save) {
-            config.setProperty(SECTION_MARKER_ES + "." + PROPERTY_KEY_CLUSTER, this.cluster);
-            this.save();
-        }
-    }
+	public void setArchiveLimit(long x) {
+		this.archiveLimit = x;
+	}
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (cluster == null ? 0 : cluster.hashCode());
-        result = prime * result + (host == null ? 0 : host.hashCode());
-        result = prime * result + (index == null ? 0 : index.hashCode());
-        result = prime * result + (node == null ? 0 : node.hashCode());
-        return result;
-    }
+	@Override
+	public String toString() {
+		return "EsConfig [cluster=" + cluster + ", host=" + host + ", node=" + node + ", index=" + index + "]";
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        EsConfig other = (EsConfig) obj;
-        if (cluster == null) {
-            if (other.cluster != null) {
-                return false;
-            }
-        } else if (!cluster.equals(other.cluster)) {
-            return false;
-        }
-        if (host == null) {
-            if (other.host != null) {
-                return false;
-            }
-        } else if (!host.equals(other.host)) {
-            return false;
-        }
-        if (index == null) {
-            if (other.index != null) {
-                return false;
-            }
-        } else if (!index.equals(other.index)) {
-            return false;
-        }
-        if (node == null) {
-            if (other.node != null) {
-                return false;
-            }
-        } else if (!node.equals(other.node)) {
-            return false;
-        }
-        return true;
-    }
+	public EsConfig(IniConfigurationFile config, ISubConfigHandler configHandler) throws ConfigurationException {
+		this(config, configHandler, true);
+	}
 
-    @Override
-    public void save()
-    {
-        this.getConfig().setProperty(SECTION_MARKER_ES + "." + PROPERTY_KEY_CLUSTER, this.cluster);
-        super.save();
-    }
-    public static boolean isInstantiated() {
-        return esConfig != null;
-    }
+	public EsConfig(IniConfigurationFile config, ISubConfigHandler configHandler, boolean save)
+			throws ConfigurationException {
 
-    public static EsConfig getDefaultConfiguration() {
-        return new EsConfig();
-    }
+		super(config, configHandler, SECTION_MARKER_ES);
+		String clustername = Environment.getVar("$HOSTNAME");
 
-    public static EsConfig getEs(IniConfigurationFile config, ISubConfigHandler configHandler) {
-        if (esConfig == null) {
-            try {
-                esConfig = new EsConfig(config, configHandler);
-            } catch (ConfigurationException e) {
-                esConfig = EsConfig.getDefaultConfiguration();
-            }
-        }
-        return esConfig;
-    }
+		String c = this.getString(PROPERTY_KEY_CLUSTER, clustername);
+		if (c != null && c.startsWith("$")) {
+			c = Environment.getVar(c);
+		}
+		this.cluster = c;
+		this.node = String.format("%s%s", this.cluster, "n1");
+		this.host = "localhost";
+		this.archiveInterval = this.getLong(PROPERTY_KEY_ARCHIVE_INTERVAL, DEFAULT_ARCHIVE_INTERVAL_SEC);
+		this.archiveLimit = this.getLong(PROPERTY_KEY_ARCHIVE_LIMIT, DEFAULT_ARCHIVE_LIMIT_SEC);
 
-    public static EsConfig reload() {
-        if (esConfig == null) {
-            return null;
-        }
-        EsConfig tmpConfig;
-        try {
-            tmpConfig = new EsConfig(esConfig.getConfig(), esConfig.getConfigHandler(), false);
-        } catch (ConfigurationException e) {
-            tmpConfig = EsConfig.getDefaultConfiguration();
-        }
-        esConfig = tmpConfig;
-        return esConfig;
-    }
+		if (save) {
+			config.setProperty(SECTION_MARKER_ES + "." + PROPERTY_KEY_CLUSTER, this.cluster);
+			config.setProperty(SECTION_MARKER_ES + "." + PROPERTY_KEY_ARCHIVE_INTERVAL, this.archiveInterval);
+			config.setProperty(SECTION_MARKER_ES + "." + PROPERTY_KEY_ARCHIVE_LIMIT, this.archiveLimit);
+			this.save();
+		}
+	}
 
-    public static void clear() {
-        esConfig=null;
-    }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (cluster == null ? 0 : cluster.hashCode());
+		result = prime * result + (host == null ? 0 : host.hashCode());
+		result = prime * result + (index == null ? 0 : index.hashCode());
+		result = prime * result + (node == null ? 0 : node.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		EsConfig other = (EsConfig) obj;
+		if (cluster == null) {
+			if (other.cluster != null) {
+				return false;
+			}
+		} else if (!cluster.equals(other.cluster)) {
+			return false;
+		}
+		if (host == null) {
+			if (other.host != null) {
+				return false;
+			}
+		} else if (!host.equals(other.host)) {
+			return false;
+		}
+		if (index == null) {
+			if (other.index != null) {
+				return false;
+			}
+		} else if (!index.equals(other.index)) {
+			return false;
+		}
+		if (node == null) {
+			if (other.node != null) {
+				return false;
+			}
+		} else if (!node.equals(other.node)) {
+			return false;
+		}
+		if (archiveInterval != other.archiveInterval) {
+			return false;
+		}
+		if (archiveLimit != other.archiveLimit) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public void save() {
+		this.getConfig().setProperty(SECTION_MARKER_ES + "." + PROPERTY_KEY_CLUSTER, this.cluster);
+		super.save();
+	}
+
+	public static boolean isInstantiated() {
+		return esConfig != null;
+	}
+
+	public static EsConfig getDefaultConfiguration() {
+		return new EsConfig();
+	}
+
+	public static EsConfig getEs(IniConfigurationFile config, ISubConfigHandler configHandler) {
+		if (esConfig == null) {
+			try {
+				esConfig = new EsConfig(config, configHandler);
+			} catch (ConfigurationException e) {
+				esConfig = EsConfig.getDefaultConfiguration();
+			}
+		}
+		return esConfig;
+	}
+
+	public static EsConfig reload() {
+		if (esConfig == null) {
+			return null;
+		}
+		EsConfig tmpConfig;
+		try {
+			tmpConfig = new EsConfig(esConfig.getConfig(), esConfig.getConfigHandler(), false);
+		} catch (ConfigurationException e) {
+			tmpConfig = EsConfig.getDefaultConfiguration();
+		}
+		esConfig = tmpConfig;
+		return esConfig;
+	}
+
+	public static void clear() {
+		esConfig = null;
+	}
 
 }

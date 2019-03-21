@@ -54,7 +54,12 @@ public class HtDataBaseReaderAndWriter<T extends IsEsObject> {
         this.mapper = new HtMapper<>( clazz );
 
     }
-
+    /**
+     * @return dataTypeName
+     */
+    public String getDataTypeName() {
+    	return this.dataTypeName;
+    }
     /**
      * Remove Object from database
      * @param object Object with content
@@ -203,11 +208,16 @@ public class HtDataBaseReaderAndWriter<T extends IsEsObject> {
     }
 
 
+    
     /**
      * Read all existing objects of a type
+     * @param query 
      * @return the list of all objects
      */
     public List<T> doReadAll() {
+    	return this.doReadAll(null);
+    }
+    public List<T> doReadAll(QueryBuilder query) {
 
         List<T> res = new ArrayList<>();
         int idx = 0;                //Idx for getAll
@@ -217,7 +227,12 @@ public class HtDataBaseReaderAndWriter<T extends IsEsObject> {
 
 
         do {
-            hits = db.doReadAllJsonData(idx, iterateLength, dataTypeName);
+        	if(query!=null) {
+        		hits=db.doReadByQueryJsonData(0, 99999, dataTypeName, query);
+        	}
+        	else {
+        		hits = db.doReadAllJsonData(idx, iterateLength, dataTypeName);
+        	}
             log.debug("Read: {} elements: {}  Failures: {}",dataTypeName,hits.length, mapper.getMappingFailures());
 
             T object;

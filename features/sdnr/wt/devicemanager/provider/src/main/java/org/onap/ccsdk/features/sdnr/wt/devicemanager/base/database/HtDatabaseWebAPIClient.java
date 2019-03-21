@@ -95,4 +95,8 @@ public class HtDatabaseWebAPIClient {
 
         return sresponse;
     }
+
+	public void insertEntry(String index, String type, JSONObject data) throws IOException {
+		this.sendRequest(String.format("/%s/%s/", index,type), "POST", data);
+	}
 }

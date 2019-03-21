@@ -101,9 +101,11 @@ public class NetconfTimeStamp {
      * @return String with Date in NETCONF/YANG Format Version 1.0.
      */
     public String getTimeStampAsNetconfString() {
-        return getRightFormattedDate(new Date().getTime());
+        return this.getTimeStampAsNetconfString(new Date().getTime());
     }
-
+    public String getTimeStampAsNetconfString(long millis) {
+    	return getRightFormattedDate(millis);
+	}
     /**
      * Get actual timestamp as NETCONF specific type NETCONF/YANG 1.0 Format in GMT
      *
@@ -251,5 +253,7 @@ public class NetconfTimeStamp {
             return dateFormat;
         }
     }
+
+	
 
 }
