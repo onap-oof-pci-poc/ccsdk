@@ -33,6 +33,8 @@ import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database.HtDataBaseRea
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database.HtDatabaseClientAbstract;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database.HtDatabaseNode;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.util.NetconfTimeStamp;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.HtDevicemanagerConfiguration;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.IConfigChangedListener;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.EsConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,20 +51,40 @@ public class IndexCleanService implements AutoCloseable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(IndexCleanService.class);
 	
-	private final EsConfig config;
+	private EsConfig config;
 	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 	private final HtDataBaseReaderAndWriter<EsObject> enventlogRW;
 	private final HtDataBaseReaderAndWriter<EsObject> faultlogRW;
 	private final HtDataBaseReaderAndWriter<EsObject> logRW;
+	private final HtDevicemanagerConfiguration htconfig;
+	private final IConfigChangedListener configChangedListener = new IConfigChangedListener() {
+		
+		@Override
+		public void onConfigChanged() {
+			LOG.debug("config changed. reninit timer");
+			IndexCleanService.this.config=EsConfig.reload();
+			IndexCleanService.this.reinit();
+		}
+	};
     
-	public IndexCleanService(EsConfig config,HtDatabaseNode htDatabase) {
-		this.config = config;
+	public IndexCleanService(HtDevicemanagerConfiguration config,HtDatabaseNode htDatabase) {
+		this.config = config.getEs();
+		this.htconfig=config;
+		this.htconfig.registerConfigChangedListener(this.configChangedListener );
 		this.enventlogRW=new HtDataBaseReaderAndWriter<>(new HtDatabaseClientAbstract(INDEX_EVENTSERVICE_INDEX,htDatabase), EVENTLOG_ESDATATYPENAME, EsObject.class);
 		this.faultlogRW=new HtDataBaseReaderAndWriter<>(new HtDatabaseClientAbstract(INDEX_EVENTSERVICE_INDEX,htDatabase), FAULTLOG_ESDATATYPENAME, EsObject.class);
 		this.logRW=new HtDataBaseReaderAndWriter<>(new HtDatabaseClientAbstract(IndexMwtnService.INDEX,htDatabase), LOG_ESDATATYPENAME, EsObject.class);
+		this.reinit();
+	}
+
+	protected void reinit() {
 		if (this.config.getArchiveInterval() > 0) {
+			LOG.info("DBCleanService is turned on for entries older than {} seconds",this.config.getArchiveLimit());
 			this.scheduler.scheduleAtFixedRate(doClean, this.config.getArchiveInterval(),
 					this.config.getArchiveInterval(), TimeUnit.SECONDS);
+		}
+		else {
+			LOG.info("DBCleanService is turned off");
 		}
 	}
 
@@ -111,7 +133,7 @@ public class IndexCleanService implements AutoCloseable {
 		}
 	}
 
-	private boolean hasEntriesOlderThan(HtDataBaseReaderAndWriter<EsObject> dbrw,String field,long millis) {
+	protected boolean hasEntriesOlderThan(HtDataBaseReaderAndWriter<EsObject> dbrw,String field,long millis) {
 		
 		List<EsObject> results;
 		QueryBuilder query = new RangeQueryBuilder(field).lt(NetconfTimeStamp.getConverter().getTimeStampAsNetconfString(millis));
@@ -123,6 +145,7 @@ public class IndexCleanService implements AutoCloseable {
 
 	@Override
 	public void close() throws Exception {
+		this.htconfig.unregisterConfigChangedListener(this.configChangedListener);
 		this.scheduler.shutdown();
 	}
 

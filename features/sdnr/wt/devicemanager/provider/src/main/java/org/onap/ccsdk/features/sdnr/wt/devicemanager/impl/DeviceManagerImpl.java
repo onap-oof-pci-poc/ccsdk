@@ -188,7 +188,7 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
                 try {
                     this.configService = new IndexConfigService(htDatabase);
                     this.mwtnService = new IndexMwtnService(htDatabase);
-                    this.dbCleanService = new IndexCleanService(dbConfig,htDatabase);
+                    this.dbCleanService = new IndexCleanService(config,htDatabase);
                 } catch (Exception e) {
                     LOG.warn("Can not start ES access clients to provide database index config, mwtn. ", e);
                 }
