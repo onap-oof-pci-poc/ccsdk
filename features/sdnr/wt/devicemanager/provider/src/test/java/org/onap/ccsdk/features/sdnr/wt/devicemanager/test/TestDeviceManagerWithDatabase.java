@@ -144,18 +144,6 @@ public class TestDeviceManagerWithDatabase {
         }
     }
 
-    //@Test
-    public static void waitfordatabase() throws InterruptedException  {
-
-        System.out.println("Test1: Wait for database");
-        int timeout = DATABASETIMEOUTSECONDS;
-        while ( !deviceManager.isDatabaseInitializationFinished() && timeout-- > 0) {
-            System.out.println("Test1: "+timeout);
-            Thread.sleep(1000); //On second
-        }
-        System.out.println("Test1: database initialized");
-    }
-
     @Test
     public void test2() {
         System.out.println("Test2: slave mountpoint");
@@ -301,65 +289,76 @@ public class TestDeviceManagerWithDatabase {
     }
     @Test
     public void test7() {
-    	final int NUM=16;
-    	final int DAYS_FOR_REMOVAL=30+2;
-    	final long ARCHIVE_LIMIT_SEC=30*24*60*60;
-    	final long ARCHIVE_INTERVAL_SEC=10;
-    	File propFile = KARAF_ETC.resolve("devicemanager.properties").toFile();
-    	//setEsConfg
-    	TestDevMgrPropertiesFile.writeFile(propFile, getContent(ARCHIVE_LIMIT_SEC,ARCHIVE_INTERVAL_SEC));
-    	DBCleanServiceHelper helper=new DBCleanServiceHelper(DAYS_FOR_REMOVAL);
-    	IndexCleanService service = deviceManager.getDbCleanService();
-    	//create old data and check if the will be cleaned completely
-    	helper.loadOldData(NUM, NUM, NUM);
-    	long timeout=ARCHIVE_INTERVAL_SEC*2;
-    	while(timeout-->0) {
-    		sleep(1000);
-    		if(service.countOldEntries()<=0) {
-    			break;
-    		}
-    	}
-    	if(timeout==0) {
-    		fail("entries are not cleared completely as expected");
-    	}
-    	
-    	
-    	//create partial old and newer data and check that only half of all data are cleaned
-    	helper.loadHalfOldData(NUM,NUM,NUM);
-    	timeout=ARCHIVE_INTERVAL_SEC*2;
-    	while(timeout-->0) {
-    		sleep(1000);
-    		if(service.countOldEntries()<=NUM/2) {
-    			break;
-    		}
-    	}
-    	if(timeout==0) {
-    		fail("entries are not cleared exactly half as expected");
-    	}
-    	//create only newer data and check that nothing is cleaned
-    	helper.loadNewData(NUM,NUM,NUM);
-    	timeout=ARCHIVE_INTERVAL_SEC*2;
-    	while(timeout-->0) {
-    		sleep(1000);
-    		if(service.countOldEntries()<NUM) {
-    			break;
-    		}
-    	}
-    	if(timeout>0) {
-    		fail("some entries were removed");
-    	}
+        final int NUM=16;
+        final int DAYS_FOR_REMOVAL=30+2;
+        final long ARCHIVE_LIMIT_SEC=30*24*60*60;
+        final long ARCHIVE_INTERVAL_SEC=10;
+        File propFile = KARAF_ETC.resolve("devicemanager.properties").toFile();
+        //setEsConfg
+        TestDevMgrPropertiesFile.writeFile(propFile, getContent(ARCHIVE_LIMIT_SEC,ARCHIVE_INTERVAL_SEC));
+        DBCleanServiceHelper helper=new DBCleanServiceHelper(DAYS_FOR_REMOVAL);
+        IndexCleanService service = deviceManager.getDbCleanService();
+        //create old data and check if the will be cleaned completely
+        helper.loadOldData(NUM, NUM, NUM);
+        long timeout=ARCHIVE_INTERVAL_SEC*2;
+        while(timeout-- > 0) {
+            sleep(1000);
+            if(service.countOldEntries() <= 0) {
+                break;
+            }
+        }
+        if(timeout==0) {
+            fail("entries are not cleared completely as expected");
+        }
+
+
+        //create partial old and newer data and check that only half of all data are cleaned
+        helper.loadHalfOldData(NUM,NUM,NUM);
+        int numberOldEntries = waitForDeletion(service, ARCHIVE_INTERVAL_SEC*2, 3*NUM/2, "entries are not cleared exactly half as expected.");
+
+        //create only newer data and check that nothing is cleaned
+        helper.loadNewData(NUM,NUM,NUM);
+        waitForDeletion(service, ARCHIVE_INTERVAL_SEC*2, 3*NUM+numberOldEntries, "Some entries were removed, but should be.");
     }
-    
+
     //********************* Private
-    private static void sleep(int millis) {
-    	try {
-			Thread.sleep(millis);
-		} catch (InterruptedException e) {
-			LOG.warn(e.getMessage());
-			Thread.interrupted();
-		}
+
+    private int waitForDeletion(IndexCleanService service, long numberToCompare, long timeout, String faultMessage) {
+        int numberEntries = 0;
+        while(timeout-- > 0) {
+            sleep(1000);
+            numberEntries = service.countOldEntries();
+            if(numberEntries < numberToCompare) {
+                fail(faultMessage+" Timeout at:"+timeout+" Entries: "+service.countOldEntries());
+            }
+        }
+        return numberEntries;
     }
-    
+
+
+    private static void waitfordatabase() throws InterruptedException  {
+
+        System.out.println("Test1: Wait for database");
+        int timeout = DATABASETIMEOUTSECONDS;
+        while ( !deviceManager.isDatabaseInitializationFinished() && timeout-- > 0) {
+            System.out.println("Test1: "+timeout);
+            Thread.sleep(1000); //On second
+        }
+        System.out.println("Ddatabase initialized");
+    }
+
+
+
+
+    private static void sleep(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            LOG.warn(e.getMessage());
+            Thread.interrupted();
+        }
+    }
+
     private static void delete(Path etc) throws IOException {
         if (Files.exists(etc)) {
             System.out.println("Found and remove:"+etc.toString());
