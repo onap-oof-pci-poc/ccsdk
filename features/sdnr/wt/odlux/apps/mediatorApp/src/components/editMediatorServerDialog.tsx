@@ -49,14 +49,14 @@ const settings: { [key: string]: DialogSettings } = {
     readonly: true,
   },
   [EditMediatorServerDialogMode.AddMediatorServer]: {
-    dialogTitle: "Add Medator Server",
+    dialogTitle: "Add Mediator Server",
     dialogDescription: "",
     applyButtonText: "Add",
     cancelButtonText: "Cancel",
     readonly: false,
   },
   [EditMediatorServerDialogMode.EditMediatorServer]: {
-    dialogTitle: "Edit Medator Server",
+    dialogTitle: "Edit Mediator Server",
     dialogDescription: "",
     applyButtonText: "Update",
     cancelButtonText: "Cancel",
@@ -97,7 +97,7 @@ class EditMediatorServerDialogComponent extends React.Component<EditMediatorServ
           <DialogContentText>
             { setting.dialogDescription }
           </DialogContentText>
-          <TextField disabled spellCheck={false} autoFocus margin="dense" id="id" label="Id" type="text" fullWidth value={ this.state._id } onChange={(event)=>{ this.setState({_id: event.target.value}); } } />
+          {/* <TextField disabled spellCheck={false} autoFocus margin="dense" id="id" label="Id" type="text" fullWidth value={ this.state._id } onChange={(event)=>{ this.setState({_id: event.target.value}); } } /> */}
           <TextField disabled={ setting.readonly } spellCheck={false} margin="dense" id="name" label="Name" type="text" fullWidth value={ this.state.name } onChange={(event)=>{ this.setState({name: event.target.value}); } }/>
           <TextField disabled={ setting.readonly } spellCheck={false} margin="dense" id="url" label="Url" type="text" fullWidth value={ this.state.url } onChange={(event)=>{ this.setState({url: event.target.value}); } }/>
          </DialogContent>
