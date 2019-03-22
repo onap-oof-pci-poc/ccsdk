@@ -163,14 +163,14 @@ public class TestDevMgrPropertiesFile {
     }
 
 
-    private void sleep(int milliseconds) {
+    private static void sleep(int milliseconds) {
         try {
             Thread.sleep(milliseconds);
         } catch (InterruptedException e) {
         }
     }
 
-    private void writeFile(File f, String content) {
+    public static void writeFile(File f, String content) {
          try {
             Files.asCharSink(f, StandardCharsets.UTF_8).write(content);
         } catch (IOException e) {

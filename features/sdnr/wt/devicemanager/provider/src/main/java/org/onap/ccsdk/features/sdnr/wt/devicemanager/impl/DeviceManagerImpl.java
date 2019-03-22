@@ -118,7 +118,9 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
     private int refreshCounter = 0;
     private AkkaConfig akkaConfig;
 	private IndexCleanService dbCleanService;
-
+	public IndexCleanService getDbCleanService() {
+		return this.dbCleanService;
+	}
     // Blueprint 1
     public DeviceManagerImpl() {
         LOG.info("Creating provider for {}", APPLICATION_NAME);

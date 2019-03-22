@@ -40,11 +40,13 @@ import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.Resource
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.container.Capabilities;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.DeviceManagerImpl;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.DeviceManagerService.Action;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.index.impl.IndexCleanService;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.DataBrokerNetconfMock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.MountPointMock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.MountPointServiceMock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.NotificationPublishServiceMock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.RpcProviderRegistryMock;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.DBCleanServiceHelper;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.ReadOnlyTransactionMountpoint1211Mock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.ReadOnlyTransactionMountpoint1211pMock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.ReadOnlyTransactionMountpoint12Mock;
@@ -113,7 +115,7 @@ public class TestDeviceManagerWithDatabase {
         System.out.println("Initialization status: "+deviceManager.isDevicemanagerInitializationOk());
         assertTrue("Devicemanager not initialized: "+msg, deviceManager.isDevicemanagerInitializationOk());
         System.out.println("Initialization done");
-
+        waitfordatabase();
     }
 
     @AfterClass
@@ -142,8 +144,8 @@ public class TestDeviceManagerWithDatabase {
         }
     }
 
-    @Test
-    public void test1() throws InterruptedException  {
+    //@Test
+    public static void waitfordatabase() throws InterruptedException  {
 
         System.out.println("Test1: Wait for database");
         int timeout = DATABASETIMEOUTSECONDS;
@@ -297,9 +299,67 @@ public class TestDeviceManagerWithDatabase {
         System.out.println("Test6: Done");
 
     }
-
+    @Test
+    public void test7() {
+    	final int NUM=16;
+    	final int DAYS_FOR_REMOVAL=30+2;
+    	final long ARCHIVE_LIMIT_SEC=30*24*60*60;
+    	final long ARCHIVE_INTERVAL_SEC=10;
+    	File propFile = KARAF_ETC.resolve("devicemanager.properties").toFile();
+    	//setEsConfg
+    	TestDevMgrPropertiesFile.writeFile(propFile, getContent(ARCHIVE_LIMIT_SEC,ARCHIVE_INTERVAL_SEC));
+    	DBCleanServiceHelper helper=new DBCleanServiceHelper(DAYS_FOR_REMOVAL);
+    	IndexCleanService service = deviceManager.getDbCleanService();
+    	//create old data and check if the will be cleaned completely
+    	helper.loadOldData(NUM, NUM, NUM);
+    	long timeout=ARCHIVE_INTERVAL_SEC*2;
+    	while(timeout-->0) {
+    		sleep(1000);
+    		if(service.countOldEntries()<=0) {
+    			break;
+    		}
+    	}
+    	if(timeout==0) {
+    		fail("entries are not cleared completely as expected");
+    	}
+    	
+    	
+    	//create partial old and newer data and check that only half of all data are cleaned
+    	helper.loadHalfOldData(NUM,NUM,NUM);
+    	timeout=ARCHIVE_INTERVAL_SEC*2;
+    	while(timeout-->0) {
+    		sleep(1000);
+    		if(service.countOldEntries()<=NUM/2) {
+    			break;
+    		}
+    	}
+    	if(timeout==0) {
+    		fail("entries are not cleared exactly half as expected");
+    	}
+    	//create only newer data and check that nothing is cleaned
+    	helper.loadNewData(NUM,NUM,NUM);
+    	timeout=ARCHIVE_INTERVAL_SEC*2;
+    	while(timeout-->0) {
+    		sleep(1000);
+    		if(service.countOldEntries()<NUM) {
+    			break;
+    		}
+    	}
+    	if(timeout>0) {
+    		fail("some entries were removed");
+    	}
+    }
+    
     //********************* Private
-
+    private static void sleep(int millis) {
+    	try {
+			Thread.sleep(millis);
+		} catch (InterruptedException e) {
+			LOG.warn(e.getMessage());
+			Thread.interrupted();
+		}
+    }
+    
     private static void delete(Path etc) throws IOException {
         if (Files.exists(etc)) {
             System.out.println("Found and remove:"+etc.toString());
@@ -316,6 +376,56 @@ public class TestDeviceManagerWithDatabase {
         if (!f.delete()) {
             throw new FileNotFoundException("Failed to delete file: " + f);
         }
+    }
+    private String getContent(long archiveLimit,long archiveInterval) {
+        return "[dcae]\n" +
+                "dcaeUserCredentials=admin:admin\n" +
+                "dcaeUrl=http://localhost:45/abc\n" +
+                "dcaeHeartbeatPeriodSeconds=120\n" +
+                "dcaeTestCollector=no\n" +
+                "\n" +
+                "[aots]\n" +
+                "userPassword=passwd\n" +
+                "soapurladd=off\n" +
+                "soapaddtimeout=10\n" +
+                "soapinqtimeout=20\n" +
+                "userName=user\n" +
+                "inqtemplate=inqreq.tmpl.xml\n" +
+                "assignedto=userid\n" +
+                "addtemplate=addreq.tmpl.xml\n" +
+                "severitypassthrough=critical,major,minor,warning\n" +
+                "systemuser=user\n" +
+                "prt-offset=1200\n" +
+                "soapurlinq=off\n" +
+                "#smtpHost=\n" +
+                "#smtpPort=\n" +
+                "#smtpUsername=\n" +
+                "#smtpPassword=\n" +
+                "#smtpSender=\n" +
+                "#smtpReceivers=\n" +
+                "\n" +
+                "[es]\n" +
+                "esCluster=sendateodl5\n" +
+                "esArchiveLimit="+archiveLimit+"\n" +
+                "esArchiveInterval="+archiveInterval+"\n" +
+                "\n" +
+                "[aai]\n" +
+                "#keep comment\n" +
+                "aaiHeaders=[\"X-TransactionId: 9999\"]\n" +
+                "aaiUrl=off\n" +
+                "aaiUserCredentials=AAI:AAI\n" +
+                "aaiDeleteOnMountpointRemove=true\n" +
+                "aaiTrustAllCerts=false\n" +
+                "aaiApiVersion=aai/v13\n" +
+                "aaiPropertiesFile=aaiclient.properties\n" +
+                "\n" +
+                "[pm]\n" +
+                "pmCluster=sendateodl5\n" +
+                "pmEnabled=true\n" +
+                "[toggleAlarmFilter]\n" +
+                "taEnabled=false\n" +
+                "taDelay=5555\n" +
+                "";
     }
 
 

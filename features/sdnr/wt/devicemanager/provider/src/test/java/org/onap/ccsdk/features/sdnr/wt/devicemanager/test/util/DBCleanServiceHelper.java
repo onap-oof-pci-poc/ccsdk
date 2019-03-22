@@ -15,7 +15,7 @@
  * the License.
  * ============LICENSE_END==========================================================================
  ******************************************************************************/
-package org.onap.ccsdk.features.sdnr.wt.devicemanager.test;
+package org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util;
 
 import static org.junit.Assert.fail;
 
@@ -24,11 +24,10 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.json.JSONObject;
-import org.junit.Test;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database.HtDatabaseWebAPIClient;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.util.NetconfTimeStamp;
 
-public class TestDBCleanService {
+public class DBCleanServiceHelper {
 
 	private static final String NODENAME_1 = "node1";
 	private static final String OBJECTID_1 = "obj1";
@@ -37,28 +36,47 @@ public class TestDBCleanService {
 	private static final String SEVERITY_1 = "critical";
 	private static final String COMPONENT_1 = "mwtnBrowserCtrl";
 	private static final String MESSAGE_1 = "mwtnBrowserCtrl started";
-
-	@Test
-	public void test() {
+	private final int daysForDeprecatedData;
+	
+	public DBCleanServiceHelper(int daysForDeprecatedData) {
+		this.daysForDeprecatedData=daysForDeprecatedData;
+	}
+	public void loadOldData(int numEventlog,int numFaultlog,int numLog) {
+		Calendar cal=Calendar.getInstance();
+		cal.setTimeInMillis(System.currentTimeMillis()-(1000*60*60*24*this.daysForDeprecatedData));
+		this.loadData(numEventlog, numFaultlog, numLog, cal);
+	}
+		
+	public void loadHalfOldData(int numEventlog,int numFaultlog,int numLog) {
+		Calendar cal=Calendar.getInstance();
+		cal.setTimeInMillis(System.currentTimeMillis()-(1000*60*60*24*this.daysForDeprecatedData));
+		this.loadData(numEventlog/2, numFaultlog/2, numLog/2, cal);
+		cal.setTimeInMillis(System.currentTimeMillis()-(1000*60*60*12*this.daysForDeprecatedData));
+		this.loadData(numEventlog/2, numFaultlog/2, numLog/2, cal);
+	}
+	public void loadNewData(int numEventlog,int numFaultlog,int numLog) {
+		Calendar cal=Calendar.getInstance();
+		cal.setTimeInMillis(System.currentTimeMillis()-(1000*60*60*12*this.daysForDeprecatedData));
+		this.loadData(numEventlog, numFaultlog, numLog, cal);
+	}
+	private void loadData(int numEventlog,int numFaultlog,int numLog, Calendar base) {
 		HtDatabaseWebAPIClient webClient = new HtDatabaseWebAPIClient();
-		Calendar cal = Calendar.getInstance();
+		Calendar cal = base;
 
-		int x = 12, i = 0, hrs = cal.get(Calendar.HOUR_OF_DAY), m = cal.get(Calendar.MONTH),
+		int i = 0, hrs = cal.get(Calendar.HOUR_OF_DAY), m = cal.get(Calendar.MONTH),
 				d = cal.get(Calendar.DAY_OF_MONTH), y = cal.get(Calendar.YEAR);
 		try {
-			while (x-- > 0) {
+			while (numEventlog-- > 0) {
 				webClient.insertEntry("sdnevents", "eventlog",
 						this.getEventObject(NODENAME_1, i++, this.getDate(y, 1, 1, hrs++, 0), OBJECTID_1, EVENTTYPE_1));
 			}
 			hrs = 0;
-			x = 12;
-			while (x-- > 0) {
+			while (numFaultlog-- > 0) {
 				webClient.insertEntry("sdnevents", "faultlog", this.getFaultLogObject(NODENAME_1, i++,
 						this.getDate(2019, 3, 21, hrs++, 0), OBJECTID_1, PROBLEM_1, SEVERITY_1, EVENTTYPE_1));
 			}
 			hrs = 0;
-			x = 12;
-			while (x-- > 0) {
+			while (numLog-- > 0) {
 				webClient.insertEntry("mwtn", "log",
 						this.getLogObject(COMPONENT_1, MESSAGE_1, this.getDate(y, m, d++, hrs++, 0), EVENTTYPE_1));
 			}

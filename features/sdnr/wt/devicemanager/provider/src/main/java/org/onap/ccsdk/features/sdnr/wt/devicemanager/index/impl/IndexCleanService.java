@@ -77,7 +77,7 @@ public class IndexCleanService implements AutoCloseable {
 		this.reinit();
 	}
 
-	protected void reinit() {
+	private void reinit() {
 		if (this.config.getArchiveInterval() > 0) {
 			LOG.info("DBCleanService is turned on for entries older than {} seconds",this.config.getArchiveLimit());
 			this.scheduler.scheduleAtFixedRate(doClean, this.config.getArchiveInterval(),
@@ -96,19 +96,19 @@ public class IndexCleanService implements AutoCloseable {
 			long time = System.currentTimeMillis()-IndexCleanService.this.config.getArchiveLimit()*1000;
 			LOG.debug("cleaning logs from entries older than {}",new Date(time).toString());
 			
-			if (IndexCleanService.this.hasEntriesOlderThan(IndexCleanService.this.enventlogRW,EVENTLOG_FIELD_TIMESTAMP,time)) {
+			if (IndexCleanService.this.hasEntriesOlderThan(IndexCleanService.this.enventlogRW,EVENTLOG_FIELD_TIMESTAMP,time)>0) {
 				IndexCleanService.this.removeEntriesOlderThan(IndexCleanService.this.enventlogRW,EVENTLOG_FIELD_TIMESTAMP,time);
 			}
 			else {
 				LOG.debug("no items to remove in {}",IndexCleanService.this.enventlogRW.getDataTypeName());
 			}
-			if (IndexCleanService.this.hasEntriesOlderThan(IndexCleanService.this.faultlogRW,FAULTLOG_FIELD_TIMESTAMP,time)) {
+			if (IndexCleanService.this.hasEntriesOlderThan(IndexCleanService.this.faultlogRW,FAULTLOG_FIELD_TIMESTAMP,time)>0) {
 				IndexCleanService.this.removeEntriesOlderThan(IndexCleanService.this.faultlogRW,FAULTLOG_FIELD_TIMESTAMP,time);
 			}
 			else {
 				LOG.debug("no items to remove in {}",IndexCleanService.this.faultlogRW.getDataTypeName());
 			}
-			if (IndexCleanService.this.hasEntriesOlderThan(IndexCleanService.this.logRW,LOG_FIELD_TIMESTAMP,time)) {
+			if (IndexCleanService.this.hasEntriesOlderThan(IndexCleanService.this.logRW,LOG_FIELD_TIMESTAMP,time)>0) {
 				IndexCleanService.this.removeEntriesOlderThan(IndexCleanService.this.logRW,LOG_FIELD_TIMESTAMP,time);
 			}
 			else {
@@ -121,7 +121,14 @@ public class IndexCleanService implements AutoCloseable {
 
 		}
 	};
-
+	public int countOldEntries() {
+		int cnt=0;
+		long time = System.currentTimeMillis()-IndexCleanService.this.config.getArchiveLimit()*1000;
+		cnt+=this.hasEntriesOlderThan(IndexCleanService.this.enventlogRW,EVENTLOG_FIELD_TIMESTAMP,time);
+		cnt+=this.hasEntriesOlderThan(IndexCleanService.this.faultlogRW,FAULTLOG_FIELD_TIMESTAMP,time);
+		cnt+=this.hasEntriesOlderThan(IndexCleanService.this.logRW,LOG_FIELD_TIMESTAMP,time);
+		return cnt;
+	}
 	private void removeEntriesOlderThan(HtDataBaseReaderAndWriter<EsObject> dbrw, String field, long millis) {
 		QueryBuilder query = new RangeQueryBuilder(field).lt(NetconfTimeStamp.getConverter().getTimeStampAsNetconfString(millis));
 		int r=dbrw.doRemoveByQuery(query);
@@ -133,14 +140,14 @@ public class IndexCleanService implements AutoCloseable {
 		}
 	}
 
-	protected boolean hasEntriesOlderThan(HtDataBaseReaderAndWriter<EsObject> dbrw,String field,long millis) {
+	private int hasEntriesOlderThan(HtDataBaseReaderAndWriter<EsObject> dbrw,String field,long millis) {
 		
 		List<EsObject> results;
 		QueryBuilder query = new RangeQueryBuilder(field).lt(NetconfTimeStamp.getConverter().getTimeStampAsNetconfString(millis));
 		results=dbrw.doReadAll(query );
 		if(results!=null && results.size()>0)
-			return true;
-		return false;
+			return results.size();
+		return 0;
 	}
 
 	@Override
