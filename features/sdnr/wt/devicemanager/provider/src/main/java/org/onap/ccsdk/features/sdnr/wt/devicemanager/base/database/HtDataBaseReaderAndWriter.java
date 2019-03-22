@@ -228,6 +228,7 @@ public class HtDataBaseReaderAndWriter<T extends IsEsObject> {
 
         do {
         	if(query!=null) {
+        		log.trace("read data in {} {} with query {}",db.getNetworkIndex(),dataTypeName,query);
         		hits=db.doReadByQueryJsonData(0, 99999, dataTypeName, query);
         	}
         	else {

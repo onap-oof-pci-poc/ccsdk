@@ -22,6 +22,7 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import org.json.JSONObject;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database.HtDatabaseWebAPIClient;
@@ -36,27 +37,30 @@ public class DBCleanServiceHelper {
 	private static final String SEVERITY_1 = "critical";
 	private static final String COMPONENT_1 = "mwtnBrowserCtrl";
 	private static final String MESSAGE_1 = "mwtnBrowserCtrl started";
-	private final int daysForDeprecatedData;
+	private final long daysForDeprecatedData_ms;
 	
 	public DBCleanServiceHelper(int daysForDeprecatedData) {
-		this.daysForDeprecatedData=daysForDeprecatedData;
+		this.daysForDeprecatedData_ms=daysForDeprecatedData;
 	}
 	public void loadOldData(int numEventlog,int numFaultlog,int numLog) {
-		Calendar cal=Calendar.getInstance();
-		cal.setTimeInMillis(System.currentTimeMillis()-(1000*60*60*24*this.daysForDeprecatedData));
+		Calendar cal=Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		long now=System.currentTimeMillis();
+		System.out.println(new Date(now).toString());
+		cal.setTimeInMillis(now-(1000*60*60*24*this.daysForDeprecatedData_ms));
+		System.out.println(cal.getTime().toString());
 		this.loadData(numEventlog, numFaultlog, numLog, cal);
 	}
 		
 	public void loadHalfOldData(int numEventlog,int numFaultlog,int numLog) {
 		Calendar cal=Calendar.getInstance();
-		cal.setTimeInMillis(System.currentTimeMillis()-(1000*60*60*24*this.daysForDeprecatedData));
+		cal.setTimeInMillis(System.currentTimeMillis()-(1000*60*60*24*this.daysForDeprecatedData_ms));
 		this.loadData(numEventlog/2, numFaultlog/2, numLog/2, cal);
-		cal.setTimeInMillis(System.currentTimeMillis()-(1000*60*60*12*this.daysForDeprecatedData));
+		cal.setTimeInMillis(System.currentTimeMillis()-(1000*60*60*12*this.daysForDeprecatedData_ms));
 		this.loadData(numEventlog/2, numFaultlog/2, numLog/2, cal);
 	}
 	public void loadNewData(int numEventlog,int numFaultlog,int numLog) {
 		Calendar cal=Calendar.getInstance();
-		cal.setTimeInMillis(System.currentTimeMillis()-(1000*60*60*12*this.daysForDeprecatedData));
+		cal.setTimeInMillis(System.currentTimeMillis()-(1000*60*60*12*this.daysForDeprecatedData_ms));
 		this.loadData(numEventlog, numFaultlog, numLog, cal);
 	}
 	private void loadData(int numEventlog,int numFaultlog,int numLog, Calendar base) {
@@ -68,22 +72,22 @@ public class DBCleanServiceHelper {
 		try {
 			while (numEventlog-- > 0) {
 				webClient.insertEntry("sdnevents", "eventlog",
-						this.getEventObject(NODENAME_1, i++, this.getDate(y, 1, 1, hrs++, 0), OBJECTID_1, EVENTTYPE_1));
+						this.getEventObject(NODENAME_1, i++, this.getDate(y, m, d, hrs++, 0), OBJECTID_1, EVENTTYPE_1));
 			}
 			hrs = 0;
 			while (numFaultlog-- > 0) {
 				webClient.insertEntry("sdnevents", "faultlog", this.getFaultLogObject(NODENAME_1, i++,
-						this.getDate(2019, 3, 21, hrs++, 0), OBJECTID_1, PROBLEM_1, SEVERITY_1, EVENTTYPE_1));
+						this.getDate(y, m, d, hrs++, 0), OBJECTID_1, PROBLEM_1, SEVERITY_1, EVENTTYPE_1));
 			}
 			hrs = 0;
 			while (numLog-- > 0) {
 				webClient.insertEntry("mwtn", "log",
-						this.getLogObject(COMPONENT_1, MESSAGE_1, this.getDate(y, m, d++, hrs++, 0), EVENTTYPE_1));
+						this.getLogObject(COMPONENT_1, MESSAGE_1, this.getDate(y, m, d, hrs++, 0), EVENTTYPE_1));
 			}
 
 		} catch (IOException e) {
 			e.printStackTrace();
-			fail(e.getMessage());
+			fail("problem writing data into database through webapi: "+ e.getMessage());
 		}
 	}
 

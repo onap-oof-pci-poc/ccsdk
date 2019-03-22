@@ -287,6 +287,7 @@ public class TestDeviceManagerWithDatabase {
         System.out.println("Test6: Done");
 
     }
+    
     @Test
     public void test7() {
         final int NUM=16;
