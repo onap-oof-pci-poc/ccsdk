@@ -15,34 +15,69 @@
  * the License.
  * ============LICENSE_END==========================================================================
  ******************************************************************************/
-package org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.database.types;
+package org.onap.ccsdk.features.sdnr.wt.devicemanager.index.database.types;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database.EsObject;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.MwtNotificationBase;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.InternalDateAndTime;
 
 /**
- *
- * Event from Network to be recorded in the database
- *
+ * Event log, used by Odlux client.
+ * Not used for writing any data by devicemanager.
+ * Type introduced to implement IndexCleanService
  */
 
-public class EsEventBase extends EsObject {
+public class EsEventOdluxLog extends EsObject {
 
-    public static final String ESDATATYPENAME = "eventlog";
+    public static final String ESDATATYPENAME = "log";
 
-    private static final String EVENTLOG_FIELD_TIMESTAMP = "event.timeStamp";
+    private static final String LOG_FIELD_TIMESTAMP = "timestamp";
 
+    private String type;
+    private String component;
+    private String message;
+    private String timestamp;
 
-    private MwtNotificationBase event;
-
-    public MwtNotificationBase getProblem() {
-        return event;
+    /**
+     * For jackson
+     */
+    protected EsEventOdluxLog() {
+    }
+    /**
+     * Constructor
+     * @param type string
+     * @param component string
+     * @param message string
+     * @param timestamp string with netconf format string
+     */
+    public EsEventOdluxLog(String type, String component, String message, InternalDateAndTime timestamp) {
+        super();
+        this.type = type;
+        this.component = component;
+        this.message = message;
+        this.timestamp = timestamp.getValue();
     }
 
-    public void setProblem(MwtNotificationBase event) {
-        this.event = event;
+    @JsonProperty("type")
+    public String getType() {
+        return type;
+    }
+
+    @JsonProperty("component")
+    public String getComponent() {
+        return component;
+    }
+
+    @JsonProperty("message")
+    public String getMessage() {
+        return message;
+    }
+
+    @JsonProperty(LOG_FIELD_TIMESTAMP)
+    public String getTimestamp() {
+        return timestamp;
     }
 
     /**
@@ -51,7 +86,7 @@ public class EsEventBase extends EsObject {
      * @return QueryBuilder for older elements related to timestamp
      */
     public static QueryBuilder getQueryForTimeStamp(String netconfTimeStamp) {
-      return new RangeQueryBuilder(EVENTLOG_FIELD_TIMESTAMP).lt(netconfTimeStamp);
+      return new RangeQueryBuilder(LOG_FIELD_TIMESTAMP).lt(netconfTimeStamp);
     }
 
  }

@@ -18,7 +18,6 @@
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf;
 
 import com.google.common.base.Optional;
-import com.google.common.util.concurrent.CheckedFuture;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.container.Capabilities;
@@ -50,7 +49,6 @@ public class ONFCoreNetworkElementFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(ONFCoreNetworkElementFactory.class);
 
-    @SuppressWarnings("deprecation")
     public static @Nonnull ONFCoreNetworkElementRepresentation create(String mountPointNodeName, DataBroker dataBroker,
             WebSocketServiceClient webSocketService, HtDatabaseEventsService databaseService,
             InstanceIdentifier<Node> instanceIdentifier, DataBroker mountpointDataBroker, ProviderClient dcaeProvider,
@@ -59,7 +57,6 @@ public class ONFCoreNetworkElementFactory {
 
         ONFCoreNetworkElementRepresentation res = null;
         try (ReadOnlyTransaction tx = dataBroker.newReadOnlyTransaction();){
-            CheckedFuture<Optional<Node>, ReadFailedException> checkedFuture = tx.read(LogicalDatastoreType.OPERATIONAL, instanceIdentifier);
             Optional<Node> nodeOption = tx.read(LogicalDatastoreType.OPERATIONAL, instanceIdentifier).checkedGet();
             if (nodeOption.isPresent()) {
                 Node node = nodeOption.get();

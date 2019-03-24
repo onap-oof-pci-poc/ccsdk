@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.aaiconnector.impl.AaiProviderClient;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.archiveservice.ArchivCleanService;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database.HtDatabaseNode;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.ONFCoreNetworkElementFactory;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.ONFCoreNetworkElementRepresentation;
@@ -42,7 +43,6 @@ import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.ProblemNotificatio
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.WebSocketServiceClient;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.WebSocketServiceClientDummyImpl;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.WebSocketServiceClientImpl2;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.index.impl.IndexCleanService;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.index.impl.IndexConfigService;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.index.impl.IndexMwtnService;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.index.impl.IndexUpdateService;
@@ -117,10 +117,8 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
     private Thread threadDoClearCurrentFaultByNodename = null;
     private int refreshCounter = 0;
     private AkkaConfig akkaConfig;
-	private IndexCleanService dbCleanService;
-	public IndexCleanService getDbCleanService() {
-		return this.dbCleanService;
-	}
+    private ArchivCleanService archiveCleanService;
+
     // Blueprint 1
     public DeviceManagerImpl() {
         LOG.info("Creating provider for {}", APPLICATION_NAME);
@@ -150,11 +148,11 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
         this.rpcApiService = new DeviceManagerApiServiceImpl(rpcProviderRegistry);
         // Get configuration
         HtDevicemanagerConfiguration config = HtDevicemanagerConfiguration.getConfiguration();
-        this.akkaConfig = null;
         try {
             this.akkaConfig = AkkaConfig.load();
             LOG.debug("akka.conf loaded: " + akkaConfig.toString());
         } catch (Exception e1) {
+            this.akkaConfig = null;
             LOG.warn("problem loading akka.conf: " + e1.getMessage());
         }
         GeoConfig geoConfig = null;
@@ -184,20 +182,18 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
             LOG.error("Can only run with local database. Stop initialization of devicemanager.");
         } else {
             // init Database Values only if singleNode or clusterMember=1
-            if (akkaConfig == null || akkaConfig.isSingleNode() || akkaConfig != null && akkaConfig.isCluster()
-                    && akkaConfig.getClusterConfig().getRoleMemberIndex() == 1) {
+            if (akkaConfig == null || akkaConfig.isClusterAndFirstNode()) {
                 // Create DB index if not existing and if database is running
                 try {
                     this.configService = new IndexConfigService(htDatabase);
                     this.mwtnService = new IndexMwtnService(htDatabase);
-                    this.dbCleanService = new IndexCleanService(config,htDatabase);
                 } catch (Exception e) {
                     LOG.warn("Can not start ES access clients to provide database index config, mwtn. ", e);
                 }
             }
             // start service for device maintenance service
             this.maintenanceService = new MaintenanceServiceImpl(htDatabase);
-            
+
             // Websockets
             try {
                 this.webSocketService = new WebSocketServiceClientImpl2(rpcProviderRegistry);
@@ -216,9 +212,12 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
                 LOG.warn("No configuration available. Don't start event manager");
             } else {
                 this.databaseClientEvents = new HtDatabaseEventsService(htDatabase);
+                //Make sure to start for one cluster node only
+                if (akkaConfig == null || akkaConfig.isClusterAndFirstNode() || akkaConfig.isSingleNode()) {
+                    this.archiveCleanService = new ArchivCleanService(config, databaseClientEvents, mwtnService);
+                }
 
                 String myDbKeyNameExtended = MYDBKEYNAMEBASE + "-" + dbConfig.getCluster();
-
 
                 this.odlEventListener = new ODLEventListener(myDbKeyNameExtended, webSocketService,
                         databaseClientEvents, dcaeProviderClient, aotsMProvider, maintenanceService);
@@ -281,7 +280,7 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
         close(maintenanceService);
         close(rpcApiService);
         close(notificationDelayService);
-        close(dbCleanService);
+        close(archiveCleanService);
         LOG.info("DeviceManagerImpl closing done");
     }
 
@@ -511,6 +510,18 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
     /*-------------------------------------------------------------------------------------------
      * Functions
      */
+
+    public ArchivCleanService getArchiveCleanService() {
+        return this.archiveCleanService;
+    }
+
+    public HtDatabaseEventsService getDatabaseClientEvents() {
+        return databaseClientEvents;
+    }
+
+    public IndexMwtnService getMwtnService() {
+        return mwtnService;
+    }
 
     /**
      * Async RPC Interface implementation

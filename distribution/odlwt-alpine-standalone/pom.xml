@@ -39,7 +39,7 @@
     <sdnr.wt.repo>mvn:org.onap.ccsdk.features.sdnr.wt/sdnr-wt-feature-aggregator/${project.version}/xml/features</sdnr.wt.repo>
     <odl.repolist.features>${sdnr.wt.repo}</odl.repolist.features>
     <SDNR_ODL_SINGLE_NODE>odl-mdsal-all,odl-netconf-topology,odl-netconf-connector</SDNR_ODL_SINGLE_NODE>
-    <SDNR_ODL_CLUSTER_NODE>odl-mdsal-clustering,odl-netconf-clustered-topology</SDNR_ODL_CLUSTER_NODE>
+    <SDNR_ODL_CLUSTER_NODE>odl-mdsal-clustering,odl-netconf-clustered-topology,odl-netconf-connector</SDNR_ODL_CLUSTER_NODE>
     <odl.boot.features.odl>${SDNR_ODL_SINGLE_NODE},odl-mdsal-apidocs,odl-daexim-all</odl.boot.features.odl>
     <ccsdk.odl.features>sdnr-wt-feature-aggregator</ccsdk.odl.features>
     <odl.boot.features.all>${odl.boot.features.odl},${ccsdk.odl.features}</odl.boot.features.all>

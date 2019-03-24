@@ -255,7 +255,7 @@ public class Resources {
     }
 
     private static Enumeration<URL> getResourceFolderFiles(String folder) {
-        LOG.info("Get ressource: {}", folder);
+        LOG.debug("Get resource: {}", folder);
         URL url = getUrlForRessource(folder);
         String path = url.getPath();
         File[] files = new File(path).listFiles();

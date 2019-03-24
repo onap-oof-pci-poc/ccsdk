@@ -47,17 +47,18 @@ import org.slf4j.LoggerFactory;
 public class ODLEventListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(ODLEventListener.class);
+
     private static final NetconfTimeStamp NETCONFTIME_CONVERTER = NetconfTimeStamp.getConverter();
 
-
     private final String ownKeyName;
-
     private final WebSocketServiceClient webSocketService;
     private final HtDatabaseEventsService databaseService;
     private final ProviderClient dcaeProvider;
     private final ProviderClient aotsMProvider;
-    private int eventNumber;
     private final MaintenanceService maintenanceService;
+
+    private int eventNumber;
+
     /*---------------------------------------------------------------
      * Construct
      */

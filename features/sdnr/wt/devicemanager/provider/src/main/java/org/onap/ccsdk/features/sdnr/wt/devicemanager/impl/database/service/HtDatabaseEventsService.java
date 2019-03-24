@@ -18,23 +18,24 @@
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.database.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.Nonnull;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.archiveservice.ArchiveCleanProvider;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database.HtDataBaseReaderAndWriter;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database.HtDatabaseClientAbstract;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database.HtDatabaseNode;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database.IndexClientBuilder;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.ONFCoreNetworkElement12Equipment;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.util.NetconfTimeStamp;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.database.types.EsEventBase;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.database.types.EsFaultCurrent;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.database.types.EsFaultLog;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.database.types.equipment.EsEquipment;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.database.types.equipment.EsToplevelEquipment;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.database.types.equipment.ExtendedEquipment;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.AttributeValueChangedNotificationXml;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.MwtNotificationBase;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.ObjectCreationNotificationXml;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.ObjectDeletionNotificationXml;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.ProblemNotificationXml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,8 +45,10 @@ import org.slf4j.LoggerFactory;
  *
  * @author herbert
  */
-public class HtDatabaseEventsService {
+public class HtDatabaseEventsService implements ArchiveCleanProvider {
     private static final Logger LOG = LoggerFactory.getLogger(HtDatabaseEventsService.class);
+
+    private static final NetconfTimeStamp NETCONFTIME_CONVERTER = NetconfTimeStamp.getConverter();
 
     ///** Filename in the resources with maven initialized version information  */
     //private static final String RESOURCENAME = "version.properties"; // could also be a constant
@@ -88,19 +91,7 @@ public class HtDatabaseEventsService {
 
     // --- Function
 
-    public void writeEventLog(ObjectCreationNotificationXml event) {
-        writeEventGeneric(event);
-    }
-
-    public void writeEventLog(ObjectDeletionNotificationXml event) {
-        writeEventGeneric(event);
-    }
-
-    public void writeEventLog(AttributeValueChangedNotificationXml event) {
-        writeEventGeneric(event);
-    }
-
-    private void writeEventGeneric(MwtNotificationBase event) {
+    public void writeEventLog(MwtNotificationBase event) {
         if (client == null) {
             LOG.debug("No DB, can not write: {}",event.toString());
             return;
@@ -224,5 +215,33 @@ public class HtDatabaseEventsService {
         }
     }
 
+    @Override
+    public int doIndexClean(Date olderAreOutdated) {
+
+        String netconfTimeStamp = NETCONFTIME_CONVERTER.getTimeStampAsNetconfString(olderAreOutdated);
+        int removed = 0;
+
+        QueryBuilder queryEventBase = EsEventBase.getQueryForTimeStamp(netconfTimeStamp);
+        removed += eventRWEventLog.doRemoveByQuery(queryEventBase);
+
+        QueryBuilder queryFaultLog = EsFaultLog.getQueryForTimeStamp(netconfTimeStamp);
+        removed += eventRWFaultLog.doRemoveByQuery(queryFaultLog);
+        return removed;
+    }
+
+    @Override
+    public int getNumberOfOldObjects(Date olderAreOutdated) {
+
+        String netconfTimeStamp = NETCONFTIME_CONVERTER.getTimeStampAsNetconfString(olderAreOutdated);
+        int numberOfElements = 0;
+
+        QueryBuilder queryEventBase = EsEventBase.getQueryForTimeStamp(netconfTimeStamp);
+        numberOfElements += eventRWEventLog.doReadAll(queryEventBase).size();
+
+        QueryBuilder queryFaultLog = EsFaultLog.getQueryForTimeStamp(netconfTimeStamp);
+        numberOfElements += eventRWFaultLog.doReadAll(queryFaultLog).size();
+
+        return numberOfElements;
+    }
 
 }

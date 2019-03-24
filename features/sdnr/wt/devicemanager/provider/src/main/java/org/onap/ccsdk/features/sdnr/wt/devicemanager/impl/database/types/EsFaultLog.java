@@ -17,6 +17,8 @@
  ******************************************************************************/
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.database.types;
 
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database.EsObject;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.ProblemNotificationXml;
 
@@ -30,6 +32,8 @@ public class EsFaultLog extends EsObject {
 
     public static final String ESDATATYPENAME = "faultlog";
 
+    private static final String FAULTLOG_FIELD_TIMESTAMP = "fault.timeStamp";
+
     private ProblemNotificationXml fault;
 
     public ProblemNotificationXml getProblem() {
@@ -38,6 +42,15 @@ public class EsFaultLog extends EsObject {
 
     public void setProblem(ProblemNotificationXml fault) {
         this.fault = fault;
+    }
+
+    /**
+     * Get older Elements
+     * @param netconfTimeStamp to identify query elements older than this timestamp.
+     * @return QueryBuilder for related elements
+     */
+    public static QueryBuilder getQueryForTimeStamp(String netconfTimeStamp) {
+        return new RangeQueryBuilder(FAULTLOG_FIELD_TIMESTAMP).lt(netconfTimeStamp);
     }
 
  }

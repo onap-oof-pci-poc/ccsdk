@@ -17,132 +17,75 @@
  ******************************************************************************/
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util;
 
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
-
-import org.json.JSONObject;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database.HtDatabaseWebAPIClient;
+import java.util.concurrent.TimeUnit;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.InternalDateAndTime;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.InternalSeverity;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.util.NetconfTimeStamp;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.DeviceManagerImpl;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.database.service.HtDatabaseEventsService;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.ObjectCreationNotificationXml;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.ProblemNotificationXml;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.index.database.types.EsEventOdluxLog;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.index.impl.IndexMwtnService;
 
 public class DBCleanServiceHelper {
 
-	private static final String NODENAME_1 = "node1";
-	private static final String OBJECTID_1 = "obj1";
-	private static final String EVENTTYPE_1 = "ObjectCreationNotificationXml";
-	private static final String PROBLEM_1 = "my problem";
-	private static final String SEVERITY_1 = "critical";
-	private static final String COMPONENT_1 = "mwtnBrowserCtrl";
-	private static final String MESSAGE_1 = "mwtnBrowserCtrl started";
-	private final long daysForDeprecatedData_ms;
-	
-	public DBCleanServiceHelper(int daysForDeprecatedData) {
-		this.daysForDeprecatedData_ms=daysForDeprecatedData;
-	}
-	public void loadOldData(int numEventlog,int numFaultlog,int numLog) {
-		Calendar cal=Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		long now=System.currentTimeMillis();
-		System.out.println(new Date(now).toString());
-		cal.setTimeInMillis(now-(1000*60*60*24*this.daysForDeprecatedData_ms));
-		System.out.println(cal.getTime().toString());
-		this.loadData(numEventlog, numFaultlog, numLog, cal);
-	}
-		
-	public void loadHalfOldData(int numEventlog,int numFaultlog,int numLog) {
-		Calendar cal=Calendar.getInstance();
-		cal.setTimeInMillis(System.currentTimeMillis()-(1000*60*60*24*this.daysForDeprecatedData_ms));
-		this.loadData(numEventlog/2, numFaultlog/2, numLog/2, cal);
-		cal.setTimeInMillis(System.currentTimeMillis()-(1000*60*60*12*this.daysForDeprecatedData_ms));
-		this.loadData(numEventlog/2, numFaultlog/2, numLog/2, cal);
-	}
-	public void loadNewData(int numEventlog,int numFaultlog,int numLog) {
-		Calendar cal=Calendar.getInstance();
-		cal.setTimeInMillis(System.currentTimeMillis()-(1000*60*60*12*this.daysForDeprecatedData_ms));
-		this.loadData(numEventlog, numFaultlog, numLog, cal);
-	}
-	private void loadData(int numEventlog,int numFaultlog,int numLog, Calendar base) {
-		HtDatabaseWebAPIClient webClient = new HtDatabaseWebAPIClient();
-		Calendar cal = base;
+    private static final NetconfTimeStamp NETCONFTIME_CONVERTER = NetconfTimeStamp.getConverter();
 
-		int i = 0, hrs = cal.get(Calendar.HOUR_OF_DAY), m = cal.get(Calendar.MONTH),
-				d = cal.get(Calendar.DAY_OF_MONTH), y = cal.get(Calendar.YEAR);
-		try {
-			while (numEventlog-- > 0) {
-				webClient.insertEntry("sdnevents", "eventlog",
-						this.getEventObject(NODENAME_1, i++, this.getDate(y, m, d, hrs++, 0), OBJECTID_1, EVENTTYPE_1));
-			}
-			hrs = 0;
-			while (numFaultlog-- > 0) {
-				webClient.insertEntry("sdnevents", "faultlog", this.getFaultLogObject(NODENAME_1, i++,
-						this.getDate(y, m, d, hrs++, 0), OBJECTID_1, PROBLEM_1, SEVERITY_1, EVENTTYPE_1));
-			}
-			hrs = 0;
-			while (numLog-- > 0) {
-				webClient.insertEntry("mwtn", "log",
-						this.getLogObject(COMPONENT_1, MESSAGE_1, this.getDate(y, m, d, hrs++, 0), EVENTTYPE_1));
-			}
+    private final HtDatabaseEventsService databaseEventService;
+    private final IndexMwtnService mwtnService;
 
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail("problem writing data into database through webapi: "+ e.getMessage());
-		}
-	}
+    /**
+     * Helper to fill data into the database
+     * @param deviceManager devicemanger to get services
+     */
+    public DBCleanServiceHelper(DeviceManagerImpl deviceManager) {
+        this.databaseEventService = deviceManager.getDatabaseClientEvents();
+        this.mwtnService = deviceManager.getMwtnService();
+    }
 
-	private Date getDate(int year, int month, int day, int hour, int minute) {
-		month = month % 12;
-		day = day % 30;
-		hour = hour % 24;
-		minute = minute % 60;
-		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.YEAR, year);
-		cal.set(Calendar.MONTH, month);
-		cal.set(Calendar.DAY_OF_MONTH, day);
-		cal.set(Calendar.HOUR_OF_DAY, hour);
-		cal.set(Calendar.MINUTE, minute);
+    /**
+     * Write data into database with specific date and content profile.
+     * @param number of data to be written for each log
+     * @param days starting day, relative to actual date
+     * @param hours starting hour ... increased by one hour for each write
+     * @return integer with the amount of written data
+     */
+    public int writeDataToLogs(int number, int days, int hours) {
+        int res = 0;
+        for (Integer t=0; t < number; t++) { //Test "sdnevents", "eventlog"
+            ObjectCreationNotificationXml notificationXml = new ObjectCreationNotificationXml(
+                    "Testpoint"+t, t.toString(), getInternalDateAndTime(days, hours+t), "ObjectId"+t);
+            databaseEventService.writeEventLog(notificationXml);
+            res++;
+        }
 
-		return cal.getTime();
-	}
+        for (Integer t=0; t < number; t++) { //Test "sdnevents", "faultlog"
+            ProblemNotificationXml fault = new ProblemNotificationXml(
+                    "ProblemNode"+t, "Problemuuid", "Problemname", InternalSeverity.Major, t.toString(), getInternalDateAndTime(days, hours+t));
+            databaseEventService.writeFaultLog(fault);
+            res++;
+        }
 
-	private JSONObject getEventObject(String nodeName, int counter, Date timeStamp, String objectId, String type) {
+        for (Integer t=0; t < number; t++) { //Test "mwtn", "log"
+            EsEventOdluxLog odluxEvent = new EsEventOdluxLog("Odluxevent"+t, "Problemuuid", "Message", getInternalDateAndTime(days, hours+t));
+            mwtnService.writeOdluxEventForTestpurpose(odluxEvent);
+            res++;
+        }
 
-		JSONObject o = new JSONObject();
-		JSONObject event = new JSONObject();
-		event.put("nodeName", nodeName);
-		event.put("counter", counter);
-		event.put("timeStamp", NetconfTimeStamp.getConverter().getTimeStampAsNetconfString(timeStamp.getTime()));
-		event.put("objectId", objectId);
-		event.put("type", type);
-		o.put("event", event);
-		System.out.println(o.toString());
-		return o;
-	}
+        return res;
+    }
 
-	private JSONObject getFaultLogObject(String nodeName, int counter, Date timeStamp, String objectId, String problem,
-			String severity, String type) {
+    /**************************************************************
+     * Private section
+     */
 
-		JSONObject o = new JSONObject();
-		JSONObject fault = new JSONObject();
-		fault.put("nodeName", nodeName);
-		fault.put("counter", counter);
-		fault.put("timeStamp", NetconfTimeStamp.getConverter().getTimeStampAsNetconfString(timeStamp.getTime()));
-		fault.put("objectId", objectId);
-		fault.put("problem", problem);
-		fault.put("severity", severity);
-		fault.put("type", type);
-		o.put("fault", fault);
-		return o;
-	}
+    private InternalDateAndTime getInternalDateAndTime(int days, int hours) {
+        Date actual = new Date(new Date().getTime() - TimeUnit.MILLISECONDS.convert(days, TimeUnit.DAYS) - TimeUnit.MILLISECONDS.convert(hours, TimeUnit.HOURS));
+        InternalDateAndTime timeStamp = InternalDateAndTime.valueOf(NETCONFTIME_CONVERTER.getTimeStamp(actual));
+        return timeStamp;
+    }
 
-	private JSONObject getLogObject(String component, String message, Date timeStamp, String type) {
 
-		JSONObject log = new JSONObject();
-		log.put("timestamp", NetconfTimeStamp.getConverter().getTimeStampAsNetconfString(timeStamp.getTime()));
-		log.put("type", type);
-		log.put("component", component);
-		log.put("message", message);
-		return log;
-	}
 }

@@ -58,7 +58,7 @@ public class HtDataBaseReaderAndWriter<T extends IsEsObject> {
      * @return dataTypeName
      */
     public String getDataTypeName() {
-    	return this.dataTypeName;
+        return this.dataTypeName;
     }
     /**
      * Remove Object from database
@@ -206,17 +206,18 @@ public class HtDataBaseReaderAndWriter<T extends IsEsObject> {
         }
         return res;
     }
-
-
-    
     /**
-     * Read all existing objects of a type
-     * @param query 
-     * @return the list of all objects
+     * Get all elements of related type
+     * @return all Elements
      */
     public List<T> doReadAll() {
-    	return this.doReadAll(null);
+        return doReadAll(null);
     }
+    /**
+     * Read all existing objects of a type
+     * @param query for the elements
+     * @return the list of all objects
+     */
     public List<T> doReadAll(QueryBuilder query) {
 
         List<T> res = new ArrayList<>();
@@ -224,16 +225,14 @@ public class HtDataBaseReaderAndWriter<T extends IsEsObject> {
         int iterateLength = 100;    //Step width for iterate
 
         SearchHit hits[];
-
-
         do {
-        	if(query!=null) {
-        		log.trace("read data in {} {} with query {}",db.getNetworkIndex(),dataTypeName,query);
-        		hits=db.doReadByQueryJsonData(0, 99999, dataTypeName, query);
-        	}
-        	else {
-        		hits = db.doReadAllJsonData(idx, iterateLength, dataTypeName);
-        	}
+            if(query!=null) {
+                log.trace("read data in {} {} with query {}",db.getNetworkIndex(),dataTypeName,query);
+                hits=db.doReadByQueryJsonData(0, 99999, dataTypeName, query);
+            }
+            else {
+                hits = db.doReadAllJsonData(idx, iterateLength, dataTypeName);
+            }
             log.debug("Read: {} elements: {}  Failures: {}",dataTypeName,hits.length, mapper.getMappingFailures());
 
             T object;

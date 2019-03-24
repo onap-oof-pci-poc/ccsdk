@@ -59,6 +59,10 @@ public class AkkaConfig {
         return this.cluserConfig != null ? this.cluserConfig.isCluster() : false;
     }
 
+    public boolean isClusterAndFirstNode() {
+        return isSingleNode() || isCluster() && getClusterConfig().getRoleMemberIndex() == 1;
+    }
+
     public static AkkaConfig load() throws Exception {
         return load(DEFAULT_FILENAME);
     }

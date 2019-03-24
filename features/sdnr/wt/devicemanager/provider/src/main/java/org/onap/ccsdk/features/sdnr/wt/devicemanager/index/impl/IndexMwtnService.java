@@ -17,9 +17,15 @@
  ******************************************************************************/
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.index.impl;
 
+import java.util.Date;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.archiveservice.ArchiveCleanProvider;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database.HtDataBaseReaderAndWriter;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database.HtDatabaseClientAbstract;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database.HtDatabaseNode;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database.IndexClientBuilder;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.util.NetconfTimeStamp;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.index.database.types.EsEventOdluxLog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,9 +34,10 @@ import org.slf4j.LoggerFactory;
  * @author herbert
  *
  */
-public class IndexMwtnService implements AutoCloseable {
+public class IndexMwtnService implements AutoCloseable, ArchiveCleanProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(IndexMwtnService.class);
+    private static final NetconfTimeStamp NETCONFTIME_CONVERTER = NetconfTimeStamp.getConverter();
 
     /** Index name to be used */
     public static final String INDEX = "mwtn";
@@ -39,6 +46,9 @@ public class IndexMwtnService implements AutoCloseable {
     /** Location of configuration data **/
     private static final String MODELDATA = "elasticsearch/index/mwtn/modelDescription";
 
+    private final HtDataBaseReaderAndWriter<EsEventOdluxLog> eventRWOdluxLog;
+
+
     private final HtDatabaseClientAbstract client;
 
     // --- Construct and initialize
@@ -46,11 +56,15 @@ public class IndexMwtnService implements AutoCloseable {
     public IndexMwtnService(HtDatabaseNode database) throws Exception {
         LOG.info("Create {} start", this.getClass().getSimpleName());
 
+
         IndexClientBuilder clientBuilder = IndexClientBuilder.getBuilder(INDEX)
                 .setMappingSettingJsonFileName(MAPPING)
                 .setModelDataDirectory(MODELDATA);
         client = clientBuilder.create(database);
         clientBuilder.close();
+
+        eventRWOdluxLog = new HtDataBaseReaderAndWriter<>(client, EsEventOdluxLog.ESDATATYPENAME, EsEventOdluxLog.class);
+
         LOG.info("Create {} finished. DB Service sucessfully started.", this.getClass().getSimpleName());
     }
 
@@ -62,10 +76,42 @@ public class IndexMwtnService implements AutoCloseable {
         return client;
     }
 
+    /**
+     * Write into Odlux log, used by client
+     * @param logEntry as test data
+     */
+    public void writeOdluxEventForTestpurpose(EsEventOdluxLog logEntry) {
+        eventRWOdluxLog.doWrite(logEntry);
+    }
 
 
     @Override
     public void close() throws Exception {
-        client.close();
+        if (client != null) {
+            client.close();
+        }
+    }
+
+    @Override
+    public int doIndexClean(Date olderAreOutdated) {
+
+        String netconfTimeStamp = NETCONFTIME_CONVERTER.getTimeStampAsNetconfString(olderAreOutdated);
+
+        QueryBuilder queryOdluxLog = EsEventOdluxLog.getQueryForTimeStamp(netconfTimeStamp);
+        int removed = eventRWOdluxLog.doRemoveByQuery(queryOdluxLog);
+        return removed;
+
+    }
+
+    @Override
+    public int getNumberOfOldObjects(Date olderAreOutdated) {
+
+        String netconfTimeStamp = NETCONFTIME_CONVERTER.getTimeStampAsNetconfString(olderAreOutdated);
+        int numberOfElements = 0;
+
+        QueryBuilder queryOdluxLog = EsEventOdluxLog.getQueryForTimeStamp(netconfTimeStamp);
+        numberOfElements += eventRWOdluxLog.doReadAll(queryOdluxLog).size();
+
+        return numberOfElements;
     }
 }

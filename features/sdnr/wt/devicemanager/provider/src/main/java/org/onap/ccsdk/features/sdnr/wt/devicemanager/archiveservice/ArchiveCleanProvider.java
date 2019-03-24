@@ -15,43 +15,25 @@
  * the License.
  * ============LICENSE_END==========================================================================
  ******************************************************************************/
-package org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.database.types;
+package org.onap.ccsdk.features.sdnr.wt.devicemanager.archiveservice;
 
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.RangeQueryBuilder;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database.EsObject;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.xml.MwtNotificationBase;
+import java.util.Date;
 
-/**
- *
- * Event from Network to be recorded in the database
- *
- */
-
-public class EsEventBase extends EsObject {
-
-    public static final String ESDATATYPENAME = "eventlog";
-
-    private static final String EVENTLOG_FIELD_TIMESTAMP = "event.timeStamp";
-
-
-    private MwtNotificationBase event;
-
-    public MwtNotificationBase getProblem() {
-        return event;
-    }
-
-    public void setProblem(MwtNotificationBase event) {
-        this.event = event;
-    }
+public interface ArchiveCleanProvider {
 
     /**
-     * Query to get older Elements
-     * @param netconfTimeStamp to identify older Elements
-     * @return QueryBuilder for older elements related to timestamp
+     * Remove all index data older, than specified
+     * @param olderAreOutdated time to specify older elements
+     * @return number of removed elements
      */
-    public static QueryBuilder getQueryForTimeStamp(String netconfTimeStamp) {
-      return new RangeQueryBuilder(EVENTLOG_FIELD_TIMESTAMP).lt(netconfTimeStamp);
-    }
+    int doIndexClean(Date olderAreOutdated);
 
- }
+    /**
+     * Get number of elements older then
+     * @param olderAreOutdated date to compare with and specify older elements
+     * @return number of elements
+     */
+    public int getNumberOfOldObjects(Date olderAreOutdated);
+
+
+}
