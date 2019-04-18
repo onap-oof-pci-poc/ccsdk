@@ -8,7 +8,7 @@ yang-gen-sal/
 .factorypath
 *.swp
 dist/
-bin/
+./**/bin/
 etc/
 node_modules/
 .fbExcludeFilterFile

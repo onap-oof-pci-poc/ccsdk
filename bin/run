@@ -1,0 +1,184 @@
+#!/bin/bash
+# ONAP docker CCSDK helper
+
+IMAGEVERSION="latest"
+NAME="sdnr"
+#DNS="192.168.178.1"
+#DNSSEARCH="fritz.box"
+
+getImage() {
+    if [ -z "$1" ] ; then
+        if [ -f "pom.xml" ] ; then
+	   IMAGENAME=$(xmllint --xpath '/*[local-name()="project"]/*[local-name()="properties"]/*[local-name()="image.name"]/text()' pom.xml)
+           echo "Image from pom.xml: $IMAGENAME"
+           IMAGE="$IMAGENAME:$IMAGEVERSION"
+        else
+           echo "No pom.xml file"
+        fi
+    else
+           IMAGE="$1"
+    fi
+}
+
+# Par1: empty or node index 0..
+# Par2: number of cluster nodes
+run-server() {
+   if [ -z "$1" ] ; then
+      HOSTNAME="$NAME"
+      ENABLE_ODL_CLUSTER="false"
+   else
+      HOSTNAME="$NAME-$1"
+      ENABLE_ODL_CLUSTER="true"
+   fi
+   if [ -n "$DNS" ] ; then
+      DNSSETUP="--dns=$DNS --dns-search=$DNSSEARCH"
+   fi
+
+   echo "Run server $HOSTNAME"
+   docker run --detach --network="yaml_default" \
+      --link ccsdk_db_container:dbhost --link ccsdk_db_container:sdnctldb01 --link ccsdk_db_container:sdnctldb02 \
+      --env MYSQL_ROOT_PASSWORD=openECOMP1.0 \
+      --env SDNC_CONFIG_DIR=/opt/onap/ccsdk/data/properties \
+      --env ENABLE_ODL_CLUSTER="$ENABLE_ODL_CLUSTER" \
+      --env SDNC_REPLICAS="$2" \
+      --env DOMAIN="" \
+      --env SDNRWT="true" \
+      --name "$HOSTNAME" \
+      --hostname "$HOSTNAME" \
+      $PORTMAPPING $DNSSETUP "$IMAGE"
+}
+
+run-single() {
+    if [ -z "$IMAGE" ] ; then
+        echo "No image"
+    else
+        echo "Stop container $NAME"
+        docker stop $NAME
+        docker rm $NAME
+
+        echo "Use image: $IMAGE"
+        if [ "$1" = "bash" ] ; then
+          docker run --entrypoint "/bin/bash" --name $NAME -it "$IMAGE"
+        else
+          run-server
+          cli
+        fi
+    fi
+}
+
+stop-cluster(){
+    exist=$(docker ps | grep $NAME-0)
+    if [ ! -z "$exist" ]; then
+        docker stop $NAME-0 $NAME-1 $NAME-2
+        docker rm $NAME-0 $NAME-1 $NAME-2
+    fi
+}
+
+run-cluster() {
+    if [ -z "$IMAGE" ] ; then
+        echo "No image"
+    else
+        stop-cluster
+        run-server 0 3
+        run-server 1 3
+        run-server 2 3
+    fi
+}
+
+cli() {
+   if [ -z "$1" ] ; then
+      docker exec -t -i "$NAME" /bin/bash -c 'TERM=xterm exec /bin/bash'
+   else
+      docker exec -t -i "$NAME-$1"  /bin/bash -c 'TERM=xterm exec /bin/bash'
+   fi
+}
+
+
+echo "Docker onap helper for docker container $NAME"
+HERE="$PWD"
+
+for OPT in "$@" ; do
+  case "$OPT" in
+    sto*)
+      OPT_STOP=true
+      ;;
+    po*)
+      PORTMAPPING="-p8181:8181"
+      ;;
+    
+  esac
+done
+
+
+
+case "$1" in
+     r)
+        echo "Run in commandline without any service"
+        getImage
+        run-single bash
+        ;;
+     ""|"single")
+        echo "Run docker image $NAME and attach to cli"
+        getImage
+        run-single
+        ;;
+     cluster)
+        getImage
+        if [ -n "$OPT_STOP" ] ; then
+          echo "Stop docker image cluster $NAME-0/1/2"
+          stop-cluster
+        else
+          echo "Run docker image cluster $NAME-0/1/2"
+          run-cluster
+        fi
+        ;;
+     e*)
+        echo "Attach to cli"
+        cli $2
+        ;;
+     co*)
+        echo "Start environment"
+        export NEXUS_DOCKER_REPO="nexus3.onap.org:10001"
+        export CCSDK_DOCKER_IMAGE_VERSION="0.4-STAGING-latest"
+        echo "Repo: $NEXUS_DOCKER_REPO" Version: "$CCSDK_DOCKER_IMAGE_VERSION\n"
+        cd src/main/yaml
+        docker-compose up -d
+        echo "\nStop ccsdk_odlsli_container"
+        docker stop ccsdk_odlsli_container
+        ;;
+      i)
+        getImage
+        echo "Image: $IMAGENAME"
+        ;;
+
+      s*)
+        echo "Run specific image $NAME with $2"
+        IMAGE="$2"
+        if [ "$3" == "r" ] ; then
+           echo "Run with bash"
+	   run-single bash
+        else
+           run-single
+        fi
+        ;;
+      *)
+        echo "Help for ONAP docker helper"
+        echo "If no image is specified from pom.xml in directory the <image.name>:latest is used"
+        echo "DNS configuration: $DNS $DNSSEARCH (Adapt to your specific setting)"
+        echo "Commands: run [p1, p2]"
+        echo "   <no parameter>: Restart single container with name $NAME"
+        echo "   single [po]: Restart single container with name $NAME"
+        echo "   cluster: Restart three node cluster with name $NAME-0/1/2"
+        echo "   cluster stop: stops three node cluster with name $NAME-0/1/2"
+        echo "   e [n]: <no n> Attach to container $NAME"
+        echo "          n=0..2 Attach to container $NAME-n"
+        echo "   spe xy [r]: Run specfic image xy."
+        echo "                 r: start with bash"
+        echo "   r [po]: Run image with bash"
+        echo "           po : map to host 8181"
+        echo "   i : Display image name"
+        echo "   co : start environment with docker-compose"
+        ;;
+esac
+
+cd $HERE
