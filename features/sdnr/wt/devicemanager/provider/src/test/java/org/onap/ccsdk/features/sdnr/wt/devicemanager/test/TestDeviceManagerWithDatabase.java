@@ -32,12 +32,13 @@ import org.json.JSONObject;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.archiveservice.ArchivCleanService;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.archiveservice.ArchiveCleanService;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database.HtDatabaseWebAPIClient;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.Resources;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.container.Capabilities;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.DeviceManagerImpl;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.DeviceManagerService.Action;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.ClusterSingletonServiceProviderMock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.DataBrokerNetconfMock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.MountPointMock;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.mock.MountPointServiceMock;
@@ -50,6 +51,9 @@ import org.onap.ccsdk.features.sdnr.wt.devicemanager.test.util.ReadOnlyTransacti
 import org.opendaylight.controller.md.sal.binding.api.MountPointService;
 import org.opendaylight.controller.md.sal.binding.api.NotificationPublishService;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
+import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonService;
+import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvider;
+import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceRegistration;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNode;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.NodeId;
 import org.slf4j.Logger;
@@ -86,7 +90,8 @@ public class TestDeviceManagerWithDatabase {
         dataBrokerNetconf.setReadOnlyTransaction(readOnlyTransaction);
         mountPoint = new MountPointMock();
         mountPoint.setReadOnlyTransaction(readOnlyTransaction);
-        MountPointService mountPointService = new MountPointServiceMock(mountPoint);
+        ClusterSingletonServiceProvider clusterSingletonService = new ClusterSingletonServiceProviderMock();
+		MountPointService mountPointService = new MountPointServiceMock(mountPoint);
         NotificationPublishService notificationPublishService = new NotificationPublishServiceMock();
         RpcProviderRegistry rpcProviderRegistry = new RpcProviderRegistryMock();
 
@@ -99,7 +104,7 @@ public class TestDeviceManagerWithDatabase {
             deviceManager.setMountPointService(mountPointService);
             deviceManager.setNotificationPublishService(notificationPublishService);
             deviceManager.setRpcProviderRegistry(rpcProviderRegistry);
-
+            deviceManager.setClusterSingletonService(clusterSingletonService);
             deviceManager.init();
         } catch (Exception e) {
             StringWriter sw = new StringWriter();
@@ -293,7 +298,7 @@ public class TestDeviceManagerWithDatabase {
         final long ARCHIVE_INTERVAL_SEC = 10;
         File propFile = KARAF_ETC.resolve("devicemanager.properties").toFile();
 
-        ArchivCleanService service = deviceManager.getArchiveCleanService();
+        ArchiveCleanService service = deviceManager.getArchiveCleanService();
         DBCleanServiceHelper helper = new DBCleanServiceHelper(deviceManager);
 
         // setEsConfg
@@ -325,7 +330,7 @@ public class TestDeviceManagerWithDatabase {
 
     // ********************* Private
 
-    private void waitForDeletion(ArchivCleanService service, long timeout, long numberAtBeginning, String faultMessage) {
+    private void waitForDeletion(ArchiveCleanService service, long timeout, long numberAtBeginning, String faultMessage) {
         int numberEntries = 0;
         while (timeout-- > 0) {
             sleep(1000);

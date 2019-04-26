@@ -24,7 +24,7 @@ import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.ToggleAlarmConf
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NotificationDelayService<T> implements AutoCloseable {
+public class NotificationDelayService<T> implements AutoCloseable, IConfigChangedListener {
     private static final Logger LOG = LoggerFactory.getLogger(NotificationDelayService.class);
 
     private final HashMap<String, NotificationDelayFilter<T>> filters;
@@ -42,16 +42,17 @@ public class NotificationDelayService<T> implements AutoCloseable {
 
     public NotificationDelayService(HtDevicemanagerConfiguration htconfig) {
         this.filters = new HashMap<>();
-        htconfig.registerConfigChangedListener(configChangedListener);
+        htconfig.registerConfigChangedListener(this);
         NotificationDelayFilter.setDelay(htconfig.getToggleAlarm().getDelay());
         NotificationDelayFilter.setEnabled(htconfig.getToggleAlarm().isEnabled());
     }
 
-    private final IConfigChangedListener configChangedListener = () -> {
+	@Override
+	public void onConfigChanged() {
         ToggleAlarmConfig cfg = ToggleAlarmConfig.reload();
         NotificationDelayFilter.setDelay(cfg.getDelay());
         NotificationDelayFilter.setEnabled(cfg.isEnabled());
-    };
+	}
 
     @Override
     public void close() throws Exception {

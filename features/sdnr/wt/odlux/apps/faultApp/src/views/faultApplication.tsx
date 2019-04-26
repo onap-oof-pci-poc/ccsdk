@@ -76,7 +76,7 @@ class FaultApplicationComponent extends React.Component<FaultApplicationComponen
               { property: "severity", title: "Severity", type: ColumnType.text, width: "140px" },
               ] } { ...this.props.currentProblemsProperties } { ...this.props.currentProblemsActions }  />
         </Panel>
-        <Panel activePanel={ activePanel } panelId={ 'AlarmNotifications' } onToggle={ onTogglePanel } title={ `Alarm Notifications ${this.props.faultNotifications.faults.length} ${this.props.faultNotifications.since}` }>
+        <Panel activePanel={ activePanel } panelId={ 'AlarmNotifications' } onToggle={ onTogglePanel } title={ `Alarm Notifications ${this.props.faultNotifications.faults.length} since ${this.props.faultNotifications.since}` }>
           <FaultTable rows={ this.props.faultNotifications.faults } asynchronus columns={ [
             { property: "icon", title: "", type: ColumnType.custom, customControl: this.renderIcon },
             { property: "timeStamp", title: "Time Stamp" },

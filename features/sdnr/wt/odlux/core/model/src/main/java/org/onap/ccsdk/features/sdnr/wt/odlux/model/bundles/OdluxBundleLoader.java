@@ -25,4 +25,6 @@ public interface OdluxBundleLoader {
 
     public int getNumberOfBundles();
 
+	public String getResourceContent(String fn, OdluxBundleResourceAccess indexBundle);
+
 }

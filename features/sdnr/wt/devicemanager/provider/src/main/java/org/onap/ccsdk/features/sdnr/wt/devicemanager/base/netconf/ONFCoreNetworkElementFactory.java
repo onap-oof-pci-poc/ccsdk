@@ -84,4 +84,8 @@ public class ONFCoreNetworkElementFactory {
         return res;
     }
 
+    public static @Nonnull ONFCoreNetworkElementRepresentation getEmpty(String mountPointNodeName) {
+    	return new ONFCoreEmpty(mountPointNodeName);
+    }
+
 }

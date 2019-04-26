@@ -12,10 +12,14 @@ const connectionStatusLogSearchHandler = createSearchDataHandler<{ event: Connec
     objectId: event._source.event.objectId,
     type: event._source.event.type,
     elementStatus: event._source.event.type === 'ObjectCreationNotificationXml'
-      ? 'connected'
+      ? 'mounted'
       : event._source.event.type === 'ObjectDeletionNotificationXml'
-        ? 'disconnected'
-        : 'unknown'
+        ? 'unmounted'
+        : event._source.event.type === 'AttributeValueChangedNotificationXml'
+          ? event._source.event.newValue
+          : 'unknown',
+    newValue: ''
+
   }),
   (name) => `event.${ name }`);
 

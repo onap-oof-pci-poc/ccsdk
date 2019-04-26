@@ -120,7 +120,7 @@ public class TestMyServlet extends Mockito {
 
     @Test
     public void testServlet2() {
-        this.testGetRequest("test/0.4.0/test.txt");
+        this.testGetRequest("test/test.txt");
         this.testGetRequest("test.css");
         this.testGetRequest("test.eps");
         this.testGetRequest("test.pdf");
@@ -156,6 +156,6 @@ public class TestMyServlet extends Mockito {
         } catch (Exception e) {
         }
 
-        assertEquals(CONTENT,sw.toString().trim());
+        assertEquals("compare content for "+fn,CONTENT,sw.toString().trim());
     }
 }

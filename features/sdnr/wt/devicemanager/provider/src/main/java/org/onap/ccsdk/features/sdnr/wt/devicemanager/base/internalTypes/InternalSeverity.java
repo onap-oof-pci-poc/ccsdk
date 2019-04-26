@@ -6,9 +6,9 @@
  * =================================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -20,6 +20,8 @@
  *
  */
 package org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes;
+
+import javax.annotation.Nullable;
 
 public enum InternalSeverity {
 
@@ -121,5 +123,29 @@ public enum InternalSeverity {
                 return InternalSeverity.Critical;
         }
         return null;
+    }
+
+    /**
+     * convert a text string into Severity
+     * @param severityString with textes non[-]alarmed, warning minor major critical
+     * @return related enum or null
+     */
+    public static @Nullable InternalSeverity valueOfString(String severityString) {
+
+    	switch( severityString.toLowerCase().trim() ) {
+    	case "non-alarmed":
+    	case "nonalarmed":
+    		return InternalSeverity.NonAlarmed;
+    	case "warning":
+    		return InternalSeverity.Warning;
+    	case "minor":
+    		return InternalSeverity.Minor;
+    	case "major":
+    		return InternalSeverity.Major;
+    	case "critical":
+    		return InternalSeverity.Critical;
+    	}
+    	return null;
+
     }
 }

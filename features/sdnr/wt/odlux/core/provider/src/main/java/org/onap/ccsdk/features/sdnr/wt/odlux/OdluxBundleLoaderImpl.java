@@ -84,11 +84,6 @@ public class OdluxBundleLoaderImpl implements OdluxBundleLoader {
 
     }
 
-    private Comparator<OdluxBundle> getBundleSorter() {
-        return this.sortorderbundlecomparator;
-    }
-
-
     public List<String> getLoadedBundles(String myBundleName) {
         List<String> list = new ArrayList<>();
         for (OdluxBundle b : bundles2) {
@@ -107,7 +102,7 @@ public class OdluxBundleLoaderImpl implements OdluxBundleLoader {
         return names;
     }
 
-    public String getResource(String fn, OdluxBundleResourceAccess indexBundle) {
+    public String getResourceContent(String fn, OdluxBundleResourceAccess indexBundle) {
         String fileContent = null;
 
         if (indexBundle.hasResource(fn)) {

@@ -221,7 +221,7 @@ class MaterialTableComponent<TData extends {} = {}> extends React.Component<Mate
           </Table>
         </div>
         <TablePagination
-          rowsPerPageOptions={[10, 50, 100, 500, 1000] }
+          rowsPerPageOptions={[5, 10, 20, 50] }
           component="div"
           count={ rowCount }
           rowsPerPage={ rowsPerPage }
@@ -399,23 +399,62 @@ class MaterialTableComponent<TData extends {} = {}> extends React.Component<Mate
     });
   }
 
-  private exportToCsv = () => {
+  private exportToCsv = async () => {
     let file;
-    const data: string[] = [];
-    data.push(this.props.columns.map(col => col.title || col.property).join(',')+"\r\n");
-    this.state.rows && this.state.rows.forEach((row : any)=> {
-      data.push(this.props.columns.map(col => row[col.property]).join(',') + "\r\n");
-    });
-    const properties = { type: 'text/csv' }; // Specify the file's mime-type.
-    try {
-      // Specify the filename using the File constructor, but ...
-      file = new File(data, "export.csv", properties);
-    } catch (e) {
-      // ... fall back to the Blob constructor if that isn't supported.
-      file = new Blob(data, properties);
+    let data: dataType[] | null = null;
+    let csv: string[] = [];
+
+
+    if (isMaterialTableComponentPropsWithRequestData(this.props)) {
+      this.setState({ loading: true });
+      const result = await Promise.resolve(
+        this.props.onRequestData( 0, 1000, this.state.orderBy, this.state.order, this.state.showFilter && this.state.filter || {})
+      );
+      data = result.rows;
+      this.setState({ loading: true });
+    } else {
+      data = MaterialTableComponent.updateRows(this.props, this.state).rows;
     }
-    const url = URL.createObjectURL(file);
-    window.location.replace(url);
+
+    if (data && data.length > 0) {
+      csv.push(this.props.columns.map(col => col.title || col.property).join(',') + "\r\n");
+      this.state.rows && this.state.rows.forEach((row: any) => {
+        csv.push(this.props.columns.map(col => row[col.property]).join(',') + "\r\n");
+      });
+      const properties = { type: "text/csv;charset=utf-8"  }; // Specify the file's mime-type.
+      try {
+        // Specify the filename using the File constructor, but ...
+        file = new File(csv, "export.csv", properties);
+      } catch (e) {
+        // ... fall back to the Blob constructor if that isn't supported.
+        file = new Blob(csv, properties);
+      }
+    }
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      const dataUri = reader.result as any;
+      const link = document.createElement("a");
+      if (typeof link.download === 'string') {
+        link.href = dataUri;
+        link.download = "export.csv";
+
+        //Firefox requires the link to be in the body
+        document.body.appendChild(link);
+
+        //simulate click
+        link.click();
+
+        //remove the link when done
+        document.body.removeChild(link);
+      } else {
+        window.open(dataUri);
+      }
+    }
+    reader.readAsDataURL(file);
+
+    // const url = URL.createObjectURL(file);
+    // window.location.replace(url);
   }
 }
 

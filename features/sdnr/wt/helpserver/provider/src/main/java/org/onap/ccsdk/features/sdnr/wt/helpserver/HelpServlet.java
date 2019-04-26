@@ -26,8 +26,6 @@ import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.nio.file.Path;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -67,11 +65,7 @@ public class HelpServlet extends HttpServlet implements AutoCloseable {
         resp.addHeader("Access-Control-Allow-Methods", "OPTIONS, HEAD, GET, POST, PUT, DELETE");
         resp.addHeader("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, Content-Length");
         if (query != null && query.contains("meta")) {
-            /*
-             * LOG.debug("received post with uri="+req.getRequestURI()); String
-             * uri=req.getRequestURI().substring(BASEURI.length()); if(uri.startsWith("/"))
-             * uri=uri.substring(1);
-             */
+          
             File f = new File(HelpInfrastructureObject.KARAFHELPDIRECTORY, "meta.json");
             if (f.exists()) {
                 LOG.debug("found local meta file");
@@ -120,36 +114,20 @@ public class HelpServlet extends HttpServlet implements AutoCloseable {
                 }
                 LOG.debug("delivering file");
                 OutputStream out = resp.getOutputStream();
-                String version = null;
-                if (REDIRECT_LINKS) {
-                    version = getVersionFromRequestedUri(uri);
-                }
-                if (this.isTextFile(f) && REDIRECT_LINKS && version != null) {
-                    final String regex =
-                            "(!?\\[[^\\]]*?\\])\\(((?:(?!http|www\\.|\\#|\\.com|\\.net|\\.info|\\.org|\\.svg|\\.png|\\.jpg|\\.gif|\\.jpeg|\\.pdf).)*?)\\)";
-                    final Pattern pattern = Pattern.compile(regex);
-                    Matcher matcher;
-                    String line;
-                    try (BufferedReader br = new BufferedReader(new FileReader(f))) {
-                        line = br.readLine();
-                        while (line != null) {
-                            // check line for internal link
-                            matcher = pattern.matcher(line);
-                            if (matcher.find()) {
-                                // extend link with specific version
-                                line = line.replace(matcher.group(2),
-                                        "../" + matcher.group(2) + version + "/README.md");
-                            }
-                            out.write((line + "\n").getBytes());
-                            line = br.readLine();
-
-                        }
-                        out.flush();
-                        out.close();
-                        br.close();
-                    }
-
-                } else {
+//                if (this.isTextFile(f) && REDIRECT_LINKS) {
+//                    String line;
+//                    try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+//                        line = br.readLine();
+//                        while (line != null) {
+//                        	out.write((line + "\n").getBytes());
+//                            line = br.readLine();
+//                        }
+//                        out.flush();
+//                        out.close();
+//                        br.close();
+//                    }
+//                } else 
+                {
                     try (FileInputStream in = new FileInputStream(f)) {
 
                         byte[] buffer = new byte[1024];
@@ -167,27 +145,6 @@ public class HelpServlet extends HttpServlet implements AutoCloseable {
                 resp.setStatus(404);
             }
         }
-    }
-
-    /**
-     * Extract version from URI string
-     * @param uri = "help/folder1/folder2/version/README.md"
-     * @return version as a string
-     */
-    private static String getVersionFromRequestedUri(String uri) {
-        if (uri == null) {
-            return null;
-        }
-        int lastidx = uri.lastIndexOf("/");
-        if (lastidx < 0) {
-            return null;
-        }
-        int slastidx = uri.lastIndexOf("/", lastidx - 1);
-        if (slastidx < 0) {
-            return null;
-        }
-        return uri.substring(slastidx + 1, lastidx);
-
     }
 
     private boolean ispdf(File f) {

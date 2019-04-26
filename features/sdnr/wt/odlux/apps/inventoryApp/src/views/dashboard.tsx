@@ -1,78 +1,47 @@
 import * as React from "react";
-import { MaterialTable, DataCallback, MaterialTableCtorType } from '../../../../framework/src/components/material-table';
 
-import { Result, InventoryType } from '../models/inventory';
+import { Connect, connect, IDispatcher } from '../../../../framework/src/flux/connect';
+import { MaterialTable, MaterialTableCtorType } from '../../../../framework/src/components/material-table';
 
-
-const url = `${ window.location.origin}/database/sdnevents/inventoryequipment/_search`;
-
-const fetchData: DataCallback = async (page, rowsPerPage, orderBy, order, filter) => {
-  const from = rowsPerPage && page != null && !isNaN(+page)
-    ? (+page) * rowsPerPage
-    : null;
-
-  const filterKeys = filter && Object.keys(filter) || [];
-
-  const query = {
-    ...filterKeys.length > 0 ? {
-      query: {
-        bool: {
-          must: filterKeys.reduce((acc, cur) => {
-            if (acc && filter && filter[cur]) {
-              acc.push({ [filter[cur].indexOf("*") > -1 || filter[cur].indexOf("?") > -1 ? "wildcard" : "prefix"]: { [cur]: filter[cur] } });
-            }
-            return acc;
-          }, [] as any[])
-        }
-      }
-    }: { "query": { "match_all": {} } },
-    ...rowsPerPage ? { "size": rowsPerPage } : {} ,
-    ...from ? { "from": from } : {},
-    ...orderBy && order ? { "sort": [{ [orderBy]: order }] } : {},
-  };
-
-  const result = await fetch(url, {
-    method: "POST",       // *GET, POST, PUT, DELETE, etc.
-    mode: "no-cors",      // no-cors, cors, *same-origin
-    cache: "no-cache",    // *default, no-cache, reload, force-cache, only-if-cached
-    headers: {
-      "Content-Type": "application/json; charset=utf-8",
-      // "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: JSON.stringify(query), // body data type must match "Content-Type" header
-  });
-
-  if (result.ok) {
-    const queryResult: Result<InventoryType> = await result.json();
-    const data = {
-      page: Math.min(page || 0, queryResult.hits.total || 0 / (rowsPerPage || 1)),
-      rowCount: queryResult.hits.total,
-      rows: queryResult && queryResult.hits && queryResult.hits.hits && queryResult.hits.hits.map(h => (
-        {
-          ...h._source,
-          _id: h._id
-        }
-      )) || []
-    };
-    return data;
-  }
-
-  return { page: 0, rowCount: 0, rows: [] };
-};
+import { InventoryType } from '../models/inventory';
+import { IApplicationStoreState } from "../../../../framework/src/store/applicationStore";
+import { createInventoryElementsProperties, createInventoryElementsActions } from "../handlers/inventoryElementsHandler";
 
 const InventoryTable = MaterialTable as MaterialTableCtorType<InventoryType & {_id: string}>;
 
-export const Dashboard : React.SFC = (props) => (
-  <InventoryTable onRequestData={ fetchData } columns={ [
-    { property: "uuid", title: "Name" },
-    { property: "parentUuid", title: "Parent" },
-    { property: "mountpoint", title: "Mountpoint" },
-    { property: "manufacturerIdentifier", title: "Manufacturer" },
-    { property: "serial", title: "Serial" },
-    { property: "typeName", title: "Type" },
-  ] } title="Inventory" idProperty="_id" >
+const mapProps = (state: IApplicationStoreState) => ({
+  inventoryElementsProperties: createInventoryElementsProperties(state),
+  inventoryElements: state.inventory.inventoryElements
+});
 
-  </InventoryTable>
-);
+const mapDispatch = (dispatcher: IDispatcher) => ({
+  inventoryElementsActions: createInventoryElementsActions(dispatcher.dispatch)
+});
 
+class DashboardComponent extends React.Component<Connect<typeof mapProps, typeof mapDispatch>> {
+  render() {
+    return <InventoryTable title="Inventory" idProperty="_id" columns={[
+      { property: "mountpoint", title: "Mountpoint" },
+      { property: "manufacturerIdentifier", title: "Manufacturer" },
+      { property: "parentUuid", title: "Parent" },
+      { property: "uuid", title: "Name" },
+      { property: "serial", title: "Serial" },
+      { property: "version", title: "Version" },
+      { property: "date", title: "Date" },
+      { property: "description", title: "Description" },
+      { property: "partTypeId", title: "Part Type Id" },
+      { property: "modelIdentifier", title: "Model Identifier" },
+      { property: "typeName", title: "Type" },
+      { property: "treeLevel", title: "Containment Level" },
+    ]}  {...this.props.inventoryElementsActions} {...this.props.inventoryElementsProperties} >
+    </InventoryTable>
+  }
+
+  componentDidMount() {
+    this.props.inventoryElementsActions.onToggleFilter();
+    this.props.inventoryElementsActions.onHandleRequestSort("mountpoint");
+  }
+}
+
+export const Dashboard = connect(mapProps, mapDispatch)(DashboardComponent);
 export default Dashboard;

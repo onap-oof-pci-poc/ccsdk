@@ -127,7 +127,7 @@ export class UnknownNetworkElementsListComponent extends React.Component<Unknown
                 </div>
                   <div className={ classes.spacer }>
                     <Tooltip title={ "Fault" } ><Button className={ classes.button } onClick={ this.navigateToApplicationHandlerCreator("fault", rowData) } >F</Button></Tooltip>
-                    <Tooltip title={ "Configure" } ><Button className={ classes.button } onClick={ this.navigateToApplicationHandlerCreator("configure", rowData) } >C</Button></Tooltip>
+                    <Tooltip title={ "Configure" } ><Button className={ classes.button } onClick={ this.navigateToApplicationHandlerCreator("configuration", rowData) } >C</Button></Tooltip>
                     <Tooltip title={ "Accounting " } ><Button className={ classes.button } onClick={ this.navigateToApplicationHandlerCreator("accounting", rowData) }>A</Button></Tooltip>
                     <Tooltip title={ "Performance" } ><Button className={ classes.button } onClick={ this.navigateToApplicationHandlerCreator("performance", rowData) }>P</Button></Tooltip>
                     <Tooltip title={ "Security" } ><Button className={ classes.button } onClick={ this.navigateToApplicationHandlerCreator("security", rowData) }>S</Button></Tooltip>

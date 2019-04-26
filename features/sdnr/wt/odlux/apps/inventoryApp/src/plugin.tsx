@@ -6,11 +6,13 @@ import { faShoppingBag } from '@fortawesome/free-solid-svg-icons';  // select ap
 import applicationManager from '../../../framework/src/services/applicationManager';
 
 import { Dashboard } from  './views/dashboard';
+import faultAppRootHandler from './handlers/inventoryAppRootHandler';
 
 export function register() {
   applicationManager.registerApplication({
     name: "inventory",
     icon: faShoppingBag,
+    rootActionHandler: faultAppRootHandler,
     rootComponent: Dashboard,
     menuEntry: "Inventory"
   });

@@ -21,7 +21,9 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
@@ -37,6 +39,24 @@ import org.onap.ccsdk.features.sdnr.wt.odlux.model.bundles.OdluxBundleLoader;
 public class TestResFileServlet {
 
     PublicResFilesServlet servlet;
+
+    @Test
+    public void test() throws ServletException {
+        servlet = new PublicResFilesServlet();
+		servlet.init();
+
+        OdluxBundleLoader loader = OdluxBundleLoaderImpl.getInstance();
+        OdluxBundle b = new OdluxBundle();
+        b.setBundleName("b1");
+        b.setIndex(9);
+        b.setLoader(loader);
+        b.initialize();
+        System.out.println("Subtest1");
+        testResReq("odlux/index.html", HttpURLConnection.HTTP_OK);
+        System.out.println("Subtest2");
+        testResReq("odlux/fragmich.txt", HttpURLConnection.HTTP_NOT_FOUND);
+        System.out.println("Done");
+    }
 
     private void testResReq(String res, int responseCode) {
         HttpServletRequest req = mock(HttpServletRequest.class);
@@ -69,25 +89,16 @@ public class TestResFileServlet {
         verify(resp).setStatus(responseCode);
     }
 
-    @Test
-    public void test() {
-        servlet = new PublicResFilesServlet();
-        OdluxBundleLoader loader = OdluxBundleLoaderImpl.getInstance();
-        OdluxBundle b = new OdluxBundle();
-        b.setBundleName("b1");
-        b.setIndex(9);
-        b.setLoader(loader);
-        b.initialize();
-        testResReq("odlux/index.html", 200);
-        testResReq("odlux/fragmich.txt", 404);
-
-    }
 
     @SuppressWarnings("serial")
     private class PublicResFilesServlet extends ResFilesServlet {
         @Override
         public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
             super.doGet(req, resp);
+        }
+        @Override
+        public String getMimeType(String fileName) {
+        	return "mimetype";
         }
     }
 }

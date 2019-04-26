@@ -9,7 +9,7 @@ class HelpService {
   public async getDocument(path: string): Promise<string | null> {
     // check if the result is allready in the cache
     if (this.documents[path]) return Promise.resolve(this.documents[path]);
-    
+
     // request the document
     const result = await requestRest<string>(`/help/${ path }`.replace(/\/{2,}/i, '/'));
     if (result) {

@@ -5,5 +5,6 @@ export type ConnectionStatusLogType = {
   timeStamp: string;
   objectId: string;
   type: string;
+  newValue: string;
 }
 

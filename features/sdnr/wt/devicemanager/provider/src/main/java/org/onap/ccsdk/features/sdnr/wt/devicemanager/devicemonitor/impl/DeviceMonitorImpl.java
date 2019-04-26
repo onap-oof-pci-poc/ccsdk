@@ -25,6 +25,12 @@ import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.toggleAlarmFilter.NotificationDelayFilter;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.HtDevicemanagerConfiguration;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.IConfigChangedListener;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.DmConfig;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.ToggleAlarmConfig;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.listener.ODLEventListener;
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.slf4j.Logger;
@@ -62,7 +68,7 @@ import org.slf4j.LoggerFactory;
  */
 
 @SuppressWarnings("deprecation")
-public class DeviceMonitorImpl implements AutoCloseable {
+public class DeviceMonitorImpl implements DeviceMonitor, IConfigChangedListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(DeviceMonitorImpl.class);
 
@@ -80,11 +86,16 @@ public class DeviceMonitorImpl implements AutoCloseable {
      * Basic implementation of devicemonitoring
      * @param odlEventListener as destination for problems
      */
-    public DeviceMonitorImpl(DataBroker dataBroker, ODLEventListener odlEventListener) {
+    public DeviceMonitorImpl(DataBroker dataBroker, ODLEventListener odlEventListener, HtDevicemanagerConfiguration htconfig) {
         LOG.info("Construct {}", this.getClass().getSimpleName());
 
         this.odlEventListener = odlEventListener;
         this.dataBroker = dataBroker;
+
+        htconfig.registerConfigChangedListener(this);
+        DmConfig dmConfig = htconfig.getDmConfig();
+        setDmConfig(dmConfig);
+
         this.queue = new ConcurrentHashMap<>();
         this.scheduler = Executors.newScheduledThreadPool(10);
     }
@@ -103,6 +114,18 @@ public class DeviceMonitorImpl implements AutoCloseable {
 
         scheduler.shutdown();
     }
+
+	@Override
+	public void onConfigChanged() {
+        DmConfig cfg = DmConfig.reload();
+        setDmConfig(cfg);
+	}
+
+	private void setDmConfig(DmConfig dmConfig) {
+        for (DeviceMonitorProblems problem : DeviceMonitorProblems.values()) {
+        	problem.setSeverity(dmConfig.getSeverity(problem));
+        }
+	}
 
     /*-------------------------------------------------------------
      * Start/ stop/ update service for Mountpoint
@@ -160,7 +183,6 @@ public class DeviceMonitorImpl implements AutoCloseable {
             DeviceMonitorTask task = queue.get(mountPointNodeName);
             //Remove from here
             queue.remove(mountPointNodeName);
-
             //Clear all problems
             task.removeMountpointIndication();
             LOG.debug("Task stopped: {}", mountPointNodeName);

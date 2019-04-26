@@ -182,7 +182,7 @@ class EditMediatorConfigDialogComponent extends React.Component<EditMediatorConf
             <Tab label="Config" />
             <Tab label="ODL AutoConnect" />
           </Tabs>
-          { this.state.activeTab === 0 ? <TabContainer >
+          {this.state.activeTab === 0 ? <TabContainer >
             <TextField disabled={setting.readonly || setting.readonlyName} spellCheck={false} autoFocus margin="dense" id="name" label="Name" type="text" fullWidth value={this.state.Name} onChange={(event) => { this.setState({ Name: event.target.value }); }} />
             <FormControl fullWidth disabled={setting.readonly}>
               <InputLabel htmlFor="deviceType">Device</InputLabel>
@@ -211,8 +211,8 @@ class EditMediatorConfigDialogComponent extends React.Component<EditMediatorConf
             <TextField disabled={setting.readonly} spellCheck={false} autoFocus margin="dense" id="ncPassword" label="Netconf Password" type="password" fullWidth value={this.state.NcPassword} onChange={(event) => { this.setState({ NcPassword: event.target.value }); }} />
             <TextField disabled={setting.readonly} spellCheck={false} autoFocus margin="dense" id="ncPort" label="Netconf Port" type="number" fullWidth value={this.state.NcPort || ""} onChange={(event) => { this.setState({ NcPort: +event.target.value }); }} />
           </TabContainer> : null}
-          { this.state.activeTab === 1 ? <TabContainer >
-            { this.state.ODLConfig && this.state.ODLConfig.length > 0
+          {this.state.activeTab === 1 ? <TabContainer >
+            {this.state.ODLConfig && this.state.ODLConfig.length > 0
               ? this.state.ODLConfig.map((cfg, ind) => {
                 const panelId = `panel-${ind}`;
                 const deleteButton = (<IconButton onClick={() => {
@@ -227,15 +227,15 @@ class EditMediatorConfigDialogComponent extends React.Component<EditMediatorConf
                   <Panel title={cfg.Server && `${cfg.User ? `${cfg.User}@` : ''}${cfg.Protocol}://${cfg.Server}:${cfg.Port}` || "new odl config"} key={panelId} panelId={panelId} activePanel={this.state.activeOdlConfig} customActionButtons={[deleteButton]}
                     onToggle={(id) => this.setState({ activeOdlConfig: (this.state.activeOdlConfig === id) ? "" : (id || "") })} >
                     <div className={classes.alignInOneLine}>
-                    <FormControl className={classes.left} margin={"dense"} >
+                      <FormControl className={classes.left} margin={"dense"} >
                         <InputLabel htmlFor={`protocol-${ind}`}>Protocoll</InputLabel>
-                        <Select value={cfg.Protocol} onChange={ this.odlConfigValueChangeHandlerCreator(ind, "Protocol", e => (e.target.value)) } inputProps={{ name: `protocol-${ind}`, id: `protocol-${ind}` }} fullWidth >
+                        <Select value={cfg.Protocol} onChange={this.odlConfigValueChangeHandlerCreator(ind, "Protocol", e => (e.target.value))} inputProps={{ name: `protocol-${ind}`, id: `protocol-${ind}` }} fullWidth >
                           <MenuItem value={"http"}>http</MenuItem>
                           <MenuItem value={"https"}>https</MenuItem>
                         </Select>
                       </FormControl>
                       <TextField className={classes.left} spellCheck={false} margin="dense" id="hostname" label="Hostname" type="text" value={cfg.Server} onChange={this.odlConfigValueChangeHandlerCreator(ind, "Server", e => e.target.value)} />
-                      <TextField className={classes.right} style={{ maxWidth: "65px"}} spellCheck={false} margin="dense" id="port" label="Port" type="number" value={cfg.Port|| ""} onChange={this.odlConfigValueChangeHandlerCreator(ind, "Port", e => +e.target.value)} />
+                      <TextField className={classes.right} style={{ maxWidth: "65px" }} spellCheck={false} margin="dense" id="port" label="Port" type="number" value={cfg.Port || ""} onChange={this.odlConfigValueChangeHandlerCreator(ind, "Port", e => +e.target.value)} />
                     </div>
                     <div className={classes.alignInOneLine}>
                       <TextField className={classes.left} spellCheck={false} margin="dense" id="username" label="Username" type="text" value={cfg.User} onChange={this.odlConfigValueChangeHandlerCreator(ind, "User", e => e.target.value)} />
@@ -311,5 +311,3 @@ class EditMediatorConfigDialogComponent extends React.Component<EditMediatorConf
 
 export const EditMediatorConfigDialog = withStyles(styles)(connect(mapProps, mapDispatch)(EditMediatorConfigDialogComponent));
 export default EditMediatorConfigDialog;
-
-

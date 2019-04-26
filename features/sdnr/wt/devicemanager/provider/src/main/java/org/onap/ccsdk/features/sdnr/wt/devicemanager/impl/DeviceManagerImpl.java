@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.aaiconnector.impl.AaiProviderClient;
-import org.onap.ccsdk.features.sdnr.wt.devicemanager.archiveservice.ArchivCleanService;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.archiveservice.ArchiveCleanService;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.database.HtDatabaseNode;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.ONFCoreNetworkElementFactory;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.netconf.ONFCoreNetworkElementRepresentation;
@@ -35,6 +35,8 @@ import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.EsConfig;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.GeoConfig;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.PmConfig;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.dcaeconnector.impl.DcaeProviderClient;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.devicemonitor.impl.DeviceMonitor;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.devicemonitor.impl.DeviceMonitorEmptyImpl;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.devicemonitor.impl.DeviceMonitorImpl;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.database.service.HtDatabaseEventsService;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.impl.listener.NetconfChangeListener;
@@ -61,6 +63,7 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.netconf.notification.
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.netconf.notification._1._0.rev080714.StreamNameType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNode;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNodeConnectionStatus.ConnectionStatus;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.netconf.node.connection.status.ClusteredConnectionStatus;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.network.topology.topology.topology.types.TopologyNetconf;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.NetworkTopology;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.NodeId;
@@ -72,6 +75,8 @@ import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceProvider;
+import org.opendaylight.mdsal.singleton.common.api.ClusterSingletonServiceRegistration;
 
 @SuppressWarnings("deprecation")
 public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, ResyncNetworkElementsListener {
@@ -93,10 +98,11 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
     private RpcProviderRegistry rpcProviderRegistry = null;
     @SuppressWarnings("unused")
     private NotificationPublishService notificationPublishService = null;
+    private ClusterSingletonServiceProvider clusterSingletonServiceProvider;
 
     private final ConcurrentHashMap<String, ONFCoreNetworkElementRepresentation> networkElementRepresentations =
             new ConcurrentHashMap<>();
-
+    private final ONFCoreNetworkElementRepresentation networkelementLock = ONFCoreNetworkElementFactory.getEmpty("NE-LOCK");
     private WebSocketServiceClient webSocketService;
     private HtDatabaseEventsService databaseClientEvents;
     private ODLEventListener odlEventListener;
@@ -105,8 +111,8 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
     private @Nullable PerformanceManagerImpl performanceManager = null;
     private ProviderClient dcaeProviderClient;
     private ProviderClient aotsMProvider;
-    private @Nullable AaiProviderClient aaiProviderClient;
-    private DeviceMonitorImpl deviceMonitor;
+    private @Nullable AaiProviderClient aaiProviderClient = null;
+    private @Nullable DeviceMonitor deviceMonitor = new DeviceMonitorEmptyImpl();
     private IndexUpdateService updateService;
     private IndexConfigService configService;
     private IndexMwtnService mwtnService;
@@ -117,7 +123,9 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
     private Thread threadDoClearCurrentFaultByNodename = null;
     private int refreshCounter = 0;
     private AkkaConfig akkaConfig;
-    private ArchivCleanService archiveCleanService;
+    private ArchiveCleanService archiveCleanService;
+    @SuppressWarnings("unused")
+	private ClusterSingletonServiceRegistration cssRegistration;
 
     // Blueprint 1
     public DeviceManagerImpl() {
@@ -139,7 +147,9 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
     public void setMountPointService(MountPointService mountPointService) {
         this.mountPointService = mountPointService;
     }
-
+    public void setClusterSingletonService(ClusterSingletonServiceProvider clusterSingletonService) {
+    	this.clusterSingletonServiceProvider = clusterSingletonService;
+    }
     public void init() {
 
         LOG.info("Session Initiated start {}", APPLICATION_NAME);
@@ -212,17 +222,14 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
                 LOG.warn("No configuration available. Don't start event manager");
             } else {
                 this.databaseClientEvents = new HtDatabaseEventsService(htDatabase);
-                //Make sure to start for one cluster node only
-                if (akkaConfig == null || akkaConfig.isClusterAndFirstNode() || akkaConfig.isSingleNode()) {
-                    this.archiveCleanService = new ArchivCleanService(config, databaseClientEvents, mwtnService);
-                }
 
                 String myDbKeyNameExtended = MYDBKEYNAMEBASE + "-" + dbConfig.getCluster();
 
                 this.odlEventListener = new ODLEventListener(myDbKeyNameExtended, webSocketService,
                         databaseClientEvents, dcaeProviderClient, aotsMProvider, maintenanceService);
             }
-
+            this.archiveCleanService = new ArchiveCleanService(config, databaseClientEvents, mwtnService);
+            this.cssRegistration = this.clusterSingletonServiceProvider.registerClusterSingletonService(this.archiveCleanService);
             // PM
             PmConfig configurationPM = config.getPm();
             LOG.info("Performance manager configuration: {}", configurationPM);
@@ -249,7 +256,7 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
             // DeviceMonitor has to be available before netconfSubscriptionManager is
             // configured
             LOG.debug("start DeviceMonitor Service");
-            this.deviceMonitor = new DeviceMonitorImpl(dataBroker, odlEventListener);
+            this.deviceMonitor = new DeviceMonitorImpl(dataBroker, odlEventListener, config);
 
             // netconfSubscriptionManager should be the last one because this is a callback
             // service
@@ -328,85 +335,109 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
             return;
         }
 
-        if (networkElementRepresentations.containsKey(mountPointNodeName)) {
-            LOG.warn("Mountpoint {} already registered. Leave startup procedure.", mountPointNodeName);
-            return;
-        }
-
-        if (!isMaster(nNode)) {
+        if (!isNetconfNodeMaster(nNode)) {
             // Change Devicemonitor-status to connected ... for non master mountpoints.
             deviceMonitor.deviceConnectSlaveIndication(mountPointNodeName);
-            return;
-        }
+		} else {
 
-        InstanceIdentifier<Node> instanceIdentifier =
-                NETCONF_TOPO_IID.child(Node.class, new NodeKey(new NodeId(mountPointNodeName)));
+			InstanceIdentifier<Node> instanceIdentifier = NETCONF_TOPO_IID.child(Node.class,
+					new NodeKey(new NodeId(mountPointNodeName)));
 
-        Optional<MountPoint> optionalMountPoint = null;
-        int timeout = 10000;
-        while (!(optionalMountPoint = mountPointService.getMountPoint(instanceIdentifier)).isPresent() && timeout > 0) {
-            LOG.info("Event listener waiting for mount point for Netconf device :: Name : {}", mountPointNodeName);
-            sleepMs(1000);
-            timeout -= 1000;
-        }
+			Optional<MountPoint> optionalMountPoint = null;
+			int timeout = 10000;
+			while (!(optionalMountPoint = mountPointService.getMountPoint(instanceIdentifier)).isPresent()
+					&& timeout > 0) {
+				LOG.info("Event listener waiting for mount point for Netconf device :: Name : {}", mountPointNodeName);
+				sleepMs(1000);
+				timeout -= 1000;
+			}
 
-        if (!optionalMountPoint.isPresent()) {
-            LOG.warn("Event listener timeout while waiting for mount point for Netconf device :: Name : {} ",
-                    mountPointNodeName);
-            return;
-        }
-        // Mountpoint is present for sure
-        MountPoint mountPoint = optionalMountPoint.get();
-        //BindingDOMDataBrokerAdapter.BUILDER_FACTORY;
-        LOG.info("Mountpoint with id: {} class {} toString {}", mountPoint.getIdentifier(), mountPoint.getClass().getName(), mountPoint);
-        Optional<DataBroker> optionalNetconfNodeDatabroker = mountPoint.getService(DataBroker.class);
+			if (!optionalMountPoint.isPresent()) {
+				LOG.warn("Event listener timeout while waiting for mount point for Netconf device :: Name : {} ",
+						mountPointNodeName);
+			} else {
+				// Mountpoint is present for sure
+				MountPoint mountPoint = optionalMountPoint.get();
+				// BindingDOMDataBrokerAdapter.BUILDER_FACTORY;
+				LOG.info("Mountpoint with id: {} class {} toString {}", mountPoint.getIdentifier(),
+						mountPoint.getClass().getName(), mountPoint);
+				Optional<DataBroker> optionalNetconfNodeDatabroker = mountPoint.getService(DataBroker.class);
 
-        if (! optionalNetconfNodeDatabroker.isPresent()) {
-            LOG.info("Slave mountpoint {} without databroker", mountPointNodeName);
-            return;
-        }
+				if (!optionalNetconfNodeDatabroker.isPresent()) {
+					LOG.info("Slave mountpoint {} without databroker", mountPointNodeName);
+				} else {
 
-        DataBroker netconfNodeDataBroker = optionalNetconfNodeDatabroker.get();
-        LOG.info("Master mountpoint {}", mountPointNodeName);
-        // getNodeInfoTest(dataBroker);
+					// It is master for mountpoint and all data are available.
+					// Make sure that specific mountPointNodeName is handled only once.
+					// be aware that startListenerOnNodeForConnectedState could be called multiple
+					// times for same mountPointNodeName.
+					// networkElementRepresentations contains handled NEs at master node.
 
-        // create automatic empty maintenance entry into db before reading and listening for problems
-        this.maintenanceService.createIfNotExists(mountPointNodeName);
+					synchronized (networkelementLock) {
+						if (networkElementRepresentations.containsKey(mountPointNodeName)) {
+							LOG.warn("Mountpoint {} already registered. Leave startup procedure.", mountPointNodeName);
+							return;
+						} else {
+							ONFCoreNetworkElementRepresentation result = networkElementRepresentations.put(mountPointNodeName,
+									networkelementLock);
+							if (result != null) {
+								LOG.info("Expected null value was not provided, but {}", result.getMountPointNodeName());
+							}
+						}
+					}
 
-        // Setup microwaveEventListener for Notificationservice
+					DataBroker netconfNodeDataBroker = optionalNetconfNodeDatabroker.get();
+					LOG.info("Master mountpoint {}", mountPointNodeName);
+					// getNodeInfoTest(dataBroker);
 
-        // MicrowaveEventListener microwaveEventListener = new
-        // MicrowaveEventListener(mountPointNodeName, websocketmanagerService,
-        // xmlMapper, databaseClientEvents);
-        ONFCoreNetworkElementRepresentation ne = ONFCoreNetworkElementFactory.create(mountPointNodeName, dataBroker,
-                webSocketService, databaseClientEvents, instanceIdentifier, netconfNodeDataBroker, dcaeProviderClient,
-                aotsMProvider, maintenanceService, notificationDelayService);
-        networkElementRepresentations.put(mountPointNodeName, ne);
-        ne.doRegisterMicrowaveEventListener(mountPoint);
+					// create automatic empty maintenance entry into db before reading and listening
+					// for problems
+					this.maintenanceService.createIfNotExists(mountPointNodeName);
 
-        // Register netconf stream
-        registerNotificationStream(mountPointNodeName, mountPoint, "NETCONF");
+					// Setup microwaveEventListener for Notificationservice
 
-        // -- Read data from NE
-        ne.initialReadFromNetworkElement();
-        ne.initSynchronizationExtension();
+					// MicrowaveEventListener microwaveEventListener = new
+					// MicrowaveEventListener(mountPointNodeName, websocketmanagerService,
+					// xmlMapper, databaseClientEvents);
+					ONFCoreNetworkElementRepresentation ne = ONFCoreNetworkElementFactory.create(mountPointNodeName,
+							dataBroker, webSocketService, databaseClientEvents, instanceIdentifier,
+							netconfNodeDataBroker, dcaeProviderClient, aotsMProvider, maintenanceService,
+							notificationDelayService);
 
-        // Setup Service that monitors registration/ deregistration of session
-        ConnectionStatus csts = nNode.getConnectionStatus();
-        sendCreateOrUpdateNotification(mountPointNodeName, action, csts);
+					synchronized (networkelementLock) {
+						ONFCoreNetworkElementRepresentation result = networkElementRepresentations
+								.put(mountPointNodeName, ne);
+						if (result != networkelementLock) {
+							LOG.info("NE list does not provide lock as epxected, but {}.",
+									result.getMountPointNodeName());
+						}
+					}
+					ne.doRegisterMicrowaveEventListener(mountPoint);
 
-        if (aaiProviderClient != null) {
-            aaiProviderClient.onDeviceRegistered(mountPointNodeName);
-        }
-        // -- Register NE to performance manager
-        if (performanceManager != null) {
-            performanceManager.registration(mountPointNodeName, ne);
-        }
+					// Register netconf stream
+					registerNotificationStream(mountPointNodeName, mountPoint, "NETCONF");
 
-        deviceMonitor.deviceConnectMasterIndication(mountPointNodeName, ne);
+					// -- Read data from NE
+					ne.initialReadFromNetworkElement();
+					ne.initSynchronizationExtension();
 
-        LOG.info("Starting Event listener on Netconf device :: Name : {} finished", mountPointNodeName);
-    }
+					sendUpdateNotification(mountPointNodeName, nNode.getConnectionStatus());
+
+					if (aaiProviderClient != null) {
+						aaiProviderClient.onDeviceRegistered(mountPointNodeName);
+					}
+					// -- Register NE to performance manager
+					if (performanceManager != null) {
+						performanceManager.registration(mountPointNodeName, ne);
+					}
+
+					deviceMonitor.deviceConnectMasterIndication(mountPointNodeName, ne);
+
+					LOG.info("Starting Event listener on Netconf device :: Name : {} finished", mountPointNodeName);
+				}
+			}
+		}
+	}
 
     /**
      * Mountpoint created or existing. Managed device is actually disconnected from node/ mountpoint.
@@ -419,15 +450,14 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
     public void enterNonConnectedState(Action action, NodeId nNodeId, NetconfNode nNode) {
         String mountPointNodeName = nNodeId.getValue();
         ConnectionStatus csts = nNode.getConnectionStatus();
-
-        sendCreateOrUpdateNotification(mountPointNodeName, action, csts);
+        if (isNetconfNodeMaster(nNode)) {
+        	sendUpdateNotification(mountPointNodeName, csts);
+        }
 
         // Handling if mountpoint exist. connected -> connecting/UnableToConnect
         stopListenerOnNodeForConnectedState(mountPointNodeName);
 
-        if (deviceMonitor != null) {
-            deviceMonitor.deviceDisconnectIndication(mountPointNodeName);
-        }
+        deviceMonitor.deviceDisconnectIndication(mountPointNodeName);
 
     }
 
@@ -466,12 +496,10 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
         }
     }
 
-    private void sendCreateOrUpdateNotification(String mountPointNodeName, Action action, ConnectionStatus csts) {
-        LOG.info("enter Non ConnectedState for device :: Name : {} Action {} ConnectionStatus {}", mountPointNodeName, action, csts);
-        if (action == Action.CREATE) {
-            odlEventListener.registration(mountPointNodeName);
-        } else {
-            odlEventListener.updateRegistration(mountPointNodeName, ConnectionStatus.class.getSimpleName(), csts != null ? csts.getName() : "null");
+    private void sendUpdateNotification(String mountPointNodeName, ConnectionStatus csts) {
+        LOG.info("enter Non ConnectedState for device :: Name : {} ConnectionStatus {}", mountPointNodeName, csts);
+        if (odlEventListener != null) {
+        	odlEventListener.updateRegistration(mountPointNodeName, ConnectionStatus.class.getSimpleName(), csts != null ? csts.getName() : "null");
         }
     }
 
@@ -479,39 +507,51 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
      * Handle netconf/mountpoint changes
      */
     @Override
-    public void netconfChangeHandler(Action action, @Nullable ConnectionStatus csts, NodeId nodeId, NetconfNode nnode) {
-        switch (action) {
-            case REMOVE:
-                removeMountpointState(nodeId); // Stop Monitor
-                //deviceManagerService.enterNonConnectedState(nodeId, nnode); // Remove Mountpoint handler
-                break;
+    public void netconfChangeHandler(Action action, @Nullable ConnectionStatus csts, NodeId nodeId, NetconfNode nNode) {
 
-            case UPDATE:
-            case CREATE:
-                if (csts != null) {
-                    switch (csts) {
-                        case Connected: {
-                            startListenerOnNodeForConnectedState(action, nodeId, nnode);
-                            break;
-                        }
-                        case UnableToConnect:
-                        case Connecting: {
-                            enterNonConnectedState(action, nodeId, nnode);
-                            break;
-                        }
-                    }
-                } else {
-                    LOG.debug("NETCONF Node handled with null status for action", action);
-                }
-                break;
-        }
+		ClusteredConnectionStatus ccsts = nNode.getClusteredConnectionStatus();
+		String nodeIdString = nodeId.getValue();
+		if (action == Action.CREATE) {
+	        if (odlEventListener != null) {
+	        	odlEventListener.registration(nodeIdString);
+	        }
+		}
+		boolean isCluster = akkaConfig == null && akkaConfig.isCluster();
+		if (isCluster && ccsts == null) {
+			LOG.debug("NETCONF Node {} {} does not provide cluster status. Stop execution.", nodeIdString, action);
+		} else {
+			switch (action) {
+			case REMOVE:
+				removeMountpointState(nodeId); // Stop Monitor
+				break;
+
+			case UPDATE:
+			case CREATE:
+				if (csts != null) {
+					switch (csts) {
+					case Connected: {
+						startListenerOnNodeForConnectedState(action, nodeId, nNode);
+						break;
+					}
+					case UnableToConnect:
+					case Connecting: {
+						enterNonConnectedState(action, nodeId, nNode);
+						break;
+					}
+					}
+				} else {
+					LOG.debug("NETCONF Node handled with null status for action", action);
+				}
+				break;
+			}
+		}
     }
 
     /*-------------------------------------------------------------------------------------------
      * Functions
      */
 
-    public ArchivCleanService getArchiveCleanService() {
+    public ArchiveCleanService getArchiveCleanService() {
         return this.archiveCleanService;
     }
 
@@ -583,9 +623,7 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
             }
 
             // Force a sync
-            if (this.deviceMonitor != null) {
-                this.deviceMonitor.refreshAlarmsInDb();
-            }
+            this.deviceMonitor.refreshAlarmsInDb();
 
             threadDoClearCurrentFaultByNodename = new Thread(() -> {
                 refreshCounter++;
@@ -690,17 +728,11 @@ public class DeviceManagerImpl implements DeviceManagerService, AutoCloseable, R
         return this.akkaConfig == null ? "" : this.akkaConfig.getClusterConfig().getClusterSeedNodeName("abc");
     }
 
-    private boolean isMaster(NetconfNode nnode) {
+    private boolean isNetconfNodeMaster(NetconfNode nnode) {
         if (isInClusterMode()) {
             LOG.debug("check if me is responsible for node");
             String masterNodeName = nnode.getClusteredConnectionStatus() == null ? "null"
                     : nnode.getClusteredConnectionStatus().getNetconfMasterNode();
-            /*
-             * List<NodeStatus> clusterNodeStatusList=nnode.getClusteredConnectionStatus()==null?null:nnode.
-             * getClusteredConnectionStatus().getNodeStatus(); if(clusterNodeStatusList!=null) { for(NodeStatus
-             * s: clusterNodeStatusList) LOG.debug("node "+s.getNode()+
-             * " with status "+(s.getStatus()==null?"null":s.getStatus().getName())); }
-             */
             String myNodeName = getClusterNetconfNodeName();
             LOG.debug("sdnMasterNode=" + masterNodeName + " and sdnMyNode=" + myNodeName);
             if (!masterNodeName.equals(myNodeName)) {

@@ -5,12 +5,12 @@
                 "versions": {
                     "0.4.0": {
                         "date": "2018-02-24",
-                        "path": "sdnr/connect/0.4.0/README.md",
+                        "path": "sdnr/connect/README.md",
                         "label": "Connect"
                     },
                     "current": {
                         "date": "2018-02-24",
-                        "path": "sdnr/connect/0.4.0/README.md",
+                        "path": "sdnr/connect/README.md",
                         "label": "Connect"
                     }
                 },
@@ -20,12 +20,12 @@
                 "versions": {
                     "0.4.0": {
                         "date": "2018-02-24",
-                        "path": "sdnr/pnfFault/0.4.0/README.md",
+                        "path": "sdnr/pnfFault/README.md",
                         "label": "Fault"
                     },
                     "current": {
                         "date": "2018-02-24",
-                        "path": "sdnr/pnfFault/0.4.0/README.md",
+                        "path": "sdnr/pnfFault/README.md",
                         "label": "Fault"
                     }
                 },
@@ -35,12 +35,12 @@
                 "versions": {
                     "0.4.0": {
                         "date": "2018-09-13",
-                        "path": "sdnr/pnfMaintenance/0.4.0/README.md",
+                        "path": "sdnr/pnfMaintenance/README.md",
                         "label": "Maintenance"
                     },
                     "current": {
                         "date": "2018-09-13",
-                        "path": "sdnr/pnfMaintenance/0.4.0/README.md",
+                        "path": "sdnr/pnfMaintenance/README.md",
                         "label": "Maintenance"
                     }
                 },
@@ -50,12 +50,12 @@
                 "versions": {
                     "0.4.0": {
                         "date": "2018-02-24",
-                        "path": "sdnr/pnfConfig/0.4.0/README.md",
+                        "path": "sdnr/pnfConfig/README.md",
                         "label": "Config"
                     },
                     "current": {
                         "date": "2018-02-24",
-                        "path": "sdnr/pnfConfig/0.4.0/README.md",
+                        "path": "sdnr/pnfConfig/README.md",
                         "label": "Config"
                     }
                 },
@@ -65,12 +65,12 @@
                 "versions": {
                     "0.4.0": {
                         "date": "2018-02-24",
-                        "path": "sdnr/pnfPerformance/0.4.0/README.md",
+                        "path": "sdnr/pnfPerformance/README.md",
                         "label": "Performance"
                     },
                     "current": {
                         "date": "2018-02-24",
-                        "path": "sdnr/pnfPerformance/0.4.0/README.md",
+                        "path": "sdnr/pnfPerformance/README.md",
                         "label": "Performance"
                     }
                 },
@@ -80,12 +80,12 @@
                 "versions": {
                     "0.4.0": {
                         "date": "2018-02-24",
-                        "path": "sdnr/pnfInventory/0.4.0/README.md",
+                        "path": "sdnr/pnfInventory/README.md",
                         "label": "Inventory"
                     },
                     "current": {
                         "date": "2018-02-24",
-                        "path": "sdnr/pnfInventory/0.4.0/README.md",
+                        "path": "sdnr/pnfInventory/README.md",
                         "label": "Inventory"
                     }
                 },
@@ -95,12 +95,12 @@
                 "versions": {
                     "0.4.0": {
                         "date": "2018-02-24",
-                        "path": "sdnr/pnfMediator/0.4.0/README.md",
+                        "path": "sdnr/pnfMediator/README.md",
                         "label": "Mediator"
                     },
                     "current": {
                         "date": "2018-02-24",
-                        "path": "sdnr/pnfMediator/0.4.0/README.md",
+                        "path": "sdnr/pnfMediator/README.md",
                         "label": "Mediator"
                     }
                 },
@@ -110,12 +110,12 @@
         "versions": {
             "0.4.0": {
                 "date": "2018-02-24",
-                "path": "sdnr/0.4.0/README.md",
+                "path": "sdnr/README.md",
                 "label": "SDN-R"
             },
             "current": {
                 "date": "2018-02-24",
-                "path": "sdnr/0.4.0/README.md",
+                "path": "sdnr/README.md",
                 "label": "SDN-R"
             }
         },
@@ -125,22 +125,22 @@
         "nodes":{
             "installation":{
                 "versions":{
-                    "0.4.0":{"date":"","path":"mediatorserver/installation/0.4.0/README.md","label":""},
-                    "current":{"date":"","path":"mediatorserver/installation/0.4.0/README.md","label":""}
+                    "0.4.0":{"date":"","path":"mediatorserver/installation/README.md","label":""},
+                    "current":{"date":"","path":"mediatorserver/installation/README.md","label":""}
                 },
                 "label":"Installation"
             },
             "mediator":{
                 "versions":{
-                    "0.4.0":{"date":"","path":"mediatorserver/mediator/0.4.0/README.md","label":""},
-                    "current":{"date":"","path":"mediatorserver/mediator/0.4.0/README.md","label":""}
+                    "0.4.0":{"date":"","path":"mediatorserver/mediator/README.md","label":""},
+                    "current":{"date":"","path":"mediatorserver/mediator/README.md","label":""}
                 },
                 "label":"Mediator"
             }
         },
         "versions":{
-            "0.4.0":{"date":"","path":"mediatorserver/0.4.0/README.md","label":""},
-            "current":{"date":"","path":"mediatorserver/0.4.0/README.md","label":""}
+            "0.4.0":{"date":"","path":"mediatorserver/README.md","label":""},
+            "current":{"date":"","path":"mediatorserver/README.md","label":""}
         },
         "label":"MediatorServer"
     },
@@ -148,12 +148,12 @@
         "versions": {
             "0.4.0": {
                 "date": "2018-02-24",
-                "path": "sdnr/0.4.0/faq.md",
+                "path": "sdnr/faq.md",
                 "label": "FAQ"
             },
             "current": {
                 "date": "2018-02-24",
-                "path": "sdnr/0.4.0/faq.md",
+                "path": "sdnr/faq.md",
                 "label": "FAQ"
             }
         },
@@ -163,12 +163,12 @@
         "versions": {
             "0.4.0": {
                 "date": "2018-02-24",
-                "path": "sdnr/0.4.0/abbreviations.md",
+                "path": "sdnr/abbreviations.md",
                 "label": "Abbreviations"
             },
             "current": {
                 "date": "2018-02-24",
-                "path": "sdnr/0.4.0/abbreviations.md",
+                "path": "sdnr/abbreviations.md",
                 "label": "Abbreviations"
             }
         },

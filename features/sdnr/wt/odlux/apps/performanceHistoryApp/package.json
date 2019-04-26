@@ -19,7 +19,7 @@
     "framework"
   ],
   "author": "Sai Neetha Phulmali",
-  "license": "MIT",
+  "license": "Apache License, Version 2.0",
   "dependencies": {
     "@odlux/framework" : "*"
   },

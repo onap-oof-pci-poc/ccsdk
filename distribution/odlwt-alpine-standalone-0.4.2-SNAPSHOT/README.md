@@ -1,6 +1,8 @@
 # Wireless transport micro services (wt)
 
 This distribution uses the ONAP ODL image "onap/ccsdk-odl-fluorine-alpine-image" to create the ONAP WT Container.
+There is no dependency to other ONAP Servers.
+This version is including 0.4.2-SNAPSHOT features.
 
 Configuration used by this container
 - Linux alpine as OS

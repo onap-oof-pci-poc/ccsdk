@@ -29,6 +29,7 @@ import org.opendaylight.controller.md.sal.binding.api.DataTreeModification;
 import org.opendaylight.controller.md.sal.common.api.data.LogicalDatastoreType;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNode;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.NetconfNodeConnectionStatus.ConnectionStatus;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.netconf.node.connection.status.ClusteredConnectionStatus;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.netconf.node.topology.rev150114.network.topology.topology.topology.types.TopologyNetconf;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.NetworkTopology;
 import org.opendaylight.yang.gen.v1.urn.tbd.params.xml.ns.yang.network.topology.rev131021.NodeId;
@@ -45,6 +46,7 @@ import org.slf4j.LoggerFactory;
 // 07.09.18 Switched to DataTreeChangeListener from ClusteredDataTreeChangeListener -> DM Service is
 // running at all nodes
 // This is not correct
+@SuppressWarnings("deprecation")
 public class NetconfChangeListener implements ClusteredDataTreeChangeListener<Node>, AutoCloseable {
 
     private static final Logger LOG = LoggerFactory.getLogger(NetconfChangeListener.class);
@@ -144,24 +146,24 @@ public class NetconfChangeListener implements ClusteredDataTreeChangeListener<No
             }
 
             if (node == null || nnode == null || nodeId == null || nodeKey == null) {
-                LOG.warn("Unexpected node {}, netconf node {} or key {} or id {}", node, nnode, nodeKey, nodeId);
+            	LOG.warn("Unexpected node {}, netconf node {} or key {} or id {}", node, nnode, nodeKey, nodeId);
             } else {
+            	String nodeIdString = nodeId.getValue();
+            	// Do not forward any controller related events to devicemanager
+            	if (nodeIdString.equals(CONTROLLER)) {
+            		LOG.debug("Stop processing for [{}]", nodeIdString);
+            	} else {
 
-                String nodeIdString = nodeId.getValue();
-                ConnectionStatus csts = nnode.getConnectionStatus();
-                LOG.debug("NETCONF Node processing with id {} action {} status {} cluster status {}", nodeIdString,
-                        action, csts, nnode.getClusteredConnectionStatus());
-
-                // Do not forward any controller related events to devicemanager
-                if (nodeIdString.equals(CONTROLLER)) {
-                    LOG.debug("Stop processing for [{}]", nodeIdString);
-                } else {
-                    // Action forwarded to devicehandler
-                    deviceManagerService.netconfChangeHandler(action, csts, nodeId, nnode);
-                }
+            		ClusteredConnectionStatus ccsts = nnode.getClusteredConnectionStatus();
+        			ConnectionStatus csts = nnode.getConnectionStatus();
+          			LOG.debug("NETCONF Node processing with id {} action {} status {} cluster status {}", nodeIdString,
+            					action, csts, ccsts);
+          			// Action forwarded to devicehandler
+           			deviceManagerService.netconfChangeHandler(action, csts, nodeId, nnode);
+            	}
             }
         } catch (NullPointerException e) {
-            LOG.warn("Unexpected null .. stop processing.", e);
+        	LOG.warn("Unexpected null .. stop processing.", e);
         }
     }
 

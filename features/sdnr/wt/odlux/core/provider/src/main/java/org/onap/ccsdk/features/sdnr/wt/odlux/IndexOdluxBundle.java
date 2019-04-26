@@ -98,7 +98,7 @@ public class IndexOdluxBundle extends OdluxBundle implements OdluxBundleResource
             }
             in.close();
         } catch (IOException e) {
-            LOG.warn("could not load resfile " + url.toString() + ": " + e.getMessage());
+            LOG.warn("could not load resfile {} : {}", url, e.getMessage());
             return null;
         }
 

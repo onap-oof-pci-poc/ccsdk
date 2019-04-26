@@ -23,6 +23,7 @@ import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.IniConfi
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.base.internalTypes.IniConfigurationFile.ConfigurationException;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.AaiConfig;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.DcaeConfig;
+import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.DmConfig;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.EsConfig;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.PmConfig;
 import org.onap.ccsdk.features.sdnr.wt.devicemanager.config.impl.ToggleAlarmConfig;
@@ -82,7 +83,7 @@ public class HtDevicemanagerConfiguration {
     public static HtDevicemanagerConfiguration getTestConfiguration() {
         return getTestConfiguration(CONFIGURATIONTESTFILE,false);
     }
-   
+
     public static HtDevicemanagerConfiguration getTestConfiguration(boolean newInstance) {
         return getTestConfiguration(CONFIGURATIONTESTFILE,newInstance);
     }
@@ -136,6 +137,10 @@ public class HtDevicemanagerConfiguration {
         return ToggleAlarmConfig.getTa(mConfig, this.subconfigHandler);
     }
 
+    public DmConfig getDmConfig() {
+    	return DmConfig.getDmConfig(mConfig, this.subconfigHandler);
+    }
+
     public ISubConfigHandler getSubconfigHandler() {
         return subconfigHandler;
     }
@@ -148,5 +153,6 @@ public class HtDevicemanagerConfiguration {
         EsConfig.clear();
         PmConfig.clear();
         ToggleAlarmConfig.clear();
+        DmConfig.clear();
     }
 }

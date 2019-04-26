@@ -79,13 +79,13 @@ module.exports = (env) => {
       new webpack.DllReferencePlugin({
         context: path.resolve(__dirname, "../../framework/src"),
         manifest: require(path.resolve(frameworkPath, "vendor-manifest.json")),
-          sourceType: "umd2"
-    }),
+        sourceType: "umd2"
+      }),
       new webpack.DllReferencePlugin({
         context: path.resolve(__dirname, "../../framework/src"),
         manifest: require(path.resolve(frameworkPath, "app-manifest.json")),
-          sourceType: "umd2"
-    }),
+        sourceType: "umd2"
+      }),
       ...(env === "release") ? [
         new webpack.DefinePlugin({
           "process.env": {
@@ -126,11 +126,31 @@ module.exports = (env) => {
         colors: true
       },
       proxy: {
-        "/database": {
-          target: "http://localhost:8181",
+
+        "/oauth2/": {
+          target: "http://localhost:3000",
+          secure: false
+        },
+        "/database/": {
+          target: "http://localhost:3000",
+          secure: false
+        },
+        "/restconf/": {
+          target: "http://localhost:3000",
+          secure: false
+        },
+        "/help/": {
+          target: "http://localhost:3000",
+          secure: false
+        },
+        "/websocket/": {
+          target: "http://localhost:3000",
+          ws: true,
+          changeOrigin: true,
           secure: false
         }
       }
+
     }
   }];
 }

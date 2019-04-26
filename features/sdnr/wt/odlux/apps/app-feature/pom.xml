@@ -19,14 +19,14 @@
 
     <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
     <artifactId>sdnr-wt-odlux-apps-feature</artifactId>
-    <version>0.4.1-SNAPSHOT</version>
+    <version>0.4.2-SNAPSHOT</version>
     <packaging>feature</packaging>
     <name>ccsdk-features-sdnr-wt :: ${project.artifactId} :: feature</name>
 
     <parent>
         <groupId>org.onap.ccsdk.parent</groupId>
         <artifactId>single-feature-parent</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.2.2-SNAPSHOT</version>
         <relativePath />
     </parent>
     <licenses>
@@ -70,6 +70,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdnr-wt-odlux-app-performanceHistoryApp</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sdnr-wt-odlux-app-configurationApp</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

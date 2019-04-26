@@ -13,6 +13,7 @@ import SnackDisplay from '../components/material-ui/snackDisplay';
 import Home from '../views/home';
 import Login from '../views/login';
 import About from '../views/about';
+import Test from '../views/test';
 
 import applicationService from '../services/applicationManager';
 import { SnackbarProvider } from 'notistack';
@@ -28,7 +29,7 @@ const styles = (theme: Theme) => createStyles({
   },
   content: {
     flexGrow: 1,
-    display: "flex", 
+    display: "flex",
     flexDirection: "column",
     backgroundColor: theme.palette.background.default,
     padding: theme.spacing.unit * 3,
@@ -59,7 +60,12 @@ export const Frame = withStyles(styles)(({ classes }: WithStyles<typeof styles>)
                 <AppFrame title={ "About" } icon={ faAddressBook } >
                   <About />
                 </AppFrame>
-              ) } />
+              )} />
+              { process.env.NODE_ENV === "development" ? <Route path="/test" component={() => (
+                <AppFrame title={"Test"} icon={faAddressBook} >
+                  <Test />
+                </AppFrame>
+              )} /> : null}
               <Route path="/login" component={ () => (
                 <AppFrame title={ "Login" } icon={ faSignInAlt } >
                   <Login />
@@ -82,4 +88,4 @@ export const Frame = withStyles(styles)(({ classes }: WithStyles<typeof styles>)
   );
 });
 
-export default Frame; 
+export default Frame;

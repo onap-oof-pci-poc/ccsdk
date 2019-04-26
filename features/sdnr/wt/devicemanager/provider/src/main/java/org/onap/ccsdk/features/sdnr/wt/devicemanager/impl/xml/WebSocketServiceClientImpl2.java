@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
  * Wrapper for forwarding web-socket notifications to the web-socket service, that is running as
  * bundle.
  */
+@SuppressWarnings("deprecation")
 public class WebSocketServiceClientImpl2 implements WebSocketServiceClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(ODLEventListener.class);

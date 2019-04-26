@@ -55,7 +55,8 @@ public class WebSocketManager extends WebSocketServlet implements Websocketmanag
     /**
      * timeout for websocket with no messages in ms
      */
-    private static final long IDLE_TIMEOUT = 5 * 60 * 1000L;
+    //private static final long IDLE_TIMEOUT = 5 * 60 * 1000L;
+    private static final long IDLE_TIMEOUT =0L;
 
     private final ArrayList<URI> clusterNodeClients = new ArrayList<>();
 

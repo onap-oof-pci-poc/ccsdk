@@ -6,14 +6,14 @@
 
     <groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
     <artifactId>sdnr-wt-odlux-apps-installer</artifactId>
-    <version>0.4.1-SNAPSHOT</version>
+    <version>0.4.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>ccsdk-features-sdnr-wt :: ${project.artifactId}</name>
 
     <parent>
         <groupId>org.onap.ccsdk.parent</groupId>
         <artifactId>odlparent-lite</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.2.2-SNAPSHOT</version>
         <relativePath />
     </parent>
 
@@ -90,6 +90,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sdnr-wt-odlux-app-performanceHistoryApp</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sdnr-wt-odlux-app-configurationApp</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

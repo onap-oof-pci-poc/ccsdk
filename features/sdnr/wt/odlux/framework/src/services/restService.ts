@@ -13,9 +13,9 @@ export const formEncode = (params: { [key: string]: string | number }) => Object
   return encodeURIComponent(key) + '=' + encodeURIComponent(params[key].toString());
 }).join('&');
 
-export async function requestRest<TData>(path: string = '', init: RequestInit = {}, authenticate: boolean = true):  Promise<TData|false|null> {
+export async function requestRest<TData>(path: string = '', init: RequestInit = {}, authenticate: boolean = true, isResource: boolean = false): Promise<TData | false | null> {
   const isAbsUrl = absUrlPattern.test(path);
-  const uri = isAbsUrl ? path : (baseUri) + ('/' + path).replace(/\/{2,}/i, '/');
+  const uri = isAbsUrl ? path : isResource ? path.replace(/\/{2,}/i, '/') : (baseUri) + ('/' + path).replace(/\/{2,}/i, '/');
   init.headers = {
     'method': 'GET',
     'Content-Type': 'application/json',

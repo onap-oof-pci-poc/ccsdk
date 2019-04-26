@@ -71,18 +71,18 @@ const settings: { [key: string]: DialogSettings } = {
   },
 };
 
-type EditMediatorServerDialogComponentProps = Connect<undefined,typeof mapDispatch> & {
+type EditMediatorServerDialogComponentProps = Connect<undefined, typeof mapDispatch> & {
   mode: EditMediatorServerDialogMode;
   mediatorServer: MediatorServer;
   onClose: () => void;
 };
 
-type EditMediatorServerDialogComponentState = MediatorServer ;
+type EditMediatorServerDialogComponentState = MediatorServer;
 
 class EditMediatorServerDialogComponent extends React.Component<EditMediatorServerDialogComponentProps, EditMediatorServerDialogComponentState> {
-  constructor(props: EditMediatorServerDialogComponentProps) {
+  constructor (props: EditMediatorServerDialogComponentProps) {
     super(props);
-    
+
     this.state = {
       ...this.props.mediatorServer
     };
@@ -91,18 +91,18 @@ class EditMediatorServerDialogComponent extends React.Component<EditMediatorServ
   render(): JSX.Element {
     const setting = settings[this.props.mode];
     return (
-      <Dialog open={ this.props.mode !== EditMediatorServerDialogMode.None }>
-        <DialogTitle id="form-dialog-title">{ setting.dialogTitle }</DialogTitle>
+      <Dialog open={this.props.mode !== EditMediatorServerDialogMode.None}>
+        <DialogTitle id="form-dialog-title">{setting.dialogTitle}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            { setting.dialogDescription }
+            {setting.dialogDescription}
           </DialogContentText>
           {/* <TextField disabled spellCheck={false} autoFocus margin="dense" id="id" label="Id" type="text" fullWidth value={ this.state._id } onChange={(event)=>{ this.setState({_id: event.target.value}); } } /> */}
-          <TextField disabled={ setting.readonly } spellCheck={false} margin="dense" id="name" label="Name" type="text" fullWidth value={ this.state.name } onChange={(event)=>{ this.setState({name: event.target.value}); } }/>
-          <TextField disabled={ setting.readonly } spellCheck={false} margin="dense" id="url" label="Url" type="text" fullWidth value={ this.state.url } onChange={(event)=>{ this.setState({url: event.target.value}); } }/>
-         </DialogContent>
+          <TextField disabled={setting.readonly} spellCheck={false} margin="dense" id="name" label="Name" type="text" fullWidth value={this.state.name} onChange={(event) => { this.setState({ name: event.target.value }); }} />
+          <TextField disabled={setting.readonly} spellCheck={false} margin="dense" id="url" label="Url" type="text" fullWidth value={this.state.url} onChange={(event) => { this.setState({ url: event.target.value }); }} />
+        </DialogContent>
         <DialogActions>
-          <Button onClick={ (event) => {
+          <Button onClick={(event) => {
             this.onApply({
               _id: this.state._id,
               name: this.state.name,
@@ -110,12 +110,12 @@ class EditMediatorServerDialogComponent extends React.Component<EditMediatorServ
             });
             event.preventDefault();
             event.stopPropagation();
-          } } > { setting.applyButtonText } </Button>
-          <Button onClick={ (event) => {
+          }} > {setting.applyButtonText} </Button>
+          <Button onClick={(event) => {
             this.onCancel();
             event.preventDefault();
             event.stopPropagation();
-          } } color="secondary"> { setting.cancelButtonText } </Button>
+          }} color="secondary"> {setting.cancelButtonText} </Button>
         </DialogActions>
       </Dialog>
     )

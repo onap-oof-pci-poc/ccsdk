@@ -2,6 +2,9 @@ import * as React from 'react';
 
 import { Theme, createStyles, WithStyles, withStyles, Tooltip } from '@material-ui/core';
 
+import { faBan } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import RemoveIcon from '@material-ui/icons/RemoveCircleOutline';
@@ -94,12 +97,18 @@ class MaintenenceViewComponent extends React.Component<MaintenenceViewComponentP
         });
       }
     };
+    const now = new Date().valueOf();
     return (
       <>
         <MaintenenceEntriesTable asynchronus rows={this.props.maintenenceEntries} customActionButtons={[ addMaintenenceEntryAction ]} columns={
         [
-          { property: "mountId", title: "Mount Id", type: ColumnType.text },
-          { property: "active", title: "Active", type: ColumnType.boolean, labels: { "true": "active", "false": "not active" }, },
+            { property: "mountId", title: "Mount Id", type: ColumnType.text },
+            {
+              property: "notifications", title: "Notification", width: 50, align: "center", type: ColumnType.custom, customControl: ({ rowData }) => (
+                rowData.active && (Date.parse(rowData.start).valueOf() <= now) && (Date.parse(rowData.end).valueOf() >= now) && <FontAwesomeIcon icon={faBan} /> || null
+              )
+            },
+          { property: "active", title: "Activation State", type: ColumnType.boolean, labels: { "true": "active", "false": "not active" }, },
           { property: "start", title: "Start Date", type: ColumnType.text },
           { property: "end", title: "End Date", type: ColumnType.text },
           { property: "actions", title: "Actions", type: ColumnType.custom, customControl : ({ rowData })=>(

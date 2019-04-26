@@ -6,19 +6,20 @@
 	<parent>
 		<groupId>org.onap.ccsdk.parent</groupId>
 		<artifactId>odlparent</artifactId>
-		<version>1.2.1-SNAPSHOT</version>
+		<version>1.2.2-SNAPSHOT</version>
 		<relativePath />
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.onap.ccsdk.features.sdnr.wt</groupId>
 	<artifactId>sdnr-wt-odlux-framework</artifactId>
-	<version>0.4.1-SNAPSHOT</version>
+	<version>0.4.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>sdnr-wt-odlux-framework</name>
 	<properties>
-		<buildtime>${maven.build.timestamp} UTC</buildtime>
-		<distversion>ONAP Dublin (Flourine-SR1)</distversion>
-		<buildno>5.88e959b(19/03/20)</buildno>
+		<buildtime>${maven.build.timestamp}</buildtime>
+		<distversion>ONAP Dublin (Flourine-SR2)</distversion>
+		<buildno>12.48eee5f(19/04/11)</buildno>
+		<odlux.version>ONAP SDN-R | ONF Wireless for ${distversion} - Build: ${buildtime} ${buildno} ${project.version}</odlux.version>
 	</properties>
 	<licenses>
 		<license>
@@ -134,7 +135,7 @@
 					<replacements>
 						<replacement>
 							<token>##odlux.version##</token>
-							<value>ONAP SDN-R | ONF Wireless for ${distversion} - Build: ${buildtime} (${buildno})</value>
+							<value>${odlux.version}</value>
 						</replacement>
 					</replacements>
 				</configuration>
