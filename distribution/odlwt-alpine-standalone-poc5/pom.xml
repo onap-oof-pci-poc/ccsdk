@@ -24,7 +24,7 @@
 
 	<properties>
 		<base.image.repo>onap/ccsdk-odl-fluorine-alpine-image:0.4.2-STAGING-latest</base.image.repo>
-		<image.name>oof-pci/ccsdk-odlwt-alpine-image</image.name>
+		<image.name>oof-pci/ccsdk-odlwt-poc5-alpine-image</image.name>
 		<ccsdk.project.version>${project.version}</ccsdk.project.version>
 		<ccsdk.build.timestamp>${maven.build.timestamp}</ccsdk.build.timestamp>
 		<ccsdk.features.version>${project.version}</ccsdk.features.version>
