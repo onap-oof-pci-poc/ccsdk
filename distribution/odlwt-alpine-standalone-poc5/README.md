@@ -4,7 +4,13 @@ The pom is creating alpine docker image containing the Boron ODL with network ap
 used for CENTENNIAL PoC#5 end of 2018.
 
 
-## Run the image
+## Create and run the image
+
+Compile:
+
+```
+   mvn clean install -P docker
+```
 
 Start with docker run:
 
