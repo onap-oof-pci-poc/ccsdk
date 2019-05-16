@@ -12,7 +12,7 @@ Configuration used by this container
 - ODLUX Login:
     - ODL Default is user here: admin/admin
 
-## Creation of 0.4.1-SNAPSHOUT Version for ODL Flurine SR1
+## Creation of 0.4.1-SNAPSHOUT Version for ODL Flourine SR1
 
 The ONAP Dublin parents 1.2.1-SNAPSHOT and 1.2.1 are creating the bundles for ODL Flourine SR1.
 Parents with higher version number are creating bundles for ODL Floutine SR2.
@@ -28,9 +28,23 @@ Steps to create a Flourine SR1 Version, by example for using 0.4.2-SNAPSHOT:
      sed -i 's#<version>0.4.2-SNAPSHOT</version>#<version>0.4.1-SNAPSHOT</version>#g' $(find . -name "pom.xml")
 
 Hint: It could occur that the versin number is used by something in the pom.xml.
-As a check use grep command with the version nmumbers to replace:
+As a check use grep command with the version numbers to replace:
 
      grep "<version>1\.2\.1-SNAPSHOT</version>" $(find . -name pom.xml)
+
+## Compile features and create image
+
+After changing the version numbers a private build is required of "wireless transport" features for version "0.4.1-SNAPSHOT".
+
+     cd features/sdnr/wt
+     mvn clean install
+
+Create image with
+
+     cd distribution/odlwt-alpine-standalone-0.4.1-SNAPSHOT
+     mvn clean install -P docker
+
+**HINT**: ONAP/Nexus does contain also a bundle with such a version number. This version is used as default if no compilation was done. Indication is such error: "[ERROR] Failed to execute goal io.fabric8:docker-maven-plugin:0.16.5:build (generate-images) on project distribution-odlwt-alpine: Unable to build image [oof-pci/ccsdk-odlwt-alpine-image]: COPY failed: stat /var/lib/docker/tmp/docker-builder864199067/preload.cache.schema: no such file or directory -> [Help 1]"
 
 
 ## Parameters
@@ -57,13 +71,13 @@ As a check use grep command with the version nmumbers to replace:
 
 #### Start single node
 
- docker run imageName
+     docker run imageName
 
 #### Start three node clusters
 
- docker run imageName --env NODE_INDEX="1" --env NODE_LIST="10.42.167.43 10.42.168.2 192.168.178.65"
- docker run imageName --env NODE_INDEX="2" --env NODE_LIST="10.42.167.43 10.42.168.2 192.168.178.65"
- docker run imageName --env NODE_INDEX="3" --env NODE_LIST="10.42.167.43 10.42.168.2 192.168.178.65"
+     docker run imageName --env NODE_INDEX="1" --env NODE_LIST="10.42.167.43 10.42.168.2 192.168.178.65"
+     docker run imageName --env NODE_INDEX="2" --env NODE_LIST="10.42.167.43 10.42.168.2 192.168.178.65"
+     docker run imageName --env NODE_INDEX="3" --env NODE_LIST="10.42.167.43 10.42.168.2 192.168.178.65"
 
 
 ### Reference
