@@ -7,13 +7,13 @@
   <parent>
     <groupId>org.onap.ccsdk.parent</groupId>
     <artifactId>odlparent-lite</artifactId>
-    <version>1.2.2-SNAPSHOT</version>
+    <version>1.3.0-SNAPSHOT</version>
     <relativePath />
   </parent>
 
   <groupId>org.onap.ccsdk.distribution</groupId>
   <artifactId>distribution-odlwt-alpine</artifactId>
-  <version>0.4.2-SNAPSHOT</version>
+  <version>0.5.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>ccsdk-distribution :: odlsli-alpine :: SDNR</name>
@@ -23,7 +23,7 @@
   </organization>
 
   <properties>
-    <base.image.repo>onap/ccsdk-odl-fluorine-alpine-image:0.4.2-STAGING-latest</base.image.repo>
+    <base.image.repo>onap/ccsdk-odl-fluorine-alpine-image:0.5.0-STAGING-latest</base.image.repo>
     <image.name>oof-pci/ccsdk-odlwt-alpine-image</image.name>
     <ccsdk.project.version>${project.version}</ccsdk.project.version>
     <ccsdk.build.timestamp>${maven.build.timestamp}</ccsdk.build.timestamp>
